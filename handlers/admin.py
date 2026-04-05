@@ -17,20 +17,25 @@ def is_admin(user_id: int) -> bool:
     return user_id in ADMIN_IDS
 
 @router.message(Command("admin"))
-async def cmd_admin(message: Message):
+async def cmd_admin(message: Message, state: FSMContext):
     if not is_admin(message.from_user.id):
         return
         
+    await state.clear()
+        
     web_url = os.getenv("WEB_URL", "http://127.0.0.1:8000").rstrip("/")
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="⚙️ الدخول إلى لوحة التحكم", url=f"{web_url}/admin")]
+    ])
+    
     text = (
         "🚀 **لوحة تحكم الإدارة (Web Panel)**\n\n"
-        "لقد وفرنا لك لوحة تحكم رسومية فخمة للتحكم الكامل في المستخدمين، الأرصدة، وسجل العمليات!\n\n"
-        f"🔗 **الرابط:** {web_url}/admin\n"
+        "اضغط على الزر أدناه للانتقال للموقع والتحكم بالبوت بالكامل.\n\n"
         "👤 **اليوزر:** `admin`\n"
         "🔑 **الباسورد:** `admin123`\n\n"
-        "*(تنبيه: ليظهر رابط Railway هنا، قم بإضافة المتغير WEB_URL في منصة ريلواي)*"
+        "*(تنبيه: زر الدخول يتطلب وضع رابط موقعك كقيمة لـ WEB_URL في Railway)*"
     )
-    await message.answer(text, parse_mode="Markdown")
+    await message.answer(text, reply_markup=keyboard, parse_mode="Markdown")
 
 @router.callback_query(F.data == "admin_main")
 async def cq_admin_main(call: CallbackQuery, state: FSMContext):
