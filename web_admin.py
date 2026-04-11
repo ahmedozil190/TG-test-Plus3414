@@ -297,15 +297,52 @@ async def complete_login(data: StockLoginComplete):
         logger.error(f"Login Complete Error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.post("/api/admin/sourcing/price/update")
+async def update_sourcing_price(data: dict):
+    # data: {country_code, buy_price, approve_delay}
+    code = data.get("country_code")
+    buy_p = float(data.get("buy_price", 0))
+    delay = int(data.get("approve_delay", 0))
+
+    # Auto-detect name and flag
+    country_name = f"Code {code}"
+    try:
+        iso_code = phonenumbers.region_code_for_country_code(int(code))
+        # Use geocoder with a dummy number for that region to get the name
+        dummy_num = phonenumbers.parse(f"+{code}00000000")
+        country_name = geocoder.description_for_number(dummy_num, "en") or f"Country {code}"
+    except: pass
+
+    async with async_session() as session:
+        cp = (await session.execute(select(CountryPrice).where(CountryPrice.country_code == code))).scalar()
+        if cp:
+            cp.buy_price = buy_p
+            cp.approve_delay = delay
+            cp.country_name = country_name # Update name if detected better
+        else:
+            cp = CountryPrice(
+                country_code=code, 
+                country_name=country_name, 
+                price=0, # Sell price starts at 0, independent
+                buy_price=buy_p,
+                approve_delay=delay
+            )
+            session.add(cp)
+        await session.commit()
+    return {"status": "success"}
+
 @app.post("/api/admin/prices/update")
 async def update_price(data: PriceUpdate):
+    """General update (mostly used by Store admin now)"""
     async with async_session() as session:
         cp = (await session.execute(select(CountryPrice).where(CountryPrice.country_code == data.country_code))).scalar()
         if cp:
             cp.price = data.price
+            # If coming from Store, we might only want to update 'price'
+            if data.country_name and data.country_name != "Unknown":
+                cp.country_name = data.country_name
             cp.buy_price = data.buy_price
             cp.approve_delay = data.approve_delay
-            cp.country_name = data.country_name
         else:
             cp = CountryPrice(
                 country_code=data.country_code, 

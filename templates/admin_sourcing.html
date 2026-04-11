@@ -267,22 +267,14 @@
     <!-- Modal Form -->
     <div id="price-modal" class="modal" onclick="closePriceModal(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
-            <h3 style="margin-bottom: 25px; color: var(--blue-primary);" data-i18n="modal_title">Edit Country Settings</h3>
+            <h3 style="margin-bottom: 25px; color: var(--blue-primary);" data-i18n="modal_title">Price Settings</h3>
             <div class="input-group">
                 <label data-i18n="lbl_code">Country Code (numeric)</label>
                 <input type="text" id="m-code" placeholder="20">
             </div>
             <div class="input-group">
-                <label data-i18n="lbl_name">Country Name</label>
-                <input type="text" id="m-name" placeholder="Egypt">
-            </div>
-            <div class="input-group">
                 <label data-i18n="lbl_buy">Buy Price ($)</label>
                 <input type="number" id="m-buy" step="0.1" placeholder="0.5">
-            </div>
-            <div class="input-group">
-                <label data-i18n="lbl_sell">Sell Price ($)</label>
-                <input type="number" id="m-price" step="0.1" placeholder="1.0">
             </div>
             <div class="input-group">
                 <label data-i18n="lbl_delay">Approval Delay (min)</label>
@@ -290,6 +282,9 @@
             </div>
             <button class="btn-add" style="width: 100%; justify-content: center;" onclick="savePriceChanges()" data-i18n="btn_save">
                 Save Changes
+            </button>
+            <button class="btn-add" style="width: 100%; justify-content: center; margin-top: 10px; background: #334155;" onclick="closePriceModal(null)">
+                Close
             </button>
         </div>
     </div>
@@ -302,47 +297,41 @@
         const translations = {
             en: {
                 nav_dashboard: "Dashboard",
-                nav_prices: "Price Management",
+                nav_prices: "Buying Prices",
                 nav_history: "Sourcing Logs",
                 nav_close: "Close Panel",
                 stat_total: "Total Accounts",
                 stat_pending: "Pending Approval",
                 recent_ops: "Recent Operations",
-                buying_prices: "Buying Prices",
+                buying_prices: "Buying Inventory",
                 btn_add: "Add Country",
                 btn_save: "Save Changes",
                 coming_soon: "Coming Soon...",
-                modal_title: "Edit Country Settings",
+                modal_title: "Buying Price Setup",
                 lbl_code: "Country Code (numeric)",
-                lbl_name: "Country Name",
                 lbl_buy: "Buy Price ($)",
-                lbl_sell: "Sell Price ($)",
                 lbl_delay: "Approval Delay (min)",
                 no_ops: "No transactions found",
-                buy_lbl: "Buy",
-                sell_lbl: "Sell"
+                buy_lbl: "Buying Price"
             },
             ar: {
                 nav_dashboard: "الرئيسية",
-                nav_prices: "إدارة الأسعار",
+                nav_prices: "أسعار الشراء",
                 nav_history: "سجلات التوريد",
                 nav_close: "إغلاق اللوحة",
                 stat_total: "إجمالي الحسابات",
                 stat_pending: "في انتظار التأكيد",
                 recent_ops: "آخر العمليات",
-                buying_prices: "أسعار الشراء",
+                buying_prices: "قائمة الشراء",
                 btn_add: "إضافة دولة",
                 btn_save: "حفظ التعديلات",
                 coming_soon: "قريباً...",
-                modal_title: "إعدادات الدولة",
+                modal_title: "إعداد سعر الشراء",
                 lbl_code: "مفتاح الدولة (رقم)",
-                lbl_name: "اسم الدولة",
                 lbl_buy: "سعر الشراء ($)",
-                lbl_sell: "سعر البيع ($)",
                 lbl_delay: "تأخير الموافقة (دقيقة)",
                 no_ops: "لا توجد عمليات",
-                buy_lbl: "شراء",
-                sell_lbl: "بيع"
+                buy_lbl: "سعر الشراء"
             }
         };
 
@@ -351,15 +340,11 @@
         function updateUI() {
             document.documentElement.lang = currentLang;
             document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
-            
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (translations[currentLang][key]) el.innerText = translations[currentLang][key];
             });
-
             document.getElementById('lang-text').innerText = currentLang === 'en' ? 'العربية' : 'English';
-            
-            // Re-render dynamic content to apply translations
             init();
         }
 
@@ -379,7 +364,7 @@
             document.getElementById('section-' + id).style.display = 'block';
             document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
             btn.classList.add('active');
-            updateUI(); // Keep title synced
+            updateUI();
             if (window.innerWidth < 1024) toggleSidebar();
         }
 
@@ -391,11 +376,8 @@
                 document.getElementById('stat-pending').innerText = data.stats.pending_count;
                 renderRecent(data.recent);
                 renderPrices(data.prices);
-            } catch (e) {
-                console.error(e);
-            } finally {
-                document.getElementById('loader').style.display = 'none';
-            }
+            } catch (e) { console.error(e); }
+            finally { document.getElementById('loader').style.display = 'none'; }
         }
 
         function renderRecent(list) {
@@ -418,9 +400,9 @@
                 <div class="list-item">
                     <div class="item-info">
                         <h4>${p.name} (+${p.code})</h4>
-                        <p>${translations[currentLang].buy_lbl}: $${p.buy_price} | ${translations[currentLang].sell_lbl}: $${p.price}</p>
+                        <p>${translations[currentLang].buy_lbl}: <span style="color: var(--blue-primary)">$${p.buy_price}</span></p>
                     </div>
-                    <button class="btn-edit" onclick="editPrice('${p.code}', '${p.name}', ${p.buy_price}, ${p.price}, ${p.approve_delay})">
+                    <button class="btn-edit" onclick="editPrice('${p.code}', ${p.buy_price}, ${p.approve_delay})">
                         <i class="fa-solid fa-pen"></i>
                     </button>
                 </div>
@@ -429,36 +411,30 @@
 
         function openPriceModal() {
             document.getElementById('m-code').value = '';
-            document.getElementById('m-name').value = '';
             document.getElementById('m-buy').value = '';
-            document.getElementById('m-price').value = '';
             document.getElementById('m-delay').value = '0';
             document.getElementById('price-modal').classList.add('active');
         }
 
-        function editPrice(code, name, buy, price, delay) {
+        function editPrice(code, buy, delay) {
             document.getElementById('m-code').value = code;
-            document.getElementById('m-name').value = name;
             document.getElementById('m-buy').value = buy;
-            document.getElementById('m-price').value = price;
             document.getElementById('m-delay').value = delay;
             document.getElementById('price-modal').classList.add('active');
         }
 
         function closePriceModal(e) {
-            if (e && e.target !== document.getElementById('price-modal')) return;
+            if (e && e.target && e.target !== document.getElementById('price-modal')) return;
             document.getElementById('price-modal').classList.remove('active');
         }
 
         async function savePriceChanges() {
             const payload = {
                 country_code: document.getElementById('m-code').value,
-                country_name: document.getElementById('m-name').value,
                 buy_price: parseFloat(document.getElementById('m-buy').value),
-                price: parseFloat(document.getElementById('m-price').value),
                 approve_delay: parseInt(document.getElementById('m-delay').value)
             };
-            await fetch('/api/admin/prices/update', {
+            await fetch('/api/admin/sourcing/price/update', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(payload)

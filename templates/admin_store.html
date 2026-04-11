@@ -111,6 +111,10 @@
                 <i class="fa-solid fa-users"></i>
                 <span data-i18n="nav_users">Customers</span>
             </div>
+            <div id="menu-prices" class="menu-item" onclick="switchSection('prices', this)">
+                <i class="fa-solid fa-tags"></i>
+                <span data-i18n="nav_prices">Selling Prices</span>
+            </div>
             <div id="menu-sales" class="menu-item" onclick="switchSection('sales', this)">
                 <i class="fa-solid fa-cart-shopping"></i>
                 <span data-i18n="nav_sales">Sales History</span>
@@ -170,6 +174,16 @@
             <div class="list-container" id="user-list"></div>
         </div>
 
+        <div id="section-prices" class="content-section" style="display: none;">
+            <div class="section-header">
+                <h3 data-i18n="nav_prices">Selling Prices</h3>
+                <button class="btn-add" onclick="openPriceModal()" style="background: var(--gold-primary); color: #000; border: none; padding: 10px 15px; border-radius: 10px; font-weight: bold; cursor: pointer;">
+                    <i class="fa-solid fa-plus"></i> <span data-i18n="btn_add">Add Price</span>
+                </button>
+            </div>
+            <div class="list-container" id="price-list"></div>
+        </div>
+
         <div id="section-sales" class="content-section" style="display: none;">
             <div class="card" style="text-align: center; color: var(--text-dim);">
                 <i class="fa-solid fa-chart-line" style="font-size: 3rem; margin-bottom: 15px;"></i>
@@ -177,6 +191,23 @@
             </div>
         </div>
     </main>
+
+    <!-- Modal for Store Pricing -->
+    <div id="price-modal" class="modal" onclick="closePriceModal(event)" style="position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 3000;">
+        <div class="modal-content" onclick="event.stopPropagation()" style="background: #111; border: 1px solid var(--gold-primary); border-radius: 20px; padding: 30px; width: 90%; max-width: 400px;">
+            <h3 style="color: var(--gold-primary); margin-bottom: 20px;" data-i18n="modal_title">Store Price Settings</h3>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; color: var(--text-dim); font-size: 0.8rem; margin-bottom: 5px;" data-i18n="lbl_code">Country Code</label>
+                <input type="text" id="m-code" style="width: 100%; background: #222; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 8px;">
+            </div>
+            <div style="margin-bottom: 25px;">
+                <label style="display: block; color: var(--text-dim); font-size: 0.8rem; margin-bottom: 5px;" data-i18n="lbl_sell">Selling Price ($)</label>
+                <input type="number" id="m-price" step="0.1" style="width: 100%; background: #222; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 8px;">
+            </div>
+            <button onclick="saveStorePrice()" style="width: 100%; padding: 12px; background: var(--gold-primary); color: #000; border: none; border-radius: 10px; font-weight: bold; cursor: pointer;" data-i18n="btn_save">Save</button>
+            <button onclick="closePriceModal()" style="width: 100%; padding: 12px; background: transparent; color: var(--text-dim); border: none; margin-top: 10px; cursor: pointer;" data-i18n="nav_close">Cancel</button>
+        </div>
+    </div>
 
     <script>
         const tg = window.Telegram.WebApp;
@@ -187,6 +218,7 @@
             en: {
                 nav_dashboard: "Dashboard",
                 nav_users: "Customers",
+                nav_prices: "Store Prices",
                 nav_sales: "Sales History",
                 nav_close: "Close Panel",
                 stat_users: "Total Clients",
@@ -196,11 +228,17 @@
                 coming_soon: "Full Analytics Coming Soon...",
                 no_sales: "No sales recorded yet",
                 service_lbl: "Account for",
-                by_user: "By User"
+                by_user: "By User",
+                btn_add: "Add Price",
+                modal_title: "Selling Price Manager",
+                lbl_code: "Code",
+                lbl_sell: "Price ($)",
+                btn_save: "Save Selling Price"
             },
             ar: {
                 nav_dashboard: "الرئيسية",
                 nav_users: "إدارة العملاء",
+                nav_prices: "أسعار البيع",
                 nav_sales: "سجل المبيعات",
                 nav_close: "إغلاق اللوحة",
                 stat_users: "إجمالي العملاء",
@@ -210,7 +248,12 @@
                 coming_soon: "التقارير التفصيلية قريباً...",
                 no_sales: "لا توجد مبيعات حالياً",
                 service_lbl: "حساب",
-                by_user: "بواسطة"
+                by_user: "بواسطة",
+                btn_add: "إضافة سعر",
+                modal_title: "إدارة أسعار البيع",
+                lbl_code: "الكود",
+                lbl_sell: "السعر ($)",
+                btn_save: "حفظ سعر البيع"
             }
         };
 
@@ -251,24 +294,29 @@
             try {
                 const res = await fetch('/api/admin/store/data');
                 const data = await res.json();
-                document.getElementById('stat-total-users').innerText = data.stats.total_users;
-                document.getElementById('stat-sales-count').innerText = data.stats.sales_count;
-                renderSales(data.recent_sales);
+                document.getElementById('stat-total-users').innerText = data.stats.user_count;
+                document.getElementById('stat-sales-count').innerText = data.transactions.length;
+                renderSales(data.transactions);
                 renderUsers(data.users);
+                
+                // Fetch prices list
+                const pRes = await fetch('/api/admin/sourcing/data');
+                const pData = await pRes.json();
+                renderPrices(pData.prices);
             } catch (e) { console.error(e); }
             finally { document.getElementById('loader').style.display = 'none'; }
         }
 
         function renderSales(list) {
             const container = document.getElementById('recent-sales');
-            if (!list.length) { container.innerHTML = `<p style="text-align: center; color: var(--text-dim);">${translations[currentLang].no_sales}</p>`; return; }
+            if (!list || !list.length) { container.innerHTML = `<p style="text-align: center; color: var(--text-dim);">${translations[currentLang].no_sales}</p>`; return; }
             container.innerHTML = list.map(item => `
                 <div class="list-item">
                     <div class="item-info">
-                        <h4>${translations[currentLang].service_lbl}: ${item.service}</h4>
-                        <p>${translations[currentLang].by_user}: ${item.user_id} | <span style="color: var(--gold-primary)">$${item.price}</span></p>
+                        <h4>Order Recorded</h4>
+                        <p>${translations[currentLang].by_user}: ${item.buyer_id} | <span style="color: var(--gold-primary)">$${item.price}</span></p>
                     </div>
-                    <span class="badge">Completed</span>
+                    <span class="badge">Success</span>
                 </div>
             `).join('');
         }
@@ -278,11 +326,59 @@
             container.innerHTML = list.map(u => `
                 <div class="list-item">
                     <div class="item-info">
-                        <h4>${u.username || u.user_id}</h4>
-                        <p>Balance: <span style="color: var(--gold-primary)">$${u.balance}</span></p>
+                        <h4>AID: ${u.id}</h4>
+                        <p>Joined: ${u.join_date} | Balance: <span style="color: var(--gold-primary)">$${u.balance}</span></p>
                     </div>
                 </div>
             `).join('');
+        }
+
+        function renderPrices(list) {
+            const container = document.getElementById('price-list');
+            container.innerHTML = list.map(p => `
+                <div class="list-item">
+                    <div class="item-info">
+                        <h4>${p.name} (+${p.code})</h4>
+                        <p>Selling Price: <span style="color: var(--gold-primary)">$${p.price}</span></p>
+                    </div>
+                    <button onclick="editPrice('${p.code}', ${p.price})" style="background: rgba(255,215,0,0.1); border: none; color: var(--gold-primary); padding: 8px; border-radius: 50%; cursor: pointer;">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function openPriceModal() {
+            document.getElementById('m-code').value = '';
+            document.getElementById('m-price').value = '';
+            document.getElementById('price-modal').style.display = 'flex';
+        }
+
+        function editPrice(code, price) {
+            document.getElementById('m-code').value = code;
+            document.getElementById('m-price').value = price;
+            document.getElementById('price-modal').style.display = 'flex';
+        }
+
+        function closePriceModal() {
+            document.getElementById('price-modal').style.display = 'none';
+        }
+
+        async function saveStorePrice() {
+            const payload = {
+                country_code: document.getElementById('m-code').value,
+                country_name: "Unknown", 
+                price: parseFloat(document.getElementById('m-price').value),
+                buy_price: 0,
+                approve_delay: 0
+            };
+            await fetch('/api/admin/prices/update', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(payload)
+            });
+            init();
+            closePriceModal();
         }
 
         updateUI();
