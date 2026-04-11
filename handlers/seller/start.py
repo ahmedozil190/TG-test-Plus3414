@@ -95,7 +95,7 @@ async def seller_coin_cmd(message: Message):
             [InlineKeyboardButton(text=withdraw_text, callback_data="seller_withdraw")]
         ])
         
-        await message.answer(coin_text, reply_markup=markup, parse_mode="HTML")
+        await message.reply(coin_text, reply_markup=markup, parse_mode="HTML")
     except Exception as e:
         await message.answer(f"⚠️ Error: {str(e)}")
 
