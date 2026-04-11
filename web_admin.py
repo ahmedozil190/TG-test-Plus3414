@@ -50,6 +50,8 @@ class PriceUpdate(BaseModel):
     country_code: str
     country_name: str
     price: float
+    buy_price: float
+    approve_delay: int
 
 class StoreBuy(BaseModel):
     user_id: int
@@ -232,7 +234,13 @@ async def store_buy(data: StoreBuy):
                         region = phonenumbers.region_code_for_country_code(int(p.country_code))
                         flag = get_flag_emoji(region)
                     except: pass
-                    prices.append({"code": p.country_code, "name": f"{flag} {p.country_name}", "price": p.price})
+                    prices.append({
+                        "code": p.country_code, 
+                        "name": f"{flag} {p.country_name}", 
+                        "price": p.price,
+                        "buy_price": p.buy_price,
+                        "approve_delay": p.approve_delay
+                    })
             except Exception as e:
                 logger.error(f"Error fetching prices: {e}")
                 prices = []
@@ -318,9 +326,17 @@ async def update_price(data: PriceUpdate):
         cp = (await session.execute(select(CountryPrice).where(CountryPrice.country_code == data.country_code))).scalar()
         if cp:
             cp.price = data.price
+            cp.buy_price = data.buy_price
+            cp.approve_delay = data.approve_delay
             cp.country_name = data.country_name
         else:
-            cp = CountryPrice(country_code=data.country_code, country_name=data.country_name, price=data.price)
+            cp = CountryPrice(
+                country_code=data.country_code, 
+                country_name=data.country_name, 
+                price=data.price,
+                buy_price=data.buy_price,
+                approve_delay=data.approve_delay
+            )
             session.add(cp)
         await session.commit()
     return {"status": "success"}

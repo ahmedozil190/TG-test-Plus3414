@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 BOT_TOKEN = os.getenv("BOT_TOKEN", "")
+SELLER_BOT_TOKEN = os.getenv("SELLER_BOT_TOKEN", "8557986485:AAHeasFbCuoByEsUtPXf81sC-454seP6EyA")
 API_ID = os.getenv("API_ID", "0")
 API_ID = int(API_ID) if API_ID.isdigit() else 0
 API_HASH = os.getenv("API_HASH", "")
