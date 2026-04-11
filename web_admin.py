@@ -35,7 +35,7 @@ class BalanceUpdate(BaseModel):
 @app.get("/admin", response_class=HTMLResponse)
 async def admin_dashboard(request: Request):
     try:
-        return templates.TemplateResponse("dashboard.html", {"request": request})
+        return templates.TemplateResponse(request=request, name="dashboard.html", context={})
     except Exception as e:
         logger.error(f"Error rendering dashboard: {e}")
         logger.error(traceback.format_exc())
