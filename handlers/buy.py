@@ -118,8 +118,15 @@ async def cq_get_code(call: CallbackQuery):
 @router.callback_query(F.data == "back_main")
 async def cq_back_main(call: CallbackQuery):
     from keyboards.client import main_keyboard
+    async with async_session() as session:
+        user = (await session.execute(select(User).where(User.id == call.from_user.id))).scalar_one_or_none()
+        balance = user.balance if user else 0.0
+        
     await call.message.edit_text(
-        f"Welcome {call.from_user.full_name} to the Exclusive Numbers Store!\n"
-        "Here you can buy Telegram numbers to receive codes, or sell your numbers to us.",
+        "- The main list.\n\n"
+        f"- Your balance:{balance}$ .\n"
+        f"- Hands of your account:{call.from_user.id} .\n"
+        "Official Bot Channel:@MOOO8O .\n"
+        "Gover the bot through the buttons below.",
         reply_markup=main_keyboard()
     )

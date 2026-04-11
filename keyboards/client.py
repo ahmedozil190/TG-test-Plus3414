@@ -3,16 +3,21 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 def main_keyboard():
     return InlineKeyboardMarkup(inline_keyboard=[
         [
-            InlineKeyboardButton(text="Buy Account", callback_data="buy_number"),
-            InlineKeyboardButton(text="Sell Account", callback_data="sell_number")
+            InlineKeyboardButton(text="- Buy an account.", callback_data="buy_number"),
+            InlineKeyboardButton(text="- Selling an account.", callback_data="sell_number")
         ],
         [
-            InlineKeyboardButton(text="Payout Money", callback_data="payout"),
-            InlineKeyboardButton(text="TopUp Balance", callback_data="deposit")
+            InlineKeyboardButton(text="Automatic payment.", callback_data="deposit")
         ],
         [
-            InlineKeyboardButton(text="Countries we buy", callback_data="countries_we_buy"),
-            InlineKeyboardButton(text="Sales channel", callback_data="sales_channel")
+            InlineKeyboardButton(text="API KEY", callback_data="api_key")
+        ],
+        [
+            InlineKeyboardButton(text="Customer service.", callback_data="customer_service")
+        ],
+        [
+            InlineKeyboardButton(text="Bot activations. ↗️", url="https://t.me/MOOO8O"),
+            InlineKeyboardButton(text="- Call link.", callback_data="call_link")
         ]
     ])
 

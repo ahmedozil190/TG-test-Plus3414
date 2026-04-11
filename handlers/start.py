@@ -23,7 +23,10 @@ async def cmd_start(message: Message):
             await session.commit()
             
     await message.answer(
-        f"Welcome {message.from_user.full_name} to the Exclusive Numbers Store!\n"
-        "Here you can buy Telegram numbers to receive codes, or sell your numbers to us.",
+        "- The main list.\n\n"
+        f"- Your balance:{user.balance}$ .\n"
+        f"- Hands of your account:{user.id} .\n"
+        "Official Bot Channel:@MOOO8O .\n"
+        "Gover the bot through the buttons below.",
         reply_markup=main_keyboard()
     )

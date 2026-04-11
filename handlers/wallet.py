@@ -38,6 +38,6 @@ async def cq_profile(call: CallbackQuery):
 async def cq_deposit(call: CallbackQuery):
     await call.answer("ميزة الشحن التلقائي ستتوفر قريباً!\nيرجى التواصل مع الإدارة للشحن اليدوي.", show_alert=True)
 
-@router.callback_query(F.data.in_(["payout", "countries_we_buy", "sales_channel"]))
+@router.callback_query(F.data.in_(["payout", "countries_we_buy", "sales_channel", "api_key", "customer_service", "call_link"]))
 async def cq_placeholders(call: CallbackQuery):
     await call.answer("This feature is coming soon! ميزة قادمة قريباً", show_alert=True)
