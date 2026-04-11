@@ -11,6 +11,7 @@ except RuntimeError:
     asyncio.set_event_loop(asyncio.new_event_loop())
 
 from aiogram import Bot, Dispatcher
+from aiogram.types import BotCommand
 from config import BOT_TOKEN
 from database.engine import init_db
 from handlers import main_router
@@ -40,6 +41,9 @@ async def main():
     asyncio.create_task(server.serve())
     
     logging.info("Starting bot...")
+    await bot.set_my_commands([
+        BotCommand(command="start", description="رساله البدء")
+    ])
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
