@@ -45,21 +45,21 @@ async def cq_customer_service(call: CallbackQuery):
         "👮‍♂️:Support: @Q_M_5"
     )
     markup = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="الرجوع 🔙", callback_data="back_main")]
+        [InlineKeyboardButton(text="- Return.", callback_data="back_main")]
     ])
-    await call.message.edit_text(text, parse_mode="HTML", reply_markup=markup)
+    await call.message.edit_text(text, reply_markup=markup, parse_mode="HTML")
 
 @router.callback_query(F.data == "call_link")
 async def cq_call_link(call: CallbackQuery):
     bot_info = await call.bot.get_me()
     text = (
         "Your invitation link:\n\n"
-        f"t.me/{bot_info.username}?start={call.from_user.id}"
+        f"<code>t.me/{bot_info.username}?start={call.from_user.id}</code>"
     )
     markup = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="الرجوع 🔙", callback_data="back_main")]
+        [InlineKeyboardButton(text="• Refer to •", callback_data="back_main")]
     ])
-    await call.message.edit_text(text, parse_mode="HTML", reply_markup=markup)
+    await call.message.edit_text(text, reply_markup=markup, parse_mode="HTML")
 
 @router.callback_query(F.data == "deposit")
 async def cq_deposit(call: CallbackQuery):
