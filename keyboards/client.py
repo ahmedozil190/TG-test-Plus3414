@@ -16,7 +16,7 @@ def main_keyboard():
             InlineKeyboardButton(text="Customer service.", callback_data="customer_service")
         ],
         [
-            InlineKeyboardButton(text="Bot activations. ↗️", url="https://t.me/MOOO8O"),
+            InlineKeyboardButton(text="Bot activations.", url="https://t.me/MOOO8O"),
             InlineKeyboardButton(text="- Call link.", callback_data="call_link")
         ]
     ])

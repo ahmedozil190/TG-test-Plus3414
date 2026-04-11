@@ -124,9 +124,10 @@ async def cq_back_main(call: CallbackQuery):
         
     await call.message.edit_text(
         "- The main list.\n\n"
-        f"- Your balance:{balance}$ .\n"
-        f"- Hands of your account:{call.from_user.id} .\n"
+        f"- Your balance:{int(balance) if balance == 0 else balance}$ .\n"
+        f"- Hands of your account:<code>{call.from_user.id}</code> .\n"
         "Official Bot Channel:@MOOO8O .\n"
         "Gover the bot through the buttons below.",
-        reply_markup=main_keyboard()
+        reply_markup=main_keyboard(),
+        parse_mode="HTML"
     )

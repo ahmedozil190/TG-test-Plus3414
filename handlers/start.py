@@ -24,9 +24,10 @@ async def cmd_start(message: Message):
             
     await message.answer(
         "- The main list.\n\n"
-        f"- Your balance:{user.balance}$ .\n"
-        f"- Hands of your account:{user.id} .\n"
+        f"- Your balance:{int(user.balance) if user.balance == 0 else user.balance}$ .\n"
+        f"- Hands of your account:<code>{user.id}</code> .\n"
         "Official Bot Channel:@MOOO8O .\n"
         "Gover the bot through the buttons below.",
-        reply_markup=main_keyboard()
+        reply_markup=main_keyboard(),
+        parse_mode="HTML"
     )
