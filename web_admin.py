@@ -10,7 +10,10 @@ from pydantic import BaseModel
 from typing import List
 
 app = FastAPI(title="Store Admin Panel")
-templates = Jinja2Templates(directory="templates")
+
+# Use absolute path for templates to avoid issues in deployment
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
 
 # Models for API requests
 class StockAdd(BaseModel):
@@ -23,14 +26,8 @@ class BalanceUpdate(BaseModel):
     user_id: int
     amount: float
 
-# Helper for DB Session
-async def get_session():
-    async with async_session() as session:
-        yield session
-
 @app.get("/admin", response_class=HTMLResponse)
 async def admin_dashboard(request: Request):
-    # In a real app, verify Telegram InitData here
     return templates.TemplateResponse("dashboard.html", {"request": request})
 
 @app.get("/api/admin/data")
@@ -41,29 +38,28 @@ async def get_admin_data():
         stock_count = (await session.execute(select(func.count(Account.id)).where(Account.status == AccountStatus.AVAILABLE))).scalar()
         total_balance = (await session.execute(select(func.sum(User.balance)))).scalar() or 0.0
         
+        # Recent Accounts (instead of problematic join)
+        accounts_result = await session.execute(select(Account).where(Account.status == AccountStatus.AVAILABLE).order_by(Account.id.desc()).limit(50))
+        accounts = [{"id": a.id, "phone_number": a.phone_number, "country": a.country, "price": a.price} for a in accounts_result.scalars().all()]
+
         # Users
-        users_result = await session.execute(select(User).order_by(User.join_date.desc()).limit(100))
+        users_result = await session.execute(select(User).order_by(User.join_date.desc()).limit(50))
         users = [{"id": u.id, "balance": u.balance, "join_date": u.join_date.strftime("%Y-%m-%d")} for u in users_result.scalars().all()]
         
-        # Accounts (Stock)
-        accounts_result = await session.execute(select(Account).where(Account.status == AccountStatus.AVAILABLE).limit(100))
-        accounts = [{"id": a.id, "phone_number": a.phone_number, "country": a.country, "price": a.price} for a in accounts_result.scalars().all()]
-        
-        # Recent Transactions
+        # Recent Transactions (Simplified)
         tx_result = await session.execute(
-            select(Transaction, Account)
-            .join(Account, Transaction.amount == -Account.price) # Simple join for display
+            select(Transaction)
             .where(Transaction.type == TransactionType.BUY)
             .order_by(Transaction.timestamp.desc())
             .limit(10)
         )
         transactions = []
-        for tx, acc in tx_result:
+        for tx in tx_result.scalars().all():
             transactions.append({
                 "buyer_id": tx.user_id,
-                "phone_number": acc.phone_number,
-                "country": acc.country,
-                "price": acc.price,
+                "phone_number": "Account Purchase",
+                "country": "-",
+                "price": abs(tx.amount),
                 "date": tx.timestamp.strftime("%Y-%m-%d %H:%M")
             })
 
