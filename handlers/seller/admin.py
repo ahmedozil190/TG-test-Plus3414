@@ -61,6 +61,29 @@ async def admin_add_country(message: Message):
     except Exception as e:
         await message.answer(f"❌ Error: {str(e)}")
 
+@router.message(Command("admin"))
+async def admin_dashboard_cmd(message: Message):
+    if message.from_user.id not in ADMIN_IDS:
+        return
+        
+    import os
+    from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
+    web_url = os.getenv("WEB_URL", "http://127.0.0.1:8000").rstrip("/")
+    
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="📥 الدخول إلى لوحة التوريد", web_app=WebAppInfo(url=f"{web_url}/admin/sourcing"))]
+    ])
+    
+    text = (
+        "📊 <b>لوحة إدارة التوريد (Sourcing Board)</b>\n\n"
+        "اضغط على الزر أدناه لإدارة عمليات شراء الحسابات، ضبط الأسعار، ومتابعة الموردين.\n\n"
+        "🛠 <b>الأدوات المتاحة:</b>\n"
+        "• إدارة أسعار الشراء والبيع لكل دولة\n"
+        "• مراقبة الحسابات الواردة الجديدة\n"
+        "• إحصائيات المخزون اللوجستي"
+    )
+    await message.answer(text, reply_markup=keyboard, parse_mode="HTML")
+
 @router.message(Command("sourcing_stats"))
 async def admin_sourcing_stats(message: Message):
     if message.from_user.id not in ADMIN_IDS:

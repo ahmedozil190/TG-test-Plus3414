@@ -32,16 +32,16 @@ async def cmd_admin(message: Message, state: FSMContext):
     web_url = os.getenv("WEB_URL", "http://127.0.0.1:8000").rstrip("/")
     from aiogram.types import WebAppInfo
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="⚙️ الدخول إلى لوحة التحكم", web_app=WebAppInfo(url=f"{web_url}/admin"))]
+        [InlineKeyboardButton(text="⚙️ الدخول إلى لوحة المتجر", web_app=WebAppInfo(url=f"{web_url}/admin/store"))]
     ])
     
     text = (
-        "🚀 <b>لوحة تحكم الإدارة (Premium Web App)</b>\n\n"
-        "اضغط على الزر أدناه لفتح لوحة التحكم الاحترافية داخل التلجرام.\n\n"
+        "🚀 <b>لوحة تحكم المتجر (Store Dashboard)</b>\n\n"
+        "اضغط على الزر أدناه لفتح لوحة إدارة المبيعات والعملاء.\n\n"
         "✨ <b>المميزات:</b>\n"
-        "• إدارة المخزون والأرقام بسهولة\n"
+        "• متابعة المبيعات والأرباح فوراً\n"
         "• شحن أرصدة المستخدمين بضغطة زر\n"
-        "• إحصائيات فورية وواجهة فاخرة"
+        "• التحكم في العملاء وإحصائيات المتجر"
     )
     await message.answer(text, reply_markup=keyboard, parse_mode="HTML")
 
