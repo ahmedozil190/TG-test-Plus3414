@@ -130,7 +130,7 @@ async def seller_cap_cmd(message: Message):
                 flag = "🌐"
                 
             # Format: 1-🇻🇺 +678 -VU: 0.55$ (Normal font, no extra spaces, trailing width char)
-            line = f"{i}-{flag} +{c.country_code} -{iso}: {c.buy_price:.2f}$ㅤ"
+            line = f"{i}-{flag} +{c.country_code} -{iso}: {c.buy_price:.2f}$ㅤㅤ"
             text_lines.append(line)
         
         text_lines.append("</blockquote>") # End expandable quote
