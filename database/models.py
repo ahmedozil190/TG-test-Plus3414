@@ -40,3 +40,10 @@ class Transaction(Base):
     type = Column(Enum(TransactionType), nullable=False)
     amount = Column(Float, nullable=False)
     timestamp = Column(DateTime, default=datetime.utcnow)
+
+class CountryPrice(Base):
+    __tablename__ = 'country_prices'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    country_code = Column(String, unique=True, nullable=False) # e.g. "20"
+    country_name = Column(String, nullable=False) # e.g. "Egypt"
+    price = Column(Float, nullable=False, default=1.0)

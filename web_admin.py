@@ -1,15 +1,18 @@
 import os
 import logging
 import traceback
+import phonenumbers
+from phonenumbers import geocoder
 from fastapi import FastAPI, Request, HTTPException, Depends
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 from sqlalchemy.future import select
 from sqlalchemy import func
 from database.engine import async_session
-from database.models import User, Account, Transaction, AccountStatus, TransactionType
+from database.models import User, Account, Transaction, AccountStatus, TransactionType, CountryPrice
 from pydantic import BaseModel
 from typing import List
+from services.session_manager import request_app_code, submit_app_code, login_clients
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -22,15 +25,25 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
 
 # Models for API requests
-class StockAdd(BaseModel):
+class StockLoginStart(BaseModel):
     phone: str
+
+class StockLoginComplete(BaseModel):
+    phone: str
+    code: str
+    hash: str
+    password: str = None
     country: str
     price: float
-    session: str
 
 class BalanceUpdate(BaseModel):
     user_id: int
     amount: float
+
+class PriceUpdate(BaseModel):
+    country_code: str
+    country_name: str
+    price: float
 
 @app.get("/admin", response_class=HTMLResponse)
 async def admin_dashboard(request: Request):
@@ -91,6 +104,14 @@ async def get_admin_data():
                 logger.error(f"Error fetching transactions: {e}")
                 transactions = []
 
+            # Country Prices
+            try:
+                prices_result = await session.execute(select(CountryPrice).order_by(CountryPrice.country_name))
+                prices = [{"code": p.country_code, "name": p.country_name, "price": p.price} for p in prices_result.scalars().all()]
+            except Exception as e:
+                logger.error(f"Error fetching prices: {e}")
+                prices = []
+
         return {
             "stats": {
                 "user_count": user_count,
@@ -99,24 +120,81 @@ async def get_admin_data():
             },
             "users": users,
             "accounts": accounts,
-            "transactions": transactions
+            "transactions": transactions,
+            "prices": prices
         }
     except Exception as e:
         logger.error(f"Fatal error in get_admin_data: {e}")
         logger.error(traceback.format_exc())
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.post("/api/admin/stock/add")
-async def add_stock(data: StockAdd):
+@app.post("/api/admin/stock/start-login")
+async def start_login(data: StockLoginStart):
+    phone = data.phone
+    if not phone.startswith("+"):
+        phone = "+" + phone
+        
+    try:
+        parsed = phonenumbers.parse(phone)
+        country_code = str(parsed.country_code)
+        country_name = geocoder.description_for_number(parsed, "en") or f"Code {country_code}"
+    except Exception as e:
+        logger.error(f"Phone Parse Error: {e}")
+        raise HTTPException(status_code=400, detail="رقم هاتف غير صالح")
+        
     async with async_session() as session:
-        new_acc = Account(
-            phone_number=data.phone,
-            country=data.country,
-            price=data.price,
-            session_string=data.session,
-            status=AccountStatus.AVAILABLE
-        )
-        session.add(new_acc)
+        cp = (await session.execute(select(CountryPrice).where(CountryPrice.country_code == country_code))).scalar()
+        price = cp.price if cp else 1.0 # Default fallback
+        
+    try:
+        # Use -1 as a special ID for Admin Login
+        code_hash = await request_app_code(-1, phone)
+        return {
+            "status": "success",
+            "country": country_name,
+            "price": price,
+            "hash": code_hash
+        }
+    except Exception as e:
+        logger.error(f"Login Start Error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/admin/stock/complete-login")
+async def complete_login(data: StockLoginComplete):
+    try:
+        # If 2FA is needed, the current session_manager doesn't handle it well in submit_app_code.
+        # But for now, we'll try the simple path.
+        session_string = await submit_app_code(-1, data.phone, data.hash, data.code)
+        
+        if not session_string:
+            raise HTTPException(status_code=400, detail="فشل في جلب الجلسة. قد يكون الكود خطأ.")
+            
+        async with async_session() as session:
+            new_acc = Account(
+                phone_number=data.phone,
+                country=data.country,
+                price=data.price,
+                session_string=session_string,
+                status=AccountStatus.AVAILABLE
+            )
+            session.add(new_acc)
+            await session.commit()
+            
+        return {"status": "success"}
+    except Exception as e:
+        logger.error(f"Login Complete Error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/admin/prices/update")
+async def update_price(data: PriceUpdate):
+    async with async_session() as session:
+        cp = (await session.execute(select(CountryPrice).where(CountryPrice.country_code == data.country_code))).scalar()
+        if cp:
+            cp.price = data.price
+            cp.country_name = data.country_name
+        else:
+            cp = CountryPrice(country_code=data.country_code, country_name=data.country_name, price=data.price)
+            session.add(cp)
         await session.commit()
     return {"status": "success"}
 

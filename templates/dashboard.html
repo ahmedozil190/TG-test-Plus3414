@@ -428,10 +428,23 @@
         <div id="section-stock" class="content-section">
             <div class="section-title">إدارة المخزون</div>
             <button class="btn" style="margin-bottom: 20px;" onclick="showAddStockModal()">
-                <i class="fa-solid fa-plus"></i> إضافة رقم جديد
+                <i class="fa-solid fa-plus"></i> إضافة رقم آلياً
             </button>
             <div class="item-list" id="stock-list">
                 <!-- Stock items listed here -->
+            </div>
+        </div>
+
+        <!-- Prices Section -->
+        <div id="section-prices" class="content-section">
+            <div class="section-title">إدارة أسعار الدول</div>
+            <div class="card" style="margin-bottom: 20px;">
+                <button class="btn btn-outline" onclick="showAddPriceModal()">
+                    <i class="fa-solid fa-plus"></i> إضافة سعر لدولة
+                </button>
+            </div>
+            <div class="item-list" id="price-list">
+                <!-- Prices listed here -->
             </div>
         </div>
     </div>
@@ -450,33 +463,64 @@
             <i class="fa-solid fa-box-open"></i>
             <span>المخزون</span>
         </div>
+        <div class="nav-item" onclick="switchSection('prices', this)">
+            <i class="fa-solid fa-tags"></i>
+            <span>الأسعار</span>
+        </div>
     </nav>
 
     <!-- Modals -->
     <div id="modal-add-stock" class="modal" onclick="closeModal(event, 'modal-add-stock')">
         <div class="modal-content" onclick="event.stopPropagation()">
-            <h3 style="margin-bottom: 20px; color: var(--gold);">إضافة رقم للمخزون</h3>
-            <div class="input-group">
-                <label>رقم الهاتف</label>
-                <input type="text" id="new-phone" placeholder="+1234567890">
+            <div id="stock-step-1">
+                <h3 style="margin-bottom: 20px; color: var(--gold);">إضافة رقم آلي</h3>
+                <div class="input-group">
+                    <label>رقم الهاتف</label>
+                    <input type="text" id="new-phone" placeholder="+201234567890">
+                </div>
+                <button class="btn" id="btn-start-login" onclick="startAutomatedLogin()">طلب كود التحقق</button>
             </div>
-            <div class="input-group">
-                <label>الدولة</label>
-                <input type="text" id="new-country" placeholder="مثلاً: Saudi Arabia">
+            
+            <div id="stock-step-2" style="display: none;">
+                <h3 style="margin-bottom: 10px; color: var(--gold);">تم إرسال الكود</h3>
+                <p id="detected-info" style="font-size: 0.8rem; margin-bottom: 20px; color: var(--text-dim);"></p>
+                <div class="input-group">
+                    <label>كود التحقق</label>
+                    <input type="text" id="new-code" placeholder="12345">
+                </div>
+                <!-- 2FA Optional -->
+                <div class="input-group">
+                    <label>كلمة مرور التحقق بخطوتين (اختياري)</label>
+                    <input type="password" id="new-password" placeholder="اتركه فارغاً إذا لم يوجد">
+                </div>
+                <button class="btn" id="btn-complete-login" onclick="completeAutomatedLogin()">تأكيد وإضافة للمخزون</button>
             </div>
-            <div class="input-group">
-                <label>السعر ($)</label>
-                <input type="number" id="new-price" step="0.01" placeholder="1.50">
-            </div>
-            <div class="input-group">
-                <label>Session String</label>
-                <textarea id="new-session" rows="3" placeholder="Paste session string here..."></textarea>
-            </div>
-            <button class="btn" onclick="saveNewStock()">حفظ الرقم</button>
-            <button class="btn btn-outline" style="margin-top: 10px;" onclick="closeModal(null, 'modal-add-stock')">إلغاء</button>
+            
+            <button class="btn btn-outline" style="margin-top: 15px;" onclick="closeModal(null, 'modal-add-stock')">إغلاق</button>
         </div>
     </div>
 
+    <div id="modal-price" class="modal" onclick="closeModal(event, 'modal-price')">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h3 style="margin-bottom: 20px; color: var(--gold);">إعداد سعر الدولة</h3>
+            <div class="input-group">
+                <label>مفتاح الدولة (numeric code)</label>
+                <input type="text" id="price-country-code" placeholder="20">
+            </div>
+            <div class="input-group">
+                <label>اسم الدولة</label>
+                <input type="text" id="price-country-name" placeholder="Egypt">
+            </div>
+            <div class="input-group">
+                <label>السعر ($)</label>
+                <input type="number" id="price-val" step="0.1" placeholder="1.5">
+            </div>
+            <button class="btn" onclick="savePrice()">حفظ السعر</button>
+            <button class="btn btn-outline" style="margin-top: 10px;" onclick="closeModal(null, 'modal-price')">إلغاء</button>
+        </div>
+    </div>
+
+    <!-- Edit Balance Modal (already exists) -->
     <div id="modal-edit-balance" class="modal" onclick="closeModal(event, 'modal-edit-balance')">
         <div class="modal-content" onclick="event.stopPropagation()">
             <h3 style="margin-bottom: 20px; color: var(--gold);">تعديل رصيد المستخدم</h3>
@@ -496,7 +540,11 @@
         tg.headerColor = '#050505';
         tg.backgroundColor = '#050505';
 
-        // Fake Data Fetching (Replace with real API calls)
+        let currentHash = null;
+        let detectedCountry = "";
+        let detectedPrice = 0;
+
+        // Fetch Data
         async function fetchData() {
             try {
                 const response = await fetch('/api/admin/data');
@@ -509,6 +557,7 @@
                 renderUsers(data.users);
                 renderStock(data.accounts);
                 renderTransactions(data.transactions);
+                renderPrices(data.prices);
             } catch (error) {
                 console.error('Error fetching data:', error);
             } finally {
@@ -556,7 +605,7 @@
 
         function renderTransactions(txns) {
             const list = document.getElementById('recent-transactions');
-            if (txns.length === 0) {
+            if (!txns || txns.length === 0) {
                 list.innerHTML = '<p style="text-align:center; color:var(--text-dim); padding:20px;">لا توجد عمليات مبيعات حالية</p>';
                 return;
             }
@@ -564,9 +613,30 @@
                 <div class="list-item">
                     <div class="item-info">
                         <h4>بيع رقم من ${tx.country}</h4>
-                        <p>${tx.phone_number} -> ${tx.buyer_id}</p>
+                        <p>${tx.phone_number || 'Account'} -> ${tx.buyer_id}</p>
                     </div>
                     <span style="color: #00ff00; font-weight:700;">$${tx.price}</span>
+                </div>
+            `).join('');
+        }
+
+        function renderPrices(prices) {
+            const list = document.getElementById('price-list');
+            if (!prices || prices.length === 0) {
+                list.innerHTML = '<p style="text-align:center; color:var(--text-dim); padding:20px;">مخزون الأسعار فارغ، قم بإضافة أسعار للدول</p>';
+                return;
+            }
+            list.innerHTML = prices.map(p => `
+                <div class="list-item">
+                    <div class="item-info">
+                        <h4>${p.name} (+${p.code})</h4>
+                        <p>السعر المثبت: <span style="color:var(--gold)">$${p.price}</span></p>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn-icon edit" onclick="editPrice('${p.code}', '${p.name}', ${p.price})">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                    </div>
                 </div>
             `).join('');
         }
@@ -581,50 +651,136 @@
             tg.HapticFeedback.selectionChanged();
         }
 
-        // Modals
+        // Automated Login Logic
         function showAddStockModal() {
+            document.getElementById('stock-step-1').style.display = 'block';
+            document.getElementById('stock-step-2').style.display = 'none';
             document.getElementById('modal-add-stock').style.display = 'flex';
         }
 
+        async function startAutomatedLogin() {
+            const phone = document.getElementById('new-phone').value;
+            if (!phone) { tg.showAlert('يرجى إدخال الرقم!'); return; }
+            
+            const btn = document.getElementById('btn-start-login');
+            btn.disabled = true;
+            btn.innerText = 'جاري الإرسال...';
+            
+            try {
+                const res = await fetch('/api/admin/stock/start-login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone: phone })
+                });
+                
+                const data = await res.json();
+                if (res.ok) {
+                    currentHash = data.hash;
+                    detectedCountry = data.country;
+                    detectedPrice = data.price;
+                    
+                    document.getElementById('detected-info').innerHTML = `
+                        الدولة: <b>${detectedCountry}</b><br>
+                        السعر التلقائي: <b>$${detectedPrice}</b>
+                    `;
+                    
+                    document.getElementById('stock-step-1').style.display = 'none';
+                    document.getElementById('stock-step-2').style.display = 'block';
+                } else {
+                    tg.showAlert('❌ خطأ: ' + (data.detail || 'فشل البدء'));
+                }
+            } catch (err) {
+                tg.showAlert('❌ فشل الاتصال بالسيرفر');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'طلب كود التحقق';
+            }
+        }
+
+        async function completeAutomatedLogin() {
+            const code = document.getElementById('new-code').value;
+            const password = document.getElementById('new-password').value;
+            const phone = document.getElementById('new-phone').value;
+            
+            if (!code) { tg.showAlert('يرجى إدخال الكود!'); return; }
+            
+            const btn = document.getElementById('btn-complete-login');
+            btn.disabled = true;
+            btn.innerText = 'جاري التحقق والحفظ...';
+            
+            try {
+                const res = await fetch('/api/admin/stock/complete-login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        phone: phone,
+                        code: code,
+                        hash: currentHash,
+                        password: password,
+                        country: detectedCountry,
+                        price: detectedPrice
+                    })
+                });
+                
+                const data = await res.json();
+                if (res.ok) {
+                    tg.showAlert('✅ تم إضافة الرقم للمخزون بنجاح!');
+                    closeModal(null, 'modal-add-stock');
+                    fetchData();
+                } else {
+                    tg.showAlert('❌ فشل: ' + (data.detail || 'حدث خطأ في التحقق'));
+                }
+            } catch (err) {
+                tg.showAlert('❌ فشل الاتصال بالسيرفر');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'تأكيد وإضافة للمخزون';
+            }
+        }
+
+        // Price Management
+        function showAddPriceModal() {
+            document.getElementById('price-country-code').value = '';
+            document.getElementById('price-country-name').value = '';
+            document.getElementById('price-val').value = '';
+            document.getElementById('modal-price').style.display = 'flex';
+        }
+
+        function editPrice(code, name, price) {
+            document.getElementById('price-country-code').value = code;
+            document.getElementById('price-country-name').value = name;
+            document.getElementById('price-val').value = price;
+            document.getElementById('modal-price').style.display = 'flex';
+        }
+
+        async function savePrice() {
+            const code = document.getElementById('price-country-code').value;
+            const name = document.getElementById('price-country-name').value;
+            const price = document.getElementById('price-val').value;
+            
+            if (!code || !name || !price) { tg.showAlert('املأ كل الخانات!'); return; }
+            
+            const res = await fetch('/api/admin/prices/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ country_code: code, country_name: name, price: parseFloat(price) })
+            });
+            
+            if (res.ok) {
+                closeModal(null, 'modal-price');
+                fetchData();
+            } else {
+                tg.showAlert('❌ فشل الحفظ');
+            }
+        }
+
+        // Other Actions (Balance/Delete) - already implemented
         let currentEditingUserId = null;
         function showEditBalance(id, current) {
             currentEditingUserId = id;
             document.getElementById('edit-user-id').innerText = 'المستخدم: ' + id;
             document.getElementById('new-balance-val').value = current;
             document.getElementById('modal-edit-balance').style.display = 'flex';
-        }
-
-        function closeModal(e, id) {
-            document.getElementById(id).style.display = 'none';
-        }
-
-        // API Calls
-        async function saveNewStock() {
-            const data = {
-                phone: document.getElementById('new-phone').value,
-                country: document.getElementById('new-country').value,
-                price: document.getElementById('new-price').value,
-                session: document.getElementById('new-session').value
-            };
-            
-            if (!data.phone || !data.country || !data.price || !data.session) {
-                tg.showAlert('يرجى ملء جميع الحقول!');
-                return;
-            }
-
-            const res = await fetch('/api/admin/stock/add', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-
-            if (res.ok) {
-                tg.showAlert('✅ تم إضافة الرقم بنجاح');
-                closeModal(null, 'modal-add-stock');
-                fetchData();
-            } else {
-                tg.showAlert('❌ حدث خطأ أثناء الإضافة');
-            }
         }
 
         async function saveBalance() {
@@ -652,6 +808,10 @@
                     fetchData();
                 }
             });
+        }
+
+        function closeModal(e, id) {
+            document.getElementById(id).style.display = 'none';
         }
 
         // Search

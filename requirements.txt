@@ -10,3 +10,4 @@ jinja2
 sqladmin
 itsdangerous
 python-multipart
+phonenumbers
