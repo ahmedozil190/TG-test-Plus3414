@@ -67,8 +67,8 @@ async def seller_coin_cmd(message: Message):
     async with async_session() as session:
         user = (await session.execute(select(User).where(User.id == message.from_user.id))).scalar_one_or_none()
         balance = user.balance if user else 0.0
+        lang = user.language if user else "en"
     
-    from datetime import datetime, timedelta, timezone
     now_utc = datetime.now(timezone.utc)
     now_egypt = now_utc + timedelta(hours=2)
     now = now_egypt.strftime("%Y/%m/%d - %I:%M:%S")
@@ -93,6 +93,9 @@ async def seller_cap_cmd(message: Message, state: FSMContext):
     # We simulate the callback to start the sell flow
     await seller_add_start(message, state)
 
+@router.message(Command("cancel"))
+async def seller_cancel_cmd(message: Message, state: FSMContext):
+    await state.clear()
     async with async_session() as session:
         user = (await session.execute(select(User).where(User.id == message.from_user.id))).scalar_one_or_none()
         lang = user.language if user else "en"
