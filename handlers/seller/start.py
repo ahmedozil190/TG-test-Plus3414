@@ -63,7 +63,7 @@ async def seller_coin_cmd(message: Message):
         [InlineKeyboardButton(text="☑️ Withdraw funds ✅", callback_data="seller_withdraw")]
     ])
     
-    await message.answer(coin_text, reply_markup=markup, parse_mode="Markdown")
+    await message.reply(coin_text, reply_markup=markup, parse_mode="Markdown")
 
 @router.message(Command("cap"))
 async def seller_cap_cmd(message: Message, state: FSMContext):
