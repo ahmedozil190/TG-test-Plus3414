@@ -1,30 +1,33 @@
 import asyncio
 import logging
 import sys
+import os
+from datetime import datetime, timedelta
+
+import phonenumbers
+from aiogram import Bot, Dispatcher
+from aiogram.types import BotCommand
+from uvicorn import Config, Server
+
+from config import BOT_TOKEN, SELLER_BOT_TOKEN
+from database.engine import init_db, async_session
+from database.models import Account, AccountStatus, CountryPrice, User, Transaction, TransactionType
+from sqlalchemy import select
+from handlers import main_router
+from web_admin import app
 
 if sys.platform == 'win32':
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
-from aiogram import Bot, Dispatcher
-from aiogram.types import BotCommand
-from config import BOT_TOKEN, SELLER_BOT_TOKEN
-from database.engine import init_db, async_session
-from handlers import main_router
-
-logging.basicConfig(level=logging.INFO)
-
-from datetime import datetime, timedelta
-import phonenumbers
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 async def auto_approve_task(bot_seller: Bot):
     """Background task to automatically approve pending accounts after delay."""
-    logging.info("Auto-approve task started.")
+    logger.info("Starting Auto-Approve background task...")
     while True:
         try:
             async with async_session() as session:
-                from database.models import Account, AccountStatus, CountryPrice, User, Transaction, TransactionType
-                from sqlalchemy import select
-                
                 stmt = select(Account).where(Account.status == AccountStatus.PENDING)
                 pending_accs = (await session.execute(stmt)).scalars().all()
                 
@@ -61,54 +64,75 @@ async def auto_approve_task(bot_seller: Bot):
                                         parse_mode="Markdown"
                                     )
                                 except Exception as n_err:
-                                    logging.error(f"Failed to notify seller {seller.id}: {n_err}")
+                                    logger.error(f"Failed to notify seller {seller.id}: {n_err}")
                     except Exception as item_err:
-                        logging.error(f"Error processing pending account {acc.id}: {item_err}")
+                        logger.error(f"Error processing pending account {acc.id}: {item_err}")
                 
                 await session.commit()
         except Exception as e:
-            logging.error(f"Auto-approve loop error: {e}")
+            logger.error(f"Auto-approve loop error: {e}")
         
-        await asyncio.sleep(60) # Check every minute
+        await asyncio.sleep(60)
+
+async def start_bot_service(dp: Dispatcher, bot: Bot, name: str):
+    """Safely starts a bot service."""
+    try:
+        logger.info(f"Starting {name} Bot service...")
+        await bot.set_my_commands([BotCommand(command="start", description="تشغيل البوت")])
+        await dp.start_polling(bot)
+    except Exception as e:
+        logger.error(f"Fatal error in {name} Bot: {e}")
 
 async def main():
-    if not BOT_TOKEN or not SELLER_BOT_TOKEN:
-        logging.error("BOT_TOKEN or SELLER_BOT_TOKEN is not set in .env")
+    logger.info("Initializing Dual-Bot Ecosystem...")
+    
+    # 1. Database
+    try:
+        await init_db()
+        logger.info("Database initialized.")
+    except Exception as e:
+        logger.error(f"Database init failed: {e}")
         return
 
-    # Buyer Bot (Store)
+    # 2. Setup Bots
+    if not BOT_TOKEN:
+        logger.error("BOT_TOKEN missing!")
+        return
+        
+    # Buyer Bot
     bot_buyer = Bot(token=BOT_TOKEN)
     dp_buyer = Dispatcher()
     dp_buyer.include_router(main_router)
 
-    # Seller Bot (Sourcing)
-    bot_seller = Bot(token=SELLER_BOT_TOKEN)
-    dp_seller = Dispatcher()
-    from handlers.seller import seller_router
-    dp_seller.include_router(seller_router)
-    
-    logging.info("Initializing database...")
-    await init_db()
-    
-    logging.info("Starting Web Admin Panel...")
-    from uvicorn import Config, Server
-    from web_admin import app
-    import os
+    # Seller Bot (Optional token)
+    bot_seller = None
+    if SELLER_BOT_TOKEN:
+        try:
+            bot_seller = Bot(token=SELLER_BOT_TOKEN)
+            dp_seller = Dispatcher()
+            from handlers.seller import seller_router
+            dp_seller.include_router(seller_router)
+            logger.info("Seller Bot initialized.")
+        except Exception as e:
+            logger.error(f"Seller Bot init failed: {e}")
+            bot_seller = None
+    else:
+        logger.warning("SELLER_BOT_TOKEN missing, Sourcing Bot will not start.")
+
+    # 3. Web Server Task
     port = int(os.environ.get("PORT", 8000))
     config = Config(app=app, host="0.0.0.0", port=port, log_level="info")
     server = Server(config)
-    
-    # Run everything
-    logging.info("Starting Dual-Bot ecosystem...")
-    await bot_buyer.set_my_commands([BotCommand(command="start", description="دخول المتجر")])
-    await bot_seller.set_my_commands([BotCommand(command="start", description="بيع أرقام")])
+    web_task = asyncio.create_task(server.serve())
+    logger.info(f"Web Admin Panel task created on port {port}.")
 
-    await asyncio.gather(
-        dp_buyer.start_polling(bot_buyer),
-        dp_seller.start_polling(bot_seller),
-        auto_approve_task(bot_seller),
-        server.serve()
-    )
+    # 4. Background Helper Tasks
+    if bot_seller:
+        asyncio.create_task(auto_approve_task(bot_seller))
+        asyncio.create_task(start_bot_service(dp_seller, bot_seller, "Seller/Sourcing"))
+
+    # 5. Main Polling (Buyer Bot)
+    await start_bot_service(dp_buyer, bot_buyer, "Store/Buyer")
 
 if __name__ == "__main__":
     asyncio.run(main())
