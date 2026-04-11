@@ -145,14 +145,7 @@ async def seller_cap_cmd(message: Message):
                 if not chunk.endswith("</blockquote>"): chunk = chunk + "\n</blockquote>"
                 await message.answer(chunk, parse_mode="HTML")
         else:
-            from config import ADMIN_IDS
-            markup = None
-            if message.from_user.id in ADMIN_IDS:
-                from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-                markup = InlineKeyboardMarkup(inline_keyboard=[
-                    [InlineKeyboardButton(text="⚙️ إدارة القائمة (حذف دول)", callback_data="manage_countries_back")]
-                ])
-            await message.answer(final_text, reply_markup=markup, parse_mode="HTML")
+            await message.answer(final_text, parse_mode="HTML")
     except Exception as e:
         await message.answer(f"⚠️ Error in /cap: {str(e)}")
 

@@ -134,13 +134,46 @@
             gap: 8px; cursor: pointer; text-decoration: none; font-size: 0.9rem;
         }
 
-        .list-container { display: flex; flex-direction: column; gap: 12px; }
+        .list-container { display: flex; flex-direction: column; gap: 15px; }
         .list-item {
-            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 18px; padding: 18px; display: flex; justify-content: space-between; align-items: center;
+            background: linear-gradient(145deg, rgba(255,255,255,0.02), rgba(255,255,255,0.05));
+            border: 1px solid var(--border);
+            border-right: 4px solid var(--blue-primary);
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
-        .item-info h4 { font-size: 0.95rem; margin-bottom: 4px; }
-        .item-info p { font-size: 0.8rem; color: var(--text-dim); }
+
+        .list-item:hover {
+            transform: translateY(-3px);
+            background: rgba(255,255,255,0.07);
+            border-color: var(--blue-primary);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
+        }
+
+        .item-info { display: flex; flex-direction: column; gap: 5px; }
+        .item-info h4 { 
+            font-size: 1.1rem; 
+            font-weight: 700; 
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .item-info h4 i { color: var(--blue-primary); font-size: 0.9rem; }
+        .item-info p { 
+            font-size: 0.85rem; 
+            color: var(--text-dim);
+            background: rgba(255,255,255,0.05);
+            padding: 4px 12px;
+            border-radius: 10px;
+            width: fit-content;
+            margin-top: 5px;
+        }
 
         .btn-edit {
             width: 40px; height: 40px; border-radius: 50%; background: rgba(59, 130, 246, 0.1);
@@ -399,10 +432,10 @@
             container.innerHTML = list.map(p => `
                 <div class="list-item">
                     <div class="item-info">
-                        <h4>${p.name} (+${p.code})</h4>
-                        <p>${translations[currentLang].buy_lbl}: <span style="color: var(--blue-primary)">$${p.buy_price}</span></p>
+                        <h4><i class="fa-solid fa-location-dot"></i> ${p.name} (+${p.code})</h4>
+                        <p><i class="fa-solid fa-tag"></i> ${translations[currentLang].buy_lbl}: <span style="color: var(--blue-primary); font-weight: 700;">$${p.buy_price}</span></p>
                     </div>
-                    <div style="display: flex; gap: 8px;">
+                    <div style="display: flex; gap: 10px;">
                         <button class="btn-edit" onclick="editPrice('${p.code}', ${p.buy_price}, ${p.approve_delay})">
                             <i class="fa-solid fa-pen"></i>
                         </button>
