@@ -20,25 +20,45 @@ async def seller_start_cmd(message: Message):
             session.add(user)
             await session.commit()
         
-    balance = user.balance
-    
-    markup = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="💰 إضافة رقم للبيع", callback_data="seller_add_account")],
-        [InlineKeyboardButton(text="📊 رصيدي وأرباحي", callback_data="seller_my_stats")],
-        [InlineKeyboardButton(text="📜 قوانين وسعر البيع", callback_data="seller_rules")],
-        [InlineKeyboardButton(text="💬 الدعم الفني", url="https://t.me/your_support_link")]
-    ])
-    
     welcome_text = (
-        f"👋 **مرحباً بك في بوت التوريد الرسمي!**\n\n"
-        f"هنا يمكنك بيع أرقام التلجرام الخاصة بك والحصول على مبالغ مالية فورية تُضاف لرصيدك.\n\n"
-        f"👤 **معلوماتك:**\n"
-        f"🆔 معرفك: `{message.from_user.id}`\n"
-        f"💰 رصيدك الحالي: **${balance:.2f}**\n\n"
-        f"استخدم الأزرار أدناه للبدء في جني الأرباح! 🚀"
+        "- Welcome to the account reception bot .\n\n"
+        "-  To start, send the desired virtual account number or send /help for assistance."
     )
     
-    await message.answer(welcome_text, parse_mode="Markdown", reply_markup=markup)
+    markup = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="💰 Add Number for Sale", callback_data="seller_add_account")],
+        [InlineKeyboardButton(text="📊 My Balance & Stats", callback_data="seller_my_stats")],
+        [InlineKeyboardButton(text="📜 Rules & Prices", callback_data="seller_rules")],
+        [InlineKeyboardButton(text="💬 Support", url="https://t.me/your_support_link")]
+    ])
+    
+    await message.answer(welcome_text, reply_markup=markup)
+
+@router.message(Command("coin"))
+async def seller_coin_cmd(message: Message):
+    async with async_session() as session:
+        user = (await session.execute(select(User).where(User.id == message.from_user.id))).scalar_one_or_none()
+        balance = user.balance if user else 0.0
+    await message.answer(f"💰 Your Current Balance: **${balance:.2f}**", parse_mode="Markdown")
+
+@router.message(Command("cap"))
+async def seller_cap_cmd(message: Message, state: FSMContext):
+    from .sell_logic import seller_add_start
+    # We simulate the callback to start the sell flow
+    await seller_add_start(message, state)
+
+@router.message(Command("cancel"))
+async def seller_cancel_cmd(message: Message, state: FSMContext):
+    await state.clear()
+    await message.answer("❌ Current operation cancelled.")
+
+@router.message(Command("language"))
+async def seller_language_cmd(message: Message):
+    await message.answer("🌐 Language selection is coming soon!")
+
+@router.message(Command("help"))
+async def seller_help_cmd(message: Message):
+    await message.answer("❓ Need help? Please contact our support team: @your_support_link")
 
 @router.callback_query(F.data == "seller_back_main")
 async def seller_back_main(call: CallbackQuery):

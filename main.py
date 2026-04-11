@@ -133,11 +133,31 @@ async def main():
     tasks = [web_task]
     
     # 5. Main Polling (Buyer Bot)
-    tasks.append(asyncio.create_task(start_bot_service(dp_buyer, bot_buyer, "Store/Buyer")))
+    buyer_commands = [
+        BotCommand(command="start", description="Start Store 🛒")
+    ]
     
+    seller_commands = [
+        BotCommand(command="start", description="start"),
+        BotCommand(command="coin", description="coin"),
+        BotCommand(command="cancel", description="cancel"),
+        BotCommand(command="language", description="language"),
+        BotCommand(command="cap", description="cap")
+    ]
+
+    async def start_buyer():
+        await bot_buyer.set_my_commands(buyer_commands)
+        await start_bot_service(dp_buyer, bot_buyer, "Store/Buyer")
+
+    async def start_seller():
+        if bot_seller:
+            await bot_seller.set_my_commands(seller_commands)
+            await start_bot_service(dp_seller, bot_seller, "Seller/Sourcing")
+
+    tasks.append(asyncio.create_task(start_buyer()))
     if bot_seller:
         tasks.append(asyncio.create_task(auto_approve_task(bot_seller)))
-        tasks.append(asyncio.create_task(start_bot_service(dp_seller, bot_seller, "Seller/Sourcing")))
+        tasks.append(asyncio.create_task(start_seller()))
 
     # Wait for completion or keep running
     await asyncio.gather(*tasks)
