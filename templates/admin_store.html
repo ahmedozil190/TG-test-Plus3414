@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>إدارة المتجر | Store Admin</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #050505;
+            --glass-bg: rgba(20, 20, 20, 0.7);
+            --gold: #d4af37;
+            --gold-bright: #ffdf00;
+            --gold-gradient: linear-gradient(45deg, #8a6d3b, #d4af37, #f7ef8a, #d4af37, #8a6d3b);
+            --text-color: #ffffff;
+            --text-dim: #b0b0b0;
+            --border-color: rgba(212, 175, 55, 0.2);
+            --accent-glow: 0 0 15px rgba(212, 175, 55, 0.3);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+        body {
+            background: var(--bg-color);
+            background-image: radial-gradient(circle at 10% 20%, rgba(212, 175, 55, 0.05) 0%, transparent 20%);
+            color: var(--text-color); overflow-x: hidden; min-height: 100vh;
+        }
+
+        #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); display: flex; justify-content: center; align-items: center; z-index: 9999; }
+        .spinner { width: 50px; height: 50px; border: 3px solid rgba(212, 175, 55, 0.1); border-top: 3px solid var(--gold); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; padding-bottom: 80px; }
+        header { text-align: center; margin-bottom: 30px; }
+        .header-logo { font-size: 2.5rem; background: var(--gold-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; text-shadow: var(--accent-glow); }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 30px; }
+        .stat-card { background: var(--glass-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 20px; text-align: center; }
+        .stat-card i { font-size: 1.5rem; color: var(--gold); margin-bottom: 10px; }
+        .stat-value { font-size: 1.5rem; font-weight: 700; }
+        .full-width { grid-column: span 2; }
+
+        .section-title { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; color: var(--gold); }
+        .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border-color); }
+
+        .navbar {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 400px; background: rgba(10, 10, 10, 0.8); backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color); border-radius: 30px; display: flex; justify-content: space-around; padding: 10px; z-index: 1000;
+        }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-dim); font-size: 0.7rem; cursor: pointer; padding: 10px; }
+        .nav-item.active { color: var(--gold); }
+        .nav-item i { font-size: 1.4rem; margin-bottom: 4px; }
+
+        .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; background: var(--gold-gradient); color: #000; font-weight: 700; cursor: pointer; }
+        .input-group { margin-bottom: 15px; }
+        input { width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; color: white; outline: none; }
+        
+        .list-item { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 15px; padding: 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .content-section { display: none; animation: fadeIn 0.4s ease; }
+        .content-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 2000; display: none; justify-content: center; align-items: center; padding: 20px; }
+        .modal-content { background: var(--bg-color); border: 1px solid var(--gold); border-radius: 20px; width: 100%; max-width: 400px; padding: 25px; }
+        .badge-success { background: rgba(0, 255, 0, 0.1); color: #00ff00; padding: 2px 8px; border-radius: 5px; font-size: 0.7rem; }
+    </style>
+</head>
+<body>
+    <div id="loader"><div class="spinner"></div></div>
+
+    <div class="container">
+        <header>
+            <h1 class="header-logo">STORE ADMIN</h1>
+            <p class="header-subtitle">SALES & CUSTOMERS</p>
+        </header>
+
+        <div id="section-home" class="content-section active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <i class="fa-solid fa-users"></i>
+                    <div class="stat-value" id="stat-users">0</div>
+                    <div class="stat-label">إجمالي المستخدمين</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fa-solid fa-phone"></i>
+                    <div class="stat-value" id="stat-stock">0</div>
+                    <div class="stat-label">أرقام معروضة للبيع</div>
+                </div>
+                <div class="stat-card full-width">
+                    <i class="fa-solid fa-sack-dollar"></i>
+                    <div class="stat-value" id="stat-balance">$0.00</div>
+                    <div class="stat-label">إجمالي رصيد العملاء</div>
+                </div>
+            </div>
+            <div class="section-title">آخر العمليات</div>
+            <div id="recent-sales"></div>
+        </div>
+
+        <div id="section-users" class="content-section">
+            <div class="section-title">إدارة حسابات العملاء</div>
+            <div class="input-group"><input type="text" id="user-search" placeholder="ابحث عن العميل بـ ID..." oninput="searchUsers()"></div>
+            <div id="user-list"></div>
+        </div>
+    </div>
+
+    <nav class="navbar">
+        <div class="nav-item active" onclick="switchSection('home', this)"><i class="fa-solid fa-house"></i><span>الرئيسية</span></div>
+        <div class="nav-item" onclick="switchSection('users', this)"><i class="fa-solid fa-users"></i><span>العملاء</span></div>
+    </nav>
+
+    <!-- Modal Edit Balance -->
+    <div id="modal-balance" class="modal" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h3 style="color: var(--gold); margin-bottom: 20px;">تعديل رصيد العميل</h3>
+            <p id="edit-user-info" style="font-size: 0.8rem; margin-bottom: 15px; color: var(--text-dim);"></p>
+            <div class="input-group">
+                <label>الرصيد الجديد ($)</label>
+                <input type="number" id="new-balance" step="0.1">
+            </div>
+            <button class="btn" onclick="saveBalance()">تحديث الرصيد</button>
+        </div>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp; tg.expand();
+
+        async function fetchData() {
+            try {
+                const response = await fetch('/api/admin/store/data');
+                const data = await response.json();
+                document.getElementById('stat-users').innerText = data.stats.user_count;
+                document.getElementById('stat-stock').innerText = data.stats.stock_count;
+                document.getElementById('stat-balance').innerText = `$${data.stats.total_balance.toFixed(2)}`;
+                renderUsers(data.users);
+                renderSales(data.transactions);
+            } catch (error) { console.error('Error:', error);
+            } finally { document.getElementById('loader').style.display = 'none'; }
+        }
+
+        function renderUsers(users) {
+            document.getElementById('user-list').innerHTML = users.map(u => `
+                <div class="list-item">
+                    <div><h4>${u.id}</h4><p>تاريخ: ${u.join_date}</p></div>
+                    <div style="text-align: left;">
+                        <span class="badge-success">$${u.balance.toFixed(2)}</span><br>
+                        <button class="btn" style="padding: 5px 10px; font-size: 0.7rem; margin-top: 5px;" onclick="showBalanceModal('${u.id}', ${u.balance})">تعديل</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderSales(txns) {
+            document.getElementById('recent-sales').innerHTML = txns.map(tx => `
+                <div class="list-item">
+                    <div><h4>شراء رقم</h4><p>العميل: ${tx.buyer_id}</p></div>
+                    <span style="color: var(--gold);">$${tx.price}</span>
+                </div>
+            `).join('');
+        }
+
+        function switchSection(id, el) {
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            document.getElementById('section-' + id).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        let editingUser = null;
+        function showBalanceModal(id, bal) { 
+            editingUser = id; document.getElementById('new-balance').value = bal;
+            document.getElementById('edit-user-info').innerText = "العميل: " + id;
+            document.getElementById('modal-balance').style.display = 'flex'; 
+        }
+        function closeModal() { document.getElementById('modal-balance').style.display = 'none'; }
+
+        async function saveBalance() {
+            const amount = document.getElementById('new-balance').value;
+            await fetch('/api/admin/user/balance', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: parseInt(editingUser), amount: parseFloat(amount) })
+            });
+            location.reload();
+        }
+
+        fetchData();
+    </script>
+</body>
+</html>

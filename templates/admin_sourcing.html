@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>إدارة التوريد | Sourcing Admin</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #050505;
+            --glass-bg: rgba(20, 20, 20, 0.7);
+            --blue: #1DA1F2;
+            --blue-bright: #00BAFF;
+            --blue-gradient: linear-gradient(45deg, #1d4ed8, #1e40af, #3b82f6, #1e3a8a);
+            --text-color: #ffffff;
+            --text-dim: #b0b0b0;
+            --border-color: rgba(59, 130, 246, 0.2);
+            --accent-glow: 0 0 15px rgba(59, 130, 246, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 20%);
+            color: var(--text-color);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        #loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-color); display: flex; justify-content: center; align-items: center;
+            z-index: 9999; transition: opacity 0.5s ease;
+        }
+
+        .spinner {
+            width: 50px; height: 50px; border: 3px solid rgba(59, 130, 246, 0.1);
+            border-top: 3px solid var(--blue); border-radius: 50%; animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; padding-bottom: 80px; }
+
+        header { text-align: center; margin-bottom: 30px; }
+        .header-logo {
+            font-size: 2.5rem; background: var(--blue-gradient); -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent; font-weight: 800; margin-bottom: 5px;
+            text-shadow: var(--accent-glow);
+        }
+        .header-subtitle { color: var(--text-dim); font-size: 0.9rem; letter-spacing: 2px; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 30px; }
+        .stat-card {
+            background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid var(--border-color);
+            border-radius: 20px; padding: 20px; text-align: center; transition: transform 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .stat-card i { font-size: 1.5rem; color: var(--blue); margin-bottom: 10px; }
+        .stat-value { font-size: 1.5rem; font-weight: 700; margin: 5px 0; }
+        .stat-label { color: var(--text-dim); font-size: 0.8rem; }
+
+        .section-title { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; font-size: 1.2rem; font-weight: 600; color: var(--blue); }
+        .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border-color); }
+
+        .card { background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid var(--border-color); border-radius: 20px; padding: 20px; }
+
+        .navbar {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 400px; background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(20px); border: 1px solid var(--border-color);
+            border-radius: 30px; display: flex; justify-content: space-around; padding: 10px; z-index: 1000;
+        }
+
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-dim); text-decoration: none; font-size: 0.7rem; transition: all 0.3s ease; padding: 10px; cursor: pointer; }
+        .nav-item.active { color: var(--blue); }
+        .nav-item i { font-size: 1.4rem; margin-bottom: 4px; }
+
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 5px; }
+        input, select { width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; color: white; outline: none; }
+        input:focus { border-color: var(--blue); }
+
+        .btn {
+            width: 100%; padding: 14px; border-radius: 12px; border: none;
+            background: var(--blue-gradient); color: #fff; font-weight: 700; cursor: pointer;
+            box-shadow: var(--accent-glow);
+        }
+        .btn:active { transform: scale(0.97); }
+        .btn-outline { background: transparent; border: 1px solid var(--blue); color: var(--blue); }
+
+        .item-list { display: flex; flex-direction: column; gap: 10px; }
+        .list-item { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 15px; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .item-info h4 { font-size: 0.9rem; margin-bottom: 2px; }
+        .item-info p { font-size: 0.75rem; color: var(--text-dim); }
+
+        .item-actions { display: flex; gap: 10px; }
+        .btn-icon { width: 35px; height: 35px; border-radius: 50%; display: flex; justify-content: center; align-items: center; background: rgba(255, 255, 255, 0.05); color: var(--text-dim); border: none; }
+        .btn-icon.edit { color: var(--blue); }
+
+        .content-section { display: none; animation: fadeIn 0.4s ease; }
+        .content-section.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 2000; display: none; justify-content: center; align-items: center; padding: 20px; }
+        .modal-content { background: var(--bg-color); border: 1px solid var(--blue); border-radius: 20px; width: 100%; max-width: 400px; padding: 25px; box-shadow: var(--accent-glow); }
+    </style>
+</head>
+<body>
+    <div id="loader"><div class="spinner"></div></div>
+
+    <div class="container">
+        <header>
+            <h1 class="header-logo">SOURCING ADMIN</h1>
+            <p class="header-subtitle">PROCUREMENT MANAGEMENT</p>
+        </header>
+
+        <!-- Home Section -->
+        <div id="section-home" class="content-section active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <i class="fa-solid fa-phone"></i>
+                    <div class="stat-value" id="stat-total-sourced">0</div>
+                    <div class="stat-label">إجمالي الحسابات الموردة</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fa-solid fa-clock"></i>
+                    <div class="stat-value" id="stat-pending">0</div>
+                    <div class="stat-label">في انتظار التأكيد</div>
+                </div>
+            </div>
+
+            <div class="section-title">آخر الحسابات الواردة</div>
+            <div class="card">
+                <div class="item-list" id="recent-sourced">
+                    <!-- Sourced list -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Prices Section (Buying) -->
+        <div id="section-prices" class="content-section">
+            <div class="section-title">إدارة أسعار الشراء من الناس</div>
+            <div class="card" style="margin-bottom: 20px;">
+                <button class="btn" onclick="showAddPriceModal()">
+                    <i class="fa-solid fa-plus"></i> إضافة دولة جديدة
+                </button>
+            </div>
+            <div class="item-list" id="price-list">
+                <!-- Prices -->
+            </div>
+        </div>
+    </div>
+
+    <nav class="navbar">
+        <div class="nav-item active" onclick="switchSection('home', this)">
+            <i class="fa-solid fa-house"></i>
+            <span>الرئيسية</span>
+        </div>
+        <div class="nav-item" onclick="switchSection('prices', this)">
+            <i class="fa-solid fa-tags"></i>
+            <span>أسعار الشراء</span>
+        </div>
+    </nav>
+
+    <!-- Modal -->
+    <div id="modal-price" class="modal" onclick="closeModal(event, 'modal-price')">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h3 style="margin-bottom: 20px; color: var(--blue);">إعداد سعر التوريد</h3>
+            <div class="input-group">
+                <label>مفتاح الدولة (numeric code)</label>
+                <input type="text" id="price-country-code" placeholder="20">
+            </div>
+            <div class="input-group">
+                <label>اسم الدولة</label>
+                <input type="text" id="price-country-name" placeholder="Egypt">
+            </div>
+            <div class="input-group">
+                <label>سعر الشراء من الناس ($)</label>
+                <input type="number" id="price-buy-val" step="0.1" placeholder="0.8">
+            </div>
+            <div class="input-group">
+                <label>سعر البيع لعامة الناس ($)</label>
+                <input type="number" id="price-sell-val" step="0.1" placeholder="1.5">
+            </div>
+            <div class="input-group">
+                <label>تأخير الموافقة (دقائق)</label>
+                <input type="number" id="price-delay-val" placeholder="60">
+            </div>
+            <button class="btn" onclick="savePrice()">حفظ السعر</button>
+            <button class="btn btn-outline" style="margin-top: 10px;" onclick="closeModal(null, 'modal-price')">إلغاء</button>
+        </div>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.headerColor = '#050505';
+
+        async function fetchData() {
+            try {
+                const response = await fetch('/api/admin/sourcing/data');
+                const data = await response.json();
+                
+                document.getElementById('stat-total-sourced').innerText = data.stats.total_sourced;
+                document.getElementById('stat-pending').innerText = data.stats.pending_count;
+                
+                renderRecent(data.recent);
+                renderPrices(data.prices);
+            } catch (error) {
+                console.error('Error:', error);
+            } finally {
+                document.getElementById('loader').style.opacity = '0';
+                setTimeout(() => document.getElementById('loader').style.display = 'none', 500);
+            }
+        }
+
+        function renderRecent(list) {
+            const el = document.getElementById('recent-sourced');
+            if (list.length === 0) { el.innerHTML = '<p style="text-align:center; padding:20px;">لا توجد حسابات واردة</p>'; return; }
+            el.innerHTML = list.map(item => `
+                <div class="list-item">
+                    <div class="item-info">
+                        <h4>${item.phone}</h4>
+                        <p>${item.country} | <span style="color:var(--blue)">$${item.buy_price}</span></p>
+                    </div>
+                    <span class="badge ${item.status === 'AVAILABLE' ? 'badge-success' : 'badge-warning'}">${item.status}</span>
+                </div>
+            `).join('');
+        }
+
+        function renderPrices(prices) {
+            const list = document.getElementById('price-list');
+            list.innerHTML = prices.map(p => `
+                <div class="list-item">
+                    <div class="item-info">
+                        <h4>${p.name} (+${p.code})</h4>
+                        <p>سعر الشراء: <span style="color:var(--blue)">$${p.buy_price}</span></p>
+                    </div>
+                    <button class="btn-icon edit" onclick="editPrice('${p.code}', '${p.name}', ${p.buy_price}, ${p.price}, ${p.approve_delay})">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function switchSection(id, el) {
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            document.getElementById('section-' + id).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function showAddPriceModal() {
+            document.getElementById('price-country-code').value = '';
+            document.getElementById('price-country-name').value = '';
+            document.getElementById('price-buy-val').value = '';
+            document.getElementById('price-sell-val').value = '';
+            document.getElementById('price-delay-val').value = '0';
+            document.getElementById('modal-price').style.display = 'flex';
+        }
+
+        function editPrice(code, name, buy, sell, delay) {
+            document.getElementById('price-country-code').value = code;
+            document.getElementById('price-country-name').value = name;
+            document.getElementById('price-buy-val').value = buy;
+            document.getElementById('price-sell-val').value = sell;
+            document.getElementById('price-delay-val').value = delay;
+            document.getElementById('modal-price').style.display = 'flex';
+        }
+
+        async function savePrice() {
+            const payload = {
+                country_code: document.getElementById('price-country-code').value,
+                country_name: document.getElementById('price-country-name').value,
+                buy_price: parseFloat(document.getElementById('price-buy-val').value),
+                price: parseFloat(document.getElementById('price-sell-val').value),
+                approve_delay: parseInt(document.getElementById('price-delay-val').value)
+            };
+            
+            await fetch('/api/admin/prices/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            location.reload();
+        }
+
+        function closeModal(e, id) { document.getElementById(id).style.display = 'none'; }
+
+        fetchData();
+    </script>
+</body>
+</html>

@@ -57,14 +57,27 @@ class StoreBuy(BaseModel):
     user_id: int
     country: str
 
+@app.get("/admin/sourcing", response_class=HTMLResponse)
+async def admin_sourcing(request: Request):
+    try:
+        return templates.TemplateResponse(request=request, name="admin_sourcing.html", context={})
+    except Exception as e:
+        logger.error(f"Error rendering sourcing dashboard: {e}")
+        return HTMLResponse(content=f"<h1>Error</h1><pre>{e}</pre>", status_code=500)
+
+@app.get("/admin/store", response_class=HTMLResponse)
+async def admin_store(request: Request):
+    try:
+        return templates.TemplateResponse(request=request, name="admin_store.html", context={})
+    except Exception as e:
+        logger.error(f"Error rendering store dashboard: {e}")
+        return HTMLResponse(content=f"<h1>Error</h1><pre>{e}</pre>", status_code=500)
+
 @app.get("/admin", response_class=HTMLResponse)
 async def admin_dashboard(request: Request):
-    try:
-        return templates.TemplateResponse(request=request, name="dashboard.html", context={})
-    except Exception as e:
-        logger.error(f"Error rendering dashboard: {e}")
-        logger.error(traceback.format_exc())
-        return HTMLResponse(content=f"<h1>Internal Server Error</h1><pre>{e}</pre>", status_code=500)
+    # Backward compatibility: Redirect to the new store admin by default
+    from fastapi.responses import RedirectResponse
+    return RedirectResponse(url="/admin/store")
 
 @app.get("/store", response_class=HTMLResponse)
 async def client_store(request: Request):
@@ -127,138 +140,102 @@ async def store_buy(data: StoreBuy):
     try:
         async with async_session() as session:
             user = await session.get(User, data.user_id)
-            if not user:
-                raise HTTPException(status_code=404, detail="User not found")
-                
-            # Get one available account from this country
-            stmt = select(Account).where(
-                Account.country == data.country,
-                Account.status == AccountStatus.AVAILABLE
-            ).limit(1)
-            
+            if not user: raise HTTPException(status_code=404, detail="User not found")
+            stmt = select(Account).where(Account.country == data.country, Account.status == AccountStatus.AVAILABLE).limit(1)
             account = (await session.execute(stmt)).scalar_one_or_none()
-            if not account:
-                raise HTTPException(status_code=400, detail="عذراً، نفدت الأرقام!")
-                
-            if user.balance < account.price:
-                raise HTTPException(status_code=400, detail="رصيدك غير كافٍ")
-                
-            # Deduct and mark
+            if not account: raise HTTPException(status_code=400, detail="عذراً، نفدت الأرقام!")
+            if user.balance < account.price: raise HTTPException(status_code=400, detail="رصيدك غير كافٍ")
             user.balance -= account.price
             account.status = AccountStatus.SOLD
             account.buyer_id = user.id
-            
-            txn = Transaction(
-                user_id=user.id,
-                type=TransactionType.BUY,
-                amount=-account.price
-            )
+            txn = Transaction(user_id=user.id, type=TransactionType.BUY, amount=-account.price)
             session.add(txn)
             await session.commit()
-            
-            return {
-                "status": "success",
-                "phone": account.phone_number,
-                "id": account.id
-            }
-    except HTTPException as e:
-        raise e
+            return {"status": "success", "phone": account.phone_number, "id": account.id}
+    except HTTPException as e: raise e
     except Exception as e:
         logger.error(f"Store Buy Error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/admin/sourcing/data")
+async def get_sourcing_data():
     try:
         async with async_session() as session:
-            # Stats (with fallbacks)
-            try:
-                user_count = (await session.execute(select(func.count(User.id)))).scalar() or 0
-                stock_count = (await session.execute(select(func.count(Account.id)).where(Account.status == AccountStatus.AVAILABLE))).scalar() or 0
-                total_balance = (await session.execute(select(func.sum(User.balance)))).scalar() or 0.0
-            except Exception as e:
-                logger.error(f"Error fetching stats: {e}")
-                user_count, stock_count, total_balance = 0, 0, 0.0
-
-            # Recent Accounts
-            try:
-                accounts_result = await session.execute(select(Account).where(Account.status == AccountStatus.AVAILABLE).order_by(Account.id.desc()).limit(50))
-                accounts = []
-                for a in accounts_result.scalars().all():
-                    # Get flag from phone number
-                    flag = "🌐"
-                    try:
-                        p = phonenumbers.parse(a.phone_number)
-                        flag = get_flag_emoji(phonenumbers.region_code_for_number(p))
-                    except: pass
-                    accounts.append({"id": a.id, "phone_number": a.phone_number, "country": f"{flag} {a.country}", "price": a.price})
-            except Exception as e:
-                logger.error(f"Error fetching accounts: {e}")
-                accounts = []
-
-            # Users
-            try:
-                users_result = await session.execute(select(User).order_by(User.join_date.desc()).limit(50))
-                users = [{"id": u.id, "balance": u.balance, "join_date": u.join_date.strftime("%Y-%m-%d")} for u in users_result.scalars().all()]
-            except Exception as e:
-                logger.error(f"Error fetching users: {e}")
-                users = []
+            total_sourced = (await session.execute(select(func.count(Account.id)))).scalar() or 0
+            pending_count = (await session.execute(select(func.count(Account.id)).where(Account.status == AccountStatus.PENDING))).scalar() or 0
             
-            # Recent Transactions
-            try:
-                tx_result = await session.execute(
-                    select(Transaction)
-                    .where(Transaction.type == TransactionType.BUY)
-                    .order_by(Transaction.timestamp.desc())
-                    .limit(10)
-                )
-                transactions = []
-                for tx in tx_result.scalars().all():
-                    transactions.append({
-                        "buyer_id": tx.user_id,
-                        "phone_number": "Account Purchase",
-                        "country": "-",
-                        "price": abs(tx.amount),
-                        "date": tx.timestamp.strftime("%Y-%m-%d %H:%M")
-                    })
-            except Exception as e:
-                logger.error(f"Error fetching transactions: {e}")
-                transactions = []
+            recent_result = await session.execute(
+                select(Account).order_by(Account.id.desc()).limit(20)
+            )
+            recent = []
+            for a in recent_result.scalars().all():
+                flag = "🌐"
+                try:
+                    p = phonenumbers.parse(a.phone_number)
+                    flag = get_flag_emoji(phonenumbers.region_code_for_number(p))
+                except: pass
+                
+                # Fetch buy_price simplified
+                recent.append({
+                    "phone": a.phone_number,
+                    "country": f"{flag} {a.country}",
+                    "buy_price": a.price * 0.5, # Simplified logic if CP not found
+                    "status": a.status.name
+                })
 
-            # Country Prices
-            try:
-                prices_result = await session.execute(select(CountryPrice).order_by(CountryPrice.country_name))
-                prices = []
-                for p in prices_result.scalars().all():
-                    # Get flag from numeric code
-                    flag = "🌐"
-                    try:
-                        # Find any region for this country code
-                        region = phonenumbers.region_code_for_country_code(int(p.country_code))
-                        flag = get_flag_emoji(region)
-                    except: pass
-                    prices.append({
-                        "code": p.country_code, 
-                        "name": f"{flag} {p.country_name}", 
-                        "price": p.price,
-                        "buy_price": p.buy_price,
-                        "approve_delay": p.approve_delay
-                    })
-            except Exception as e:
-                logger.error(f"Error fetching prices: {e}")
-                prices = []
+            prices_result = await session.execute(select(CountryPrice).order_by(CountryPrice.country_name))
+            prices = []
+            for p in prices_result.scalars().all():
+                flag = "🌐"
+                try:
+                    region = phonenumbers.region_code_for_country_code(int(p.country_code))
+                    flag = get_flag_emoji(region)
+                except: pass
+                prices.append({
+                    "code": p.country_code, 
+                    "name": f"{flag} {p.country_name}", 
+                    "buy_price": p.buy_price,
+                    "price": p.price,
+                    "approve_delay": p.approve_delay
+                })
 
         return {
-            "stats": {
-                "user_count": user_count,
-                "stock_count": stock_count,
-                "total_balance": total_balance
-            },
-            "users": users,
-            "accounts": accounts,
-            "transactions": transactions,
+            "stats": {"total_sourced": total_sourced, "pending_count": pending_count},
+            "recent": recent,
             "prices": prices
         }
     except Exception as e:
-        logger.error(f"Fatal error in get_admin_data: {e}")
-        logger.error(traceback.format_exc())
+        logger.error(f"Sourcing Data Error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/admin/store/data")
+async def get_admin_store_data():
+    try:
+        async with async_session() as session:
+            user_count = (await session.execute(select(func.count(User.id)))).scalar() or 0
+            stock_count = (await session.execute(select(func.count(Account.id)).where(Account.status == AccountStatus.AVAILABLE))).scalar() or 0
+            total_balance = (await session.execute(select(func.sum(User.balance)))).scalar() or 0.0
+
+            users_result = await session.execute(select(User).order_by(User.join_date.desc()).limit(50))
+            users = [{"id": u.id, "balance": u.balance, "join_date": u.join_date.strftime("%Y-%m-%d")} for u in users_result.scalars().all()]
+            
+            tx_result = await session.execute(
+                select(Transaction)
+                .where(Transaction.type == TransactionType.BUY)
+                .order_by(Transaction.timestamp.desc())
+                .limit(20)
+            )
+            transactions = []
+            for tx in tx_result.scalars().all():
+                transactions.append({"buyer_id": tx.user_id, "price": abs(tx.amount)})
+
+        return {
+            "stats": {"user_count": user_count, "stock_count": stock_count, "total_balance": total_balance},
+            "users": users,
+            "transactions": transactions
+        }
+    except Exception as e:
+        logger.error(f"Store Admin Data Error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/admin/stock/start-login")
