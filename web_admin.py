@@ -304,14 +304,14 @@ async def update_sourcing_price(data: dict):
     buy_p = float(data.get("buy_price", 0))
     delay = int(data.get("approve_delay", 0))
 
-    # Auto-detect name and flag
+    # Auto-detect name more reliably
     name_only = f"Country {code}"
-    iso_code = "ZZ"
     try:
         iso_code = phonenumbers.region_code_for_country_code(int(code))
-        # Get a valid example number for this region to get the name
-        example_num = phonenumbers.example_number(iso_code)
-        name_only = geocoder.description_for_number(example_num, "en") or f"Country {code}"
+        # Use mobile example number for better geocoding results
+        example_num = phonenumbers.example_number_for_type(iso_code, phonenumbers.PhoneNumberType.MOBILE)
+        if example_num:
+            name_only = geocoder.description_for_number(example_num, "en") or name_only
     except: pass
 
     async with async_session() as session:
@@ -331,6 +331,16 @@ async def update_sourcing_price(data: dict):
             session.add(cp)
         await session.commit()
     return {"status": "success"}
+
+@app.delete("/api/admin/prices/delete/{code}")
+async def delete_price_entry(code: str):
+    async with async_session() as session:
+        cp = (await session.execute(select(CountryPrice).where(CountryPrice.country_code == code))).scalar()
+        if cp:
+            await session.delete(cp)
+            await session.commit()
+            return {"status": "success"}
+    raise HTTPException(status_code=404, detail="Price entry not found")
 
 @app.post("/api/admin/prices/update")
 async def update_price(data: PriceUpdate):

@@ -402,9 +402,14 @@
                         <h4>${p.name} (+${p.code})</h4>
                         <p>${translations[currentLang].buy_lbl}: <span style="color: var(--blue-primary)">$${p.buy_price}</span></p>
                     </div>
-                    <button class="btn-edit" onclick="editPrice('${p.code}', ${p.buy_price}, ${p.approve_delay})">
-                        <i class="fa-solid fa-pen"></i>
-                    </button>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn-edit" onclick="editPrice('${p.code}', ${p.buy_price}, ${p.approve_delay})">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+                        <button class="btn-edit" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;" onclick="deletePrice('${p.code}')">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
                 </div>
             `).join('');
         }
@@ -441,6 +446,16 @@
             });
             init();
             closePriceModal();
+        }
+
+        async function deletePrice(code) {
+            if (!confirm(currentLang === 'ar' ? 'هل أنت متأكد من حذف هذه الدولة؟' : 'Are you sure you want to delete this country?')) return;
+            try {
+                await fetch(`/api/admin/prices/delete/${code}`, { method: 'DELETE' });
+                init();
+            } catch (e) {
+                alert('Error deleting country');
+            }
         }
 
         updateUI();
