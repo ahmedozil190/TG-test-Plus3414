@@ -13,6 +13,9 @@ ADMIN_IDS = [int(x.strip()) for x in os.getenv("ADMIN_IDS", "").split(",") if x.
 # For Railway persistence, we check if /data volume exists
 if os.path.exists("/data"):
     DATABASE_URL = "sqlite+aiosqlite:////data/app.db"
+else:
+    DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///app.db")
+
 # WebApp URLs
 WEBAPP_URL = os.getenv("WEBAPP_URL", "https://web-production-5e98a.up.railway.app")
 STORE_URL = f"{WEBAPP_URL}/store"

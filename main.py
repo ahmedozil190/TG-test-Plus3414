@@ -5,11 +5,6 @@ import sys
 if sys.platform == 'win32':
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
-try:
-    asyncio.get_event_loop()
-except RuntimeError:
-    asyncio.set_event_loop(asyncio.new_event_loop())
-
 from aiogram import Bot, Dispatcher
 from aiogram.types import BotCommand
 from config import BOT_TOKEN
