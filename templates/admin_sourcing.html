@@ -93,18 +93,23 @@
 
         /* Top Bar Styling */
         .topbar {
-            position: fixed; top: 20px; left: 20px; right: 20px; height: 65px;
-            background: var(--glass-bg); backdrop-filter: blur(15px); border: 1px solid var(--border);
-            border-radius: 20px; display: flex; align-items: center; justify-content: space-between;
-            padding: 0 20px; z-index: 1000; box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            position: fixed; top: 0; left: 0; right: 0; height: 60px;
+            background: #0b1120; border-bottom: 1px solid rgba(255,255,255,0.06);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 16px; z-index: 1000;
         }
 
-        .hamburger { font-size: 1.5rem; color: var(--blue-primary); cursor: pointer; }
-        .page-title { font-size: 1.1rem; font-weight: 700; color: var(--text-main); }
+        .hamburger { font-size: 1.3rem; color: #fff; cursor: pointer; width: 40px; }
+        .page-title { font-size: 1.1rem; font-weight: 800; color: #fff; flex: 1; text-align: center; }
+        .avatar {
+            width: 36px; height: 36px; border-radius: 50%; background: #22c55e;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem; font-weight: 800; color: #fff;
+        }
 
         /* Main Content */
         main {
-            flex: 1; padding: 105px 20px 40px; max-width: 900px;
+            flex: 1; padding: 75px 16px 40px; max-width: 900px;
             margin: 0 auto; width: 100%; transition: var(--transition);
         }
 
@@ -197,6 +202,66 @@
         .badge-success { background: rgba(34, 197, 94, 0.1); color: #22c55e; }
         .badge-warning { background: rgba(234, 179, 8, 0.1); color: #eab308; }
 
+        /* Users page specific */
+        .user-stat-card {
+            background: #0f1629; border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px; padding: 18px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 12px;
+        }
+        .user-stat-card .label { font-size: 0.85rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+        .user-stat-card .value { font-size: 1.4rem; font-weight: 800; }
+        .user-stat-card .value.green { color: #22c55e; }
+        .user-stat-card .value.red { color: #ef4444; }
+
+        .search-card {
+            background: #0f1629; border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 20px; padding: 25px 20px; margin-bottom: 20px;
+        }
+        .search-input {
+            width: 100%; background: #0b1120; border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px; padding: 14px 16px; color: #fff; font-size: 0.95rem;
+            outline: none; margin-bottom: 15px;
+        }
+        .search-input::placeholder { color: #475569; }
+        .btn-find {
+            width: 100%; padding: 14px; border: none; border-radius: 14px; cursor: pointer;
+            background: linear-gradient(135deg, #3b82f6, #a855f7);
+            color: #fff; font-size: 1rem; font-weight: 700;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            transition: all 0.3s; box-shadow: 0 4px 20px rgba(139, 92, 246, 0.3);
+        }
+        .btn-find:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(139, 92, 246, 0.4); }
+
+        .mgmt-card {
+            background: #0f1629; border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 20px; padding: 25px 20px;
+        }
+        .mgmt-card h4 { font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 18px; }
+        .tab-row { display: flex; gap: 12px; margin-bottom: 20px; }
+        .tab-btn {
+            padding: 10px 28px; border-radius: 25px; border: none; cursor: pointer;
+            font-size: 0.85rem; font-weight: 700; transition: all 0.3s;
+        }
+        .tab-btn.active { background: var(--blue-primary); color: #fff; }
+        .tab-btn:not(.active) { background: transparent; color: var(--text-dim); border: 1px solid rgba(255,255,255,0.1); }
+        .tab-btn:not(.active):hover { border-color: var(--blue-primary); color: var(--blue-primary); }
+
+        .user-card {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px; padding: 16px; margin-bottom: 10px;
+            display: flex; align-items: center; gap: 14px;
+        }
+        .user-card .u-avatar {
+            width: 42px; height: 42px; border-radius: 50%; background: var(--blue-primary);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 0.9rem; color: #fff; flex-shrink: 0;
+        }
+        .user-card .u-info { flex: 1; }
+        .user-card .u-info h5 { font-size: 0.95rem; font-weight: 600; color: #fff; margin-bottom: 3px; }
+        .user-card .u-info p { font-size: 0.8rem; color: var(--text-dim); }
+        .user-card .u-balance { font-size: 1rem; font-weight: 800; color: #22c55e; }
+
         @media (min-width: 1024px) {
             .sidebar { left: 0; }
             [dir="rtl"] .sidebar { left: auto; right: 0; }
@@ -204,7 +269,7 @@
             [dir="rtl"] main { padding-right: 300px; padding-left: 20px; }
             .hamburger { display: none; }
             .topbar { left: 300px; }
-            [dir="rtl"] .topbar { left: 20px; right: 300px; }
+            [dir="rtl"] .topbar { left: 0; right: 300px; }
         }
     </style>
 </head>
@@ -246,12 +311,10 @@
     <!-- Top Bar -->
     <div class="topbar">
         <div class="hamburger" onclick="toggleSidebar()">
-            <i class="fa-solid fa-bars-staggered"></i>
+            <i class="fa-solid fa-bars"></i>
         </div>
         <div class="page-title" id="page-title" data-i18n="nav_dashboard">Dashboard</div>
-        <div class="user-profile">
-            <i class="fa-solid fa-circle-user" style="font-size: 1.5rem; color: var(--blue-primary);"></i>
-        </div>
+        <div class="avatar">AD</div>
     </div>
 
     <main>
@@ -289,11 +352,32 @@
             <div class="list-container" id="price-list"></div>
         </div>
 
+        <!-- Users Section -->
         <div id="section-users" class="content-section" style="display: none;">
-            <div class="section-header">
-                <h3 data-i18n="nav_users">Users</h3>
+            <div class="user-stat-card">
+                <span class="label" data-i18n="stat_total_users">TOTAL USERS</span>
+                <span class="value green" id="user-count">0</span>
             </div>
-            <div class="list-container" id="user-list"></div>
+            <div class="user-stat-card">
+                <span class="label" data-i18n="stat_banned">BANNED</span>
+                <span class="value red" id="banned-count">0</span>
+            </div>
+
+            <div class="search-card">
+                <input class="search-input" type="text" id="user-search" placeholder="Search users..." data-i18n-placeholder="search_placeholder">
+                <button class="btn-find" onclick="searchUsers()">
+                    <i class="fa-solid fa-magnifying-glass"></i> <span data-i18n="btn_find">Find</span>
+                </button>
+            </div>
+
+            <div class="mgmt-card">
+                <h4 data-i18n="user_mgmt">User Management</h4>
+                <div class="tab-row">
+                    <button class="tab-btn active" onclick="switchTab('active', this)" data-i18n="tab_active">Active</button>
+                    <button class="tab-btn" onclick="switchTab('banned', this)" data-i18n="tab_banned">Banned</button>
+                </div>
+                <div class="list-container" id="user-list"></div>
+            </div>
         </div>
     </main>
 
@@ -345,7 +429,13 @@
                 lbl_delay: "Approval Delay (min)",
                 no_ops: "No transactions found",
                 buy_lbl: "Buying Price",
-                no_users: "No users found"
+                no_users: "No users found",
+                stat_total_users: "TOTAL USERS",
+                stat_banned: "BANNED",
+                btn_find: "Find",
+                user_mgmt: "User Management",
+                tab_active: "Active",
+                tab_banned: "Banned"
             },
             ar: {
                 nav_dashboard: "الرئيسية",
@@ -364,7 +454,13 @@
                 lbl_delay: "تأخير الموافقة (دقيقة)",
                 no_ops: "لا توجد عمليات",
                 buy_lbl: "سعر الشراء",
-                no_users: "لا يوجد مستخدمين"
+                no_users: "لا يوجد مستخدمين",
+                stat_total_users: "إجمالي المستخدمين",
+                stat_banned: "محظورين",
+                btn_find: "بحث",
+                user_mgmt: "إدارة المستخدمين",
+                tab_active: "نشط",
+                tab_banned: "محظور"
             }
         };
 
@@ -401,6 +497,9 @@
             if (window.innerWidth < 1024) toggleSidebar();
         }
 
+        let allUsers = [];
+        let currentTab = 'active';
+
         async function init() {
             try {
                 const res = await fetch('/api/admin/sourcing/data');
@@ -410,25 +509,46 @@
                 renderRecent(data.recent);
                 renderPrices(data.prices);
 
-                // Fetch users from store API
                 const uRes = await fetch('/api/admin/store/data');
                 const uData = await uRes.json();
-                renderUsers(uData.users);
+                allUsers = uData.users || [];
+                document.getElementById('user-count').innerText = allUsers.length;
+                document.getElementById('banned-count').innerText = allUsers.filter(u => u.banned).length;
+                renderUsers(allUsers);
             } catch (e) { console.error(e); }
             finally { document.getElementById('loader').style.display = 'none'; }
         }
 
+        function switchTab(tab, btn) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderUsers(allUsers);
+        }
+
+        function searchUsers() {
+            const q = document.getElementById('user-search').value.trim().toLowerCase();
+            if (!q) { renderUsers(allUsers); return; }
+            const filtered = allUsers.filter(u => String(u.id).includes(q));
+            renderUsers(filtered);
+        }
+
         function renderUsers(list) {
             const container = document.getElementById('user-list');
-            if (!list || !list.length) { container.innerHTML = `<p style="text-align: center; color: var(--text-dim);">${translations[currentLang].no_users}</p>`; return; }
-            container.innerHTML = list.map(u => `
-                <div class="list-item">
-                    <div class="item-info">
-                        <h4><i class="fa-solid fa-user"></i> ID: ${u.id}</h4>
-                        <p><i class="fa-solid fa-calendar"></i> ${u.join_date} &nbsp;|&nbsp; <i class="fa-solid fa-wallet"></i> <span style="color: var(--blue-primary); font-weight: 700;">$${u.balance}</span></p>
+            const filtered = currentTab === 'banned' ? list.filter(u => u.banned) : list.filter(u => !u.banned);
+            if (!filtered.length) { container.innerHTML = `<p style="text-align: center; color: var(--text-dim); padding: 20px;">${translations[currentLang].no_users}</p>`; return; }
+            container.innerHTML = filtered.map(u => {
+                const initials = String(u.id).slice(0, 2);
+                return `
+                <div class="user-card">
+                    <div class="u-avatar">${initials}</div>
+                    <div class="u-info">
+                        <h5>User #${u.id}</h5>
+                        <p>${u.join_date}</p>
                     </div>
-                </div>
-            `).join('');
+                    <span class="u-balance">$${u.balance}</span>
+                </div>`;
+            }).join('');
         }
 
         function renderRecent(list) {
