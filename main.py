@@ -135,13 +135,13 @@ async def main():
     # 5. Set Bot Commands (Side Menu)
     from aiogram.types import BotCommandScopeAllPrivateChats
     
-    buyer_commands = [BotCommand(command="start", description="Start Store 🛒")]
+    buyer_commands = [BotCommand(command="start", description="/start")]
     seller_commands = [
-        BotCommand(command="start", description="start"),
-        BotCommand(command="coin", description="coin"),
-        BotCommand(command="cancel", description="cancel"),
-        BotCommand(command="language", description="language"),
-        BotCommand(command="cap", description="cap")
+        BotCommand(command="start", description="/start"),
+        BotCommand(command="coin", description="/coin"),
+        BotCommand(command="cancel", description="/cancel"),
+        BotCommand(command="language", description="/language"),
+        BotCommand(command="cap", description="/cap")
     ]
 
     try:
