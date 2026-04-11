@@ -1,5 +1,5 @@
 from aiogram import Router, F
-from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
+from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, ReplyKeyboardMarkup, KeyboardButton
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from database.engine import async_session
@@ -26,6 +26,16 @@ async def seller_start_cmd(message: Message):
         "-  To start, send the desired virtual account number or send /help for assistance."
     )
     
+    # Reply Keyboard (Main Menu Buttons in the bottom)
+    main_menu_kb = ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text="💰 Sell Accounts"), KeyboardButton(text="📊 My Coins")],
+            [KeyboardButton(text="🌍 Language"), KeyboardButton(text="❌ Cancel")]
+        ],
+        resize_keyboard=True
+    )
+    
+    # Inline Keyboard (Buttons under the message)
     markup = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="💰 Add Number for Sale", callback_data="seller_add_account")],
         [InlineKeyboardButton(text="📊 My Balance & Stats", callback_data="seller_my_stats")],
@@ -33,7 +43,25 @@ async def seller_start_cmd(message: Message):
         [InlineKeyboardButton(text="💬 Support", url="https://t.me/your_support_link")]
     ])
     
-    await message.answer(welcome_text, reply_markup=markup)
+    await message.answer(welcome_text, reply_markup=main_menu_kb)
+    await message.answer("Use the menu below to navigate or interact with the bot.", reply_markup=markup)
+
+# Handlers for Reply Keyboard buttons
+@router.message(F.text == "💰 Sell Accounts")
+async def seller_btn_sell(message: Message, state: FSMContext):
+    await seller_cap_cmd(message, state)
+
+@router.message(F.text == "📊 My Coins")
+async def seller_btn_coin(message: Message):
+    await seller_coin_cmd(message)
+
+@router.message(F.text == "🌍 Language")
+async def seller_btn_lang(message: Message):
+    await seller_language_cmd(message)
+
+@router.message(F.text == "❌ Cancel")
+async def seller_btn_cancel(message: Message, state: FSMContext):
+    await seller_cancel_cmd(message, state)
 
 @router.message(Command("coin"))
 async def seller_coin_cmd(message: Message):
