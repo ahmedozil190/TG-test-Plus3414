@@ -18,6 +18,12 @@ from services.session_manager import request_app_code, submit_app_code, login_cl
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+def get_flag_emoji(country_code: str):
+    """Convert ISO country code to flag emoji."""
+    if not country_code or len(country_code) != 2:
+        return "🌐"
+    return "".join(chr(ord(c) + 127397) for c in country_code.upper())
+
 app = FastAPI(title="Store Admin Panel")
 
 # Use absolute path for templates to avoid issues in deployment
@@ -70,7 +76,15 @@ async def get_admin_data():
             # Recent Accounts
             try:
                 accounts_result = await session.execute(select(Account).where(Account.status == AccountStatus.AVAILABLE).order_by(Account.id.desc()).limit(50))
-                accounts = [{"id": a.id, "phone_number": a.phone_number, "country": a.country, "price": a.price} for a in accounts_result.scalars().all()]
+                accounts = []
+                for a in accounts_result.scalars().all():
+                    # Get flag from phone number
+                    flag = "🌐"
+                    try:
+                        p = phonenumbers.parse(a.phone_number)
+                        flag = get_flag_emoji(phonenumbers.region_code_for_number(p))
+                    except: pass
+                    accounts.append({"id": a.id, "phone_number": a.phone_number, "country": f"{flag} {a.country}", "price": a.price})
             except Exception as e:
                 logger.error(f"Error fetching accounts: {e}")
                 accounts = []
@@ -107,7 +121,16 @@ async def get_admin_data():
             # Country Prices
             try:
                 prices_result = await session.execute(select(CountryPrice).order_by(CountryPrice.country_name))
-                prices = [{"code": p.country_code, "name": p.country_name, "price": p.price} for p in prices_result.scalars().all()]
+                prices = []
+                for p in prices_result.scalars().all():
+                    # Get flag from numeric code
+                    flag = "🌐"
+                    try:
+                        # Find any region for this country code
+                        region = phonenumbers.region_code_for_country_code(int(p.country_code))
+                        flag = get_flag_emoji(region)
+                    except: pass
+                    prices.append({"code": p.country_code, "name": f"{flag} {p.country_name}", "price": p.price})
             except Exception as e:
                 logger.error(f"Error fetching prices: {e}")
                 prices = []
@@ -137,7 +160,9 @@ async def start_login(data: StockLoginStart):
     try:
         parsed = phonenumbers.parse(phone)
         country_code = str(parsed.country_code)
-        country_name = geocoder.description_for_number(parsed, "en") or f"Code {country_code}"
+        iso_code = phonenumbers.region_code_for_number(parsed)
+        flag = get_flag_emoji(iso_code)
+        country_name = f"{flag} " + (geocoder.description_for_number(parsed, "en") or f"Code {country_code}")
     except Exception as e:
         logger.error(f"Phone Parse Error: {e}")
         raise HTTPException(status_code=400, detail="رقم هاتف غير صالح")
