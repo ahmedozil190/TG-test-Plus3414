@@ -3,189 +3,296 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>إدارة المتجر | Store Admin</title>
+    <title>إدارة المتجر | Store Dashboard</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --bg-color: #050505;
-            --glass-bg: rgba(20, 20, 20, 0.7);
-            --gold: #d4af37;
-            --gold-bright: #ffdf00;
-            --gold-gradient: linear-gradient(45deg, #8a6d3b, #d4af37, #f7ef8a, #d4af37, #8a6d3b);
-            --text-color: #ffffff;
-            --text-dim: #b0b0b0;
-            --border-color: rgba(212, 175, 55, 0.2);
-            --accent-glow: 0 0 15px rgba(212, 175, 55, 0.3);
+            --sidebar-bg: #111111;
+            --glass-bg: rgba(18, 18, 18, 0.7);
+            --gold-primary: #FFD700;
+            --gold-glow: rgba(255, 215, 0, 0.3);
+            --text-main: #ffffff;
+            --text-dim: #a0a0a0;
+            --border: rgba(255, 215, 0, 0.15);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
         body {
             background: var(--bg-color);
-            background-image: radial-gradient(circle at 10% 20%, rgba(212, 175, 55, 0.05) 0%, transparent 20%);
-            color: var(--text-color); overflow-x: hidden; min-height: 100vh;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
         }
 
-        #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); display: flex; justify-content: center; align-items: center; z-index: 9999; }
-        .spinner { width: 50px; height: 50px; border: 3px solid rgba(212, 175, 55, 0.1); border-top: 3px solid var(--gold); border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        .container { max-width: 800px; margin: 0 auto; padding: 20px; padding-bottom: 80px; }
-        header { text-align: center; margin-bottom: 30px; }
-        .header-logo { font-size: 2.5rem; background: var(--gold-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; text-shadow: var(--accent-glow); }
-
-        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 30px; }
-        .stat-card { background: var(--glass-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 20px; text-align: center; }
-        .stat-card i { font-size: 1.5rem; color: var(--gold); margin-bottom: 10px; }
-        .stat-value { font-size: 1.5rem; font-weight: 700; }
-        .full-width { grid-column: span 2; }
-
-        .section-title { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; color: var(--gold); }
-        .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border-color); }
-
-        .navbar {
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            width: 90%; max-width: 400px; background: rgba(10, 10, 10, 0.8); backdrop-filter: blur(20px);
-            border: 1px solid var(--border-color); border-radius: 30px; display: flex; justify-content: space-around; padding: 10px; z-index: 1000;
+        /* Sidebar Styling */
+        .sidebar {
+            width: 280px;
+            background: var(--sidebar-bg);
+            border-left: 1px solid var(--border);
+            height: 100vh;
+            position: fixed;
+            right: -280px; 
+            top: 0;
+            z-index: 2000;
+            padding: 30px 20px;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.5);
         }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-dim); font-size: 0.7rem; cursor: pointer; padding: 10px; }
-        .nav-item.active { color: var(--gold); }
-        .nav-item i { font-size: 1.4rem; margin-bottom: 4px; }
 
-        .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; background: var(--gold-gradient); color: #000; font-weight: 700; cursor: pointer; }
-        .input-group { margin-bottom: 15px; }
-        input { width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; color: white; outline: none; }
-        
-        .list-item { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 15px; padding: 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .content-section { display: none; animation: fadeIn 0.4s ease; }
-        .content-section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .sidebar.active { right: 0; }
 
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 2000; display: none; justify-content: center; align-items: center; padding: 20px; }
-        .modal-content { background: var(--bg-color); border: 1px solid var(--gold); border-radius: 20px; width: 100%; max-width: 400px; padding: 25px; }
-        .badge-success { background: rgba(0, 255, 0, 0.1); color: #00ff00; padding: 2px 8px; border-radius: 5px; font-size: 0.7rem; }
+        .sidebar-header {
+            padding-bottom: 30px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .sidebar-logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, #FFD700, #ffec8b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .menu-list { list-style: none; flex: 1; }
+        .menu-item {
+            display: flex; align-items: center; gap: 15px; padding: 15px; border-radius: 12px;
+            color: var(--text-dim); text-decoration: none; margin-bottom: 10px; transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .menu-item i { font-size: 1.2rem; }
+        .menu-item:hover, .menu-item.active {
+            background: rgba(255, 215, 0, 0.05);
+            color: var(--gold-primary);
+        }
+
+        /* Top Bar Styling */
+        .topbar {
+            position: fixed; top: 20px; left: 20px; right: 20px; height: 65px;
+            background: var(--glass-bg); backdrop-filter: blur(15px); border: 1px solid var(--border);
+            border-radius: 20px; display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px; z-index: 1000;
+        }
+
+        .hamburger { font-size: 1.5rem; color: var(--gold-primary); cursor: pointer; }
+        .page-title { font-size: 1.1rem; font-weight: 700; color: var(--gold-primary); }
+
+        /* Main Content */
+        main {
+            flex: 1; padding: 105px 20px 40px; max-width: 900px;
+            margin: 0 auto; width: 100%;
+        }
+
+        .overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(3px);
+            z-index: 1500; display: none;
+        }
+        .overlay.active { display: block; }
+
+        /* Stats Cards */
+        .grid-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 30px; }
+        .stat-card {
+            background: var(--glass-bg); border: 1px solid var(--border); border-radius: 24px;
+            padding: 25px 15px; text-align: center; transition: var(--transition);
+        }
+        .stat-card i { font-size: 2rem; color: var(--gold-primary); margin-bottom: 12px; }
+        .stat-value { font-size: 1.8rem; font-weight: 800; color: #fff; }
+        .stat-label { font-size: 0.8rem; color: var(--text-dim); }
+
+        .card { background: var(--glass-bg); border: 1px solid var(--border); border-radius: 24px; padding: 25px; margin-bottom: 25px; }
+        .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+        .section-header h3 { font-size: 1.1rem; color: var(--gold-primary); }
+
+        .list-container { display: flex; flex-direction: column; gap: 12px; }
+        .list-item {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 18px; padding: 18px; display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .item-info h4 { font-size: 0.95rem; margin-bottom: 4px; }
+        .item-info p { font-size: 0.8rem; color: var(--text-dim); }
+
+        .badge { padding: 4px 10px; border-radius: 8px; font-size: 0.7rem; font-weight: 700; }
+        .badge-success { background: rgba(34, 197, 94, 0.1); color: #22c55e; }
+
+        /* Loader */
+        #loader { position: fixed; inset: 0; background: var(--bg-color); display: flex; justify-content: center; align-items: center; z-index: 9999; }
+        .spinner { width: 40px; height: 40px; border: 3px solid rgba(255, 215, 0, 0.2); border-top-color: var(--gold-primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        @media (min-width: 1024px) {
+            .sidebar { right: 0; }
+            main { padding-right: 300px; padding-left: 20px; margin: 0; max-width: 1200px; }
+            .hamburger { display: none; }
+            .topbar { right: 300px; }
+        }
     </style>
 </head>
 <body>
     <div id="loader"><div class="spinner"></div></div>
+    <div id="overlay" class="overlay" onclick="toggleSidebar()"></div>
 
-    <div class="container">
-        <header>
-            <h1 class="header-logo">STORE ADMIN</h1>
-            <p class="header-subtitle">SALES & CUSTOMERS</p>
-        </header>
+    <!-- Sidebar -->
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <h2 class="sidebar-logo">STORE DASHBOARD</h2>
+        </div>
+        <div class="menu-list">
+            <div class="menu-item active" onclick="switchSection('home', this)">
+                <i class="fa-solid fa-house"></i>
+                <span>الرئيسية</span>
+            </div>
+            <div class="menu-item" onclick="switchSection('users', this)">
+                <i class="fa-solid fa-users"></i>
+                <span>إدارة العملاء</span>
+            </div>
+            <div class="menu-item" onclick="switchSection('sales', this)">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span>المبيعات</span>
+            </div>
+        </div>
+        <div style="margin-top: auto;">
+            <div class="menu-item" style="color: #ef4444;" onclick="window.Telegram.WebApp.close()">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span>إغلاق اللوحة</span>
+            </div>
+        </div>
+    </div>
 
-        <div id="section-home" class="content-section active">
-            <div class="stats-grid">
+    <!-- Top Bar -->
+    <div class="topbar">
+        <div class="hamburger" onclick="toggleSidebar()">
+            <i class="fa-solid fa-bars-staggered"></i>
+        </div>
+        <div class="page-title" id="page-title">الرئيسية</div>
+        <div class="user-profile">
+            <i class="fa-solid fa-crown" style="font-size: 1.5rem; color: var(--gold-primary);"></i>
+        </div>
+    </div>
+
+    <main>
+        <!-- Home Section -->
+        <div id="section-home" class="content-section">
+            <div class="grid-stats">
                 <div class="stat-card">
                     <i class="fa-solid fa-users"></i>
-                    <div class="stat-value" id="stat-users">0</div>
-                    <div class="stat-label">إجمالي المستخدمين</div>
+                    <div class="stat-value" id="stat-total-users">0</div>
+                    <div class="stat-label">إجمالي العملاء</div>
                 </div>
                 <div class="stat-card">
-                    <i class="fa-solid fa-phone"></i>
-                    <div class="stat-value" id="stat-stock">0</div>
-                    <div class="stat-label">أرقام معروضة للبيع</div>
-                </div>
-                <div class="stat-card full-width">
-                    <i class="fa-solid fa-sack-dollar"></i>
-                    <div class="stat-value" id="stat-balance">$0.00</div>
-                    <div class="stat-label">إجمالي رصيد العملاء</div>
+                    <i class="fa-solid fa-money-bill-trend-up"></i>
+                    <div class="stat-value" id="stat-sales-count">0</div>
+                    <div class="stat-label">إجمالي المبيعات</div>
                 </div>
             </div>
-            <div class="section-title">آخر العمليات</div>
-            <div id="recent-sales"></div>
-        </div>
 
-        <div id="section-users" class="content-section">
-            <div class="section-title">إدارة حسابات العملاء</div>
-            <div class="input-group"><input type="text" id="user-search" placeholder="ابحث عن العميل بـ ID..." oninput="searchUsers()"></div>
-            <div id="user-list"></div>
-        </div>
-    </div>
-
-    <nav class="navbar">
-        <div class="nav-item active" onclick="switchSection('home', this)"><i class="fa-solid fa-house"></i><span>الرئيسية</span></div>
-        <div class="nav-item" onclick="switchSection('users', this)"><i class="fa-solid fa-users"></i><span>العملاء</span></div>
-    </nav>
-
-    <!-- Modal Edit Balance -->
-    <div id="modal-balance" class="modal" onclick="closeModal()">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <h3 style="color: var(--gold); margin-bottom: 20px;">تعديل رصيد العميل</h3>
-            <p id="edit-user-info" style="font-size: 0.8rem; margin-bottom: 15px; color: var(--text-dim);"></p>
-            <div class="input-group">
-                <label>الرصيد الجديد ($)</label>
-                <input type="number" id="new-balance" step="0.1">
+            <div class="section-header">
+                <h3>آخر المبيعات</h3>
             </div>
-            <button class="btn" onclick="saveBalance()">تحديث الرصيد</button>
+            <div class="card">
+                <div class="list-container" id="recent-sales">
+                    <!-- Dynamic Content -->
+                </div>
+            </div>
         </div>
-    </div>
+
+        <!-- Users Section -->
+        <div id="section-users" class="content-section" style="display: none;">
+            <div class="section-header">
+                <h3>قائمة المستخدمين</h3>
+            </div>
+            <div class="list-container" id="user-list">
+                <!-- Dynamic Content -->
+            </div>
+        </div>
+
+        <!-- Sales Section (Placeholder) -->
+        <div id="section-sales" class="content-section" style="display: none;">
+            <div class="card" style="text-align: center; color: var(--text-dim);">
+                <i class="fa-solid fa-chart-line" style="font-size: 3rem; margin-bottom: 15px;"></i>
+                <p>قسـم المبيعات التفصيلي سيتم برمجته قريباً...</p>
+            </div>
+        </div>
+    </main>
 
     <script>
-        const tg = window.Telegram.WebApp; tg.expand();
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.headerColor = '#050505';
 
-        async function fetchData() {
-            try {
-                const response = await fetch('/api/admin/store/data');
-                const data = await response.json();
-                document.getElementById('stat-users').innerText = data.stats.user_count;
-                document.getElementById('stat-stock').innerText = data.stats.stock_count;
-                document.getElementById('stat-balance').innerText = `$${data.stats.total_balance.toFixed(2)}`;
-                renderUsers(data.users);
-                renderSales(data.transactions);
-            } catch (error) { console.error('Error:', error);
-            } finally { document.getElementById('loader').style.display = 'none'; }
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
         }
 
-        function renderUsers(users) {
-            document.getElementById('user-list').innerHTML = users.map(u => `
+        function switchSection(id, btn) {
+            document.querySelectorAll('.content-section').forEach(s => s.style.display = 'none');
+            document.getElementById('section-' + id).style.display = 'block';
+            document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('page-title').innerText = btn.querySelector('span').innerText;
+            if (window.innerWidth < 1024) toggleSidebar();
+        }
+
+        async function init() {
+            try {
+                const res = await fetch('/api/admin/store/data');
+                const data = await res.json();
+                
+                document.getElementById('stat-total-users').innerText = data.stats.total_users;
+                document.getElementById('stat-sales-count').innerText = data.stats.sales_count;
+                
+                renderSales(data.recent_sales);
+                renderUsers(data.users);
+            } catch (e) {
+                console.error(e);
+            } finally {
+                document.getElementById('loader').style.display = 'none';
+            }
+        }
+
+        function renderSales(list) {
+            const container = document.getElementById('recent-sales');
+            if (!list.length) { container.innerHTML = '<p style="text-align: center; color: var(--text-dim);">لا توجد مبيعات</p>'; return; }
+            container.innerHTML = list.map(item => `
                 <div class="list-item">
-                    <div><h4>${u.id}</h4><p>تاريخ: ${u.join_date}</p></div>
-                    <div style="text-align: left;">
-                        <span class="badge-success">$${u.balance.toFixed(2)}</span><br>
-                        <button class="btn" style="padding: 5px 10px; font-size: 0.7rem; margin-top: 5px;" onclick="showBalanceModal('${u.id}', ${u.balance})">تعديل</button>
+                    <div class="item-info">
+                        <h4>بيع حساب: ${item.service}</h4>
+                        <p>بواسطة: ${item.user_id} | <span style="color: var(--gold-primary)">$${item.price}</span></p>
+                    </div>
+                    <span class="badge badge-success">مكتمل</span>
+                </div>
+            `).join('');
+        }
+
+        function renderUsers(list) {
+            const container = document.getElementById('user-list');
+            container.innerHTML = list.map(u => `
+                <div class="list-item">
+                    <div class="item-info">
+                        <h4>${u.username || u.user_id}</h4>
+                        <p>الرصيد: <span style="color: var(--gold-primary)">$${u.balance}</span></p>
                     </div>
                 </div>
             `).join('');
         }
 
-        function renderSales(txns) {
-            document.getElementById('recent-sales').innerHTML = txns.map(tx => `
-                <div class="list-item">
-                    <div><h4>شراء رقم</h4><p>العميل: ${tx.buyer_id}</p></div>
-                    <span style="color: var(--gold);">$${tx.price}</span>
-                </div>
-            `).join('');
-        }
-
-        function switchSection(id, el) {
-            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-            document.getElementById('section-' + id).classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            el.classList.add('active');
-        }
-
-        let editingUser = null;
-        function showBalanceModal(id, bal) { 
-            editingUser = id; document.getElementById('new-balance').value = bal;
-            document.getElementById('edit-user-info').innerText = "العميل: " + id;
-            document.getElementById('modal-balance').style.display = 'flex'; 
-        }
-        function closeModal() { document.getElementById('modal-balance').style.display = 'none'; }
-
-        async function saveBalance() {
-            const amount = document.getElementById('new-balance').value;
-            await fetch('/api/admin/user/balance', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ user_id: parseInt(editingUser), amount: parseFloat(amount) })
-            });
-            location.reload();
-        }
-
-        fetchData();
+        init();
     </script>
 </body>
 </html>

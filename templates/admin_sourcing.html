@@ -3,304 +3,508 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>إدارة التوريد | Sourcing Admin</title>
+    <title>إدارة التوريد | Sourcing Dashboard</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg-color: #050505;
-            --glass-bg: rgba(20, 20, 20, 0.7);
-            --blue: #1DA1F2;
-            --blue-bright: #00BAFF;
-            --blue-gradient: linear-gradient(45deg, #1d4ed8, #1e40af, #3b82f6, #1e3a8a);
-            --text-color: #ffffff;
-            --text-dim: #b0b0b0;
-            --border-color: rgba(59, 130, 246, 0.2);
-            --accent-glow: 0 0 15px rgba(59, 130, 246, 0.3);
+            --bg-color: #030712;
+            --sidebar-bg: #0f172a;
+            --glass-bg: rgba(15, 23, 42, 0.6);
+            --blue-primary: #3b82f6;
+            --blue-glow: rgba(59, 130, 246, 0.4);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --border: rgba(59, 130, 246, 0.15);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            margin: 0; padding: 0; box-sizing: border-box;
             font-family: 'Cairo', sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
 
         body {
             background: var(--bg-color);
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 20%),
-                radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 20%);
-            color: var(--text-color);
-            overflow-x: hidden;
+            color: var(--text-main);
             min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
         }
 
+        /* Sidebar Styling */
+        .sidebar {
+            width: 280px;
+            background: var(--sidebar-bg);
+            border-left: 1px solid var(--border);
+            height: 100vh;
+            position: fixed;
+            right: -280px; /* Hidden by default on mobile */
+            top: 0;
+            z-index: 2000;
+            padding: 30px 20px;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+        }
+
+        .sidebar.active {
+            right: 0;
+        }
+
+        .sidebar-header {
+            padding-bottom: 30px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .sidebar-logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, #3b82f6, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .menu-list { list-style: none; flex: 1; }
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border-radius: 12px;
+            color: var(--text-dim);
+            text-decoration: none;
+            margin-bottom: 10px;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .menu-item i { font-size: 1.2rem; }
+        .menu-item:hover, .menu-item.active {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--blue-primary);
+            box-shadow: inset 0 0 10px rgba(59, 130, 246, 0.05);
+        }
+
+        /* Top Bar Styling */
+        .topbar {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            height: 65px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .hamburger {
+            font-size: 1.5rem;
+            color: var(--blue-primary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .page-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            padding: 105px 20px 40px;
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(3px);
+            z-index: 1500;
+            display: none;
+        }
+
+        .overlay.active { display: block; }
+
+        /* Content Cards */
+        .grid-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 25px 15px;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .stat-card i { font-size: 2rem; color: var(--blue-primary); margin-bottom: 12px; opacity: 0.8; }
+        .stat-value { font-size: 1.8rem; font-weight: 800; color: #fff; }
+        .stat-label { font-size: 0.8rem; color: var(--text-dim); margin-top: 5px; }
+
+        .card {
+            background: var(--glass-bg);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .section-header h3 { font-size: 1.1rem; color: var(--blue-primary); }
+
+        .btn-add {
+            background: var(--blue-primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 15px var(--blue-glow);
+        }
+
+        .list-container { display: flex; flex-direction: column; gap: 12px; }
+        .list-item {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 18px;
+            padding: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .list-item:hover { background: rgba(255,255,255,0.06); border-color: var(--border); }
+
+        .item-info h4 { font-size: 0.95rem; margin-bottom: 4px; }
+        .item-info p { font-size: 0.8rem; color: var(--text-dim); }
+
+        .btn-edit {
+            width: 40px; height: 40px; border-radius: 50%;
+            background: rgba(59, 130, 246, 0.1);
+            border: none; color: var(--blue-primary);
+            cursor: pointer; transition: var(--transition);
+        }
+        .btn-edit:hover { background: var(--blue-primary); color: white; transform: rotate(15deg); }
+
+        /* Modal */
+        .modal {
+            position: fixed; inset: 0;
+            display: none; justify-content: center; align-items: center;
+            z-index: 3000; padding: 20px;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            background: #0f172a; border: 1px solid var(--blue-primary);
+            border-radius: 28px; width: 100%; max-width: 450px;
+            padding: 30px; position: relative;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 20px var(--blue-glow);
+            animation: modalIn 0.3s ease;
+        }
+
+        @keyframes modalIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .input-group { margin-bottom: 18px; }
+        .input-group label { display: block; font-size: 0.85rem; color: var(--text-dim); margin-bottom: 8px; }
+        input {
+            width: 100%; background: #1e293b; border: 1px solid var(--border);
+            border-radius: 12px; padding: 14px; color: white; outline: none; transition: var(--transition);
+        }
+        input:focus { border-color: var(--blue-primary); box-shadow: 0 0 10px rgba(59, 130, 246, 0.1); }
+
+        /* Loader */
         #loader {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-color); display: flex; justify-content: center; align-items: center;
-            z-index: 9999; transition: opacity 0.5s ease;
+            position: fixed; inset: 0; background: var(--bg-color);
+            display: flex; justify-content: center; align-items: center; z-index: 9999;
         }
 
         .spinner {
-            width: 50px; height: 50px; border: 3px solid rgba(59, 130, 246, 0.1);
-            border-top: 3px solid var(--blue); border-radius: 50%; animation: spin 1s linear infinite;
+            width: 40px; height: 40px; border: 3px solid rgba(59, 130, 246, 0.2);
+            border-top-color: var(--blue-primary); border-radius: 50%;
+            animation: spin 0.8s linear infinite;
         }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        .container { max-width: 800px; margin: 0 auto; padding: 20px; padding-bottom: 80px; }
-
-        header { text-align: center; margin-bottom: 30px; }
-        .header-logo {
-            font-size: 2.5rem; background: var(--blue-gradient); -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent; font-weight: 800; margin-bottom: 5px;
-            text-shadow: var(--accent-glow);
+        .badge {
+            padding: 4px 10px; border-radius: 8px; font-size: 0.7rem; font-weight: 700;
         }
-        .header-subtitle { color: var(--text-dim); font-size: 0.9rem; letter-spacing: 2px; }
+        .badge-success { background: rgba(34, 197, 94, 0.1); color: #22c55e; }
+        .badge-warning { background: rgba(234, 179, 8, 0.1); color: #eab308; }
 
-        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 30px; }
-        .stat-card {
-            background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid var(--border-color);
-            border-radius: 20px; padding: 20px; text-align: center; transition: transform 0.3s ease;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        @media (min-width: 1024px) {
+            .sidebar { right: 0; }
+            main { padding-right: 300px; padding-left: 20px; margin: 0; max-width: 1200px; }
+            .hamburger { display: none; }
+            .topbar { right: 300px; }
         }
-        .stat-card i { font-size: 1.5rem; color: var(--blue); margin-bottom: 10px; }
-        .stat-value { font-size: 1.5rem; font-weight: 700; margin: 5px 0; }
-        .stat-label { color: var(--text-dim); font-size: 0.8rem; }
-
-        .section-title { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; font-size: 1.2rem; font-weight: 600; color: var(--blue); }
-        .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border-color); }
-
-        .card { background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid var(--border-color); border-radius: 20px; padding: 20px; }
-
-        .navbar {
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            width: 90%; max-width: 400px; background: rgba(10, 10, 10, 0.8);
-            backdrop-filter: blur(20px); border: 1px solid var(--border-color);
-            border-radius: 30px; display: flex; justify-content: space-around; padding: 10px; z-index: 1000;
-        }
-
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-dim); text-decoration: none; font-size: 0.7rem; transition: all 0.3s ease; padding: 10px; cursor: pointer; }
-        .nav-item.active { color: var(--blue); }
-        .nav-item i { font-size: 1.4rem; margin-bottom: 4px; }
-
-        .input-group { margin-bottom: 15px; }
-        .input-group label { display: block; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 5px; }
-        input, select { width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; color: white; outline: none; }
-        input:focus { border-color: var(--blue); }
-
-        .btn {
-            width: 100%; padding: 14px; border-radius: 12px; border: none;
-            background: var(--blue-gradient); color: #fff; font-weight: 700; cursor: pointer;
-            box-shadow: var(--accent-glow);
-        }
-        .btn:active { transform: scale(0.97); }
-        .btn-outline { background: transparent; border: 1px solid var(--blue); color: var(--blue); }
-
-        .item-list { display: flex; flex-direction: column; gap: 10px; }
-        .list-item { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 15px; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .item-info h4 { font-size: 0.9rem; margin-bottom: 2px; }
-        .item-info p { font-size: 0.75rem; color: var(--text-dim); }
-
-        .item-actions { display: flex; gap: 10px; }
-        .btn-icon { width: 35px; height: 35px; border-radius: 50%; display: flex; justify-content: center; align-items: center; background: rgba(255, 255, 255, 0.05); color: var(--text-dim); border: none; }
-        .btn-icon.edit { color: var(--blue); }
-
-        .content-section { display: none; animation: fadeIn 0.4s ease; }
-        .content-section.active { display: block; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 2000; display: none; justify-content: center; align-items: center; padding: 20px; }
-        .modal-content { background: var(--bg-color); border: 1px solid var(--blue); border-radius: 20px; width: 100%; max-width: 400px; padding: 25px; box-shadow: var(--accent-glow); }
     </style>
 </head>
 <body>
     <div id="loader"><div class="spinner"></div></div>
+    <div id="overlay" class="overlay" onclick="toggleSidebar()"></div>
 
-    <div class="container">
-        <header>
-            <h1 class="header-logo">SOURCING ADMIN</h1>
-            <p class="header-subtitle">PROCUREMENT MANAGEMENT</p>
-        </header>
+    <!-- Sidebar -->
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <h2 class="sidebar-logo">SOURCING PANEL</h2>
+        </div>
+        <div class="menu-list">
+            <div class="menu-item active" onclick="switchSection('home', this)">
+                <i class="fa-solid fa-house"></i>
+                <span>الرئيسية</span>
+            </div>
+            <div class="menu-item" onclick="switchSection('prices', this)">
+                <i class="fa-solid fa-tags"></i>
+                <span>إدارة الأسعار</span>
+            </div>
+            <div class="menu-item" onclick="switchSection('history', this)">
+                <i class="fa-solid fa-history"></i>
+                <span>سجلات التوريد</span>
+            </div>
+        </div>
+        <div style="margin-top: auto;">
+            <div class="menu-item" style="color: #ef4444;" onclick="window.Telegram.WebApp.close()">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span>إغلاق اللوحة</span>
+            </div>
+        </div>
+    </div>
 
+    <!-- Top Bar -->
+    <div class="topbar">
+        <div class="hamburger" onclick="toggleSidebar()">
+            <i class="fa-solid fa-bars-staggered"></i>
+        </div>
+        <div class="page-title" id="page-title">الرئيسية</div>
+        <div class="user-profile">
+            <i class="fa-solid fa-circle-user" style="font-size: 1.5rem; color: var(--blue-primary);"></i>
+        </div>
+    </div>
+
+    <main>
         <!-- Home Section -->
-        <div id="section-home" class="content-section active">
-            <div class="stats-grid">
+        <div id="section-home" class="content-section animate-fade">
+            <div class="grid-stats">
                 <div class="stat-card">
-                    <i class="fa-solid fa-phone"></i>
+                    <i class="fa-solid fa-database"></i>
                     <div class="stat-value" id="stat-total-sourced">0</div>
-                    <div class="stat-label">إجمالي الحسابات الموردة</div>
+                    <div class="stat-label">إجمالي الحسابات</div>
                 </div>
                 <div class="stat-card">
-                    <i class="fa-solid fa-clock"></i>
+                    <i class="fa-solid fa-hourglass-half"></i>
                     <div class="stat-value" id="stat-pending">0</div>
                     <div class="stat-label">في انتظار التأكيد</div>
                 </div>
             </div>
 
-            <div class="section-title">آخر الحسابات الواردة</div>
+            <div class="section-header">
+                <h3>آخر العمليات الواردة</h3>
+            </div>
             <div class="card">
-                <div class="item-list" id="recent-sourced">
-                    <!-- Sourced list -->
+                <div class="list-container" id="recent-sourced">
+                    <!-- Dynamic Content -->
                 </div>
             </div>
         </div>
 
-        <!-- Prices Section (Buying) -->
-        <div id="section-prices" class="content-section">
-            <div class="section-title">إدارة أسعار الشراء من الناس</div>
-            <div class="card" style="margin-bottom: 20px;">
-                <button class="btn" onclick="showAddPriceModal()">
-                    <i class="fa-solid fa-plus"></i> إضافة دولة جديدة
+        <!-- Prices Section -->
+        <div id="section-prices" class="content-section" style="display: none;">
+            <div class="section-header">
+                <h3>أسعار التوريد (شراء)</h3>
+                <button class="btn-add" onclick="openPriceModal()">
+                    <i class="fa-solid fa-plus"></i> إضافة دولة
                 </button>
             </div>
-            <div class="item-list" id="price-list">
-                <!-- Prices -->
+            <div class="list-container" id="price-list">
+                <!-- Dynamic Content -->
             </div>
         </div>
-    </div>
 
-    <nav class="navbar">
-        <div class="nav-item active" onclick="switchSection('home', this)">
-            <i class="fa-solid fa-house"></i>
-            <span>الرئيسية</span>
+        <!-- History Section (Placeholder) -->
+        <div id="section-history" class="content-section" style="display: none;">
+            <div class="card" style="text-align: center; color: var(--text-dim);">
+                <i class="fa-solid fa-folder-open" style="font-size: 3rem; margin-bottom: 15px;"></i>
+                <p>قسـم السـجـلات سيتم برمجته قريباً...</p>
+            </div>
         </div>
-        <div class="nav-item" onclick="switchSection('prices', this)">
-            <i class="fa-solid fa-tags"></i>
-            <span>أسعار الشراء</span>
-        </div>
-    </nav>
+    </main>
 
-    <!-- Modal -->
-    <div id="modal-price" class="modal" onclick="closeModal(event, 'modal-price')">
+    <!-- Modal Form -->
+    <div id="price-modal" class="modal" onclick="closePriceModal(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
-            <h3 style="margin-bottom: 20px; color: var(--blue);">إعداد سعر التوريد</h3>
+            <h3 style="margin-bottom: 25px; color: var(--blue-primary);">تعديل إعدادات الدولة</h3>
             <div class="input-group">
-                <label>مفتاح الدولة (numeric code)</label>
-                <input type="text" id="price-country-code" placeholder="20">
+                <label>مفتاح الدولة (numeric)</label>
+                <input type="text" id="m-code" placeholder="20">
             </div>
             <div class="input-group">
                 <label>اسم الدولة</label>
-                <input type="text" id="price-country-name" placeholder="Egypt">
+                <input type="text" id="m-name" placeholder="Egypt">
             </div>
             <div class="input-group">
-                <label>سعر الشراء من الناس ($)</label>
-                <input type="number" id="price-buy-val" step="0.1" placeholder="0.8">
+                <label>سعر الشراء ($)</label>
+                <input type="number" id="m-buy" step="0.1" placeholder="0.5">
             </div>
             <div class="input-group">
-                <label>سعر البيع لعامة الناس ($)</label>
-                <input type="number" id="price-sell-val" step="0.1" placeholder="1.5">
+                <label>سعر البيع ($)</label>
+                <input type="number" id="m-price" step="0.1" placeholder="1.0">
             </div>
             <div class="input-group">
-                <label>تأخير الموافقة (دقائق)</label>
-                <input type="number" id="price-delay-val" placeholder="60">
+                <label>تأخير الموافقة (دقيقة)</label>
+                <input type="number" id="m-delay" placeholder="60">
             </div>
-            <button class="btn" onclick="savePrice()">حفظ السعر</button>
-            <button class="btn btn-outline" style="margin-top: 10px;" onclick="closeModal(null, 'modal-price')">إلغاء</button>
+            <button class="btn-add" style="width: 100%; justify-content: center;" onclick="savePriceChanges()">
+                حفظ التعديلات
+            </button>
         </div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
-        tg.headerColor = '#050505';
+        tg.headerColor = '#030712';
+        tg.backgroundColor = '#030712';
 
-        async function fetchData() {
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
+        }
+
+        function switchSection(id, btn) {
+            document.querySelectorAll('.content-section').forEach(s => s.style.display = 'none');
+            document.getElementById('section-' + id).style.display = 'block';
+            
+            document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+            btn.classList.add('active');
+            
+            document.getElementById('page-title').innerText = btn.querySelector('span').innerText;
+            if (window.innerWidth < 1024) toggleSidebar();
+        }
+
+        async function init() {
             try {
-                const response = await fetch('/api/admin/sourcing/data');
-                const data = await response.json();
+                const res = await fetch('/api/admin/sourcing/data');
+                const data = await res.json();
                 
                 document.getElementById('stat-total-sourced').innerText = data.stats.total_sourced;
                 document.getElementById('stat-pending').innerText = data.stats.pending_count;
                 
                 renderRecent(data.recent);
                 renderPrices(data.prices);
-            } catch (error) {
-                console.error('Error:', error);
+            } catch (e) {
+                console.error(e);
             } finally {
-                document.getElementById('loader').style.opacity = '0';
-                setTimeout(() => document.getElementById('loader').style.display = 'none', 500);
+                document.getElementById('loader').style.display = 'none';
             }
         }
 
         function renderRecent(list) {
-            const el = document.getElementById('recent-sourced');
-            if (list.length === 0) { el.innerHTML = '<p style="text-align:center; padding:20px;">لا توجد حسابات واردة</p>'; return; }
-            el.innerHTML = list.map(item => `
+            const container = document.getElementById('recent-sourced');
+            if (!list.length) { container.innerHTML = '<p style="text-align: center; color: var(--text-dim);">لا توجد عمليات</p>'; return; }
+            
+            container.innerHTML = list.map(item => `
                 <div class="list-item">
                     <div class="item-info">
                         <h4>${item.phone}</h4>
-                        <p>${item.country} | <span style="color:var(--blue)">$${item.buy_price}</span></p>
+                        <p>${item.country} | <span style="color: var(--blue-primary)">$${item.buy_price}</span></p>
                     </div>
                     <span class="badge ${item.status === 'AVAILABLE' ? 'badge-success' : 'badge-warning'}">${item.status}</span>
                 </div>
             `).join('');
         }
 
-        function renderPrices(prices) {
-            const list = document.getElementById('price-list');
-            list.innerHTML = prices.map(p => `
+        function renderPrices(list) {
+            const container = document.getElementById('price-list');
+            container.innerHTML = list.map(p => `
                 <div class="list-item">
                     <div class="item-info">
                         <h4>${p.name} (+${p.code})</h4>
-                        <p>سعر الشراء: <span style="color:var(--blue)">$${p.buy_price}</span></p>
+                        <p>الشراء: $${p.buy_price} | البيع: $${p.price}</p>
                     </div>
-                    <button class="btn-icon edit" onclick="editPrice('${p.code}', '${p.name}', ${p.buy_price}, ${p.price}, ${p.approve_delay})">
-                        <i class="fa-solid fa-pen-to-square"></i>
+                    <button class="btn-edit" onclick="editPrice('${p.code}', '${p.name}', ${p.buy_price}, ${p.price}, ${p.approve_delay})">
+                        <i class="fa-solid fa-pen"></i>
                     </button>
                 </div>
             `).join('');
         }
 
-        function switchSection(id, el) {
-            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-            document.getElementById('section-' + id).classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            el.classList.add('active');
+        function openPriceModal() {
+            document.getElementById('m-code').value = '';
+            document.getElementById('m-name').value = '';
+            document.getElementById('m-buy').value = '';
+            document.getElementById('m-price').value = '';
+            document.getElementById('m-delay').value = '0';
+            document.getElementById('price-modal').classList.add('active');
         }
 
-        function showAddPriceModal() {
-            document.getElementById('price-country-code').value = '';
-            document.getElementById('price-country-name').value = '';
-            document.getElementById('price-buy-val').value = '';
-            document.getElementById('price-sell-val').value = '';
-            document.getElementById('price-delay-val').value = '0';
-            document.getElementById('modal-price').style.display = 'flex';
+        function editPrice(code, name, buy, price, delay) {
+            document.getElementById('m-code').value = code;
+            document.getElementById('m-name').value = name;
+            document.getElementById('m-buy').value = buy;
+            document.getElementById('m-price').value = price;
+            document.getElementById('m-delay').value = delay;
+            document.getElementById('price-modal').classList.add('active');
         }
 
-        function editPrice(code, name, buy, sell, delay) {
-            document.getElementById('price-country-code').value = code;
-            document.getElementById('price-country-name').value = name;
-            document.getElementById('price-buy-val').value = buy;
-            document.getElementById('price-sell-val').value = sell;
-            document.getElementById('price-delay-val').value = delay;
-            document.getElementById('modal-price').style.display = 'flex';
+        function closePriceModal(e) {
+            if (e && e.target !== document.getElementById('price-modal')) return;
+            document.getElementById('price-modal').classList.remove('active');
         }
 
-        async function savePrice() {
+        async function savePriceChanges() {
             const payload = {
-                country_code: document.getElementById('price-country-code').value,
-                country_name: document.getElementById('price-country-name').value,
-                buy_price: parseFloat(document.getElementById('price-buy-val').value),
-                price: parseFloat(document.getElementById('price-sell-val').value),
-                approve_delay: parseInt(document.getElementById('price-delay-val').value)
+                country_code: document.getElementById('m-code').value,
+                country_name: document.getElementById('m-name').value,
+                buy_price: parseFloat(document.getElementById('m-buy').value),
+                price: parseFloat(document.getElementById('m-price').value),
+                approve_delay: parseInt(document.getElementById('m-delay').value)
             };
             
             await fetch('/api/admin/prices/update', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(payload)
             });
-            location.reload();
+            init();
+            closePriceModal();
         }
 
-        function closeModal(e, id) { document.getElementById(id).style.display = 'none'; }
-
-        fetchData();
+        init();
     </script>
 </body>
 </html>
