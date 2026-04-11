@@ -84,7 +84,7 @@ async def seller_coin_cmd(message: Message):
         
         balance_display = int(balance) if balance == int(balance) else balance
         coin_text = (
-            f"<b>💵 Your user account in the robot:</b>\n\n"
+            f"💵 Your user account in the robot:\n\n"
             f"👤ID: <code>{message.from_user.id}</code>\n"
             f"💰 Your balance: {balance_display}$\n\n"
             f"⏰ This post was taken in {now}"
