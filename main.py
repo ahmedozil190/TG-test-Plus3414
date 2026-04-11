@@ -82,7 +82,6 @@ async def start_bot_service(dp: Dispatcher, bot: Bot, name: str):
         me = await bot.get_me()
         logger.info(f"✅ SUCCESS: {name} Bot (@{me.username}) is connected and starting!")
         
-        await bot.set_my_commands([BotCommand(command="start", description="تشغيل البوت")])
         await dp.start_polling(bot)
     except Exception as e:
         logger.error(f"❌ FATAL ERROR in {name} Bot connection: {e}")
