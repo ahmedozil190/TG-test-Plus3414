@@ -112,12 +112,12 @@ async def main():
             dp_seller = Dispatcher()
             from handlers.seller import seller_router
             dp_seller.include_router(seller_router)
-            logger.info("Seller Bot initialized.")
+            logger.info("✅ SUCCESS: Seller Bot Initialized and Router Registered.")
         except Exception as e:
-            logger.error(f"Seller Bot init failed: {e}")
+            logger.error(f"❌ ERROR: Seller Bot init failed: {e}")
             bot_seller = None
     else:
-        logger.warning("SELLER_BOT_TOKEN missing, Sourcing Bot will not start.")
+        logger.warning("⚠️ WARNING: SELLER_BOT_TOKEN is empty! Seller Bot will not start.")
 
     # 3. Web Server Task
     port = int(os.environ.get("PORT", 8000))
