@@ -1,5 +1,5 @@
 from aiogram import Router, F, Bot
-from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, ReplyKeyboardRemove, BotCommand, BotCommandScopeChat
+from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, ReplyKeyboardRemove, BotCommand, BotCommandScopeChat, ReplyKeyboardMarkup, KeyboardButton
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from database.engine import async_session
@@ -83,11 +83,27 @@ async def seller_cancel_cmd(message: Message, state: FSMContext):
 
 @router.message(Command("language"))
 async def seller_language_cmd(message: Message):
-    await message.answer("🌐 Language selection is coming soon!")
+    lang_text = (
+        "- الرجاء اختيار اللغة المفضلة لديك .\n\n"
+        "- Please choose your preferred language ."
+    )
+    markup = ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text="عربي"), KeyboardButton(text="English")]
+        ],
+        resize_keyboard=True
+    )
+    await message.answer(lang_text, reply_markup=markup)
 
 @router.message(Command("help"))
 async def seller_help_cmd(message: Message):
-    await message.answer("❓ Need help? Please contact our support team: @your_support_link")
+    help_text = (
+        "✅-The explanation required in the robot channel is at the following address:\n"
+        "- https://t.me/+WvuURnelU2kzM2Rk\n"
+        "♻️ If the answer to your question is not in the channel, you can contact : @FE4EE\n\n"
+        "/cancel"
+    )
+    await message.answer(help_text)
 
 @router.callback_query(F.data == "seller_back_main")
 async def seller_back_main(call: CallbackQuery):
