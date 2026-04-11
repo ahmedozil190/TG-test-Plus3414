@@ -3,7 +3,7 @@ from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, C
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from database.engine import async_session
-from database.models import User
+from database.models import User, CountryPrice
 from sqlalchemy.future import select
 
 router = Router()
@@ -101,44 +101,47 @@ async def seller_coin_cmd(message: Message):
 
 @router.message(Command("cap"))
 async def seller_cap_cmd(message: Message):
-    import phonenumbers
-    from phonenumbers import region_code_for_country_code
-    
-    def get_flag(iso_code):
-        if not iso_code: return "🌐"
-        if iso_code == "ZZ": return "🌐"
-        return "".join(chr(127397 + ord(c)) for c in iso_code.upper())
+    try:
+        import phonenumbers
+        from phonenumbers import region_code_for_country_code
+        
+        def get_flag(iso_code):
+            if not iso_code: return "🌐"
+            if iso_code == "ZZ": return "🌐"
+            return "".join(chr(127397 + ord(c)) for c in iso_code.upper())
 
-    async with async_session() as session:
-        result = await session.execute(
-            select(CountryPrice).order_by(CountryPrice.id.asc())
-        )
-        countries = result.scalars().all()
-    
-    if not countries:
-        await message.answer("<b>📊 Buying Prices List</b>\n\n- The list is currently empty.", parse_mode="HTML")
-        return
+        async with async_session() as session:
+            result = await session.execute(
+                select(CountryPrice).order_by(CountryPrice.id.asc())
+            )
+            countries = result.scalars().all()
+        
+        if not countries:
+            await message.answer("<b>📊 Buying Prices List</b>\n\n- The list is currently empty.", parse_mode="HTML")
+            return
 
-    text_lines = ["<b>📊 Buying Prices List:</b>\n"]
-    for i, c in enumerate(countries, 1):
-        try:
-            iso = region_code_for_country_code(int(c.country_code))
-            flag = get_flag(iso)
-        except:
-            iso = "??"
-            flag = "🌐"
-            
-        # Format: 1- 🇻🇺 +678 -VU: $0.55
-        line = f"{i}- {flag} +{c.country_code} -{iso}: ${c.buy_price:.2f}"
-        text_lines.append(line)
-    
-    final_text = "\n".join(text_lines)
-    if len(final_text) > 4000:
-        for i in range(0, len(text_lines), 50):
-            chunk = "\n".join(text_lines[i:i+50])
-            await message.answer(chunk, parse_mode="HTML")
-    else:
-        await message.answer(final_text, parse_mode="HTML")
+        text_lines = ["<b>📊 Buying Prices List:</b>\n"]
+        for i, c in enumerate(countries, 1):
+            try:
+                iso = region_code_for_country_code(int(c.country_code))
+                flag = get_flag(iso)
+            except:
+                iso = "??"
+                flag = "🌐"
+                
+            # Format: 1- 🇻🇺 +678 -VU: $0.55
+            line = f"{i}- {flag} +{c.country_code} -{iso}: ${c.buy_price:.2f}"
+            text_lines.append(line)
+        
+        final_text = "\n".join(text_lines)
+        if len(final_text) > 4000:
+            for i in range(0, len(text_lines), 50):
+                chunk = "\n".join(text_lines[i:i+50])
+                await message.answer(chunk, parse_mode="HTML")
+        else:
+            await message.answer(final_text, parse_mode="HTML")
+    except Exception as e:
+        await message.answer(f"⚠️ Error in /cap: {str(e)}")
 
 @router.message(Command("cancel"))
 async def seller_cancel_cmd(message: Message, state: FSMContext):
