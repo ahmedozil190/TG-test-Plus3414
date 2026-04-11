@@ -136,17 +136,14 @@ async def seller_cap_cmd(message: Message):
         text_lines.append("</blockquote>") # End expandable quote
         
         final_text = "\n".join(text_lines)
-        # Even with blockquote, we should respect length limits
         if len(final_text) > 4000:
-            # For very long lists, expandable blockquote might not work well across chunks,
-            # but we'll try to keep them grouped.
             for i in range(0, len(text_lines), 50):
                 chunk = "\n".join(text_lines[i:i+50])
-                if not chunk.startswith("<blockquote"): chunk = " <blockquote expandable>\n" + chunk
+                if not chunk.startswith("<blockquote"): chunk = "<blockquote expandable>\n" + chunk
                 if not chunk.endswith("</blockquote>"): chunk = chunk + "\n</blockquote>"
                 await message.answer(chunk, parse_mode="HTML")
         else:
-            await message.answer(f"<b>📊 Buying Prices List:</b>\n{final_text}", parse_mode="HTML")
+            await message.answer(final_text, parse_mode="HTML")
     except Exception as e:
         await message.answer(f"⚠️ Error in /cap: {str(e)}")
 
