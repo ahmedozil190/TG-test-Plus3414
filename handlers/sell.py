@@ -21,7 +21,7 @@ async def cq_sell_number(call: CallbackQuery):
     text = (
         "- Welcome to the account purchase section.\n\n"
         f"- Total balance : {int(balance) if balance == 0 else balance}$\n"
-        f"- Hands your account : <code>{call.from_user.id}</code> .\n"
+        f"- Hands your account : <a href=\"tg://user?id={call.from_user.id}\">{call.from_user.id}</a> .\n"
         "- Price : @MOOO8O .\n"
         "Gover the bot through the buttons below."
     )
