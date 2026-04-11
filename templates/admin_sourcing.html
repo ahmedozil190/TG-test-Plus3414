@@ -226,9 +226,9 @@
                 <i class="fa-solid fa-tags"></i>
                 <span data-i18n="nav_prices">Price Management</span>
             </div>
-            <div id="menu-logs" class="menu-item" onclick="switchSection('history', this)">
-                <i class="fa-solid fa-history"></i>
-                <span data-i18n="nav_history">Sourcing Logs</span>
+            <div id="menu-users" class="menu-item" onclick="switchSection('users', this)">
+                <i class="fa-solid fa-users"></i>
+                <span data-i18n="nav_users">Users</span>
             </div>
         </div>
         <div style="margin-top: auto;">
@@ -289,11 +289,11 @@
             <div class="list-container" id="price-list"></div>
         </div>
 
-        <div id="section-history" class="content-section" style="display: none;">
-            <div class="card" style="text-align: center; color: var(--text-dim);">
-                <i class="fa-solid fa-folder-open" style="font-size: 3rem; margin-bottom: 15px;"></i>
-                <p data-i18n="coming_soon">Coming Soon...</p>
+        <div id="section-users" class="content-section" style="display: none;">
+            <div class="section-header">
+                <h3 data-i18n="nav_users">Users</h3>
             </div>
+            <div class="list-container" id="user-list"></div>
         </div>
     </main>
 
@@ -331,7 +331,7 @@
             en: {
                 nav_dashboard: "Dashboard",
                 nav_prices: "Buying Prices",
-                nav_history: "Sourcing Logs",
+                nav_users: "Users",
                 nav_close: "Close Panel",
                 stat_total: "Total Accounts",
                 stat_pending: "Pending Approval",
@@ -339,18 +339,18 @@
                 buying_prices: "Buying Inventory",
                 btn_add: "Add Country",
                 btn_save: "Save Changes",
-                coming_soon: "Coming Soon...",
                 modal_title: "Buying Price Setup",
                 lbl_code: "Country Code (numeric)",
                 lbl_buy: "Buy Price ($)",
                 lbl_delay: "Approval Delay (min)",
                 no_ops: "No transactions found",
-                buy_lbl: "Buying Price"
+                buy_lbl: "Buying Price",
+                no_users: "No users found"
             },
             ar: {
                 nav_dashboard: "الرئيسية",
                 nav_prices: "أسعار الشراء",
-                nav_history: "سجلات التوريد",
+                nav_users: "المستخدمين",
                 nav_close: "إغلاق اللوحة",
                 stat_total: "إجمالي الحسابات",
                 stat_pending: "في انتظار التأكيد",
@@ -358,13 +358,13 @@
                 buying_prices: "قائمة الشراء",
                 btn_add: "إضافة دولة",
                 btn_save: "حفظ التعديلات",
-                coming_soon: "قريباً...",
                 modal_title: "إعداد سعر الشراء",
                 lbl_code: "مفتاح الدولة (رقم)",
                 lbl_buy: "سعر الشراء ($)",
                 lbl_delay: "تأخير الموافقة (دقيقة)",
                 no_ops: "لا توجد عمليات",
-                buy_lbl: "سعر الشراء"
+                buy_lbl: "سعر الشراء",
+                no_users: "لا يوجد مستخدمين"
             }
         };
 
@@ -409,8 +409,26 @@
                 document.getElementById('stat-pending').innerText = data.stats.pending_count;
                 renderRecent(data.recent);
                 renderPrices(data.prices);
+
+                // Fetch users from store API
+                const uRes = await fetch('/api/admin/store/data');
+                const uData = await uRes.json();
+                renderUsers(uData.users);
             } catch (e) { console.error(e); }
             finally { document.getElementById('loader').style.display = 'none'; }
+        }
+
+        function renderUsers(list) {
+            const container = document.getElementById('user-list');
+            if (!list || !list.length) { container.innerHTML = `<p style="text-align: center; color: var(--text-dim);">${translations[currentLang].no_users}</p>`; return; }
+            container.innerHTML = list.map(u => `
+                <div class="list-item">
+                    <div class="item-info">
+                        <h4><i class="fa-solid fa-user"></i> ID: ${u.id}</h4>
+                        <p><i class="fa-solid fa-calendar"></i> ${u.join_date} &nbsp;|&nbsp; <i class="fa-solid fa-wallet"></i> <span style="color: var(--blue-primary); font-weight: 700;">$${u.balance}</span></p>
+                    </div>
+                </div>
+            `).join('');
         }
 
         function renderRecent(list) {
