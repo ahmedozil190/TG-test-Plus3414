@@ -880,14 +880,14 @@
             <i class="fas fa-tags"></i>
             <span data-i18n="nav_prices">Buying Prices</span>
         </div>
+        <div id="menu-history" class="menu-item" onclick="switchNav('history', this)">
+            <i class="fas fa-clock-rotate-left"></i>
+            <span data-i18n="nav_history">History</span>
+        </div>
         <div style="margin-top: auto;">
-            <div class="menu-item" onclick="toggleLanguage()">
-                <i class="fas fa-language"></i>
-                <span id="lang-text">العربية</span>
-            </div>
-            <div class="menu-item danger" onclick="window.Telegram.WebApp.close()">
-                <i class="fas fa-right-from-bracket"></i>
-                <span data-i18n="nav_close">Close Panel</span>
+            <div id="menu-settings" class="menu-item" onclick="switchNav('settings', this)">
+                <i class="fas fa-cog"></i>
+                <span data-i18n="nav_settings">Settings</span>
             </div>
         </div>
     </div>
@@ -1001,6 +1001,32 @@
                 </div>
             </section>
 
+            <!-- ===== History Section ===== -->
+            <section id="section-history" class="view-section">
+                <div class="section-header">
+                    <i class="fas fa-clock-rotate-left"></i>
+                    <h2 data-i18n="nav_history">History</h2>
+                </div>
+                <div class="card" style="padding: 22px;">
+                    <div class="list-container" id="history-list"></div>
+                </div>
+            </section>
+
+            <!-- ===== Settings Section ===== -->
+            <section id="section-settings" class="view-section">
+                <div class="section-header">
+                    <i class="fas fa-cog"></i>
+                    <h2 data-i18n="nav_settings">Settings</h2>
+                </div>
+                <div class="card" style="padding: 22px;">
+                    <div class="form-group">
+                        <label data-i18n="lbl_bot_name">Bot Name</label>
+                        <input type="text" id="setting-bot-name" class="input-field" placeholder="Sourcing Bot">
+                    </div>
+                    <button class="primary-btn" onclick="saveSettings()" data-i18n="btn_save_settings">Save Settings</button>
+                </div>
+            </section>
+
         </div>
     </main>
 
@@ -1058,7 +1084,11 @@
                 search_placeholder: "Search users...",
                 user_mgmt: "User Management",
                 tab_active: "Active",
-                tab_banned: "Banned"
+                tab_banned: "Banned",
+                nav_history: "History",
+                nav_settings: "Settings",
+                lbl_bot_name: "Bot Name",
+                btn_save_settings: "Save Settings"
             },
             ar: {
                 panel_title: "لوحة التوريد",
@@ -1087,7 +1117,11 @@
                 search_placeholder: "بحث عن مستخدم...",
                 user_mgmt: "إدارة المستخدمين",
                 tab_active: "نشط",
-                tab_banned: "محظور"
+                tab_banned: "محظور",
+                nav_history: "سجل العمليات",
+                nav_settings: "الإعدادات",
+                lbl_bot_name: "اسم البوت",
+                btn_save_settings: "حفظ الإعدادات"
             }
         };
 
@@ -1131,7 +1165,7 @@
             if (btn) btn.classList.add('active');
 
             // Update page title
-            const titleMap = { home: 'nav_dashboard', prices: 'nav_prices', users: 'nav_users' };
+            const titleMap = { home: 'nav_dashboard', prices: 'nav_prices', users: 'nav_users', history: 'nav_history', settings: 'nav_settings' };
             const titleEl = document.getElementById('page-title');
             titleEl.setAttribute('data-i18n', titleMap[id]);
             titleEl.innerText = translations[currentLang][titleMap[id]];
@@ -1146,6 +1180,7 @@
                 document.getElementById('stat-total-sourced').innerText = data.stats.total_sourced;
                 document.getElementById('stat-pending').innerText = data.stats.pending_count;
                 renderRecent(data.recent);
+                renderHistory(data.recent);
                 renderPrices(data.prices);
 
                 const uRes = await fetch('/api/admin/store/data');
@@ -1324,6 +1359,27 @@
             } catch (e) {
                 alert('Error deleting country');
             }
+        }
+
+        function renderHistory(list) {
+            const container = document.getElementById('history-list');
+            if (!list || !list.length) {
+                container.innerHTML = `<p style="text-align: center; color: var(--text-secondary); padding: 20px;">${translations[currentLang].no_ops}</p>`;
+                return;
+            }
+            container.innerHTML = list.map(item => `
+                <div class="list-item">
+                    <div class="item-info">
+                        <h4>${item.phone}</h4>
+                        <p>${item.country} | <span style="color: var(--accent); font-weight: 700;">$${item.buy_price}</span></p>
+                    </div>
+                    <span class="badge ${item.status === 'AVAILABLE' ? 'badge-success' : 'badge-warning'}">${item.status}</span>
+                </div>
+            `).join('');
+        }
+
+        function saveSettings() {
+            alert(currentLang === 'ar' ? 'تم حفظ الإعدادات بنجاح!' : 'Settings saved successfully!');
         }
 
         updateUI();

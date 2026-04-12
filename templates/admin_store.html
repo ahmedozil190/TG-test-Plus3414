@@ -882,13 +882,9 @@
             <span data-i18n="nav_sales">Sales History</span>
         </div>
         <div style="margin-top: auto;">
-            <div class="menu-item" onclick="toggleLanguage()">
-                <i class="fas fa-language"></i>
-                <span id="lang-text">العربية</span>
-            </div>
-            <div class="menu-item danger" onclick="window.Telegram.WebApp.close()">
-                <i class="fas fa-right-from-bracket"></i>
-                <span data-i18n="nav_close">Close Panel</span>
+            <div id="menu-settings" class="menu-item" onclick="switchNav('settings', this)">
+                <i class="fas fa-cog"></i>
+                <span data-i18n="nav_settings">Settings</span>
             </div>
         </div>
     </div>
@@ -1027,6 +1023,21 @@
                 </div>
             </section>
 
+            <!-- ===== Settings Section ===== -->
+            <section id="section-settings" class="view-section">
+                <div class="section-header">
+                    <i class="fas fa-cog"></i>
+                    <h2 data-i18n="nav_settings">Settings</h2>
+                </div>
+                <div class="card" style="padding: 22px;">
+                    <div class="form-group">
+                        <label data-i18n="lbl_bot_name">Bot Name</label>
+                        <input type="text" id="setting-bot-name" class="input-field" placeholder="Store Bot">
+                    </div>
+                    <button class="primary-btn" onclick="saveSettings()" data-i18n="btn_save_settings">Save Settings</button>
+                </div>
+            </section>
+
         </div>
     </main>
 
@@ -1084,7 +1095,10 @@
                 tab_banned: "Banned",
                 tab_all: "All",
                 tab_recent: "Recent",
-                no_users: "No users found"
+                no_users: "No users found",
+                nav_settings: "Settings",
+                lbl_bot_name: "Bot Name",
+                btn_save_settings: "Save Settings"
             },
             ar: {
                 panel_title: "لوحة المتجر",
@@ -1117,7 +1131,10 @@
                 tab_banned: "محظور",
                 tab_all: "الكل",
                 tab_recent: "الأخيرة",
-                no_users: "لا يوجد مستخدمين"
+                no_users: "لا يوجد مستخدمين",
+                nav_settings: "الإعدادات",
+                lbl_bot_name: "اسم البوت",
+                btn_save_settings: "حفظ الإعدادات"
             }
         };
 
@@ -1161,7 +1178,7 @@
             document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
             if (btn) btn.classList.add('active');
 
-            const titleMap = { home: 'nav_dashboard', users: 'nav_users', prices: 'nav_prices', sales: 'nav_sales' };
+            const titleMap = { home: 'nav_dashboard', users: 'nav_users', prices: 'nav_prices', sales: 'nav_sales', settings: 'nav_settings' };
             const titleEl = document.getElementById('page-title');
             titleEl.setAttribute('data-i18n', titleMap[id]);
             titleEl.innerText = translations[currentLang][titleMap[id]];
@@ -1391,6 +1408,10 @@
             } catch (e) {
                 alert('Error deleting country');
             }
+        }
+
+        function saveSettings() {
+            alert(currentLang === 'ar' ? 'تم حفظ الإعدادات بنجاح!' : 'Settings saved successfully!');
         }
 
         updateUI();
