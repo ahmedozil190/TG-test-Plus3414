@@ -13,6 +13,7 @@ from database.models import User, Account, Transaction, AccountStatus, Transacti
 from pydantic import BaseModel
 from typing import List
 from services.session_manager import request_app_code, submit_app_code, login_clients
+import pycountry
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -23,6 +24,30 @@ def get_flag_emoji(country_code: str):
     if not country_code or len(country_code) != 2:
         return "🌐"
     return "".join(chr(ord(c) + 127397) for c in country_code.upper())
+
+def resolve_country_info(country_code_str: str):
+    """Resolve ISO code and Country Name from a numeric calling code."""
+    try:
+        # Clean input: remove +, leading zeros, spaces
+        code = country_code_str.strip().lstrip('+').lstrip('0')
+        if not code: return "Unknown", "🌐"
+        
+        numeric_code = int(code)
+        iso_code = phonenumbers.region_code_for_country_code(numeric_code)
+        flag = get_flag_emoji(iso_code)
+        
+        # Resolve name using pycountry for accuracy
+        name = f"Country {numeric_code}"
+        try:
+            country = pycountry.countries.get(alpha_2=iso_code)
+            if country:
+                name = country.name
+        except: pass
+        
+        return name, flag
+    except Exception as e:
+        logger.error(f"Error resolving country {country_code_str}: {e}")
+        return f"Code {country_code_str}", "🌐"
 
 app = FastAPI(title="Store Admin Panel")
 
@@ -329,14 +354,7 @@ async def update_sourcing_price(data: dict):
     delay = int(data.get("approve_delay", 0))
 
     # Auto-detect name more reliably
-    name_only = f"Country {code}"
-    try:
-        iso_code = phonenumbers.region_code_for_country_code(int(code))
-        # Use mobile example number for better geocoding results
-        example_num = phonenumbers.example_number_for_type(iso_code, phonenumbers.PhoneNumberType.MOBILE)
-        if example_num:
-            name_only = geocoder.description_for_number(example_num, "en") or name_only
-    except: pass
+    name_only, _ = resolve_country_info(code)
 
     async with async_session() as session:
         cp = (await session.execute(select(CountryPrice).where(CountryPrice.country_code == code))).scalar()
@@ -373,15 +391,23 @@ async def update_price(data: PriceUpdate):
         cp = (await session.execute(select(CountryPrice).where(CountryPrice.country_code == data.country_code))).scalar()
         if cp:
             cp.price = data.price
-            # If coming from Store, we might only want to update 'price'
-            if data.country_name and data.country_name != "Unknown":
+            # If name is Unknown, try to resolve it
+            if not data.country_name or data.country_name == "Unknown":
+                name, _ = resolve_country_info(data.country_code)
+                cp.country_name = name
+            elif data.country_name:
                 cp.country_name = data.country_name
+                
             cp.buy_price = data.buy_price
             cp.approve_delay = data.approve_delay
         else:
+            name = data.country_name
+            if not name or name == "Unknown":
+                name, _ = resolve_country_info(data.country_code)
+                
             cp = CountryPrice(
                 country_code=data.country_code, 
-                country_name=data.country_name, 
+                country_name=name, 
                 price=data.price,
                 buy_price=data.buy_price,
                 approve_delay=data.approve_delay
