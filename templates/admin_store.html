@@ -1245,6 +1245,8 @@
             document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
             if (btn) btn.classList.add('active');
 
+            sessionStorage.setItem('last_view_admin_store', id);
+
             const titleMap = { home: 'nav_dashboard', users: 'nav_users', prices: 'nav_prices', sales: 'nav_sales', settings: 'nav_settings' };
             const titleEl = document.getElementById('page-title');
             titleEl.setAttribute('data-i18n', titleMap[id]);
@@ -1565,6 +1567,12 @@
         }
 
         updateUI();
+        const savedView = sessionStorage.getItem('last_view_admin_store');
+        if (savedView && savedView !== 'home') {
+            const menuBtn = document.getElementById('menu-' + (savedView === 'users' ? 'users' : savedView === 'prices' ? 'prices' : savedView === 'sales' ? 'sales' : savedView === 'settings' ? 'settings' : 'dashboard'));
+            if (menuBtn) switchNav(savedView, menuBtn);
+            else switchNav(savedView);
+        }
     </script>
 </body>
 

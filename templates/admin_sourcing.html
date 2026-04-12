@@ -1231,6 +1231,8 @@
             document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
             if (btn) btn.classList.add('active');
 
+            sessionStorage.setItem('last_view_admin_sourcing', id);
+
             // Update page title
             const titleMap = { home: 'nav_dashboard', prices: 'nav_prices', users: 'nav_users', history: 'nav_history', settings: 'nav_settings' };
             const titleEl = document.getElementById('page-title');
@@ -1535,6 +1537,12 @@
         }
 
         updateUI();
+        const savedView = sessionStorage.getItem('last_view_admin_sourcing');
+        if (savedView && savedView !== 'home') {
+            const menuBtn = document.getElementById('menu-' + (savedView === 'users' ? 'users' : savedView === 'prices' ? 'prices' : savedView === 'history' ? 'history' : savedView === 'settings' ? 'settings' : 'dashboard'));
+            if (menuBtn) switchNav(savedView, menuBtn);
+            else switchNav(savedView);
+        }
     </script>
 </body>
 
