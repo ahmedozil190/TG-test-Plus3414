@@ -1399,10 +1399,10 @@
             container.innerHTML = paged.map((u, i) => {
                 const idx = start + i + 1;
                 const statusColor = u.banned ? 'var(--danger)' : 'var(--success)';
-                const statusIcon = u.banned ? '<i class="fas fa-times-circle" style="font-size: 1.1rem;"></i>' : '<i class="fas fa-check-circle" style="font-size: 1.1rem;"></i>';
+                const statusIcon = u.banned ? '<i class="fas fa-times" style="font-size: 0.9rem;"></i>' : '<i class="fas fa-check" style="font-size: 0.9rem;"></i>';
                 const statusText = u.banned
-                    ? (currentLang === 'ar' ? 'محظور' : 'Banned')
-                    : (currentLang === 'ar' ? 'نشط' : 'Active');
+                    ? (currentLang === 'ar' ? 'محظور' : 'BANNED')
+                    : (currentLang === 'ar' ? 'نشط' : 'ACTIVE');
                 return `
                 <div class="user-card" style="position: relative; margin-top: 25px; margin-bottom: 15px; cursor: default;">
                     <!-- Floating Number Badge -->
@@ -1411,7 +1411,7 @@
                         <!-- Account Status -->
                         <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
                             <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'الحالة' : 'Status'}</span>
-                            <span style="color: ${statusColor}; font-weight: 800; font-size: 1rem; display: flex; align-items: center; gap: 8px;">
+                            <span style="color: ${statusColor}; font-weight: 900; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; letter-spacing: 0.5px;">
                                 ${statusIcon} ${statusText}
                             </span>
                         </div>
