@@ -272,8 +272,16 @@ async def get_admin_store_data():
             stock_count = (await session.execute(select(func.count(Account.id)).where(Account.status == AccountStatus.AVAILABLE))).scalar() or 0
             total_balance = (await session.execute(select(func.sum(User.balance)))).scalar() or 0.0
 
-            users_result = await session.execute(select(User).order_by(User.join_date.desc()).limit(50))
-            users = [{"id": u.id, "balance": u.balance, "join_date": u.join_date.strftime("%Y-%m-%d")} for u in users_result.scalars().all()]
+            users_result = await session.execute(select(User).order_by(User.id.desc()).limit(200))
+            users = [
+                {
+                    "id": u.id,
+                    "balance": round(u.balance or 0.0, 2),
+                    "join_date": u.join_date.strftime("%Y-%m-%d") if u.join_date else "N/A",
+                    "banned": False
+                }
+                for u in users_result.scalars().all()
+            ]
             
             tx_result = await session.execute(
                 select(Transaction)
