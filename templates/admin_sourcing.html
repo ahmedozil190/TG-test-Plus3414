@@ -1517,20 +1517,20 @@
                         ${idx}
                     </div>
                     <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
-                        <!-- Country Code -->
-                        <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
-                            <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'كود الدولة' : 'Country Code'}</span>
-                            <span style="color: #fff; font-weight: 800; font-size: 1.1rem;">+${p.code}</span>
-                        </div>
                         <!-- Country Name -->
                         <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
                             <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'اسم الدولة' : 'Country Name'}</span>
-                            <span style="color: #fff; font-weight: 700; font-size: 0.95rem;">${p.name}</span>
+                            <span style="color: var(--success); font-weight: 800; font-size: 1.1rem;">${p.name.split(' ').filter(word => !/^[A-Z]{2}$/.test(word)).join(' ')}</span>
+                        </div>
+                        <!-- Country Code -->
+                        <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'كود الدولة' : 'Country Code'}</span>
+                            <span style="color: var(--accent-purple); font-weight: 800; font-size: 1.1rem;">+${p.code}</span>
                         </div>
                         <!-- Buy Price -->
                         <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
                             <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'سعر الشراء' : 'Buy Price'}</span>
-                            <span style="color: var(--accent); font-weight: 900; font-size: 1.1rem;">$${p.buy_price}</span>
+                            <span style="color: var(--accent); font-weight: 900; font-size: 1.1rem;">$${Number(p.buy_price).toFixed(2)}</span>
                         </div>
                     </div>
                     <!-- Action Buttons -->

@@ -230,7 +230,7 @@
 
         /* ========== Pagination & Sub-components ========== */
         .pag-btn-new {
-            background: rgba(255,255,255,0.05);
+            background: rgba(255, 255, 255, 0.05);
             border: none;
             width: 40px;
             height: 40px;
@@ -242,9 +242,11 @@
             align-items: center;
             justify-content: center;
         }
+
         .pag-btn-new:hover {
-            background: rgba(255,255,255,0.15);
+            background: rgba(255, 255, 255, 0.15);
         }
+
         .user-card-index {
             position: absolute;
             top: -12px;
@@ -302,7 +304,10 @@
         /* ========== Confirm Modal ========== */
         .confirm-overlay {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: rgba(0, 0, 0, 0.7);
             backdrop-filter: blur(8px);
             display: none;
@@ -312,10 +317,12 @@
             opacity: 0;
             transition: 0.3s;
         }
+
         .confirm-overlay.active {
             display: flex;
             opacity: 1;
         }
+
         .confirm-modal {
             background: linear-gradient(165deg, #1e2235, #161929);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -328,9 +335,11 @@
             transform: scale(0.9);
             transition: 0.3s;
         }
+
         .confirm-overlay.active .confirm-modal {
             transform: scale(1);
         }
+
         .confirm-icon {
             width: 60px;
             height: 60px;
@@ -343,22 +352,26 @@
             font-size: 1.5rem;
             margin: 0 auto 20px;
         }
+
         .confirm-title {
             font-size: 1.25rem;
             font-weight: 700;
             color: #fff;
             margin-bottom: 10px;
         }
+
         .confirm-msg {
             color: #94a3b8;
             font-size: 0.95rem;
             line-height: 1.5;
             margin-bottom: 25px;
         }
+
         .confirm-btns {
             display: flex;
             gap: 12px;
         }
+
         .confirm-btn {
             flex: 1;
             padding: 12px;
@@ -368,17 +381,26 @@
             transition: 0.3s;
             border: none;
         }
+
         .confirm-yes {
             background: var(--danger);
             color: #fff;
         }
+
         .confirm-no {
             background: rgba(255, 255, 255, 0.05);
             color: #fff;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .confirm-yes:hover { opacity: 0.9; transform: translateY(-2px); }
-        .confirm-no:hover { background: rgba(255, 255, 255, 0.1); }
+
+        .confirm-yes:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .confirm-no:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
 
         .menu-btn {
             font-size: 1.5rem;
@@ -1081,7 +1103,8 @@
 
                 <!-- User Management -->
                 <div class="card" style="padding: 22px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                         <h3 style="color: var(--text-secondary); font-size: 1rem; font-weight: 700;"
                             data-i18n="user_mgmt">User Management</h3>
                     </div>
@@ -1094,7 +1117,8 @@
                     </div>
                     <div class="list-container" id="user-list"></div>
                     <!-- Pagination -->
-                    <div id="user-pagination" class="pagination" style="display: none; justify-content: center; align-items: center; gap: 15px; margin-top: 20px;">
+                    <div id="user-pagination" class="pagination"
+                        style="display: none; justify-content: center; align-items: center; gap: 15px; margin-top: 20px;">
                         <button class="pag-btn-new" onclick="prevPage()">
                             <i class="fas fa-chevron-left"></i>
                         </button>
@@ -1127,7 +1151,8 @@
                 </div>
 
                 <div class="card" style="padding: 22px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                         <div class="section-header" style="margin: 0;">
                             <h2 data-i18n="nav_prices">Selling Prices</h2>
                         </div>
@@ -1137,10 +1162,14 @@
                     </div>
                     <div class="list-container" id="price-list"></div>
                     <!-- Pagination -->
-                    <div class="pagination" id="price-pagination" style="display: none; justify-content: center; align-items: center; gap: 15px; margin-top: 20px;">
-                        <button class="pag-btn-new" onclick="prevPricePage()"><i class="fas fa-chevron-left"></i></button>
-                        <span class="pag-info" id="price-page-info" style="color: #fff; font-weight: 600; font-size: 0.9rem;">Page 1</span>
-                        <button class="pag-btn-new" onclick="nextPricePage()"><i class="fas fa-chevron-right"></i></button>
+                    <div class="pagination" id="price-pagination"
+                        style="display: none; justify-content: center; align-items: center; gap: 15px; margin-top: 20px;">
+                        <button class="pag-btn-new" onclick="prevPricePage()"><i
+                                class="fas fa-chevron-left"></i></button>
+                        <span class="pag-info" id="price-page-info"
+                            style="color: #fff; font-weight: 600; font-size: 0.9rem;">Page 1</span>
+                        <button class="pag-btn-new" onclick="nextPricePage()"><i
+                                class="fas fa-chevron-right"></i></button>
                     </div>
                 </div>
             </section>
@@ -1175,7 +1204,8 @@
                         <label data-i18n="lbl_bot_name">Bot Name</label>
                         <input type="text" id="setting-bot-name" class="input-field" placeholder="Store Bot">
                     </div>
-                    <button class="primary-btn" onclick="saveSettings()" data-i18n="btn_save_settings">Save Settings</button>
+                    <button class="primary-btn" onclick="saveSettings()" data-i18n="btn_save_settings">Save
+                        Settings</button>
                 </div>
             </section>
 
@@ -1540,7 +1570,7 @@
             document.getElementById('stat-total-countries').innerText = list.length;
             const container = document.getElementById('price-list');
             const pagContainer = document.getElementById('price-pagination');
-            
+
             if (!list || !list.length) {
                 container.innerHTML = `
                 <div style="text-align: center; padding: 40px 20px; background: rgba(0,0,0,0.15); border-radius: 16px; border: 1px dashed rgba(255,255,255,0.05); margin-top: 10px;">
@@ -1564,20 +1594,20 @@
                         ${idx}
                     </div>
                     <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
-                        <!-- Country Code -->
-                        <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
-                            <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'كود الدولة' : 'Country Code'}</span>
-                            <span style="color: #fff; font-weight: 800; font-size: 1.1rem;">+${p.code}</span>
-                        </div>
                         <!-- Country Name -->
                         <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
                             <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'اسم الدولة' : 'Country Name'}</span>
-                            <span style="color: #fff; font-weight: 700; font-size: 0.95rem;">${p.name}</span>
+                            <span style="color: var(--success); font-weight: 800; font-size: 1.1rem;">${p.name.split(' ').filter(word => !/^[A-Z]{2}$/.test(word)).join(' ')}</span>
+                        </div>
+                        <!-- Country Code -->
+                        <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'كود الدولة' : 'Country Code'}</span>
+                            <span style="color: var(--accent-purple); font-weight: 800; font-size: 1.1rem;">+${p.code}</span>
                         </div>
                         <!-- Sell Price -->
                         <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
                             <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'سعر البيع' : 'Sell Price'}</span>
-                            <span style="color: var(--accent); font-weight: 900; font-size: 1.1rem;">$${p.price}</span>
+                            <span style="color: var(--accent); font-weight: 900; font-size: 1.1rem;">$${Number(p.price).toFixed(2)}</span>
                         </div>
                     </div>
                     <!-- Action Buttons -->
@@ -1649,16 +1679,16 @@
                 // Optimistic UI update: Remove from local array immediately
                 allPrices = allPrices.filter(p => p.code !== code);
                 if (filteredPrices) filteredPrices = filteredPrices.filter(p => p.code !== code);
-                
+
                 // Re-render only the prices list (instant UI)
                 renderPrices(filteredPrices || allPrices);
-                
+
                 // Perform deletion in background
                 fetch(`/api/admin/prices/delete/${code}`, { method: 'DELETE' }).catch(e => {
                     console.error("Delete failed:", e);
                     init(); // Re-sync if error
                 });
-            } catch (e) { 
+            } catch (e) {
                 console.error(e);
                 init();
             }
@@ -1698,10 +1728,13 @@
         <div class="confirm-modal" onclick="event.stopPropagation()">
             <div class="confirm-icon"><i class="fas fa-exclamation-triangle"></i></div>
             <div id="confirm-title" class="confirm-title" data-i18n="confirm_title">Confirm Action</div>
-            <div id="confirm-msg" class="confirm-msg" data-i18n="confirm_delete_msg">Are you sure you want to proceed?</div>
+            <div id="confirm-msg" class="confirm-msg" data-i18n="confirm_delete_msg">Are you sure you want to proceed?
+            </div>
             <div class="confirm-btns">
-                <button class="confirm-btn confirm-no" onclick="closeConfirm(false)" data-i18n="btn_cancel">Cancel</button>
-                <button class="confirm-btn confirm-yes" onclick="closeConfirm(true)" data-i18n="btn_confirm">Delete Now</button>
+                <button class="confirm-btn confirm-no" onclick="closeConfirm(false)"
+                    data-i18n="btn_cancel">Cancel</button>
+                <button class="confirm-btn confirm-yes" onclick="closeConfirm(true)" data-i18n="btn_confirm">Delete
+                    Now</button>
             </div>
         </div>
     </div>
