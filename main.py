@@ -15,6 +15,7 @@ from database.models import Account, AccountStatus, CountryPrice, User, Transact
 from sqlalchemy import select
 from handlers import main_router
 from web_admin import app
+from middlewares.user_update import UserUpdateMiddleware
 
 if sys.platform == 'win32':
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
@@ -106,6 +107,9 @@ async def main():
     bot_buyer = Bot(token=BOT_TOKEN)
     dp_buyer = Dispatcher()
     dp_buyer.include_router(main_router)
+    
+    # Register middleware
+    dp_buyer.update.outer_middleware(UserUpdateMiddleware())
 
     # Seller Bot (Optional token)
     bot_seller = None
@@ -114,6 +118,10 @@ async def main():
             bot_seller = Bot(token=SELLER_BOT_TOKEN)
             dp_seller = Dispatcher()
             dp_seller.include_router(seller_router)
+            
+            # Register middleware
+            dp_seller.update.outer_middleware(UserUpdateMiddleware())
+            
             logger.info("Seller Bot configured.")
         except Exception as e:
             logger.error(f"Seller Bot configuration failed: {e}")

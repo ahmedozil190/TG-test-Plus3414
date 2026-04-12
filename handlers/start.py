@@ -17,18 +17,10 @@ async def cmd_start(message: Message):
         result = await session.execute(stmt)
         user = result.scalar_one_or_none()
         
-        full_name = f"{message.from_user.first_name or ''} {message.from_user.last_name or ''}".strip() or None
-        tg_username = message.from_user.username or None
-        
         if not user:
-            user = User(id=user_id, balance=0.0, full_name=full_name, username=tg_username)
+            user = User(id=user_id, balance=0.0)
             session.add(user)
-        else:
-            # Update name/username if it changed
-            if full_name: user.full_name = full_name
-            if tg_username: user.username = tg_username
-            
-        await session.commit()
+            await session.commit()
             
     await message.answer(
         "- The main list.\n\n"
