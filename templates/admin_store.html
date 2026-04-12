@@ -1273,10 +1273,8 @@
                 renderSalesList(allTransactions);
                 renderUsers(filteredUsers || allUsers);
 
-                // Fetch prices
-                const pRes = await fetch('/api/admin/sourcing/data');
-                const pData = await pRes.json();
-                allPrices = pData.prices || [];
+                // Fetch sell prices from store endpoint
+                allPrices = data.prices || [];
                 renderPrices(allPrices);
             } catch (e) { console.error(e); }
             finally { document.getElementById('loader').style.display = 'none'; }

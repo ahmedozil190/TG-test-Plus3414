@@ -229,10 +229,26 @@ async def get_admin_store_data():
             for tx in tx_result.scalars().all():
                 transactions.append({"buyer_id": tx.user_id, "price": abs(tx.amount)})
 
+            # Fetch sell prices (only price field, not buy_price)
+            prices_result = await session.execute(select(CountryPrice).order_by(CountryPrice.country_name))
+            prices = []
+            for p in prices_result.scalars().all():
+                flag = "🌐"
+                try:
+                    region = phonenumbers.region_code_for_country_code(int(p.country_code))
+                    flag = get_flag_emoji(region)
+                except: pass
+                prices.append({
+                    "code": p.country_code,
+                    "name": f"{flag} {p.country_name}",
+                    "price": p.price
+                })
+
         return {
             "stats": {"user_count": user_count, "stock_count": stock_count, "total_balance": total_balance},
             "users": users,
-            "transactions": transactions
+            "transactions": transactions,
+            "prices": prices
         }
     except Exception as e:
         logger.error(f"Store Admin Data Error: {e}")
