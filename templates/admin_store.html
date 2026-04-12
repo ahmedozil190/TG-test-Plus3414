@@ -1492,10 +1492,22 @@
 
             container.innerHTML = paged.map((u, i) => {
                 const idx = start + i + 1;
+                const statusColor = u.banned ? 'var(--danger)' : 'var(--success)';
+                const statusIcon = u.banned ? '<i class="fas fa-times-circle" style="font-size: 1.1rem;"></i>' : '<i class="fas fa-check-circle" style="font-size: 1.1rem;"></i>';
+                const statusText = u.banned
+                    ? (currentLang === 'ar' ? 'محظور' : 'Banned')
+                    : (currentLang === 'ar' ? 'نشط' : 'Active');
                 return `
                 <div class="user-card" style="position: relative; margin-top: 25px; margin-bottom: 15px; cursor: default;">
                     <div class="user-card-index">${idx}</div>
                     <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+                        <!-- User Status -->
+                        <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'الحالة' : 'Status'}</span>
+                            <span style="color: ${statusColor}; font-weight: 800; font-size: 1rem; display: flex; align-items: center; gap: 8px;">
+                                ${statusIcon} ${statusText}
+                            </span>
+                        </div>
                         <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
                             <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'الاسم الكامل' : 'Full Name'}</span>
                             <span style="color: #00d2ff; font-weight: 700; font-size: 1rem;">${u.full_name}</span>
