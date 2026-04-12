@@ -1349,26 +1349,30 @@
                 return;
             }
             container.innerHTML = list.map(p => `
-                <div class="user-card" style="margin-top: 0; margin-bottom: 15px; cursor: default;">
-                    <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 10px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="background: #11141d; border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 18px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+                        <!-- Country Code -->
+                        <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); padding: 14px 18px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center;">
                             <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'كود الدولة' : 'Country Code'}</span>
                             <span style="color: #fff; font-weight: 800; font-size: 1.1rem;">+${p.code}</span>
                         </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <!-- Country Name -->
+                        <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); padding: 14px 18px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center;">
                             <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'اسم الدولة' : 'Country Name'}</span>
                             <span style="color: #fff; font-weight: 700; font-size: 0.95rem;">${p.name}</span>
                         </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <!-- Buy Price -->
+                        <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); padding: 14px 18px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center;">
                             <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'سعر الشراء' : 'Buy Price'}</span>
                             <span style="color: var(--accent); font-weight: 900; font-size: 1.1rem;">$${p.buy_price}</span>
                         </div>
                     </div>
-                    <div class="user-card-dashed" style="display: flex; gap: 10px;">
-                        <button class="primary-btn" style="flex: 1; background: rgba(96, 165, 250, 0.1); color: var(--accent); border: 1px solid rgba(96, 165, 250, 0.2); box-shadow: none; padding: 12px; font-size: 0.9rem;" onclick="editPrice('${p.code}', ${p.buy_price}, ${p.approve_delay})">
+                    <!-- Action Buttons -->
+                    <div style="display: flex; gap: 10px;">
+                        <button class="primary-btn" style="flex: 1; background: rgba(96, 165, 250, 0.1); color: var(--accent); border: 1px solid rgba(96, 165, 250, 0.2); box-shadow: none; padding: 14px; font-size: 0.95rem;" onclick="editPrice('${p.code}', ${p.buy_price}, ${p.approve_delay})">
                             <i class="fas fa-pen" style="margin-right: 5px;"></i> ${currentLang === 'ar' ? 'تعديل' : 'Edit'}
                         </button>
-                        <button class="primary-btn" style="flex: 1; background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); box-shadow: none; padding: 12px; font-size: 0.9rem;" onclick="deletePrice('${p.code}')">
+                        <button class="primary-btn" style="flex: 1; background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); box-shadow: none; padding: 14px; font-size: 0.95rem;" onclick="deletePrice('${p.code}')">
                             <i class="fas fa-trash" style="margin-right: 5px;"></i> ${currentLang === 'ar' ? 'حذف' : 'Delete'}
                         </button>
                     </div>
