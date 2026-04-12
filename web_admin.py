@@ -78,6 +78,25 @@ def clean_display_name(raw_name: str) -> str:
 
 app = FastAPI(title="Store Admin Panel")
 
+@app.on_event("startup")
+async def run_migrations():
+    """Auto-migrate SQLite DB to add any missing columns."""
+    from database.engine import engine
+    import sqlalchemy
+    try:
+        async with engine.begin() as conn:
+            # Add full_name to users if missing
+            try:
+                await conn.execute(sqlalchemy.text("ALTER TABLE users ADD COLUMN full_name TEXT"))
+            except: pass
+            # Add username to users if missing
+            try:
+                await conn.execute(sqlalchemy.text("ALTER TABLE users ADD COLUMN username TEXT"))
+            except: pass
+        logger.info("DB migration check complete.")
+    except Exception as e:
+        logger.warning(f"Migration warning: {e}")
+
 # Use absolute path for templates to avoid issues in deployment
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
@@ -273,14 +292,48 @@ async def get_admin_store_data():
             total_balance = (await session.execute(select(func.sum(User.balance)))).scalar() or 0.0
 
             users_result = await session.execute(select(User).order_by(User.id.desc()).limit(200))
+            all_users_raw = users_result.scalars().all()
+
+            # Get per-user account stats in one query
+            seller_stats = {}
+            for u in all_users_raw:
+                sold = (await session.execute(
+                    select(func.count(Account.id)).where(Account.seller_id == u.id)
+                )).scalar() or 0
+                accepted = (await session.execute(
+                    select(func.count(Account.id)).where(
+                        Account.seller_id == u.id,
+                        Account.status == AccountStatus.SOLD
+                    )
+                )).scalar() or 0
+                rejected = (await session.execute(
+                    select(func.count(Account.id)).where(
+                        Account.seller_id == u.id,
+                        Account.status == AccountStatus.REJECTED
+                    )
+                )).scalar() or 0
+                bought = (await session.execute(
+                    select(func.count(Account.id)).where(Account.buyer_id == u.id)
+                )).scalar() or 0
+                seller_stats[u.id] = {
+                    "sold": sold, "accepted": accepted,
+                    "rejected": rejected, "bought": bought
+                }
+
             users = [
                 {
                     "id": u.id,
+                    "full_name": u.full_name or "N/A",
+                    "username": f"@{u.username}" if u.username else "N/A",
                     "balance": round(u.balance or 0.0, 2),
                     "join_date": u.join_date.strftime("%Y-%m-%d") if u.join_date else "N/A",
-                    "banned": False
+                    "banned": False,
+                    "sold_count": seller_stats[u.id]["sold"],
+                    "accepted_count": seller_stats[u.id]["accepted"],
+                    "rejected_count": seller_stats[u.id]["rejected"],
+                    "bought_count": seller_stats[u.id]["bought"],
                 }
-                for u in users_result.scalars().all()
+                for u in all_users_raw
             ]
             
             tx_result = await session.execute(

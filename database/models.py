@@ -9,6 +9,7 @@ class AccountStatus(enum.Enum):
     AVAILABLE = "available"
     PENDING = "pending"
     SOLD = "sold"
+    REJECTED = "rejected"
 
 class TransactionType(enum.Enum):
     DEPOSIT = "deposit"
@@ -21,6 +22,8 @@ class User(Base):
     balance = Column(Float, default=0.0)
     language = Column(String, default="ar")
     join_date = Column(DateTime, default=datetime.utcnow)
+    full_name = Column(String, nullable=True)
+    username = Column(String, nullable=True)
 
 class Account(Base):
     __tablename__ = 'accounts'

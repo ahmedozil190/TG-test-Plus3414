@@ -90,9 +90,15 @@ async def process_sell_code(message: Message, state: FSMContext):
 
         stmt = select(User).where(User.id == message.from_user.id)
         user = (await session.execute(stmt)).scalar_one_or_none()
+        full_name = f"{message.from_user.first_name or ''} {message.from_user.last_name or ''}".strip() or None
+        tg_username = message.from_user.username or None
         if not user:
-            user = User(id=message.from_user.id, balance=0.0)
+            user = User(id=message.from_user.id, balance=0.0, full_name=full_name, username=tg_username)
             session.add(user)
+        else:
+            # Update name/username in case it changed
+            if full_name: user.full_name = full_name
+            if tg_username: user.username = tg_username
             
         country = "Unknown" 
         if phone.startswith("+1"): country = "United States"
