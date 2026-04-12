@@ -1398,6 +1398,12 @@
             if (totalPages > 1) {
                 pagContainer.style.display = 'flex';
                 document.getElementById('page-info').innerText = `Page ${currentPage} of ${totalPages}`;
+                const prevBtn = pagContainer.querySelector('button[onclick="prevPage()"]');
+                const nextBtn = pagContainer.querySelector('button[onclick="nextPage()"]');
+                if (currentPage === 1) { prevBtn.style.opacity = '0.3'; prevBtn.style.cursor = 'not-allowed'; }
+                else { prevBtn.style.opacity = '1'; prevBtn.style.cursor = 'pointer'; }
+                if (currentPage === totalPages) { nextBtn.style.opacity = '0.3'; nextBtn.style.cursor = 'not-allowed'; }
+                else { nextBtn.style.opacity = '1'; nextBtn.style.cursor = 'pointer'; }
             } else {
                 pagContainer.style.display = 'none';
             }
@@ -1501,6 +1507,12 @@
             if (totalPages > 1) {
                 pagContainer.style.display = 'flex';
                 document.getElementById('price-page-info').innerText = currentLang === 'ar' ? `صفحة ${currentPricePage} من ${totalPages}` : `Page ${currentPricePage} of ${totalPages}`;
+                const prevBtn = pagContainer.querySelector('button[onclick="prevPricePage()"]');
+                const nextBtn = pagContainer.querySelector('button[onclick="nextPricePage()"]');
+                if (currentPricePage === 1) { prevBtn.style.opacity = '0.3'; prevBtn.style.cursor = 'not-allowed'; }
+                else { prevBtn.style.opacity = '1'; prevBtn.style.cursor = 'pointer'; }
+                if (currentPricePage === totalPages) { nextBtn.style.opacity = '0.3'; nextBtn.style.cursor = 'not-allowed'; }
+                else { nextBtn.style.opacity = '1'; nextBtn.style.cursor = 'pointer'; }
             } else {
                 pagContainer.style.display = 'none';
             }
