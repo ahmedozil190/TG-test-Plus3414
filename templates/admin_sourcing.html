@@ -1,456 +1,1079 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sourcing Dashboard</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg-color: #080d27;
-            --sidebar-bg: #0c1232;
-            --glass-bg: rgba(17, 26, 58, 0.7);
-            --blue-primary: #3b82f6;
-            --blue-glow: rgba(59, 130, 246, 0.4);
-            --text-main: #f8fafc;
-            --text-dim: #8b95b5;
-            --border: rgba(100, 120, 200, 0.12);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --bg-main: #0a0b10;
+            --bg-card: rgba(255, 255, 255, 0.02);
+            --border-card: rgba(255, 255, 255, 0.05);
+            --accent: #60a5fa;
+            --accent-dark: #3b82f6;
+            --accent-purple: #a855f7;
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --sidebar-bg: #181d29;
+            --nav-bg: rgba(15, 17, 26, 0.95);
+            --radius: 18px;
         }
 
-        [dir="rtl"] { font-family: 'Cairo', sans-serif; }
-        [dir="ltr"] { font-family: 'Inter', sans-serif; }
-
         * {
-            margin: 0; padding: 0; box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
         }
 
-        body {
-            background: var(--bg-color);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            overflow-x: hidden;
-            transition: var(--transition);
+        [dir="ltr"] {
+            font-family: 'Outfit', sans-serif;
         }
 
-        /* Sidebar Styling */
-        .sidebar {
-            width: 280px;
-            background: var(--sidebar-bg);
-            border-right: 1px solid var(--border);
+        [dir="rtl"] {
+            font-family: 'Cairo', sans-serif;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(96, 165, 250, 0.3);
+            border-radius: 10px;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-primary);
             height: 100vh;
-            position: fixed;
-            left: -280px; /* Hidden by default (LTR) */
-            top: 0;
-            z-index: 2000;
-            padding: 30px 20px;
-            transition: var(--transition);
+            overflow: hidden;
             display: flex;
             flex-direction: column;
-            box-shadow: 10px 0 30px rgba(0,0,0,0.5);
         }
 
-        [dir="rtl"] .sidebar { left: auto; right: -280px; border-right: none; border-left: 1px solid var(--border); box-shadow: -10px 0 30px rgba(0,0,0,0.5); }
-        .sidebar.active { left: 0; }
-        [dir="rtl"] .sidebar.active { right: 0; left: auto; }
-
-        .sidebar-header {
-            padding-bottom: 30px;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 30px;
-            text-align: center;
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 10% 10%, rgba(96, 165, 250, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.1) 0%, transparent 40%);
+            z-index: -1;
+            pointer-events: none;
         }
 
-        .sidebar-logo {
-            font-size: 1.5rem;
+        /* ========== Loader ========== */
+        #loader {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid #1c1f2e;
+            border-top: 3px solid var(--accent-dark);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ========== Side Menu ========== */
+        .side-menu {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 280px;
+            height: 100vh;
+            background: var(--sidebar-bg);
+            border-right: 1px solid rgba(255, 255, 255, 0.15);
+            z-index: 2001;
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 20px 10px;
+            box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+        }
+
+        [dir="rtl"] .side-menu {
+            left: auto;
+            right: -100%;
+            border-right: none;
+            border-left: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .side-menu.active {
+            left: 0;
+        }
+
+        [dir="rtl"] .side-menu.active {
+            right: 0;
+            left: auto;
+        }
+
+        .side-menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: -20px -10px 15px -10px;
+            padding: 25px 15px 20px 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .side-menu-title {
+            font-size: 1.15rem;
             font-weight: 800;
-            color: var(--blue-primary);
+            background: linear-gradient(90deg, #60a5fa, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .menu-list { list-style: none; flex: 1; }
+        .close-circle {
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            color: #cbd5e1;
+            transition: 0.3s;
+        }
+
+        .close-circle:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
         .menu-item {
             display: flex;
             align-items: center;
             gap: 15px;
-            padding: 15px;
+            padding: 12px 15px;
             border-radius: 12px;
-            color: var(--text-dim);
+            color: #94a3b8;
             text-decoration: none;
-            margin-bottom: 10px;
-            transition: var(--transition);
+            margin-bottom: 4px;
             cursor: pointer;
+            transition: 0.2s;
+            font-weight: 600;
+            border-left: 2px solid transparent;
         }
 
-        .menu-item i { font-size: 1.2rem; }
-        .menu-item:hover, .menu-item.active {
-            background: rgba(59, 130, 246, 0.1);
-            color: var(--blue-primary);
+        [dir="rtl"] .menu-item {
+            border-left: none;
+            border-right: 2px solid transparent;
         }
 
-        /* Top Bar Styling */
-        .topbar {
-            position: fixed; top: 0; left: 0; right: 0; height: 60px;
-            background: #0c1232; border-bottom: 1px solid rgba(100,120,200,0.08);
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 16px; z-index: 1000;
+        .menu-item i {
+            width: 24px;
+            text-align: center;
+            font-size: 1.1rem;
+            color: #94a3b8;
         }
 
-        .hamburger { font-size: 1.3rem; color: #fff; cursor: pointer; width: 40px; }
-        .page-title { font-size: 1.1rem; font-weight: 800; color: #fff; flex: 1; text-align: center; }
-        .avatar {
-            width: 36px; height: 36px; border-radius: 50%; background: #22c55e;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 0.8rem; font-weight: 800; color: #fff;
+        .menu-item.active {
+            background: #252840;
+            color: var(--accent);
+            border-left: 5px solid var(--accent);
+            border-radius: 14px;
         }
 
-        /* Main Content */
-        main {
-            flex: 1; padding: 75px 16px 40px; max-width: 900px;
-            margin: 0 auto; width: 100%; transition: var(--transition);
+        [dir="rtl"] .menu-item.active {
+            border-left: none;
+            border-right: 5px solid var(--accent);
         }
 
-        .overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(3px);
-            z-index: 1500; display: none;
-        }
-        .overlay.active { display: block; }
-
-        /* Stats Cards */
-        .grid-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 30px; }
-        .stat-card {
-            background: var(--glass-bg); border: 1px solid var(--border); border-radius: 24px;
-            padding: 25px 15px; text-align: center;
-        }
-        .stat-card i { font-size: 2rem; color: var(--blue-primary); margin-bottom: 12px; }
-        .stat-value { font-size: 1.8rem; font-weight: 800; color: #fff; }
-        .stat-label { font-size: 0.8rem; color: var(--text-dim); margin-top: 5px; }
-
-        .card { background: var(--glass-bg); border: 1px solid var(--border); border-radius: 24px; padding: 25px; margin-bottom: 25px; }
-        .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-        .section-header h3 { font-size: 1.1rem; color: var(--blue-primary); }
-
-        .btn-add {
-            background: var(--blue-primary); color: white; border: none; padding: 12px 20px;
-            border-radius: 12px; font-weight: 600; display: flex; align-items: center;
-            gap: 8px; cursor: pointer; text-decoration: none; font-size: 0.9rem;
+        .menu-item.active i {
+            color: var(--accent);
         }
 
-        .list-container { display: flex; flex-direction: column; gap: 15px; }
-        .list-item {
-            background: linear-gradient(145deg, rgba(255,255,255,0.02), rgba(255,255,255,0.05));
-            border: 1px solid var(--border);
-            border-right: 4px solid var(--blue-primary);
-            border-radius: 20px;
-            padding: 20px;
+        .menu-item.danger {
+            color: var(--danger);
+        }
+
+        .menu-item.danger i {
+            color: var(--danger);
+        }
+
+        /* ========== Menu Overlay ========== */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(2px);
+            z-index: 2000;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .menu-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* ========== Header ========== */
+        header {
+            background-color: var(--nav-bg);
+            padding: 12px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: var(--transition);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border-card);
+            backdrop-filter: blur(20px);
+        }
+
+        .menu-btn {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        header h1 {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .avatar {
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, #60a5fa, #3b82f6);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(96, 165, 250, 0.4);
+        }
+
+        /* ========== Main Scroller ========== */
+        #app-content-scroller {
+            overflow-y: auto;
+            overflow-x: hidden;
+            flex: 1;
+            scroll-behavior: smooth;
+        }
+
+        #app-content-scroller::-webkit-scrollbar {
+            width: 7px;
+        }
+
+        #app-content-scroller::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        #app-content-scroller::-webkit-scrollbar-thumb {
+            background: #8b5cf6;
+            border-radius: 10px;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+        }
+
+        .container {
+            padding: 20px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* ========== Section Header ========== */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 25px 0 15px 0;
+            color: var(--text-secondary);
+        }
+
+        .section-header i {
+            font-size: 1.2rem;
+        }
+
+        .section-header h2 {
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        /* ========== Sections ========== */
+        .view-section {
+            display: none;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .view-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* ========== Glass Card ========== */
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        /* ========== Stat Row Card ========== */
+        .stat-row {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 60px;
+            padding: 12px 20px;
+        }
+
+        .stat-row .label {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .stat-row .value {
+            font-size: 1.3rem;
+            font-weight: 800;
+        }
+
+        /* ========== List Items ========== */
+        .list-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .list-item {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(14px);
+            border: 1px solid var(--border-card);
+            border-radius: 16px;
+            padding: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
         }
 
         .list-item:hover {
-            transform: translateY(-3px);
-            background: rgba(255,255,255,0.07);
-            border-color: var(--blue-primary);
-            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
+            transform: scale(1.02);
         }
 
-        .item-info { display: flex; flex-direction: column; gap: 5px; }
-        .item-info h4 { 
-            font-size: 1.1rem; 
-            font-weight: 700; 
-            color: var(--text-main);
+        .list-item:active {
+            transform: scale(0.98);
+        }
+
+        .item-info {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .item-info h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        .item-info h4 i { color: var(--blue-primary); font-size: 0.9rem; }
-        .item-info p { 
-            font-size: 0.85rem; 
-            color: var(--text-dim);
-            background: rgba(255,255,255,0.05);
-            padding: 4px 12px;
+
+        .item-info h4 i {
+            color: var(--accent);
+            font-size: 0.85rem;
+        }
+
+        .item-info p {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+        }
+
+        .badge {
+            padding: 6px 14px;
             border-radius: 10px;
-            width: fit-content;
-            margin-top: 5px;
+            font-size: 0.7rem;
+            font-weight: 800;
+        }
+
+        .badge-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .badge-warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        /* ========== Tabs ========== */
+        .tabs-row {
+            display: flex;
+            gap: 0;
+            margin-bottom: 25px;
+            padding: 5px;
+            border-radius: 14px;
+            border: 1px solid var(--border-card);
+            background: rgba(0, 0, 0, 0.35);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            background: transparent;
+            color: #94a3b8;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .tab-btn.active {
+            background: var(--accent-dark);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        /* ========== Search Card ========== */
+        .search-input {
+            width: 100%;
+            padding: 14px;
+            background: #0f1116;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 0.95rem;
+            outline: none;
+            transition: 0.3s;
+            margin-bottom: 12px;
+        }
+
+        .search-input::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.6;
+        }
+
+        .search-input:focus {
+            border-color: var(--accent);
+        }
+
+        .btn-find {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-purple));
+            border: none;
+            border-radius: 14px;
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(96, 165, 250, 0.2);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-find:active {
+            transform: scale(0.96);
+        }
+
+        /* ========== User Card (Rich) ========== */
+        .user-card {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(14px);
+            border: 1px solid var(--border-card);
+            border-radius: 16px;
+            padding: 18px;
+            margin-top: 15px;
+            position: relative;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .user-card:hover {
+            transform: scale(1.02);
+        }
+
+        .user-card:active {
+            transform: scale(0.98);
+        }
+
+        .user-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .user-card-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .user-card-sub {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .user-card-id {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .user-stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 18px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            padding-top: 15px;
+        }
+
+        .user-stat-item {
+            text-align: center;
+        }
+
+        .user-stat-label {
+            font-size: 0.65rem;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .user-stat-value {
+            font-size: 1rem;
+            font-weight: 800;
+        }
+
+        .user-card-dashed {
+            border-top: 1px dashed rgba(255, 255, 255, 0.1);
+            margin-top: 15px;
+            padding-top: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* ========== Buttons ========== */
+        .btn-add {
+            background: linear-gradient(135deg, var(--accent-dark), #2563eb);
+            color: #fff;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+
+        .btn-add:active {
+            transform: scale(0.96);
         }
 
         .btn-edit {
-            width: 40px; height: 40px; border-radius: 50%; background: rgba(59, 130, 246, 0.1);
-            border: none; color: var(--blue-primary); cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: rgba(96, 165, 250, 0.1);
+            border: 1px solid rgba(96, 165, 250, 0.15);
+            color: var(--accent);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
         }
 
-        /* Modal */
-        .modal { position: fixed; inset: 0; display: none; justify-content: center; align-items: center; z-index: 3000; padding: 20px; }
-        .modal.active { display: flex; }
-        .modal-content { background: #0f172a; border: 1px solid var(--blue-primary); border-radius: 28px; width: 100%; max-width: 450px; padding: 30px; }
-
-        .input-group { margin-bottom: 18px; }
-        .input-group label { display: block; font-size: 0.85rem; color: var(--text-dim); margin-bottom: 8px; }
-        input { width: 100%; background: #1e293b; border: 1px solid var(--border); border-radius: 12px; padding: 14px; color: white; outline: none; }
-
-        #loader { position: fixed; inset: 0; background: var(--bg-color); display: flex; justify-content: center; align-items: center; z-index: 9999; }
-        .spinner { width: 40px; height: 40px; border: 3px solid rgba(59, 130, 246, 0.2); border-top-color: var(--blue-primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-
-        .badge { padding: 4px 10px; border-radius: 8px; font-size: 0.7rem; font-weight: 700; }
-        .badge-success { background: rgba(34, 197, 94, 0.1); color: #22c55e; }
-        .badge-warning { background: rgba(234, 179, 8, 0.1); color: #eab308; }
-
-        /* Users page specific */
-        .user-stat-card {
-            background: #111a3a; border: 1px solid rgba(100,120,200,0.1);
-            border-left: 3px solid;
-            border-image: linear-gradient(180deg, #3b82f6, #8b5cf6) 1;
-            border-radius: 16px; padding: 18px 20px;
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 12px;
+        .btn-edit:active {
+            transform: scale(0.96);
         }
-        .user-stat-card .label { font-size: 0.85rem; font-weight: 700; color: #8b95b5; text-transform: uppercase; letter-spacing: 1px; }
-        .user-stat-card .value { font-size: 1.4rem; font-weight: 800; }
-        .user-stat-card .value.green { color: #22c55e; }
-        .user-stat-card .value.red { color: #ef4444; }
 
-        .search-card {
-            background: #111a3a; border: 1px solid rgba(100,120,200,0.1);
-            border-radius: 20px; padding: 25px 20px; margin: 25px 0 20px;
+        .btn-delete {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
         }
-        .search-input {
-            width: 100%; background: #080d27; border: 1px solid rgba(150,160,200,0.2);
-            border-radius: 12px; padding: 14px 16px; color: #fff; font-size: 0.95rem;
-            outline: none; margin-bottom: 15px;
-        }
-        .search-input:focus { border-color: rgba(139, 92, 246, 0.5); }
-        .search-input::placeholder { color: #5a6585; }
-        .btn-find {
-            width: 100%; padding: 14px; border: none; border-radius: 14px; cursor: pointer;
-            background: linear-gradient(135deg, #22c55e, #8b5cf6);
-            color: #fff; font-size: 1rem; font-weight: 700;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-            transition: all 0.3s; box-shadow: 0 4px 20px rgba(139, 92, 246, 0.25);
-        }
-        .btn-find:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(139, 92, 246, 0.4); }
 
-        .mgmt-card {
-            background: #111a3a; border: 1px solid rgba(100,120,200,0.1);
-            border-radius: 20px; padding: 25px 20px;
+        .btn-delete:active {
+            transform: scale(0.96);
         }
-        .mgmt-card h4 { font-size: 1rem; font-weight: 700; color: #e2e8f0; margin-bottom: 18px; }
-        .tab-row { display: flex; gap: 12px; margin-bottom: 20px; }
-        .tab-btn {
-            padding: 10px 28px; border-radius: 25px; border: none; cursor: pointer;
-            font-size: 0.85rem; font-weight: 700; transition: all 0.3s;
-        }
-        .tab-btn.active { background: var(--blue-primary); color: #fff; }
-        .tab-btn:not(.active) { background: transparent; color: #8b95b5; border: 1px solid rgba(100,120,200,0.15); }
-        .tab-btn:not(.active):hover { border-color: var(--blue-primary); color: var(--blue-primary); }
 
-        .user-card {
-            background: rgba(17, 26, 58, 0.5); border: 1px solid rgba(100,120,200,0.08);
-            border-radius: 16px; padding: 16px; margin-bottom: 10px;
-            display: flex; align-items: center; gap: 14px;
+        /* ========== Modal ========== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
-        .user-card .u-avatar {
-            width: 42px; height: 42px; border-radius: 50%; background: var(--blue-primary);
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 800; font-size: 0.9rem; color: #fff; flex-shrink: 0;
-        }
-        .user-card .u-info { flex: 1; }
-        .user-card .u-info h5 { font-size: 0.95rem; font-weight: 600; color: #e2e8f0; margin-bottom: 3px; }
-        .user-card .u-info p { font-size: 0.8rem; color: #8b95b5; }
-        .user-card .u-balance { font-size: 1rem; font-weight: 800; color: #22c55e; }
 
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-card {
+            background: rgba(19, 23, 34, 0.98);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            padding: 30px;
+            width: 90%;
+            max-width: 380px;
+            transform: scale(0.9);
+            transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.25);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+        }
+
+        .modal-overlay.active .modal-card {
+            transform: scale(1);
+        }
+
+        .modal-card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            margin-left: 5px;
+        }
+
+        .input-field {
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid #2e3248;
+            color: #fff;
+            padding: 12px;
+            border-radius: 10px;
+            outline: none;
+            font-size: 0.95rem;
+            transition: 0.3s;
+        }
+
+        .input-field:focus {
+            border-color: var(--accent);
+        }
+
+        .primary-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-purple));
+            color: #fff;
+            border: none;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(96, 165, 250, 0.2);
+            transition: 0.2s;
+        }
+
+        .primary-btn:active {
+            transform: scale(0.96);
+        }
+
+        .cancel-btn {
+            width: 100%;
+            padding: 14px;
+            background: #1a1d24;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            color: var(--text-secondary);
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        /* Hide number input arrows */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        /* ========== Pagination ========== */
+        .pagination {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+            padding: 10px;
+        }
+
+        .nav-arrow {
+            background: rgba(255, 255, 255, 0.05);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            color: #fff;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .nav-arrow:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* ========== Desktop ========== */
         @media (min-width: 1024px) {
-            .sidebar { left: 0; }
-            [dir="rtl"] .sidebar { left: auto; right: 0; }
-            main { padding-left: 300px; padding-right: 20px; margin: 0; max-width: 1200px; }
-            [dir="rtl"] main { padding-right: 300px; padding-left: 20px; }
-            .hamburger { display: none; }
-            .topbar { left: 300px; }
-            [dir="rtl"] .topbar { left: 0; right: 300px; }
+            .side-menu {
+                left: 0;
+            }
+
+            [dir="rtl"] .side-menu {
+                left: auto;
+                right: 0;
+            }
+
+            header {
+                padding-left: 300px;
+            }
+
+            [dir="rtl"] header {
+                padding-left: 20px;
+                padding-right: 300px;
+            }
+
+            .container {
+                max-width: 700px;
+            }
+
+            .menu-btn {
+                display: none;
+            }
         }
     </style>
 </head>
-<body>
-    <div id="loader"><div class="spinner"></div></div>
-    <div id="overlay" class="overlay" onclick="toggleSidebar()"></div>
 
-    <!-- Sidebar -->
-    <div id="sidebar" class="sidebar">
-        <div class="sidebar-header">
-            <h2 class="sidebar-logo"><i class="fa-solid fa-shield-halved"></i></h2>
+<body>
+    <!-- Loader -->
+    <div id="loader">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Overlay -->
+    <div id="menu-overlay" class="menu-overlay" onclick="toggleMenu()"></div>
+
+    <!-- Side Menu -->
+    <div id="side-menu" class="side-menu">
+        <div class="side-menu-header">
+            <h3 class="side-menu-title" data-i18n="panel_title">Sourcing Panel</h3>
+            <div class="close-circle" onclick="toggleMenu()">
+                <i class="fas fa-times"></i>
+            </div>
         </div>
-        <div class="menu-list">
-            <div id="menu-dashboard" class="menu-item active" onclick="switchSection('home', this)">
-                <i class="fa-solid fa-house"></i>
-                <span data-i18n="nav_dashboard">Dashboard</span>
-            </div>
-            <div id="menu-prices" class="menu-item" onclick="switchSection('prices', this)">
-                <i class="fa-solid fa-tags"></i>
-                <span data-i18n="nav_prices">Price Management</span>
-            </div>
-            <div id="menu-users" class="menu-item" onclick="switchSection('users', this)">
-                <i class="fa-solid fa-users"></i>
-                <span data-i18n="nav_users">Users</span>
-            </div>
+        <div id="menu-dashboard" class="menu-item active" onclick="switchNav('home', this)">
+            <i class="fas fa-chart-pie"></i>
+            <span data-i18n="nav_dashboard">Dashboard</span>
+        </div>
+        <div id="menu-prices" class="menu-item" onclick="switchNav('prices', this)">
+            <i class="fas fa-tags"></i>
+            <span data-i18n="nav_prices">Buying Prices</span>
+        </div>
+        <div id="menu-users" class="menu-item" onclick="switchNav('users', this)">
+            <i class="fas fa-users-cog"></i>
+            <span data-i18n="nav_users">Users</span>
         </div>
         <div style="margin-top: auto;">
             <div class="menu-item" onclick="toggleLanguage()">
-                <i class="fa-solid fa-language"></i>
+                <i class="fas fa-language"></i>
                 <span id="lang-text">العربية</span>
             </div>
-            <div class="menu-item" style="color: #ef4444;" onclick="window.Telegram.WebApp.close()">
-                <i class="fa-solid fa-right-from-bracket"></i>
+            <div class="menu-item danger" onclick="window.Telegram.WebApp.close()">
+                <i class="fas fa-right-from-bracket"></i>
                 <span data-i18n="nav_close">Close Panel</span>
             </div>
         </div>
     </div>
 
-    <!-- Top Bar -->
-    <div class="topbar">
-        <div class="hamburger" onclick="toggleSidebar()">
-            <i class="fa-solid fa-bars"></i>
+    <!-- Header -->
+    <header>
+        <div class="menu-btn" onclick="toggleMenu()">
+            <i class="fas fa-bars"></i>
         </div>
-        <div class="page-title" id="page-title" data-i18n="nav_dashboard">Dashboard</div>
+        <h1 id="page-title" data-i18n="nav_dashboard">Dashboard</h1>
         <div class="avatar">AD</div>
-    </div>
+    </header>
 
-    <main>
-        <!-- Home Section -->
-        <div id="section-home" class="content-section">
-            <div class="grid-stats">
-                <div class="stat-card">
-                    <i class="fa-solid fa-database"></i>
-                    <div class="stat-value" id="stat-total-sourced">0</div>
-                    <div class="stat-label" data-i18n="stat_total">Total Accounts</div>
+    <!-- Main Scroller -->
+    <main id="app-content-scroller">
+        <div class="container">
+
+            <!-- ===== Dashboard Section ===== -->
+            <section id="section-home" class="view-section active">
+                <!-- Stats -->
+                <div class="section-header">
+                    <i class="fas fa-database"></i>
+                    <h2 data-i18n="stat_section">Inventory</h2>
                 </div>
-                <div class="stat-card">
-                    <i class="fa-solid fa-hourglass-half"></i>
-                    <div class="stat-value" id="stat-pending">0</div>
-                    <div class="stat-label" data-i18n="stat_pending">Pending Approval</div>
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 30px;">
+                    <div class="card stat-row">
+                        <span class="label" data-i18n="stat_total">TOTAL ACCOUNTS</span>
+                        <span class="value" id="stat-total-sourced" style="color: var(--success);">0</span>
+                    </div>
+                    <div class="card stat-row">
+                        <span class="label" data-i18n="stat_pending">PENDING APPROVAL</span>
+                        <span class="value" id="stat-pending" style="color: var(--warning);">0</span>
+                    </div>
                 </div>
-            </div>
 
-            <div class="section-header">
-                <h3 data-i18n="recent_ops">Recent Operations</h3>
-            </div>
-            <div class="card">
-                <div class="list-container" id="recent-sourced"></div>
-            </div>
-        </div>
-
-        <!-- Prices Section -->
-        <div id="section-prices" class="content-section" style="display: none;">
-            <div class="section-header">
-                <h3 data-i18n="buying_prices">Buying Prices</h3>
-                <button class="btn-add" onclick="openPriceModal()">
-                    <i class="fa-solid fa-plus"></i> <span data-i18n="btn_add">Add Country</span>
-                </button>
-            </div>
-            <div class="list-container" id="price-list"></div>
-        </div>
-
-        <!-- Users Section -->
-        <div id="section-users" class="content-section" style="display: none;">
-            <div class="user-stat-card">
-                <span class="label" data-i18n="stat_total_users">TOTAL USERS</span>
-                <span class="value green" id="user-count">0</span>
-            </div>
-            <div class="user-stat-card">
-                <span class="label" data-i18n="stat_banned">BANNED</span>
-                <span class="value red" id="banned-count">0</span>
-            </div>
-
-            <div class="search-card">
-                <input class="search-input" type="text" id="user-search" placeholder="Search users..." data-i18n-placeholder="search_placeholder">
-                <button class="btn-find" onclick="searchUsers()">
-                    <i class="fa-solid fa-magnifying-glass"></i> <span data-i18n="btn_find">Find</span>
-                </button>
-            </div>
-
-            <div class="mgmt-card">
-                <h4 data-i18n="user_mgmt">User Management</h4>
-                <div class="tab-row">
-                    <button class="tab-btn active" onclick="switchTab('active', this)" data-i18n="tab_active">Active</button>
-                    <button class="tab-btn" onclick="switchTab('banned', this)" data-i18n="tab_banned">Banned</button>
+                <!-- Recent Operations -->
+                <div class="section-header">
+                    <i class="fas fa-clock-rotate-left"></i>
+                    <h2 data-i18n="recent_ops">Recent Operations</h2>
                 </div>
-                <div class="list-container" id="user-list"></div>
-            </div>
+                <div class="card" style="padding: 22px;">
+                    <div class="list-container" id="recent-sourced"></div>
+                </div>
+            </section>
+
+            <!-- ===== Prices Section ===== -->
+            <section id="section-prices" class="view-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div class="section-header" style="margin: 0;">
+                        <i class="fas fa-tags"></i>
+                        <h2 data-i18n="buying_prices">Buying Inventory</h2>
+                    </div>
+                    <button class="btn-add" onclick="openPriceModal()">
+                        <i class="fas fa-plus"></i> <span data-i18n="btn_add">Add</span>
+                    </button>
+                </div>
+                <div class="list-container" id="price-list"></div>
+            </section>
+
+            <!-- ===== Users Section ===== -->
+            <section id="section-users" class="view-section">
+                <!-- User Stats -->
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 25px;">
+                    <div class="card stat-row">
+                        <span class="label" data-i18n="stat_total_users">TOTAL USERS</span>
+                        <span class="value" id="user-count" style="color: var(--success);">0</span>
+                    </div>
+                    <div class="card stat-row">
+                        <span class="label" data-i18n="stat_banned">BANNED</span>
+                        <span class="value" id="banned-count" style="color: var(--danger);">0</span>
+                    </div>
+                </div>
+
+                <!-- Search -->
+                <div class="card" style="padding: 18px; margin-bottom: 25px;">
+                    <input class="search-input" type="text" id="user-search" placeholder="Search users..."
+                        data-i18n-placeholder="search_placeholder">
+                    <button class="btn-find" onclick="searchUsers()">
+                        <i class="fas fa-search"></i> <span data-i18n="btn_find">Find</span>
+                    </button>
+                    <div id="reset-search-container" style="display: none; margin-top: 10px;">
+                        <button class="cancel-btn" onclick="resetSearch()" data-i18n="btn_reset">Reset</button>
+                    </div>
+                </div>
+
+                <!-- User Management -->
+                <div class="card" style="padding: 22px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3 style="color: var(--text-secondary); font-size: 1rem; font-weight: 700;"
+                            data-i18n="user_mgmt">User Management</h3>
+                    </div>
+
+                    <div class="tabs-row">
+                        <button class="tab-btn active" id="tab-active" onclick="switchTab('active', this)"
+                            data-i18n="tab_active">Active</button>
+                        <button class="tab-btn" id="tab-banned" onclick="switchTab('banned', this)"
+                            data-i18n="tab_banned">Banned</button>
+                    </div>
+                    <div class="list-container" id="user-list"></div>
+
+                    <!-- Pagination -->
+                    <div id="user-pagination" class="pagination">
+                        <button class="nav-arrow" onclick="prevPage()">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <span id="page-info" style="font-size: 0.9rem; font-weight: 600;">Page 1 of 1</span>
+                        <button class="nav-arrow" onclick="nextPage()">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
         </div>
     </main>
 
-    <!-- Modal Form -->
-    <div id="price-modal" class="modal" onclick="closePriceModal(event)">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <h3 style="margin-bottom: 25px; color: var(--blue-primary);" data-i18n="modal_title">Price Settings</h3>
-            <div class="input-group">
+    <!-- ===== Price Modal ===== -->
+    <div id="price-modal" class="modal-overlay" onclick="closePriceModal(event)">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <h3 data-i18n="modal_title">Buying Price Setup</h3>
+            <div class="form-group">
                 <label data-i18n="lbl_code">Country Code (numeric)</label>
-                <input type="text" id="m-code" placeholder="20">
+                <input type="text" id="m-code" class="input-field" placeholder="20">
             </div>
-            <div class="input-group">
+            <div class="form-group">
                 <label data-i18n="lbl_buy">Buy Price ($)</label>
-                <input type="number" id="m-buy" step="0.1" placeholder="0.5">
+                <input type="number" id="m-buy" class="input-field" step="0.1" placeholder="0.5">
             </div>
-            <div class="input-group">
+            <div class="form-group">
                 <label data-i18n="lbl_delay">Approval Delay (min)</label>
-                <input type="number" id="m-delay" placeholder="60">
+                <input type="number" id="m-delay" class="input-field" placeholder="60">
             </div>
-            <button class="btn-add" style="width: 100%; justify-content: center;" onclick="savePriceChanges()" data-i18n="btn_save">
-                Save Changes
-            </button>
-            <button class="btn-add" style="width: 100%; justify-content: center; margin-top: 10px; background: #334155;" onclick="closePriceModal(null)">
-                Close
-            </button>
+            <button class="primary-btn" onclick="savePriceChanges()" data-i18n="btn_save">Save Changes</button>
+            <button class="cancel-btn" onclick="closePriceModal(null)" data-i18n="nav_close">Close</button>
         </div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
-        tg.headerColor = '#030712';
+        tg.headerColor = '#0a0b10';
 
         const translations = {
             en: {
+                panel_title: "Sourcing Panel",
                 nav_dashboard: "Dashboard",
                 nav_prices: "Buying Prices",
                 nav_users: "Users",
                 nav_close: "Close Panel",
-                stat_total: "Total Accounts",
-                stat_pending: "Pending Approval",
+                stat_section: "Inventory",
+                stat_total: "TOTAL ACCOUNTS",
+                stat_pending: "PENDING APPROVAL",
                 recent_ops: "Recent Operations",
                 buying_prices: "Buying Inventory",
-                btn_add: "Add Country",
+                btn_add: "Add",
                 btn_save: "Save Changes",
+                btn_reset: "Reset",
                 modal_title: "Buying Price Setup",
                 lbl_code: "Country Code (numeric)",
                 lbl_buy: "Buy Price ($)",
                 lbl_delay: "Approval Delay (min)",
                 no_ops: "No transactions found",
-                buy_lbl: "Buying Price",
+                buy_lbl: "Buy Price",
                 no_users: "No users found",
                 stat_total_users: "TOTAL USERS",
                 stat_banned: "BANNED",
                 btn_find: "Find",
+                search_placeholder: "Search users...",
                 user_mgmt: "User Management",
                 tab_active: "Active",
                 tab_banned: "Banned"
             },
             ar: {
+                panel_title: "لوحة التوريد",
                 nav_dashboard: "الرئيسية",
                 nav_prices: "أسعار الشراء",
                 nav_users: "المستخدمين",
                 nav_close: "إغلاق اللوحة",
+                stat_section: "المخزون",
                 stat_total: "إجمالي الحسابات",
                 stat_pending: "في انتظار التأكيد",
                 recent_ops: "آخر العمليات",
                 buying_prices: "قائمة الشراء",
-                btn_add: "إضافة دولة",
+                btn_add: "إضافة",
                 btn_save: "حفظ التعديلات",
+                btn_reset: "إعادة ضبط",
                 modal_title: "إعداد سعر الشراء",
                 lbl_code: "مفتاح الدولة (رقم)",
                 lbl_buy: "سعر الشراء ($)",
@@ -461,6 +1084,7 @@
                 stat_total_users: "إجمالي المستخدمين",
                 stat_banned: "محظورين",
                 btn_find: "بحث",
+                search_placeholder: "بحث عن مستخدم...",
                 user_mgmt: "إدارة المستخدمين",
                 tab_active: "نشط",
                 tab_banned: "محظور"
@@ -468,6 +1092,11 @@
         };
 
         let currentLang = localStorage.getItem('admin_lang') || 'en';
+        let allUsers = [];
+        let currentTab = 'active';
+        let filteredUsers = null;
+        const USERS_PER_PAGE = 10;
+        let currentPage = 1;
 
         function updateUI() {
             document.documentElement.lang = currentLang;
@@ -475,6 +1104,10 @@
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (translations[currentLang][key]) el.innerText = translations[currentLang][key];
+            });
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (translations[currentLang][key]) el.placeholder = translations[currentLang][key];
             });
             document.getElementById('lang-text').innerText = currentLang === 'en' ? 'العربية' : 'English';
             init();
@@ -486,22 +1119,25 @@
             updateUI();
         }
 
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('active');
-            document.getElementById('overlay').classList.toggle('active');
+        function toggleMenu() {
+            document.getElementById('side-menu').classList.toggle('active');
+            document.getElementById('menu-overlay').classList.toggle('active');
         }
 
-        function switchSection(id, btn) {
-            document.querySelectorAll('.content-section').forEach(s => s.style.display = 'none');
-            document.getElementById('section-' + id).style.display = 'block';
+        function switchNav(id, btn) {
+            document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+            document.getElementById('section-' + id).classList.add('active');
             document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
-            btn.classList.add('active');
-            updateUI();
-            if (window.innerWidth < 1024) toggleSidebar();
-        }
+            if (btn) btn.classList.add('active');
 
-        let allUsers = [];
-        let currentTab = 'active';
+            // Update page title
+            const titleMap = { home: 'nav_dashboard', prices: 'nav_prices', users: 'nav_users' };
+            const titleEl = document.getElementById('page-title');
+            titleEl.setAttribute('data-i18n', titleMap[id]);
+            titleEl.innerText = translations[currentLang][titleMap[id]];
+
+            if (window.innerWidth < 1024) toggleMenu();
+        }
 
         async function init() {
             try {
@@ -517,51 +1153,105 @@
                 allUsers = uData.users || [];
                 document.getElementById('user-count').innerText = allUsers.length;
                 document.getElementById('banned-count').innerText = allUsers.filter(u => u.banned).length;
-                renderUsers(allUsers);
+                renderUsers(filteredUsers || allUsers);
             } catch (e) { console.error(e); }
             finally { document.getElementById('loader').style.display = 'none'; }
         }
 
         function switchTab(tab, btn) {
             currentTab = tab;
+            currentPage = 1;
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            renderUsers(allUsers);
+            renderUsers(filteredUsers || allUsers);
         }
 
         function searchUsers() {
             const q = document.getElementById('user-search').value.trim().toLowerCase();
-            if (!q) { renderUsers(allUsers); return; }
-            const filtered = allUsers.filter(u => String(u.id).includes(q));
-            renderUsers(filtered);
+            if (!q) { filteredUsers = null; renderUsers(allUsers); return; }
+            filteredUsers = allUsers.filter(u => String(u.id).includes(q));
+            currentPage = 1;
+            document.getElementById('reset-search-container').style.display = 'block';
+            renderUsers(filteredUsers);
+        }
+
+        function resetSearch() {
+            document.getElementById('user-search').value = '';
+            filteredUsers = null;
+            currentPage = 1;
+            document.getElementById('reset-search-container').style.display = 'none';
+            renderUsers(allUsers);
         }
 
         function renderUsers(list) {
             const container = document.getElementById('user-list');
             const filtered = currentTab === 'banned' ? list.filter(u => u.banned) : list.filter(u => !u.banned);
-            if (!filtered.length) { container.innerHTML = `<p style="text-align: center; color: var(--text-dim); padding: 20px;">${translations[currentLang].no_users}</p>`; return; }
-            container.innerHTML = filtered.map(u => {
-                const initials = String(u.id).slice(0, 2);
+
+            if (!filtered.length) {
+                container.innerHTML = `<p style="text-align: center; color: var(--text-secondary); padding: 20px;">${translations[currentLang].no_users}</p>`;
+                document.getElementById('user-pagination').style.display = 'none';
+                return;
+            }
+
+            // Pagination
+            const totalPages = Math.ceil(filtered.length / USERS_PER_PAGE);
+            const start = (currentPage - 1) * USERS_PER_PAGE;
+            const paged = filtered.slice(start, start + USERS_PER_PAGE);
+
+            container.innerHTML = paged.map((u, i) => {
+                const idx = start + i + 1;
                 return `
                 <div class="user-card">
-                    <div class="u-avatar">${initials}</div>
-                    <div class="u-info">
-                        <h5>User #${u.id}</h5>
-                        <p>${u.join_date}</p>
+                    <div class="user-card-header">
+                        <span class="user-card-title">User #${u.id}</span>
                     </div>
-                    <span class="u-balance">$${u.balance}</span>
+                    <div class="user-card-sub">
+                        <span class="user-card-id">${u.join_date}</span>
+                    </div>
+                    <div class="user-stats-grid">
+                        <div class="user-stat-item">
+                            <div class="user-stat-label">${currentLang === 'ar' ? 'الرصيد' : 'Balance'}</div>
+                            <div class="user-stat-value" style="color: var(--success);">$${u.balance}</div>
+                        </div>
+                        <div class="user-stat-item">
+                            <div class="user-stat-label">${currentLang === 'ar' ? 'الترتيب' : 'Rank'}</div>
+                            <div class="user-stat-value" style="color: var(--accent);">#${idx}</div>
+                        </div>
+                    </div>
                 </div>`;
             }).join('');
+
+            // pagination controls
+            const pagContainer = document.getElementById('user-pagination');
+            if (totalPages > 1) {
+                pagContainer.style.display = 'flex';
+                document.getElementById('page-info').innerText = `Page ${currentPage} of ${totalPages}`;
+            } else {
+                pagContainer.style.display = 'none';
+            }
+        }
+
+        function prevPage() {
+            if (currentPage > 1) { currentPage--; renderUsers(filteredUsers || allUsers); }
+        }
+        function nextPage() {
+            const list = filteredUsers || allUsers;
+            const filtered = currentTab === 'banned' ? list.filter(u => u.banned) : list.filter(u => !u.banned);
+            const totalPages = Math.ceil(filtered.length / USERS_PER_PAGE);
+            if (currentPage < totalPages) { currentPage++; renderUsers(list); }
         }
 
         function renderRecent(list) {
             const container = document.getElementById('recent-sourced');
-            if (!list.length) { container.innerHTML = `<p style="text-align: center; color: var(--text-dim);">${translations[currentLang].no_ops}</p>`; return; }
+            if (!list.length) {
+                container.innerHTML = `<p style="text-align: center; color: var(--text-secondary); padding: 20px;">${translations[currentLang].no_ops}</p>`;
+                return;
+            }
             container.innerHTML = list.map(item => `
                 <div class="list-item">
                     <div class="item-info">
                         <h4>${item.phone}</h4>
-                        <p>${item.country} | <span style="color: var(--blue-primary)">$${item.buy_price}</span></p>
+                        <p>${item.country} | <span style="color: var(--accent); font-weight: 700;">$${item.buy_price}</span></p>
                     </div>
                     <span class="badge ${item.status === 'AVAILABLE' ? 'badge-success' : 'badge-warning'}">${item.status}</span>
                 </div>
@@ -570,18 +1260,22 @@
 
         function renderPrices(list) {
             const container = document.getElementById('price-list');
+            if (!list.length) {
+                container.innerHTML = `<p style="text-align: center; color: var(--text-secondary); padding: 20px;">${translations[currentLang].no_ops}</p>`;
+                return;
+            }
             container.innerHTML = list.map(p => `
                 <div class="list-item">
                     <div class="item-info">
-                        <h4><i class="fa-solid fa-location-dot"></i> ${p.name} (+${p.code})</h4>
-                        <p><i class="fa-solid fa-tag"></i> ${translations[currentLang].buy_lbl}: <span style="color: var(--blue-primary); font-weight: 700;">$${p.buy_price}</span></p>
+                        <h4><i class="fas fa-location-dot"></i> ${p.name} (+${p.code})</h4>
+                        <p><i class="fas fa-tag"></i> ${translations[currentLang].buy_lbl}: <span style="color: var(--accent); font-weight: 700;">$${p.buy_price}</span></p>
                     </div>
-                    <div style="display: flex; gap: 10px;">
+                    <div style="display: flex; gap: 8px;">
                         <button class="btn-edit" onclick="editPrice('${p.code}', ${p.buy_price}, ${p.approve_delay})">
-                            <i class="fa-solid fa-pen"></i>
+                            <i class="fas fa-pen"></i>
                         </button>
-                        <button class="btn-edit" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;" onclick="deletePrice('${p.code}')">
-                            <i class="fa-solid fa-trash"></i>
+                        <button class="btn-delete" onclick="deletePrice('${p.code}')">
+                            <i class="fas fa-trash"></i>
                         </button>
                     </div>
                 </div>
@@ -615,7 +1309,7 @@
             };
             await fetch('/api/admin/sourcing/price/update', {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
             init();
@@ -635,4 +1329,5 @@
         updateUI();
     </script>
 </body>
+
 </html>
