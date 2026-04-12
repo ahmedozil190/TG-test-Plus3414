@@ -961,6 +961,12 @@
                         </button>
                     </div>
                     <div class="list-container" id="price-list"></div>
+                    <!-- Pagination -->
+                    <div class="pagination" id="price-pagination" style="display: none; justify-content: center; align-items: center; gap: 15px; margin-top: 20px;">
+                        <button class="pag-btn" style="background: rgba(255,255,255,0.05); border: none; padding: 10px 15px; border-radius: 8px; color: var(--text-secondary); cursor: pointer;" onclick="prevPricePage()"><i class="fas fa-chevron-left"></i></button>
+                        <span class="pag-info" id="price-page-info" style="color: #fff; font-weight: 600; font-size: 0.9rem;">Page 1</span>
+                        <button class="pag-btn" style="background: rgba(255,255,255,0.05); border: none; padding: 10px 15px; border-radius: 8px; color: var(--text-secondary); cursor: pointer;" onclick="nextPricePage()"><i class="fas fa-chevron-right"></i></button>
+                    </div>
                 </div>
             </section>
 
@@ -1154,6 +1160,8 @@
         let currentPage = 1;
         let allPrices = [];
         let filteredPrices = null;
+        const PRICES_PER_PAGE = 10;
+        let currentPricePage = 1;
 
         function updateUI() {
             document.documentElement.lang = currentLang;
@@ -1322,8 +1330,9 @@
 
         function searchPrices() {
             const q = document.getElementById('price-search').value.trim().toLowerCase();
-            if (!q) { filteredPrices = null; renderPrices(allPrices); return; }
+            if (!q) { filteredPrices = null; currentPricePage = 1; renderPrices(allPrices); return; }
             filteredPrices = allPrices.filter(p => (p.name && p.name.toLowerCase().includes(q)) || String(p.code).includes(q));
+            currentPricePage = 1;
             document.getElementById('reset-price-search-container').style.display = 'block';
             renderPrices(filteredPrices);
         }
@@ -1331,13 +1340,25 @@
         function resetPriceSearch() {
             document.getElementById('price-search').value = '';
             filteredPrices = null;
+            currentPricePage = 1;
             document.getElementById('reset-price-search-container').style.display = 'none';
             renderPrices(allPrices);
+        }
+
+        function prevPricePage() {
+            if (currentPricePage > 1) { currentPricePage--; renderPrices(filteredPrices || allPrices); }
+        }
+
+        function nextPricePage() {
+            const list = filteredPrices || allPrices;
+            const totalPages = Math.ceil(list.length / PRICES_PER_PAGE);
+            if (currentPricePage < totalPages) { currentPricePage++; renderPrices(list); }
         }
 
         function renderPrices(list) {
             document.getElementById('stat-total-countries').innerText = list.length;
             const container = document.getElementById('price-list');
+            const pagContainer = document.getElementById('price-pagination');
 
             if (!list || !list.length) {
                 container.innerHTML = `
@@ -1345,9 +1366,17 @@
                     <i class="fas fa-tags" style="font-size: 2.5rem; color: rgba(255,255,255,0.1); margin-bottom: 12px;"></i>
                     <p style="color: var(--text-secondary); font-weight: 600; font-size: 0.95rem;">No countries found</p>
                 </div>`;
+                pagContainer.style.display = 'none';
                 return;
             }
-            container.innerHTML = list.map(p => `
+
+            const totalPages = Math.ceil(list.length / PRICES_PER_PAGE);
+            const start = (currentPricePage - 1) * PRICES_PER_PAGE;
+            const paged = list.slice(start, start + PRICES_PER_PAGE);
+
+            container.innerHTML = paged.map((p, i) => {
+                const idx = start + i + 1;
+                return `
                 <div class="user-card" style="margin-top: 0; margin-bottom: 15px; cursor: default;">
                     <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
                         <!-- Country Code -->
@@ -1358,7 +1387,7 @@
                         <!-- Country Name -->
                         <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
                             <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'اسم الدولة' : 'Country Name'}</span>
-                            <span style="color: #fff; font-weight: 700; font-size: 0.95rem;">${p.name}</span>
+                            <span style="color: #fff; font-weight: 700; font-size: 0.95rem;"><span style="color: var(--accent); margin-right: 5px;">#${parseFloat(idx)}</span> ${p.name}</span>
                         </div>
                         <!-- Buy Price -->
                         <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
@@ -1376,7 +1405,15 @@
                         </button>
                     </div>
                 </div>
-            `).join('');
+                `;
+            }).join('');
+
+            if (totalPages > 1) {
+                pagContainer.style.display = 'flex';
+                document.getElementById('price-page-info').innerText = currentLang === 'ar' ? `صفحة ${currentPricePage} من ${totalPages}` : `Page ${currentPricePage} of ${totalPages}`;
+            } else {
+                pagContainer.style.display = 'none';
+            }
         }
 
         function openPriceModal() {
