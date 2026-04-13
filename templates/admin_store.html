@@ -1405,7 +1405,11 @@
         function renderSales(list) {
             const container = document.getElementById('recent-sales');
             if (!list || !list.length) {
-                container.innerHTML = `<p style="text-align: center; color: var(--text-secondary); padding: 20px;">${translations[currentLang].no_sales}</p>`;
+                container.innerHTML = `
+                <div style="text-align: center; padding: 40px 20px; background: rgba(0,0,0,0.15); border-radius: 16px; border: 1px dashed rgba(255,255,255,0.05); margin-top: 10px;">
+                    <i class="fas fa-shopping-cart" style="font-size: 2.5rem; color: rgba(255,255,255,0.1); margin-bottom: 12px;"></i>
+                    <p style="color: var(--text-secondary); font-weight: 600; font-size: 0.95rem;">${translations[currentLang].no_sales}</p>
+                </div>`;
                 return;
             }
             container.innerHTML = list.slice(0, 5).map(item => `
@@ -1422,7 +1426,11 @@
         function renderSalesList(list) {
             const container = document.getElementById('sales-list');
             if (!list || !list.length) {
-                container.innerHTML = `<p style="text-align: center; color: var(--text-secondary); padding: 20px;">${translations[currentLang].no_sales}</p>`;
+                container.innerHTML = `
+                <div style="text-align: center; padding: 40px 20px; background: rgba(0,0,0,0.15); border-radius: 16px; border: 1px dashed rgba(255,255,255,0.05); margin-top: 10px;">
+                    <i class="fas fa-receipt" style="font-size: 2.5rem; color: rgba(255,255,255,0.1); margin-bottom: 12px;"></i>
+                    <p style="color: var(--text-secondary); font-weight: 600; font-size: 0.95rem;">${translations[currentLang].no_sales}</p>
+                </div>`;
                 return;
             }
             container.innerHTML = list.map(item => `
