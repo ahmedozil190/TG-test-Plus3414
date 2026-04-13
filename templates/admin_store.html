@@ -691,6 +691,163 @@
             transform: scale(0.98);
         }
 
+        /* ========== Management Modal ========== */
+        .manage-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            z-index: 3000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: all 0.4s ease;
+            padding: 20px;
+        }
+
+        .manage-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .manage-card {
+            background: linear-gradient(165deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+            width: 100%;
+            max-width: 450px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            transform: translateY(30px);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .manage-overlay.active .manage-card {
+            transform: translateY(0);
+        }
+
+        .manage-header {
+            padding: 30px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+        }
+
+        .manage-avatar {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-purple));
+            border-radius: 20px;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #fff;
+            box-shadow: 0 10px 20px rgba(96, 165, 250, 0.3);
+        }
+
+        .manage-name {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .manage-id {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-family: monospace;
+        }
+
+        .manage-body {
+            padding: 30px;
+        }
+
+        .manage-stat-box {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 18px;
+            padding: 20px;
+            margin-bottom: 25px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .manage-stat-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .manage-stat-value {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--success);
+        }
+
+        .manage-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .manage-btn {
+            width: 100%;
+            padding: 16px;
+            border-radius: 16px;
+            border: none;
+            font-weight: 700;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .manage-btn.primary {
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            color: #fff;
+            box-shadow: 0 8px 15px rgba(59, 130, 246, 0.2);
+        }
+
+        .manage-btn.danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .manage-btn.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .manage-btn:active {
+            transform: scale(0.97);
+        }
+
+        .manage-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 32px;
+            height: 32px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
         .user-card-header {
             display: flex;
             justify-content: space-between;
@@ -1275,7 +1432,12 @@
                 confirm_title: "Are you sure?",
                 confirm_delete_msg: "This action cannot be undone.",
                 btn_confirm: "Delete Now",
-                btn_cancel: "Cancel"
+                btn_cancel: "Cancel",
+                lbl_full_name: "Full Name",
+                lbl_current_balance: "Current Balance",
+                btn_edit_balance: "Update Balance",
+                btn_ban_user: "Ban User",
+                btn_unban_user: "Unban User"
             },
             ar: {
                 panel_title: "لوحة المتجر",
@@ -1317,7 +1479,12 @@
                 confirm_title: "هل أنت متأكد؟",
                 confirm_delete_msg: "لا يمكن التراجع عن هذا الإجراء بعد تنفيذه.",
                 btn_confirm: "حذف الآن",
-                btn_cancel: "إلغاء"
+                btn_cancel: "إلغاء",
+                lbl_full_name: "الاسم الكامل",
+                lbl_current_balance: "الرصيد الحالي",
+                btn_edit_balance: "تعديل الرصيد",
+                btn_ban_user: "حظر المستخدم",
+                btn_unban_user: "إلغاء حظر المستخدم"
             }
         };
 
@@ -1506,9 +1673,9 @@
                     ? (currentLang === 'ar' ? 'محظور' : 'BANNED')
                     : (currentLang === 'ar' ? 'نشط' : 'ACTIVE');
                 return `
-                <div class="user-card" style="position: relative; margin-top: 25px; margin-bottom: 15px; cursor: default;">
+                <div class="user-card" onclick='openManageModal(${JSON.stringify(u)})'>
                     <div class="user-card-index">${idx}</div>
-                    <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
                         <!-- Account Status -->
                         <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
                             <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'الحالة' : 'Status'}</span>
@@ -1532,21 +1699,9 @@
                             <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'الرصيد' : 'Balance'}</span>
                             <span style="color: #30d158; font-weight: 900; font-size: 1.1rem;">$${u.balance_store}</span>
                         </div>
-                        <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
-                            <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'إجمالي ما اشتراه' : 'Total Spent'}</span>
-                            <span style="color: #ffcc00; font-weight: 900; font-size: 1.1rem;">$${u.spent_total}</span>
-                        </div>
-                    </div>
-                    <!-- Action Buttons -->
-                    <div style="display: flex; gap: 10px;">
-                        <button class="primary-btn" style="flex: 1; background: rgba(96, 165, 250, 0.1); color: var(--accent); border: 1px solid rgba(96, 165, 250, 0.2); box-shadow: none; padding: 14px; font-size: 0.95rem;" onclick="promptBalance(${u.id}, ${u.balance_store}, 'store')">
-                            <i class="fas fa-wallet" style="margin-right: 5px;"></i> ${currentLang === 'ar' ? 'تعديل الرصيد' : 'Update Balance'}
-                        </button>
-                        <button class="primary-btn" style="flex: 1; background: ${u.banned ? 'rgba(48, 209, 88, 0.1)' : 'rgba(255, 69, 58, 0.1)'}; color: ${u.banned ? 'var(--success)' : 'var(--danger)'}; border: 1px solid ${u.banned ? 'rgba(48, 209, 88, 0.2)' : 'rgba(255, 69, 58, 0.2)'}; box-shadow: none; padding: 14px; font-size: 0.95rem;" onclick="toggleBan(${u.id}, ${u.banned}, 'store')">
-                            <i class="fas ${u.banned ? 'fa-user-check' : 'fa-user-slash'}" style="margin-right: 5px;"></i> ${u.banned ? (currentLang === 'ar' ? 'إلغاء الحظر' : 'Unban') : (currentLang === 'ar' ? 'حظر' : 'Ban')}
-                        </button>
                     </div>
                 </div>`;
+            }).join('');
             }).join('');
 
             const pagContainer = document.getElementById('user-pagination');
@@ -1589,6 +1744,42 @@
                 if (res.ok) init();
                 else alert('Failed to update balance');
             } catch (e) { console.error(e); }
+        }
+
+        let currentUser = null;
+        function openManageModal(u) {
+            currentUser = u;
+            document.getElementById('manage-name').innerText = u.full_name || 'N/A';
+            document.getElementById('manage-id').innerText = '@' + (u.username || u.id);
+            document.getElementById('manage-balance').innerText = `$${Number(u.balance_store).toFixed(2)}`;
+            
+            const banBtn = document.getElementById('manage-ban-btn');
+            if (u.banned) {
+                banBtn.innerHTML = `<i class="fas fa-user-check"></i> ${translations[currentLang].btn_unban_user}`;
+                banBtn.className = 'manage-btn success';
+            } else {
+                banBtn.innerHTML = `<i class="fas fa-user-slash"></i> ${translations[currentLang].btn_ban_user}`;
+                banBtn.className = 'manage-btn danger';
+            }
+            
+            document.getElementById('user-manage-modal').classList.add('active');
+        }
+
+        function closeManageModal() {
+            document.getElementById('user-manage-modal').classList.remove('active');
+            currentUser = null;
+        }
+
+        async function manageBalance() {
+            if (!currentUser) return;
+            await promptBalance(currentUser.id, currentUser.balance_store, 'store');
+            closeManageModal();
+        }
+
+        async function manageBan() {
+            if (!currentUser) return;
+            await toggleBan(currentUser.id, currentUser.banned, 'store');
+            closeManageModal();
         }
 
         async function toggleBan(userId, currentStatus, botType) {
@@ -1802,6 +1993,30 @@
             else switchNav(savedView, null, true);
         }
     </script>
+    <div id="user-manage-modal" class="manage-overlay" onclick="closeManageModal()">
+        <div class="manage-card" onclick="event.stopPropagation()">
+            <div class="manage-header">
+                <div class="manage-close" onclick="closeManageModal()"><i class="fas fa-times"></i></div>
+                <div class="manage-avatar"><i class="fas fa-user"></i></div>
+                <div id="manage-name" class="manage-name">User Name</div>
+                <div id="manage-id" class="manage-id">@username</div>
+            </div>
+            <div class="manage-body">
+                <div class="manage-stat-box">
+                    <div class="manage-stat-label" data-i18n="lbl_current_balance">Current Balance</div>
+                    <div id="manage-balance" class="manage-stat-value">$0.00</div>
+                </div>
+                <div class="manage-actions">
+                    <button class="manage-btn primary" onclick="manageBalance()">
+                        <i class="fas fa-wallet"></i> <span data-i18n="btn_edit_balance">Update Balance</span>
+                    </button>
+                    <button id="manage-ban-btn" class="manage-btn danger" onclick="manageBan()">
+                        <i class="fas fa-user-slash"></i> <span data-i18n="btn_ban_user">Ban User</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div id="confirm-overlay" class="confirm-overlay" onclick="closeConfirm(false)">
         <div class="confirm-modal" onclick="event.stopPropagation()">
             <div class="confirm-icon"><i class="fas fa-exclamation-triangle"></i></div>
