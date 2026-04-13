@@ -93,6 +93,18 @@ async def run_migrations():
             try:
                 await conn.execute(sqlalchemy.text("ALTER TABLE users ADD COLUMN username TEXT"))
             except: pass
+            # Add balance_store to users if missing
+            try:
+                await conn.execute(sqlalchemy.text("ALTER TABLE users ADD COLUMN balance_store FLOAT DEFAULT 0.0"))
+                # Copy existing balance to balance_store if possible
+                try:
+                    await conn.execute(sqlalchemy.text("UPDATE users SET balance_store = balance"))
+                except: pass
+            except: pass
+            # Add balance_sourcing to users if missing
+            try:
+                await conn.execute(sqlalchemy.text("ALTER TABLE users ADD COLUMN balance_sourcing FLOAT DEFAULT 0.0"))
+            except: pass
         logger.info("DB migration check complete.")
     except Exception as e:
         logger.warning(f"Migration warning: {e}")
