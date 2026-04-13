@@ -116,6 +116,7 @@ class StockLoginComplete(BaseModel):
 class BalanceUpdate(BaseModel):
     user_id: int
     amount: float
+    type: str = "store" # "store" or "sourcing"
 
 class PriceUpdate(BaseModel):
     country_code: str
@@ -196,7 +197,7 @@ async def get_store_data(user_id: int = None):
             if user_id:
                 user = await session.get(User, user_id)
                 if user:
-                    balance = user.balance
+                    balance = user.balance_store
 
         return {
             "countries": countries,
@@ -215,8 +216,8 @@ async def store_buy(data: StoreBuy):
             stmt = select(Account).where(Account.country == data.country, Account.status == AccountStatus.AVAILABLE).limit(1)
             account = (await session.execute(stmt)).scalar_one_or_none()
             if not account: raise HTTPException(status_code=400, detail="عذراً، نفدت الأرقام!")
-            if user.balance < account.price: raise HTTPException(status_code=400, detail="رصيدك غير كافٍ")
-            user.balance -= account.price
+            if user.balance_store < account.price: raise HTTPException(status_code=400, detail="رصيدك غير كافٍ")
+            user.balance_store -= account.price
             account.status = AccountStatus.SOLD
             account.buyer_id = user.id
             txn = Transaction(user_id=user.id, type=TransactionType.BUY, amount=-account.price)
@@ -274,11 +275,17 @@ async def get_sourcing_data():
                     "approve_delay": p.approve_delay
                 })
 
-        return {
-            "stats": {"total_sourced": total_sourced, "pending_count": pending_count},
-            "recent": recent,
-            "prices": prices
-        }
+            total_sourcing_balance = (await session.execute(select(func.sum(User.balance_sourcing)))).scalar() or 0.0
+            
+            return {
+                "stats": {
+                    "total_sourced": total_sourced, 
+                    "pending_count": pending_count,
+                    "total_balance": round(total_sourcing_balance, 2)
+                },
+                "recent": recent,
+                "prices": prices
+            }
     except Exception as e:
         logger.error(f"Sourcing Data Error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -289,7 +296,7 @@ async def get_admin_store_data():
         async with async_session() as session:
             user_count = (await session.execute(select(func.count(User.id)))).scalar() or 0
             stock_count = (await session.execute(select(func.count(Account.id)).where(Account.status == AccountStatus.AVAILABLE))).scalar() or 0
-            total_balance = (await session.execute(select(func.sum(User.balance)))).scalar() or 0.0
+            total_balance = (await session.execute(select(func.sum(User.balance_store)))).scalar() or 0.0
 
             users_result = await session.execute(select(User).order_by(User.id.desc()).limit(200))
             all_users_raw = users_result.scalars().all()
@@ -334,7 +341,8 @@ async def get_admin_store_data():
                     "id": u.id,
                     "full_name": u.full_name or "N/A",
                     "username": f"@{u.username}" if u.username else "N/A",
-                    "balance": round(u.balance or 0.0, 2),
+                    "balance_store": round(u.balance_store or 0.0, 2),
+                    "balance_sourcing": round(u.balance_sourcing or 0.0, 2),
                     "join_date": u.join_date.strftime("%Y-%m-%d") if u.join_date else "N/A",
                     "banned": False,
                     "sold_count": seller_stats[u.id]["sold"],
@@ -528,7 +536,10 @@ async def update_balance(data: BalanceUpdate):
     async with async_session() as session:
         user = await session.get(User, data.user_id)
         if user:
-            user.balance = data.amount
+            if data.type == "sourcing":
+                user.balance_sourcing = data.amount
+            else:
+                user.balance_store = data.amount
             await session.commit()
             return {"status": "success"}
     raise HTTPException(status_code=404, detail="User not found")

@@ -33,7 +33,6 @@ class UserUpdateMiddleware(BaseMiddleware):
                         # Auto-create if not exists (helpful for background sync)
                         user = User(
                             id=user_id, 
-                            balance=0.0, 
                             full_name=full_name, 
                             username=username
                         )

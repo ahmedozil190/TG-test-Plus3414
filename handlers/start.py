@@ -18,13 +18,13 @@ async def cmd_start(message: Message):
         user = result.scalar_one_or_none()
         
         if not user:
-            user = User(id=user_id, balance=0.0)
+            user = User(id=user_id)
             session.add(user)
             await session.commit()
             
     await message.answer(
         "- The main list.\n\n"
-        f"- Your balance:{int(user.balance) if user.balance == 0 else user.balance}$ .\n"
+        f"- Your balance:{int(user.balance_store) if user.balance_store == 0 else user.balance_store}$ .\n"
         f"- Hands of your account:<code>{user.id}</code> .\n"
         "Official Bot Channel:@MOOO8O .\n"
         "Gover the bot through the buttons below.",

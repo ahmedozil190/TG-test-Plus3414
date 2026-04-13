@@ -19,7 +19,7 @@ async def get_profile_text(user_id: int, full_name: str) -> str:
         text = (
             f"👤 **الملف الشخصي: {full_name}**\n\n"
             f"**الرقم التعريفي:** `{user.id}`\n"
-            f"**الرصيد:** `${user.balance:.2f}`\n"
+            f"**الرصيد:** `${user.balance_store:.2f}`\n"
             f"**تاريخ الانضمام:** `{user.join_date.strftime('%Y-%m-%d')}`"
         )
         return text

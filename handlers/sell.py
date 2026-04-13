@@ -16,7 +16,7 @@ from keyboards.client import sell_menu_keyboard
 async def cq_sell_number(call: CallbackQuery):
     async with async_session() as session:
         user = (await session.execute(select(User).where(User.id == call.from_user.id))).scalar_one_or_none()
-        balance = user.balance if user else 0.0
+        balance = user.balance_sourcing if user else 0.0
         
     text = (
         "- Welcome to the account purchase section.\n\n"
@@ -91,7 +91,7 @@ async def process_sell_code(message: Message, state: FSMContext):
         stmt = select(User).where(User.id == message.from_user.id)
         user = (await session.execute(stmt)).scalar_one_or_none()
         if not user:
-            user = User(id=message.from_user.id, balance=0.0)
+            user = User(id=message.from_user.id)
             session.add(user)
             
         country = "Unknown" 
@@ -110,7 +110,7 @@ async def process_sell_code(message: Message, state: FSMContext):
         )
         session.add(acc)
         
-        user.balance += price
+        user.balance_sourcing += price
         
         txn = Transaction(
             user_id=user.id,

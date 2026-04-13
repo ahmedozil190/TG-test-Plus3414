@@ -202,12 +202,12 @@ async def cq_confirm_buy(call: CallbackQuery):
             await call.answer("عذراً، نفدت الأرقام من هذه الدولة حالياً.", show_alert=True)
             return
             
-        if user.balance < account.price:
+        if user.balance_store < account.price:
             await call.answer("عذراً، رصيدك غير كافٍ لشراء هذا الرقم.", show_alert=True)
             return
             
         # Perform buy
-        user.balance -= account.price
+        user.balance_store -= account.price
         account.status = AccountStatus.SOLD
         account.buyer_id = user.id
         
@@ -266,7 +266,7 @@ async def cq_back_main(call: CallbackQuery):
     from keyboards.client import main_keyboard
     async with async_session() as session:
         user = (await session.execute(select(User).where(User.id == call.from_user.id))).scalar_one_or_none()
-        balance = user.balance if user else 0.0
+        balance = user.balance_store if user else 0.0
         
     await call.message.edit_text(
         "- The main list.\n\n"

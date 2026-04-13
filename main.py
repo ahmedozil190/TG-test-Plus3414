@@ -50,7 +50,7 @@ async def auto_approve_task(bot_seller: Bot):
                             # Pay the seller
                             seller = await session.get(User, acc.seller_id)
                             if seller:
-                                seller.balance += cp.buy_price
+                                seller.balance_sourcing += cp.buy_price
                                 tx = Transaction(user_id=seller.id, type=TransactionType.SELL, amount=cp.buy_price)
                                 session.add(tx)
                                 

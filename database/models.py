@@ -19,7 +19,8 @@ class TransactionType(enum.Enum):
 class User(Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True) # Telegram User ID
-    balance = Column(Float, default=0.0)
+    balance_store = Column(Float, default=0.0)
+    balance_sourcing = Column(Float, default=0.0)
     language = Column(String, default="ar")
     join_date = Column(DateTime, default=datetime.utcnow)
     full_name = Column(String, nullable=True)

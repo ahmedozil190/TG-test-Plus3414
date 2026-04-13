@@ -57,7 +57,8 @@ async def cq_admin_stats(call: CallbackQuery):
     
     async with async_session() as session:
         users_count = (await session.execute(select(func.count(User.id)))).scalar()
-        total_balance = (await session.execute(select(func.sum(User.balance)))).scalar() or 0.0
+        total_balance_store = (await session.execute(select(func.sum(User.balance_store)))).scalar() or 0.0
+        total_balance_sourcing = (await session.execute(select(func.sum(User.balance_sourcing)))).scalar() or 0.0
         
         avail_count = (await session.execute(select(func.count(Account.id)).where(Account.status == AccountStatus.AVAILABLE))).scalar()
         sold_count = (await session.execute(select(func.count(Account.id)).where(Account.status == AccountStatus.SOLD))).scalar()
@@ -65,7 +66,8 @@ async def cq_admin_stats(call: CallbackQuery):
     text = (
         "📊 <b>الإحصائيات العامة للمتجر:</b>\n\n"
         f"👥 <b>إجمالي المستخدمين:</b> {users_count}\n"
-        f"💰 <b>إجمالي الأرصدة المودعة:</b> ${total_balance:.2f}\n\n"
+        f"💰 <b>إجمالي أرصدة المتجر:</b> ${total_balance_store:.2f}\n"
+        f"💸 <b>إجمالي أرصدة التوريد:</b> ${total_balance_sourcing:.2f}\n\n"
         f"📱 <b>الأرقام المتاحة للبيع:</b> {avail_count}\n"
         f"✅ <b>الأرقام المباعة:</b> {sold_count}"
     )
@@ -96,7 +98,8 @@ async def process_user_id(message: Message, state: FSMContext):
     text = (
         f"👤 <b>بيانات المستخدم:</b>\n"
         f"<b>ID:</b> <code>{user.id}</code>\n"
-        f"<b>الرصيد الكلي:</b> <code>${user.balance:.2f}</code>\n"
+        f"<b>رصيد المتجر:</b> <code>${user.balance_store:.2f}</code>\n"
+        f"<b>رصيد التوريد:</b> <code>${user.balance_sourcing:.2f}</code>\n"
         f"<b>تاريخ الانضمام:</b> {user.join_date.strftime('%Y-%m-%d')}"
     )
     await message.answer(text, reply_markup=admin_user_keyboard(user.id), parse_mode="HTML")
@@ -127,11 +130,12 @@ async def process_add_balance(message: Message, state: FSMContext):
     async with async_session() as session:
         user = (await session.execute(select(User).where(User.id == target_id))).scalar_one_or_none()
         if user:
-            user.balance += amount
+            # By default targets store balance through this bot's admin
+            user.balance_store += amount
             txn = Transaction(user_id=target_id, type=TransactionType.DEPOSIT, amount=amount)
             session.add(txn)
             await session.commit()
-            await message.answer(f"✅ تم إضافة ${amount:.2f} لرصيد المستخدم بنجاح.\nالرصيد الجديد: ${user.balance:.2f}", reply_markup=admin_back_keyboard())
+            await message.answer(f"✅ تم إضافة ${amount:.2f} لرصيد المتجر الخاص بالمستخدم بنجاح.\nالرصيد الجديد: ${user.balance_store:.2f}", reply_markup=admin_back_keyboard())
         else:
             await message.answer("حدث خطأ، المستخدم غير موجود.")
     await state.clear()
@@ -160,12 +164,12 @@ async def process_sub_balance(message: Message, state: FSMContext):
     async with async_session() as session:
         user = (await session.execute(select(User).where(User.id == target_id))).scalar_one_or_none()
         if user:
-            if user.balance < amount:
-                await message.answer("المبلغ المدخل أكبر من رصيد المستخدم!", reply_markup=admin_back_keyboard())
+            if user.balance_store < amount:
+                await message.answer("المبلغ المدخل أكبر من رصيد المتجر!", reply_markup=admin_back_keyboard())
                 return
-            user.balance -= amount
+            user.balance_store -= amount
             await session.commit()
-            await message.answer(f"✅ تم خصم ${amount:.2f} من رصيد المستخدم بنجاح.\nالرصيد المتبقي: ${user.balance:.2f}", reply_markup=admin_back_keyboard())
+            await message.answer(f"✅ تم خصم ${amount:.2f} من رصيد المتجر بنجاح.\nالرصيد المتبقي: ${user.balance_store:.2f}", reply_markup=admin_back_keyboard())
         else:
             await message.answer("حدث خطأ، المستخدم غير موجود.")
     await state.clear()
