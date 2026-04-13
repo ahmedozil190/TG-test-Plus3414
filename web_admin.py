@@ -121,6 +121,12 @@ async def run_migrations():
             try:
                 await conn.execute(sqlalchemy.text("ALTER TABLE users ADD COLUMN is_banned_sourcing BOOLEAN DEFAULT 0"))
             except: pass
+            
+            # One-time migration: set existing users active in both if they weren't before
+            # This ensures they appear in dashboards immediately after migration
+            try:
+                await conn.execute(sqlalchemy.text("UPDATE users SET is_active_store = 1, is_active_sourcing = 1 WHERE is_active_store = 0 AND is_active_sourcing = 0"))
+            except: pass
         logger.info("DB migration check complete.")
     except Exception as e:
         logger.warning(f"Migration warning: {e}")
