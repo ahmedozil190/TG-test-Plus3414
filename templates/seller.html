@@ -264,9 +264,11 @@
 
         .toast {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
-            background: var(--bg-elevated); color: var(--text-p); padding: 14px 28px;
+            background: var(--bg-elevated); color: var(--text-p); padding: 14px 24px;
             border-radius: 50px; border: 1px solid var(--border);
             z-index: 10000; transition: transform 0.4s var(--ease); font-weight: 600;
+            white-space: nowrap; pointer-events: none;
+            box-shadow: var(--shadow-lg); font-size: 0.85rem;
         }
         .toast.show { transform: translateX(-50%) translateY(0); }
 
@@ -729,7 +731,8 @@
                 const data = await res.json();
                 
                 if (res.ok) {
-                    showToast("Withdrawal Requested!");
+                    const opCode = String(data.id).padStart(6, '0');
+                    showToast(`Succeeded! Operation: <span style="color:var(--accent); font-weight:800">#${opCode}</span>`);
                     document.getElementById('withdrawAmount').value = '';
                     document.getElementById('paymentDetails').value = '';
                     closeConfirmModal();
@@ -852,7 +855,7 @@
 
         function showToast(msg) {
             const t = document.getElementById('toast');
-            t.textContent = msg;
+            t.innerHTML = msg; // Changed to innerHTML to support span coloring
             t.classList.add('show');
             setTimeout(() => t.classList.remove('show'), 3000);
         }

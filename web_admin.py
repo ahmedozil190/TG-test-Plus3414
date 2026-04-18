@@ -826,7 +826,8 @@ async def seller_withdraw(req: WithdrawSubmit):
         
         session.add(withdraw)
         await session.commit()
-        return {"ok": True}
+        await session.refresh(withdraw)
+        return {"ok": True, "id": withdraw.id}
 
 @app.get("/api/seller/withdrawals")
 async def get_withdrawals(user_id: int):
