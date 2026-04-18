@@ -819,15 +819,19 @@
                     
                     item.innerHTML = `
                         <div class="h-info" style="flex:1">
-                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px">
-                                <span class="h-amt" style="color:var(--text-p)">$${h.amount.toFixed(2)}</span>
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px">
+                                <span class="h-amt" style="color:var(--text-p); font-size:1.1rem">$${h.amount.toFixed(2)}</span>
                                 <span class="h-status st-${h.status}">${h.status}</span>
                             </div>
-                            <div style="display:flex; justify-content:space-between; align-items:center">
-                                <span class="h-meta"><i class="fas fa-barcode" style="font-size:0.6rem; margin-right:4px"></i>${h.transaction_id || h.id}</span>
-                                <span class="h-meta"><i class="fas fa-wallet" style="font-size:0.6rem; margin-right:4px"></i>${shortAddr}</span>
+                            <div style="text-align:center; margin-bottom:8px">
+                                <span class="h-meta" style="font-size:0.85rem; font-weight:700; color:var(--text-p)">
+                                    <i class="fas fa-barcode" style="margin-right:4px"></i>${h.transaction_id}
+                                </span>
                             </div>
-                            <div class="h-meta" style="margin-top:4px; opacity:0.6"><i class="far fa-clock" style="font-size:0.6rem; margin-right:4px"></i>${h.date}</div>
+                            <div style="display:flex; justify-content:space-between; align-items:center; opacity:0.7">
+                                <span class="h-meta"><i class="far fa-calendar-alt" style="margin-right:4px"></i>${h.date}</span>
+                                <span class="h-meta"><i class="fas fa-wallet" style="margin-right:4px"></i>${shortAddr}</span>
+                            </div>
                         </div>
                     `;
                     list.appendChild(item);
