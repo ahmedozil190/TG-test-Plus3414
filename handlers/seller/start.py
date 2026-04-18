@@ -1,5 +1,5 @@
 from aiogram import Router, F, Bot
-from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, ReplyKeyboardRemove, BotCommand, BotCommandScopeChat, ReplyKeyboardMarkup, KeyboardButton, WebAppInfo
+from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, ReplyKeyboardRemove, BotCommand, BotCommandScopeChat, ReplyKeyboardMarkup, KeyboardButton, WebAppInfo, MenuButtonWebApp
 from config import SELLER_URL
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
@@ -34,12 +34,15 @@ async def seller_start_cmd(message: Message, bot: Bot = None):
             BotCommand(command="coin", description="/coin"),
             BotCommand(command="cancel", description="/cancel"),
             BotCommand(command="language", description="/language"),
-            BotCommand(command="cap", description="/cap"),
-            BotCommand(command="admin", description="Admin Panel ⚙️"),
-            BotCommand(command="manage_countries", description="إدارة الدول وحذفها ❌")
+            BotCommand(command="cap", description="/cap")
         ]
         try:
             await bot.set_my_commands(user_commands, scope=BotCommandScopeChat(chat_id=message.from_user.id))
+            # Set the "Open Panel" menu button
+            await bot.set_chat_menu_button(
+                chat_id=message.from_user.id,
+                menu_button=MenuButtonWebApp(text="Open Panel", web_app=WebAppInfo(url=SELLER_URL))
+            )
         except:
             pass
 
