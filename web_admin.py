@@ -794,4 +794,56 @@ async def seller_submit_otp(data: SellerOTPSubmit):
     except Exception as e:
         logger.error(f"Seller OTP Submit Error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/seller/withdraw")
+async def seller_withdraw(req: WithdrawSubmit):
+    async with async_session() as session:
+        user = await session.get(User, req.user_id)
+        if not user or not user.is_active_sourcing:
+            raise HTTPException(status_code=403, detail="Unauthorized")
+        
+        # Validation: Check amount and balance
+        if req.amount <= 0:
+            raise HTTPException(status_code=400, detail="Invalid amount")
+            
+        min_amount = 4.0 if "TRX" in req.method else 10.0
+        if req.amount < min_amount:
+            raise HTTPException(status_code=400, detail=f"Minimum withdrawal is ${min_amount}")
+        
+        if user.balance_sourcing < req.amount:
+            raise HTTPException(status_code=400, detail="Insufficient balance")
+        
+        # Create Request
+        withdraw = WithdrawalRequest(
+            user_id=req.user_id,
+            amount=req.amount,
+            method=req.method,
+            address=req.address
+        )
+        
+        # Deduct balance immediately
+        user.balance_sourcing -= req.amount
+        
+        session.add(withdraw)
+        await session.commit()
+        return {"ok": True}
+
+@app.get("/api/seller/withdrawals")
+async def get_withdrawals(user_id: int):
+    async with async_session() as session:
+        stmt = select(WithdrawalRequest).where(WithdrawalRequest.user_id == user_id).order_by(WithdrawalRequest.created_at.desc()).limit(20)
+        results = (await session.execute(stmt)).scalars().all()
+        
+        history = []
+        for r in results:
+            history.append({
+                "id": r.id,
+                "amount": r.amount,
+                "method": r.method,
+                "address": r.address,
+                "status": r.status.value,
+                "date": r.created_at.strftime("%Y-%m-%d %H:%M")
+            })
+        return {"history": history}
+
 # --- End of Web Admin SOURCINGPRO ---

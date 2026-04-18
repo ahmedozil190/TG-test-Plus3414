@@ -270,6 +270,34 @@
         }
         .toast.show { transform: translateX(-50%) translateY(0); }
 
+        /* ─── Confirmation Modal ─── */
+        .modal-overlay {
+            position: fixed; inset: 0; z-index: 5000;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
+            display: none; align-items: center; justify-content: center; padding: 20px;
+            animation: fadeIn 0.3s var(--ease);
+        }
+        .modal-overlay.show { display: flex; }
+        .confirm-modal {
+            background: var(--bg-elevated); border: 1px solid var(--border);
+            border-radius: 24px; padding: 30px; width: 100%; max-width: 400px;
+            box-shadow: var(--shadow-lg); text-align: center;
+            animation: modalIn 0.4s var(--ease);
+        }
+        @keyframes modalIn { from { transform: scale(0.9) translateY(20px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .modal-title { font-size: 1.2rem; font-weight: 800; margin-bottom: 12px; }
+        .modal-body { font-size: 0.9rem; color: var(--text-s); margin-bottom: 25px; line-height: 1.6; }
+        .modal-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .confirm-details {
+            background: var(--card-glass); border-radius: 16px; padding: 15px;
+            margin-bottom: 20px; text-align: left; border: 1px solid var(--border);
+        }
+        .cd-item { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 5px; }
+        .cd-lbl { color: var(--text-s); }
+        .cd-val { font-weight: 700; color: var(--text-p); }
+
     </style>
 </head>
 <body class="dark-mode">
@@ -491,6 +519,28 @@
 
     </div>
 
+    <!-- Confirmation Modal Structure -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="confirm-modal">
+            <div class="modal-title">Confirm Withdrawal</div>
+            <div class="modal-body">Please review your payout details carefully before proceeding.</div>
+            
+            <div class="confirm-details">
+                <div class="cd-item"><span class="cd-lbl">Amount:</span> <span class="cd-val" id="confAmt">$0.00</span></div>
+                <div class="cd-item"><span class="cd-lbl">Method:</span> <span class="cd-val" id="confMethod">-</span></div>
+                <div class="cd-item" style="flex-direction:column; gap:4px; margin-top:8px">
+                    <span class="cd-lbl">Wallet address:</span>
+                    <span class="cd-val" id="confAddr" style="word-break:break-all; font-size:0.75rem">-</span>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-secondary" onclick="closeConfirmModal()">Cancel</button>
+                <button class="btn-action" id="finalConfirmBtn" style="padding:14px" onclick="confirmWithdraw()">Withdraw</button>
+            </div>
+        </div>
+    </div>
+
     <div class="toast" id="toast"></div>
 
     <script>
@@ -647,9 +697,25 @@
             const addr = document.getElementById('paymentDetails').value.trim();
 
             if (amt < currentMin) return showToast(`Min withdrawal is $${currentMin}`);
-            if (!addr) return showToast("Address/ID required");
+            if (!addr) return showToast("Address required");
 
-            const btn = document.getElementById('submitWithdrawBtn');
+            // Open Confirm Modal
+            document.getElementById('confAmt').textContent = `$${amt.toFixed(2)}`;
+            document.getElementById('confMethod').textContent = currentMethod;
+            document.getElementById('confAddr').textContent = addr;
+            document.getElementById('confirmModal').classList.add('show');
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('confirmModal').classList.remove('show');
+        }
+
+        async function confirmWithdraw() {
+            const amt = parseFloat(document.getElementById('withdrawAmount').value) || 0;
+            const addr = document.getElementById('paymentDetails').value.trim();
+            const btn = document.getElementById('finalConfirmBtn');
+            const mainSubmitBtn = document.getElementById('submitWithdrawBtn');
+
             btn.disabled = true;
             btn.innerHTML = '<span class="loader-ring" style="width:20px;height:20px"></span>';
 
@@ -659,11 +725,14 @@
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ user_id: userId, amount: amt, method: currentMethod, address: addr })
                 });
+                
                 const data = await res.json();
-                if (data.ok) {
+                
+                if (res.ok) {
                     showToast("Withdrawal Requested!");
                     document.getElementById('withdrawAmount').value = '';
                     document.getElementById('paymentDetails').value = '';
+                    closeConfirmModal();
                     fetchSellerData(); // Refresh balance
                     fetchWithdrawals(); // Refresh history
                 } else {
@@ -673,7 +742,7 @@
                 showToast("Request failed");
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = 'Confirm Withdrawal <i class="fas fa-paper-plane"></i>';
+                btn.innerHTML = 'Withdraw';
             }
         }
 
@@ -779,21 +848,6 @@
                 btn.disabled = false;
                 btn.innerHTML = 'Confirm Sourcing <i class="fas fa-check-circle"></i>';
             }
-        }
-
-        function requestWithdraw() {
-            const amount = document.getElementById('withdrawAmount').value;
-            const details = document.getElementById('paymentDetails').value;
-            if (!amount || amount < 5) return tg.showAlert("Minimum withdrawal is $5.00");
-            if (!details) return tg.showAlert("Payment details required");
-            
-            tg.showConfirm(`Confirm withdrawal of $${amount} to ${details}?`, (ok) => {
-                if (ok) {
-                    tg.HapticFeedback.notificationOccurred('success');
-                    tg.showAlert("Request submitted successfully!");
-                    changeView('dashboard');
-                }
-            });
         }
 
         function showToast(msg) {
