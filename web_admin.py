@@ -682,6 +682,8 @@ async def get_seller_data(user_id: int):
             # Get stats
             sold_count = (await session.execute(select(func.count(Account.id)).where(Account.seller_id == user_id, Account.status == AccountStatus.SOLD))).scalar() or 0
             pending_count = (await session.execute(select(func.count(Account.id)).where(Account.seller_id == user_id, Account.status == AccountStatus.PENDING))).scalar() or 0
+            accepted_count = (await session.execute(select(func.count(Account.id)).where(Account.seller_id == user_id, Account.status == AccountStatus.AVAILABLE))).scalar() or 0
+            rejected_count = (await session.execute(select(func.count(Account.id)).where(Account.seller_id == user_id, Account.status == AccountStatus.REJECTED))).scalar() or 0
             
             # Calculate Pending Balance
             pending_balance = (await session.execute(
@@ -720,7 +722,9 @@ async def get_seller_data(user_id: int):
                 },
                 "stats": {
                     "sold": sold_count,
-                    "pending": pending_count
+                    "pending": pending_count,
+                    "accepted": accepted_count,
+                    "rejected": rejected_count
                 },
                 "prices": formatted_prices
             }
