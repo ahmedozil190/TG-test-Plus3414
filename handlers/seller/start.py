@@ -63,16 +63,27 @@ async def seller_start_cmd(message: Message, bot: Bot = None):
             "- مرحبًا بك في لوحة استقبال الحسابات الاحترافية 🎊 .\n\n"
             "- اضغط على الزر أدناه لبدء بيع حساباتك ومتابعة أرباحك بشكل أسرع وأكثر سلاسة."
         )
-        btn_text = "🚀 فتح لوحة الموردين"
+        btn_panel = "🚀 فتح لوحة الموردين"
+        btn_balance = "💰 عرض رصيدي"
+        btn_prices = "📊 قائمة الأسعار"
+        btn_support = "🆘 الدعم الفني"
     else:
         welcome_text = (
             "- Welcome to the Professional Sourcing Panel 🎊 .\n\n"
             "- Click the button below to start selling your accounts and track your earnings faster and smoother."
         )
-        btn_text = "🚀 Open Sourcing Panel"
+        btn_panel = "🚀 Open Sourcing Panel"
+        btn_balance = "💰 View My Balance"
+        btn_prices = "📊 Price List"
+        btn_support = "🆘 Support"
     
     markup = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text=btn_text, web_app=WebAppInfo(url=SELLER_URL))]
+        [InlineKeyboardButton(text=btn_panel, web_app=WebAppInfo(url=SELLER_URL))],
+        [
+            InlineKeyboardButton(text=btn_balance, callback_data="seller_coin_info"),
+            InlineKeyboardButton(text=btn_prices, callback_data="seller_price_list")
+        ],
+        [InlineKeyboardButton(text=btn_support, url="https://t.me/FE4EE")]
     ])
     
     await message.answer(welcome_text, reply_markup=markup)
@@ -227,3 +238,13 @@ async def seller_help_cmd(message: Message):
 async def seller_back_main(call: CallbackQuery):
     # Re-run the start logic
     await seller_start_cmd(call.message)
+
+@router.callback_query(F.data == "seller_coin_info")
+async def cq_seller_coin(call: CallbackQuery):
+    await seller_coin_cmd(call.message)
+    await call.answer()
+
+@router.callback_query(F.data == "seller_price_list")
+async def cq_seller_prices(call: CallbackQuery):
+    await seller_cap_cmd(call.message)
+    await call.answer()
