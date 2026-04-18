@@ -1,5 +1,6 @@
 from aiogram import Router, F, Bot
-from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, ReplyKeyboardRemove, BotCommand, BotCommandScopeChat, ReplyKeyboardMarkup, KeyboardButton
+from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, ReplyKeyboardRemove, BotCommand, BotCommandScopeChat, ReplyKeyboardMarkup, KeyboardButton, WebAppInfo
+from config import SELLER_URL
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from database.engine import async_session
@@ -56,16 +57,22 @@ async def seller_start_cmd(message: Message, bot: Bot = None):
     lang = user.language
     if lang == "ar":
         welcome_text = (
-            "- مرحبًا بك في روبوت استقبال الحسابات 🎊 .\n\n"
-            "- 👉 للبدء ، أرسل رقم الحساب الافتراضي المطلوب أو أرسل /help للحصول على المساعدة ."
+            "- مرحبًا بك في لوحة استقبال الحسابات الاحترافية 🎊 .\n\n"
+            "- اضغط على الزر أدناه لبدء بيع حساباتك ومتابعة أرباحك بشكل أسرع وأكثر سلاسة."
         )
+        btn_text = "🚀 فتح لوحة الموردين"
     else:
         welcome_text = (
-            "- Welcome to the account reception bot .\n\n"
-            "-  To start, send the desired virtual account number or send /help for assistance."
+            "- Welcome to the Professional Sourcing Panel 🎊 .\n\n"
+            "- Click the button below to start selling your accounts and track your earnings faster and smoother."
         )
+        btn_text = "🚀 Open Sourcing Panel"
     
-    await message.answer(welcome_text, reply_markup=ReplyKeyboardRemove())
+    markup = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=btn_text, web_app=WebAppInfo(url=SELLER_URL))]
+    ])
+    
+    await message.answer(welcome_text, reply_markup=markup)
 
 @router.message(Command("coin"))
 async def seller_coin_cmd(message: Message):

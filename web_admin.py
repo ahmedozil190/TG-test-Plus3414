@@ -15,6 +15,22 @@ from typing import List
 from services.session_manager import request_app_code, submit_app_code, login_clients
 import pycountry
 import re
+from datetime import datetime
+
+class SellerDataRequest(BaseModel):
+    user_id: int
+
+class SellerOTPRequest(BaseModel):
+    user_id: int
+    phone: str
+
+class SellerOTPSubmit(BaseModel):
+    user_id: int
+    phone: str
+    hash: str
+    code: str
+    country: str
+    buy_price: float
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -77,6 +93,10 @@ def clean_display_name(raw_name: str) -> str:
     return clean.strip()
 
 app = FastAPI(title="Store Admin Panel")
+
+@app.get("/seller", response_class=HTMLResponse)
+async def get_seller_panel(request: Request):
+    return templates.TemplateResponse("seller.html", {"request": request})
 
 @app.on_event("startup")
 async def run_migrations():
@@ -629,3 +649,89 @@ async def toggle_ban(data: BanToggle):
             await session.commit()
             return {"status": "success"}
     raise HTTPException(status_code=404, detail="User not found")
+# --- Seller Panel APIs ---
+
+@app.get("/api/seller/data")
+async def get_seller_data(user_id: int):
+    async with async_session() as session:
+        user = await session.get(User, user_id)
+        if not user:
+            # Create user if missing (first time opening app)
+            user = User(id=user_id, balance_sourcing=0.0, balance_store=0.0, is_active_sourcing=True)
+            session.add(user)
+            await session.commit()
+            await session.refresh(user)
+            
+        # Get stats
+        sold_count = (await session.execute(select(func.count(Account.id)).where(Account.seller_id == user_id, Account.status == AccountStatus.SOLD))).scalar() or 0
+        pending_count = (await session.execute(select(func.count(Account.id)).where(Account.seller_id == user_id, Account.status == AccountStatus.PENDING))).scalar() or 0
+        
+        # Get prices
+        prices_result = await session.execute(select(CountryPrice).where(CountryPrice.buy_price > 0).order_by(CountryPrice.country_name))
+        prices = prices_result.scalars().all()
+        
+        formatted_prices = []
+        for p in prices:
+            name, flag = resolve_country_info(p.country_code)
+            formatted_prices.append({
+                "name": p.country_name if p.country_name and p.country_name != "Unknown" else name,
+                "flag": flag,
+                "code": p.country_code,
+                "price": p.buy_price
+            })
+            
+        return {
+            "user": {
+                "id": user.id,
+                "balance": user.balance_sourcing,
+                "is_banned": user.is_banned_sourcing
+            },
+            "stats": {
+                "sold": sold_count,
+                "pending": pending_count
+            },
+            "prices": formatted_prices
+        }
+
+@app.post("/api/seller/request-otp")
+async def seller_request_otp(data: SellerOTPRequest):
+    async with async_session() as session:
+        user = await session.get(User, data.user_id)
+        if user and user.is_banned_sourcing:
+            raise HTTPException(status_code=403, detail="عذراً، أنت محظور من التوريد.")
+            
+    try:
+        phone = data.phone.strip()
+        if not phone.startswith("+"): phone = "+" + phone
+        
+        phone_code_hash = await request_app_code(data.user_id, phone)
+        return {"hash": phone_code_hash, "phone": phone}
+    except Exception as e:
+        logger.error(f"Seller OTP Request Error: {e}")
+        raise HTTPException(status_code=500, detail=f"خطأ في طلب الكود: {str(e)}")
+
+@app.post("/api/seller/submit-otp")
+async def seller_submit_otp(data: SellerOTPSubmit):
+    try:
+        session_string = await submit_app_code(data.user_id, data.phone, data.hash, data.code)
+        
+        if not session_string:
+            raise HTTPException(status_code=400, detail="فشل التحقق. الكود خطأ أو انتهت صلاحيته.")
+            
+        async with async_session() as session:
+            new_acc = Account(
+                phone_number=data.phone,
+                country=data.country,
+                price=0, # Admin will set selling price or it will be auto-calculated
+                session_string=session_string,
+                status=AccountStatus.PENDING,
+                seller_id=data.user_id,
+                created_at=datetime.utcnow()
+            )
+            session.add(new_acc)
+            await session.commit()
+            
+        return {"status": "success"}
+    except Exception as e:
+        logger.error(f"Seller OTP Submit Error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
