@@ -683,6 +683,16 @@ async def get_seller_data(user_id: int):
             sold_count = (await session.execute(select(func.count(Account.id)).where(Account.seller_id == user_id, Account.status == AccountStatus.SOLD))).scalar() or 0
             pending_count = (await session.execute(select(func.count(Account.id)).where(Account.seller_id == user_id, Account.status == AccountStatus.PENDING))).scalar() or 0
             
+            # Calculate Pending Balance
+            pending_balance = (await session.execute(
+                select(func.sum(Account.price)).where(Account.seller_id == user_id, Account.status == AccountStatus.PENDING)
+            )).scalar() or 0.0
+            
+            # Calculate Total Withdrawn
+            total_withdrawn = (await session.execute(
+                select(func.sum(Transaction.amount)).where(Transaction.user_id == user_id, Transaction.type == TransactionType.WITHDRAW)
+            )).scalar() or 0.0
+            
             # Get prices
             prices_result = await session.execute(select(CountryPrice).where(CountryPrice.buy_price > 0).order_by(CountryPrice.country_name))
             prices = prices_result.scalars().all()
@@ -704,6 +714,8 @@ async def get_seller_data(user_id: int):
                 "user": {
                     "id": user.id,
                     "balance": user.balance_sourcing,
+                    "pending_balance": pending_balance,
+                    "total_withdrawn": total_withdrawn,
                     "is_banned": user.is_banned_sourcing
                 },
                 "stats": {

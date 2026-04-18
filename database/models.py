@@ -15,6 +15,7 @@ class TransactionType(enum.Enum):
     DEPOSIT = "deposit"
     BUY = "buy"
     SELL = "sell"
+    WITHDRAW = "withdraw"
 
 class User(Base):
     __tablename__ = 'users'
