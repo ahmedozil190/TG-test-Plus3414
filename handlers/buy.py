@@ -1,7 +1,7 @@
 import logging
 import re
 from aiogram import Router, F
-from aiogram.types import CallbackQuery, Message, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import CallbackQuery, Message, InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 from aiogram.fsm.context import FSMContext
 from database.engine import async_session
 from database.models import Account, AccountStatus, User, Transaction, TransactionType
@@ -9,6 +9,7 @@ from sqlalchemy.future import select
 from sqlalchemy import func
 from services.session_manager import get_telegram_login_code
 from states.buy_state import BuyAccountState
+from config import STORE_URL
 
 router = Router()
 

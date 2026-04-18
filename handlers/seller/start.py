@@ -211,10 +211,7 @@ async def seller_help_cmd(message: Message):
             "♻️ If the answer to your question is not in the channel, you can contact : @FE4EE\n\n"
             "/cancel"
         )
-    markup = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="VIEW CHANNEL", url="https://t.me/+WvuURnelU2kzM2Rk")]
-    ])
-    await message.answer(help_text, reply_markup=markup, parse_mode="HTML")
+    await message.answer(help_text, parse_mode="HTML")
 
 @router.callback_query(F.data == "seller_back_main")
 async def seller_back_main(call: CallbackQuery):
