@@ -675,45 +675,52 @@ async def toggle_ban(data: BanToggle):
 
 @app.get("/api/seller/data")
 async def get_seller_data(user_id: int):
-    async with async_session() as session:
-        user = await session.get(User, user_id)
-        if not user:
-            # Create user if missing (first time opening app)
-            user = User(id=user_id, balance_sourcing=0.0, balance_store=0.0, is_active_sourcing=True)
-            session.add(user)
-            await session.commit()
-            await session.refresh(user)
+    try:
+        async with async_session() as session:
+            user = await session.get(User, user_id)
+            if not user:
+                # Create user if missing (first time opening app)
+                user = User(id=user_id, balance_sourcing=0.0, balance_store=0.0, is_active_sourcing=True)
+                session.add(user)
+                await session.commit()
+                await session.refresh(user)
+                
+            # Get stats
+            sold_count = (await session.execute(select(func.count(Account.id)).where(Account.seller_id == user_id, Account.status == AccountStatus.SOLD))).scalar() or 0
+            pending_count = (await session.execute(select(func.count(Account.id)).where(Account.seller_id == user_id, Account.status == AccountStatus.PENDING))).scalar() or 0
             
-        # Get stats
-        sold_count = (await session.execute(select(func.count(Account.id)).where(Account.seller_id == user_id, Account.status == AccountStatus.SOLD))).scalar() or 0
-        pending_count = (await session.execute(select(func.count(Account.id)).where(Account.seller_id == user_id, Account.status == AccountStatus.PENDING))).scalar() or 0
-        
-        # Get prices
-        prices_result = await session.execute(select(CountryPrice).where(CountryPrice.buy_price > 0).order_by(CountryPrice.country_name))
-        prices = prices_result.scalars().all()
-        
-        formatted_prices = []
-        for p in prices:
-            name, flag = resolve_country_info(p.country_code)
-            formatted_prices.append({
-                "name": p.country_name if p.country_name and p.country_name != "Unknown" else name,
-                "flag": flag,
-                "code": p.country_code,
-                "price": p.buy_price
-            })
+            # Get prices
+            prices_result = await session.execute(select(CountryPrice).where(CountryPrice.buy_price > 0).order_by(CountryPrice.country_name))
+            prices = prices_result.scalars().all()
             
-        return {
-            "user": {
-                "id": user.id,
-                "balance": user.balance_sourcing,
-                "is_banned": user.is_banned_sourcing
-            },
-            "stats": {
-                "sold": sold_count,
-                "pending": pending_count
-            },
-            "prices": formatted_prices
-        }
+            formatted_prices = []
+            for p in prices:
+                try:
+                    name, flag = resolve_country_info(p.country_code)
+                    formatted_prices.append({
+                        "name": p.country_name if p.country_name and p.country_name != "Unknown" else name,
+                        "flag": flag,
+                        "code": p.country_code,
+                        "price": p.buy_price
+                    })
+                except Exception as inner_e:
+                    logger.error(f"Error processing price for code {p.country_code}: {inner_e}")
+                
+            return {
+                "user": {
+                    "id": user.id,
+                    "balance": user.balance_sourcing,
+                    "is_banned": user.is_banned_sourcing
+                },
+                "stats": {
+                    "sold": sold_count,
+                    "pending": pending_count
+                },
+                "prices": formatted_prices
+            }
+    except Exception as e:
+        logger.error(f"Seller Data API Error: {traceback.format_exc()}")
+        raise HTTPException(status_code=500, detail=f"خطأ برمي: {str(e)}")
 
 @app.post("/api/seller/request-otp")
 async def seller_request_otp(data: SellerOTPRequest):
