@@ -15,6 +15,8 @@ from typing import List
 from services.session_manager import request_app_code, submit_app_code, login_clients
 import pycountry
 import re
+import urllib.request
+import json
 from datetime import datetime
 
 class SellerDataRequest(BaseModel):
@@ -678,7 +680,18 @@ async def get_seller_data(user_id: int):
                 session.add(user)
                 await session.commit()
                 await session.refresh(user)
-                
+            
+            # Fetch Bot Name dynamically
+            bot_name = "Bot"
+            try:
+                from config import SELLER_BOT_TOKEN
+                with urllib.request.urlopen(f"https://api.telegram.org/bot{SELLER_BOT_TOKEN}/getMe", timeout=5) as r:
+                    res_data = json.loads(r.read().decode())
+                    if res_data.get("ok"):
+                        bot_name = res_data["result"].get("first_name", "Bot")
+            except Exception as b_err:
+                logger.error(f"Error fetching bot name: {b_err}")
+
             # Get stats
             sold_count = (await session.execute(select(func.count(Account.id)).where(Account.seller_id == user_id, Account.status == AccountStatus.SOLD))).scalar() or 0
             pending_count = (await session.execute(select(func.count(Account.id)).where(Account.seller_id == user_id, Account.status == AccountStatus.PENDING))).scalar() or 0
@@ -720,6 +733,7 @@ async def get_seller_data(user_id: int):
                     "total_withdrawn": total_withdrawn,
                     "is_banned": user.is_banned_sourcing
                 },
+                "bot_name": bot_name,
                 "stats": {
                     "sold": sold_count,
                     "pending": pending_count,
