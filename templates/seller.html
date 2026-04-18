@@ -562,7 +562,7 @@
             <div class="success-icon">✅</div>
             <div class="modal-title" style="color:var(--text-p)">Request Submitted</div>
             <div class="modal-body" id="successText" style="text-align: center; color: var(--text-p);">
-                Withdrawal request submitted, please be patient until the bot administrator approves your payment•
+                Withdrawal request submitted, please be patient until the bot administrator approves your payment.
             </div>
             
             <div class="trans-no-box" id="successTransNo">
@@ -813,12 +813,22 @@
                 data.history.forEach(h => {
                     const item = document.createElement('div');
                     item.className = 'history-item';
+                    
+                    // Format address to show start...end
+                    const shortAddr = h.address.length > 12 ? (h.address.substring(0, 6) + '...' + h.address.slice(-4)) : h.address;
+                    
                     item.innerHTML = `
-                        <div class="h-info">
-                            <div class="h-amt">$${h.amount.toFixed(2)}</div>
-                            <div class="h-meta">${h.method} • ${h.date}</div>
+                        <div class="h-info" style="flex:1">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px">
+                                <span class="h-amt" style="color:var(--text-p)">$${h.amount.toFixed(2)}</span>
+                                <span class="h-status st-${h.status}">${h.status}</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; align-items:center">
+                                <span class="h-meta"><i class="fas fa-barcode" style="font-size:0.6rem; margin-right:4px"></i>${h.transaction_id || h.id}</span>
+                                <span class="h-meta"><i class="fas fa-wallet" style="font-size:0.6rem; margin-right:4px"></i>${shortAddr}</span>
+                            </div>
+                            <div class="h-meta" style="margin-top:4px; opacity:0.6"><i class="far fa-clock" style="font-size:0.6rem; margin-right:4px"></i>${h.date}</div>
                         </div>
-                        <div class="h-status st-${h.status}">${h.status}</div>
                     `;
                     list.appendChild(item);
                 });
