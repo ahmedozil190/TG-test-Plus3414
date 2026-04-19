@@ -677,7 +677,7 @@
 
         .tab-btn.active {
             background: var(--accent-dark);
-            color: var(--text-primary);
+            color: #ffffff;
             box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
         }
 
@@ -710,7 +710,7 @@
             background: linear-gradient(135deg, var(--accent), var(--accent-purple));
             border: none;
             border-radius: 14px;
-            color: var(--text-primary);
+            color: #ffffff;
             font-weight: 700;
             font-size: 0.95rem;
             display: flex;
@@ -1654,7 +1654,6 @@
                     : (currentLang === 'ar' ? 'نشط' : 'ACTIVE');
                 return `
                 <div class="user-card" onclick='openManageModal(${JSON.stringify(u)})'>
-                    <div class="user-card-index">${idx}</div>
                     <div style="display: flex; flex-direction: column; gap: 10px;">
                         <!-- Account Status -->
                         <div style="background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
@@ -1867,10 +1866,6 @@
                 const idx = start + i + 1;
                 return `
                 <div class="user-card" style="position: relative; margin-top: 25px; margin-bottom: 15px; cursor: default;">
-                    <!-- Floating Number Badge -->
-                    <div class="user-card-index">
-                        ${idx}
-                    </div>
                     <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
                         <!-- Name -->
                         <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
