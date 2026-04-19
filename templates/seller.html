@@ -501,7 +501,6 @@
                             <span id="detFlag" style="font-size:1.4rem"></span>
                             <div class="det-info">
                                 <div id="detName" class="det-name">Country Name</div>
-                                <div id="detSub" style="font-size:0.65rem; opacity:0.6">Estimated Reward</div>
                             </div>
                         </div>
                         <div id="detPrice" class="det-price">$0.00</div>
@@ -1000,7 +999,7 @@
                         document.getElementById('detFlag').textContent = "⚠️";
                         document.getElementById('detName').textContent = "Country Not Requested";
                         document.getElementById('detName').style.color = 'var(--error)';
-                        document.getElementById('detPrice').textContent = "Closed";
+                        document.getElementById('detPrice').textContent = "";
                         area.style.display = 'block';
                         btn.disabled = true;
                         btn.style.opacity = '0.5';
