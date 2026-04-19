@@ -13,9 +13,9 @@ login_clients: Dict[int, Client] = {}
 async def create_client(session_string: str = None) -> Client:
     # Use professional identity strings to avoid automated session bans
     identity = {
-        "device_model": "Samsung SM-G991B",
-        "system_version": "Android 12",
-        "app_version": "8.7.4",
+        "device_model": "Samsung SM-S918B", # Galaxy S23 Ultra
+        "system_version": "Android 14", # Modern Android version
+        "app_version": "10.14.5", # Recent Telegram version
         "lang_code": "en"
     }
     if session_string:
