@@ -821,26 +821,31 @@
         }
 
         .manage-card {
-            background: linear-gradient(165deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
-            width: 100%;
-            max-width: 450px;
-            border-radius: 24px;
-            border: 1px solid var(--border);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            overflow: hidden;
-            transform: translateY(30px);
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            background: #1a1a1c;
+            width: 90%;
+            max-width: 400px;
+            border-radius: 32px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 30px 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+            transform: scale(0.9);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .manage-overlay.active .manage-card {
             transform: translateY(0);
         }
 
-        .manage-header {
-            padding: 30px;
+        .manage-data-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 18px;
+            padding: 18px 12px;
+            margin-bottom: 15px;
             text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .manage-avatar {
@@ -893,10 +898,9 @@
         }
 
         .manage-stat-value {
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             font-weight: 900;
             color: #32d74b;
-            text-shadow: 0 0 20px rgba(50, 215, 75, 0.2);
         }
 
         /* Interactive Balance Adjustment Controls */
@@ -1856,12 +1860,9 @@
         let currentUser = null;
         function openManageModal(u) {
             currentUser = u;
-            document.getElementById('manage-name').innerText = (u.full_name || 'N/A').toUpperCase();
-            document.getElementById('manage-id').innerText = '@' + (u.username || u.id);
+            document.getElementById('manage-name').innerText = (u.full_name || u.id).toUpperCase();
+            document.getElementById('manage-id').innerText = '@' + (u.username || 'N/A');
             document.getElementById('manage-balance').innerText = `$${Number(u.balance_sourcing).toFixed(2)}`;
-            document.getElementById('manage-pending').innerText = `$${Number(u.pending_balance || 0).toFixed(2)}`;
-            document.getElementById('manage-sold').innerText = u.sold_count || 0;
-            document.getElementById('manage-sold-label').innerText = currentLang === 'ar' ? 'أرقام باعها' : 'Numbers Sold';
             document.getElementById('adjust-amount').value = '';
 
             const banBtn = document.getElementById('manage-ban-btn');
@@ -2196,39 +2197,38 @@
     </script>
     <div id="user-manage-modal" class="manage-overlay" onclick="closeManageModal()">
         <div class="manage-card" onclick="event.stopPropagation()">
-            <div class="manage-header">
-                <div id="manage-name" class="manage-name">USER NAME</div>
-                <div id="manage-id" class="manage-id">@username</div>
+            
+            <!-- Name Box -->
+            <div class="manage-data-box">
+                <div id="manage-name" style="color: #ffca28; font-weight: 900; font-size: 1.3rem; letter-spacing: 1px;">USER NAME</div>
             </div>
-            <div class="manage-body">
+
+            <!-- ID Box -->
+            <div class="manage-data-box">
+                <div id="manage-id" style="color: #64b5f6; font-weight: 800; font-size: 1.15rem;">@username</div>
+            </div>
+
+            <!-- Balance Box -->
+            <div class="manage-data-box" style="margin-bottom: 25px; padding: 22px 12px;">
                 <div id="manage-balance" class="manage-stat-value">$0.00</div>
-                
-                <!-- Interaction Bar -->
-                <div class="manage-control-group">
-                    <div class="manage-input-wrapper">
-                        <input type="number" id="adjust-amount" class="manage-input" data-i18n-placeholder="ph_amount" placeholder="Amount...">
-                    </div>
-                    <button class="adjust-btn plus" onclick="adjustBalanceInline('plus')">
-                        <i class="fas fa-plus"></i>
-                    </button>
-                    <button class="adjust-btn minus" onclick="adjustBalanceInline('minus')">
-                        <i class="fas fa-minus"></i>
-                    </button>
-                </div>
+            </div>
 
-                <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 25px; font-size: 0.9rem;">
-                    <div style="background: rgba(255,255,255,0.03); padding: 8px 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
-                        <span data-i18n="lbl_pending_balance" style="color: var(--text-secondary);">Pending</span>: <span id="manage-pending" style="color: #ff9f0a; font-weight: 700;">$0.00</span>
-                    </div>
-                    <div style="background: rgba(255,255,255,0.03); padding: 8px 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
-                        <span id="manage-sold-label" style="color: var(--text-secondary);">Numbers Sold</span>: <span id="manage-sold" style="color: var(--text-primary); font-weight: 700;">0</span>
-                    </div>
+            <!-- Interaction Bar -->
+            <div class="manage-control-group">
+                <div class="manage-input-wrapper">
+                    <input type="number" id="adjust-amount" class="manage-input" data-i18n-placeholder="ph_amount" placeholder="Amount...">
                 </div>
+                <button class="adjust-btn plus" onclick="adjustBalanceInline('plus')">
+                    <i class="fas fa-plus"></i>
+                </button>
+                <button class="adjust-btn minus" onclick="adjustBalanceInline('minus')">
+                    <i class="fas fa-minus"></i>
+                </button>
+            </div>
 
-                <div class="manage-actions">
-                    <button id="manage-ban-btn" class="manage-btn danger" onclick="manageBan()">Ban</button>
-                    <button class="manage-btn secondary" onclick="closeManageModal()" data-i18n="nav_close">Close</button>
-                </div>
+            <div class="manage-actions">
+                <button id="manage-ban-btn" class="manage-btn danger" onclick="manageBan()">Ban</button>
+                <button class="manage-btn secondary" onclick="closeManageModal()" data-i18n="nav_close">Close</button>
             </div>
         </div>
     </div>
