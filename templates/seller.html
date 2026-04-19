@@ -1826,12 +1826,6 @@
 
         // ─── Startup Logic ───
         window.onload = () => {
-            // Force Telegram Header to match current theme dynamically
-            if (tg) {
-                const isDark = document.body.classList.contains('dark-mode');
-                tg.setHeaderColor(isDark ? '#111113' : '#ffffff');
-                tg.setBackgroundColor(isDark ? '#09090b' : '#f8f9fa');
-            }
 
             fetchSellerData();
             // Check hash for persistence
