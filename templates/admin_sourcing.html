@@ -1740,7 +1740,12 @@
                         <!-- Balance -->
                         <div style="background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
                             <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'الرصيد' : 'Balance'}</span>
-                            <span style="color: #30d158; font-weight: 900; font-size: 1.1rem;">$${u.balance_sourcing}</span>
+                            <span style="color: #30d158; font-weight: 900; font-size: 1.1rem;">$${Number(u.balance_sourcing).toFixed(2)}</span>
+                        </div>
+                        <!-- Pending Balance -->
+                        <div style="background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'الرصيد المعلق' : 'Pending Balance'}</span>
+                            <span style="color: #ff9f0a; font-weight: 800; font-size: 1rem;">$${Number(u.pending_balance || 0).toFixed(2)}</span>
                         </div>
                         <!-- Sold Count -->
                         <div style="background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
