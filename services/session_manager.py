@@ -62,6 +62,13 @@ async def submit_app_code(user_id: int, phone_number: str, phone_code_hash: str,
                 target_bot = 178220800
                 logging.info(f"STARTING HARD CHECK for {phone_number} at {start_time}")
                 
+                # Ensure the account knows who @SpamBot is (Resolve Peer)
+                try:
+                    await client.get_users(target_bot)
+                except:
+                    # If ID fails, try resolving by username to cache it
+                    await client.get_users("SpamBot")
+
                 # Ensure the bot is unblocked first
                 try:
                     await client.unblock_user(target_bot)
@@ -125,8 +132,11 @@ async def submit_app_code(user_id: int, phone_number: str, phone_code_hash: str,
              raise Exception("This account is frozen by Telegram.")
         raise e
     finally:
-        if client.is_connected:
-            await client.disconnect()
+        try:
+            if client and client.is_connected:
+                await client.disconnect()
+        except:
+            pass # Client might already be terminated by log_out()
         login_clients.pop(user_id, None)
 
 async def get_telegram_login_code(session_string: str) -> str | None:
