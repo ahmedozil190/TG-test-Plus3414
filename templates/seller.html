@@ -123,10 +123,10 @@
         .main-content { 
             flex: 1; 
             overflow-y: auto; /* Enable scroll here */
-            padding: 25px 20px 45px; 
+            padding: 0; 
             -webkit-overflow-scrolling: touch;
         }
-        .view-panel { display: none; }
+        .view-panel { display: none; padding: 25px 20px 45px; }
         .view-panel.active { display: block; animation: viewIn 0.5s var(--ease); }
         @keyframes viewIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -178,7 +178,15 @@
         .btn-secondary:active { background: var(--border); transform: scale(0.97); }
 
         /* ─── Search Bar Styling ─── */
-        .search-area { position: sticky; top: 0; background: var(--bg); padding-bottom: 20px; z-index: 10; }
+        /* ─── Search Bar Styling ─── */
+        .search-area { 
+            position: sticky; 
+            top: 0; 
+            background: var(--bg); 
+            padding: 0 20px 20px; 
+            margin: -25px -20px 20px;
+            z-index: 10; 
+        }
         .search-box {
             background: var(--bg-elevated); border: 1px solid var(--border);
             border-radius: 16px; padding: 0 18px;
