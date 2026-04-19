@@ -66,7 +66,7 @@
         /* ─── Top Bar ─── */
         .top-bar {
             height: 70px;
-            background: #09090b; border-bottom: 1px solid var(--border);
+            background: var(--bg); border-bottom: 1px solid var(--border);
             display: flex; align-items: center; justify-content: space-between;
             padding: 0 20px; z-index: 1000; flex-shrink: 0;
         }
@@ -1149,10 +1149,12 @@
 
         // ─── Startup Logic ───
         window.onload = () => {
-            // Force Telegram Header to match theme
+            // Force Telegram Header to match current theme dynamically
             if (tg) {
-                tg.setHeaderColor('#09090b');
-                tg.setBackgroundColor('#09090b');
+                const isDark = document.body.classList.contains('dark-mode');
+                const themeColor = isDark ? '#09090b' : '#f8f9fa';
+                tg.setHeaderColor(themeColor);
+                tg.setBackgroundColor(themeColor);
             }
             
             fetchSellerData();
