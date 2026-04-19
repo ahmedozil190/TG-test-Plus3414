@@ -130,13 +130,13 @@
         .top-bar {
             height: 70px;
             background: var(--bg-elevated);
-            border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 0 20px;
             z-index: 1000;
             flex-shrink: 0;
+            border-bottom: none; /* Seamless top frame */
         }
 
         .nav-trigger {
@@ -1453,8 +1453,12 @@
         function applyTheme() {
             const scheme = tg.colorScheme;
             document.body.className = scheme === 'light' ? 'light-mode' : 'dark-mode';
-            tg.headerColor = scheme === 'light' ? '#ffffff' : '#111113';
-            tg.backgroundColor = scheme === 'light' ? '#f8f9fa' : '#09090b';
+            
+            const headerColor = scheme === 'light' ? '#ffffff' : '#111113';
+            const bgColor = scheme === 'light' ? '#f8f9fa' : '#09090b';
+            
+            tg.setHeaderColor(headerColor);
+            tg.setBackgroundColor(bgColor);
         }
         tg.onEvent('themeChanged', applyTheme);
         applyTheme();
