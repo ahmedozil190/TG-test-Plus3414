@@ -1388,8 +1388,6 @@
             const titleEl = document.getElementById('page-title');
             titleEl.setAttribute('data-i18n', titleMap[id]);
             titleEl.innerText = translations[currentLang][titleMap[id]];
-
-            if (!skipToggle && window.innerWidth < 1024) toggleMenu();
         }
 
         async function init() {
@@ -1397,6 +1395,10 @@
                 const res = await fetch('/api/admin/sourcing/data');
                 const data = await res.json();
                 document.getElementById('stat-total-sourced').innerText = data.stats.total_sourced;
+                if(data.bot_name) document.getElementById('sideBrandName').textContent = data.bot_name;
+                const uname = tg.initDataUnsafe?.user?.first_name || "AD";
+                const uIEl = document.getElementById('userInitial');
+                if(uIEl) uIEl.textContent = uname.charAt(0).toUpperCase();
                 document.getElementById('stat-pending').innerText = data.stats.pending_count;
                 document.getElementById('stat-total-balance').innerText = `$${Number(data.stats.total_balance).toFixed(2)}`;
                 
