@@ -1453,8 +1453,12 @@
         function applyTheme() {
             const scheme = tg.colorScheme;
             document.body.className = scheme === 'light' ? 'light-mode' : 'dark-mode';
-            tg.headerColor = scheme === 'light' ? '#ffffff' : '#111113';
-            tg.backgroundColor = scheme === 'light' ? '#f8f9fa' : '#09090b';
+            
+            const headerColor = scheme === 'light' ? '#ffffff' : '#111113';
+            const bgColor = scheme === 'light' ? '#f8f9fa' : '#09090b';
+            
+            tg.setHeaderColor(headerColor);
+            tg.setBackgroundColor(bgColor);
         }
         tg.onEvent('themeChanged', applyTheme);
         applyTheme();

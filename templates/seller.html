@@ -253,6 +253,24 @@
             }
         }
 
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 44px; /* Slightly taller for visibility */
+            background: var(--bg-elevated);
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            color: var(--text-s);
+            font-weight: 600;
+            z-index: 2000;
+            letter-spacing: 0.5px;
+        }
+
         /* ─── Unified High-End Cards ─── */
         .info-card-stack {
             display: flex;
@@ -1330,7 +1348,9 @@
         </div>
     </div>
 
-    <div class="toast" id="toast"></div>
+    <div class="bottom-bar">
+        @buytgacc1bot
+    </div>
 
     <script>
         const tg = window.Telegram.WebApp;
@@ -1340,8 +1360,12 @@
         function applyTheme() {
             const scheme = tg.colorScheme;
             document.body.className = scheme === 'light' ? 'light-mode' : 'dark-mode';
-            tg.headerColor = scheme === 'light' ? '#ffffff' : '#111113';
-            tg.backgroundColor = scheme === 'light' ? '#f8f9fa' : '#09090b';
+            
+            const headerColor = scheme === 'light' ? '#ffffff' : '#111113';
+            const bgColor = scheme === 'light' ? '#f8f9fa' : '#09090b';
+            
+            tg.setHeaderColor(headerColor);
+            tg.setBackgroundColor(bgColor);
         }
         tg.onEvent('themeChanged', applyTheme);
         applyTheme();
