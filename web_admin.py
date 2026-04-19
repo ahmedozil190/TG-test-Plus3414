@@ -366,6 +366,18 @@ async def get_sourcing_data():
                 })
 
             # Bot-specific user count and balance
+            bot_name = "Bot"
+            try:
+                from config import SELLER_BOT_TOKEN
+                import urllib.request, json
+                req = urllib.request.Request(f"https://api.telegram.org/bot{SELLER_BOT_TOKEN}/getMe")
+                with urllib.request.urlopen(req, timeout=3) as r:
+                    res_data = json.loads(r.read().decode())
+                    if res_data.get("ok"):
+                        bot_name = res_data["result"].get("first_name", "Bot")
+            except Exception:
+                pass
+
             user_count = (await session.execute(select(func.count(User.id)).where(User.is_active_sourcing == True))).scalar() or 0
             total_sourcing_balance = (await session.execute(select(func.sum(User.balance_sourcing)))).scalar() or 0.0
 
@@ -400,6 +412,7 @@ async def get_sourcing_data():
                 })
 
             return {
+                "bot_name": bot_name,
                 "stats": {
                     "total_sourced": total_sourced, 
                     "pending_count": pending_count,
@@ -420,9 +433,9 @@ async def get_admin_store_data():
         async with async_session() as session:
             bot_name = "Bot"
             try:
-                from config import STORE_BOT_TOKEN
+                from config import BOT_TOKEN
                 import urllib.request, json
-                req = urllib.request.Request(f"https://api.telegram.org/bot{STORE_BOT_TOKEN}/getMe")
+                req = urllib.request.Request(f"https://api.telegram.org/bot{BOT_TOKEN}/getMe")
                 with urllib.request.urlopen(req, timeout=3) as r:
                     res_data = json.loads(r.read().decode())
                     if res_data.get("ok"):
@@ -520,6 +533,7 @@ async def get_admin_store_data():
                 })
 
         return {
+            "bot_name": bot_name,
             "stats": {"user_count": user_count, "stock_count": stock_count, "total_balance": total_balance},
             "users": users,
             "transactions": transactions,

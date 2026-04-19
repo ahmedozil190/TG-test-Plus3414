@@ -1275,7 +1275,6 @@
 
         const translations = {
             en: {
-                panel_title: "Store Panel",
                 nav_dashboard: "Dashboard",
                 nav_users: "Customers",
                 nav_prices: "Selling Prices",
@@ -1322,7 +1321,6 @@
                 btn_unban_user: "Unban User"
             },
             ar: {
-                panel_title: "لوحة المتجر",
                 nav_dashboard: "الرئيسية",
                 nav_users: "إدارة العملاء",
                 nav_prices: "أسعار البيع",
@@ -1393,7 +1391,6 @@
                 const key = el.getAttribute('data-i18n-placeholder');
                 if (translations[currentLang][key]) el.placeholder = translations[currentLang][key];
             });
-            init();
         }
 
         function toggleLanguage() {
@@ -1855,7 +1852,6 @@
         let confirmResolve = null;
         function showConfirm() {
             document.getElementById('confirm-overlay').classList.add('active');
-            updateUI(); // Ensure translations are applied
             return new Promise((resolve) => {
                 confirmResolve = resolve;
             });

@@ -1243,7 +1243,6 @@
 
         const translations = {
             en: {
-                panel_title: "Sourcing Panel",
                 nav_dashboard: "Dashboard",
                 nav_prices: "Buying Prices",
                 nav_users: "Customers",
@@ -1287,7 +1286,6 @@
                 btn_unban_user: "Unban User"
             },
             ar: {
-                panel_title: "لوحة التوريد",
                 nav_dashboard: "الرئيسية",
                 nav_prices: "أسعار الشراء",
                 nav_users: "العملاء",
@@ -1356,7 +1354,6 @@
                 const key = el.getAttribute('data-i18n-placeholder');
                 if (translations[currentLang][key]) el.placeholder = translations[currentLang][key];
             });
-            init();
         }
 
         function toggleLanguage() {
