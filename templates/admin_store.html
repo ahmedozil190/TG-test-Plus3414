@@ -1254,7 +1254,7 @@
             <i class="fas fa-bars"></i>
         </button>
         <div class="page-title" id="page-title" data-i18n="nav_dashboard">Dashboard</div>
-        <div class="user-avatar" id="userInitial">AD</div>
+        <div class="user-avatar" id="userInitial"></div>
     </div>
 
     <!-- Sidebar Drawer -->
@@ -1493,7 +1493,7 @@
             const scheme = tg.colorScheme;
             document.body.className = scheme === 'light' ? 'light-mode' : 'dark-mode';
             tg.headerColor = scheme === 'light' ? '#ffffff' : '#111113';
-            tg.backgroundColor = scheme === 'light' ? '#f8f9fa' : '#09090b';
+            tg.backgroundColor = scheme === 'light' ? '#f8f9fa' : '#111113';
         }
         tg.onEvent('themeChanged', applyTheme);
         applyTheme();
