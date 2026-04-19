@@ -137,6 +137,8 @@
             padding: 0 20px;
             z-index: 1000;
             flex-shrink: 0;
+            position: sticky;
+            top: 0;
         }
 
         .nav-trigger {
@@ -229,6 +231,31 @@
         .side-brand-name {
             font-size: 1.2rem;
             font-weight: 800;
+        }
+        .main-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: var(--bg-elevated);
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            z-index: 2000;
+            letter-spacing: 0.5px;
         }
 
         .side-nav {
@@ -1425,8 +1452,9 @@
                 </div>
             </section>
 
-        </div>
-    </main>
+    <div class="bottom-bar">
+        @TG_Store_Plus_bot
+    </div>
 
     <!-- ===== Price Modal ===== -->
     <div id="price-modal" class="modal-overlay" onclick="closePriceModal(event)">
