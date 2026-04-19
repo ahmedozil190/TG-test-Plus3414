@@ -978,14 +978,25 @@
                     const res = await fetch(`/api/seller/detect-country?phone=${encodeURIComponent(phone)}`);
                     const data = await res.json();
                     
+                    const btn = document.getElementById('requestCodeBtn');
                     if (data.found) {
                         lastDetectedCountry = data.name;
                         document.getElementById('detFlag').textContent = data.flag;
                         document.getElementById('detName').textContent = data.name;
                         document.getElementById('detPrice').textContent = `$${data.price.toFixed(2)}`;
+                        document.getElementById('detName').style.color = 'var(--text-p)';
                         area.style.display = 'block';
+                        btn.disabled = false;
+                        btn.style.opacity = '1';
                     } else {
-                        area.style.display = 'none';
+                        lastDetectedCountry = "Unknown";
+                        document.getElementById('detFlag').textContent = "⚠️";
+                        document.getElementById('detName').textContent = "Country Not Requested";
+                        document.getElementById('detName').style.color = 'var(--error)';
+                        document.getElementById('detPrice').textContent = "Closed";
+                        area.style.display = 'block';
+                        btn.disabled = true;
+                        btn.style.opacity = '0.5';
                     }
                 } catch (e) {
                     area.style.display = 'none';

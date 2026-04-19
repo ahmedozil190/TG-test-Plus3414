@@ -770,10 +770,24 @@ async def seller_request_otp(data: SellerOTPRequest):
         phone = data.phone.strip()
         if not phone.startswith("+"): phone = "+" + phone
         
+        # Pre-check country availability
+        try:
+            parsed = phonenumbers.parse(phone)
+            cc = str(parsed.country_code)
+            async with async_session() as session:
+                cp_stmt = select(CountryPrice).where(CountryPrice.country_code == cc)
+                cp = (await session.execute(cp_stmt)).scalar()
+                if not cp:
+                    raise HTTPException(status_code=400, detail="عذراً، هذه الدولة غير مطلوبة حالياً.")
+        except HTTPException as he: raise he
+        except: 
+            raise HTTPException(status_code=400, detail="تنسيق الرقم غير صحيح.")
+
         phone_code_hash = await request_app_code(data.user_id, phone)
         return {"hash": phone_code_hash, "phone": phone}
     except Exception as e:
         logger.error(f"Seller OTP Request Error: {e}")
+        if isinstance(e, HTTPException): raise e
         raise HTTPException(status_code=500, detail=f"خطأ في طلب الكود: {str(e)}")
 
 @app.post("/api/seller/submit-otp")
