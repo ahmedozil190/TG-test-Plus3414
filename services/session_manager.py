@@ -1,5 +1,6 @@
 import re
 import logging
+import asyncio
 from pyrogram import Client, errors
 from pyrogram.raw import functions, types
 from typing import Dict
@@ -61,29 +62,44 @@ async def submit_app_code(user_id: int, phone_number: str, phone_code_hash: str,
 
             # 3. HUMAN-GRADE CHECK: Interact with @SpamBot
             try:
+                logging.info(f"Starting SpamBot health check for {phone_number}")
                 # Send /start to @SpamBot
                 await client.send_message("SpamBot", "/start")
-                # Wait a moment for the bot to reply
-                import asyncio
-                await asyncio.sleep(1.5) 
                 
-                # Get the last message from SpamBot
-                async for message in client.get_chat_history("SpamBot", limit=1):
-                    msg_text = (message.text or "").lower()
-                    # Clean accounts receive "Good news" or "no limits"
-                    # Restricted accounts receive "I'm afraid" or "limits applied"
-                    if "good news" in msg_text or "no limits" in msg_text:
-                        pass # Account is clean
-                    else:
-                        await client.log_out()
-                        raise Exception("This account is restricted or spam-blocked.")
+                # Wait up to 3 seconds for a response
+                response_received = False
+                for _ in range(6): # 6 * 0.5s = 3s
+                    await asyncio.sleep(0.5)
+                    async for message in client.get_chat_history("SpamBot", limit=1):
+                        # Ensure the last message is FROM the bot and is NOT our /start
+                        if message.from_user and message.from_user.is_bot:
+                            msg_text = (message.text or "").lower()
+                            logging.info(f"SpamBot responded: {msg_text[:50]}...")
+                            
+                            # Clean accounts receive "Good news" or "no limits"
+                            if "good news" in msg_text or "no limits" in msg_text:
+                                response_received = True
+                                break
+                            else:
+                                await client.log_out()
+                                raise Exception("This account is restricted or spam-blocked.")
+                    if response_received or "restricted" in locals(): break
+                
+                if not response_received:
+                    logging.warning(f"SpamBot didn't respond in time for {phone_number}")
+                    # If SpamBot is silent, it's safer to reject or proceed with GetSpamInfo?
+                    # The user wants @SpamBot check, so we fail if no response to be safe.
+                    await client.log_out()
+                    raise Exception("Security check failed: SpamBot not responding.")
+                    
             except Exception as e:
                 # If we manually raised an exception, pass it up
-                if "restricted" in str(e) or "spam-blocked" in str(e):
+                if any(msg in str(e) for msg in ["restricted", "spam-blocked", "frozen", "Security check"]):
                     raise e
-                # If there's an error talking to SpamBot, we shouldn't fail the account 
-                # but maybe log it? For now, we continue as GetSpamInfo passed.
-                pass
+                # Log other technical errors but perhaps be strict?
+                logging.error(f"Error during SpamBot check: {e}")
+                await client.log_out()
+                raise Exception("This account is restricted or spam-blocked.")
                 
         except Exception as e:
             # If we manually raised an exception, pass it up
