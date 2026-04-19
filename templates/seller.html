@@ -325,6 +325,35 @@
         .pg-btn:disabled { opacity: 0.3; cursor: not-allowed; }
         .pg-info { font-size: 0.75rem; color: var(--text-s); font-weight: 500; }
 
+        /* ─── Sourcing Stepper ─── */
+        .stepper-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 20px; margin-bottom: 30px; position: relative;
+        }
+        .stepper-header::after {
+            content: ''; position: absolute; top: 15px; left: 50px; right: 50px;
+            height: 2px; background: var(--border); z-index: 1;
+        }
+        .step-node {
+            width: 32px; height: 32px; border-radius: 50%; background: var(--bg-elevated);
+            border: 2px solid var(--border); display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem; font-weight: 800; z-index: 2; transition: 0.3s; color: var(--text-s);
+        }
+        .step-node.active { border-color: var(--accent); color: var(--accent); background: rgba(88, 101, 242, 0.1); }
+        .step-node.completed { background: var(--success); border-color: var(--success); color: white; }
+
+        .detection-badge {
+            display: flex; align-items: center; gap: 10px; padding: 12px;
+            background: rgba(88, 101, 242, 0.05); border: 1px solid rgba(88, 101, 242, 0.2);
+            border-radius: 12px; margin-top: 15px; animation: slideUp 0.3s ease;
+        }
+        .acc-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px; border-radius: 12px; background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border); margin-bottom: 8px;
+        }
+        @keyframes slideUp { from {opacity:0; transform:translateY(10px);} to {opacity:1; transform:translateY(0);} }
+
     </style>
 </head>
 <body class="dark-mode">
@@ -444,37 +473,75 @@
 
         <!-- View: Submit (Wizard) -->
         <div class="view-panel" id="view-submit">
-            <div class="wizard-pane" id="step-phone">
+            <!-- Stepper Header -->
+            <div class="stepper-header">
+                <div class="step-node active" id="node-1">1</div>
+                <div class="step-node" id="node-2">2</div>
+                <div class="step-node" id="node-3"><i class="fas fa-check"></i></div>
+            </div>
+
+            <div class="wizard-pane" id="step-phone" style="padding-top:0">
                 <div class="w-icon"><i class="fas fa-mobile-alt"></i></div>
-                <h2 class="w-title">Submit Account</h2>
-                <p class="w-desc">Enter the phone number for the account you want to sell. Ensure you can access the account for the code.</p>
+                <h2 class="w-title">Account Details</h2>
+                <p class="w-desc">Enter the international phone number. We'll automatically detect the country and your reward price.</p>
+                
                 <div class="input-group">
-                    <label>Phone Number (International Format)</label>
-                    <input type="text" id="phoneInput" class="w-input" placeholder="+123..." autocomplete="off">
+                    <label>Phone Number</label>
+                    <input type="text" id="phoneInput" class="w-input" placeholder="+123..." oninput="handlePhoneInput()">
                 </div>
-                <button class="btn-action" id="requestCodeBtn" onclick="requestOTP()">
-                    Request Verification Code <i class="fas fa-chevron-right"></i>
+
+                <div id="detectionArea" style="display:none">
+                    <div class="detection-badge">
+                        <span id="detFlag" style="font-size:1.5rem"></span>
+                        <div style="flex:1">
+                            <div id="detName" style="font-weight:700; font-size:0.9rem">Country Name</div>
+                            <div style="font-size:0.7rem; opacity:0.6">Estimated Reward</div>
+                        </div>
+                        <div id="detPrice" style="font-weight:800; color:var(--success); font-size:1.1rem">$0.00</div>
+                    </div>
+                </div>
+
+                <button class="btn-action" id="requestCodeBtn" onclick="requestOTP()" style="margin-top:20px">
+                    Get Verification Code <i class="fas fa-angle-right"></i>
                 </button>
             </div>
 
-            <div class="wizard-pane" id="step-otp" style="display:none">
-                <div class="w-icon" style="color:var(--warning)"><i class="fas fa-shield-alt"></i></div>
-                <h2 class="w-title">Verification</h2>
-                <p class="w-desc">Enter the code sent to the Telegram account of <b id="displayPhone"></b>.</p>
+            <div class="wizard-pane" id="step-otp" style="display:none; padding-top:0">
+                <div class="w-icon" style="color:var(--warning)"><i class="fas fa-key"></i></div>
+                <h2 class="w-title">Verify Login</h2>
+                <p class="w-desc">A 5-digit code was sent to <b id="displayPhone"></b> on Telegram.</p>
                 <div class="input-group">
-                    <label>5-Digit Code</label>
-                    <input type="text" id="otpInput" class="w-input" placeholder="00000" maxlength="5" inputmode="numeric" style="text-align:center; letter-spacing:10px">
+                    <label>Telegram Code</label>
+                    <input type="text" id="otpInput" class="w-input" placeholder="•••••" maxlength="5" style="text-align:center; letter-spacing:8px; font-size:1.5rem">
                 </div>
                 <button class="btn-action" id="submitCodeBtn" onclick="submitOTP()">
-                    Confirm Sourcing <i class="fas fa-check-circle"></i>
+                    Finish Submission <i class="fas fa-check-circle"></i>
                 </button>
             </div>
 
-            <div class="wizard-pane" id="step-success" style="display:none">
+            <div class="wizard-pane" id="step-success" style="display:none; padding-top:0">
                 <div class="w-icon" style="color:var(--success)"><i class="fas fa-check-double"></i></div>
-                <h2 class="w-title">Submitted!</h2>
-                <p class="w-desc">Your account is now in the technical review queue. Your balance will be updated automatically upon approval.</p>
-                <button class="btn-action" onclick="changeView('dashboard')">Back to Home</button>
+                <h2 class="w-title">Great Work!</h2>
+                <p class="w-desc">Account <span id="successPhone" style="font-weight:700"></span> has been submitted for review.</p>
+                <div style="display:flex; gap:10px; margin-top:20px">
+                    <button class="btn-secondary" style="flex:1" onclick="resetSubmission()">Submit Another</button>
+                    <button class="btn-action" style="flex:1" onclick="changeView('dashboard')">Home</button>
+                </div>
+            </div>
+
+            <!-- New Sourcing History Section -->
+            <div class="withdraw-card" style="margin-top:30px; padding:20px">
+                <h3 style="font-size:1rem; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center">
+                    Submission History
+                    <span style="font-size:0.7rem; opacity:0.5; font-weight:400">Last 15 items</span>
+                </h3>
+                <div id="sourcingHistory" style="display:flex; flex-direction:column; gap:8px">
+                    <!-- JS Data -->
+                </div>
+                <div id="sourcingEmpty" style="text-align:center; padding:30px; opacity:0.3; display:none">
+                    <i class="fas fa-inbox" style="font-size:2rem; margin-bottom:10px"></i>
+                    <div>No accounts submitted yet</div>
+                </div>
             </div>
         </div>
 
@@ -663,6 +730,7 @@
             if (viewId === 'dashboard') fetchSellerData();
             if (viewId === 'pricing') fetchSellerData();
             if (viewId === 'withdraw') fetchWithdrawals();
+            if (viewId === 'submit') fetchSourcingHistory();
         }
 
         // ─── Data Services ───
@@ -891,7 +959,40 @@
             }
         }
 
-        // ─── Business Logic ───
+        // ─── Sourcing / Submit Logic ───
+        let lastDetectedCountry = "Unknown";
+        let detectionTimeout = null;
+
+        function handlePhoneInput() {
+            const phone = document.getElementById('phoneInput').value.trim();
+            const area = document.getElementById('detectionArea');
+            
+            if (phone.length < 5) {
+                area.style.display = 'none';
+                return;
+            }
+
+            if (detectionTimeout) clearTimeout(detectionTimeout);
+            detectionTimeout = setTimeout(async () => {
+                try {
+                    const res = await fetch(`/api/seller/detect-country?phone=${encodeURIComponent(phone)}`);
+                    const data = await res.json();
+                    
+                    if (data.found) {
+                        lastDetectedCountry = data.name;
+                        document.getElementById('detFlag').textContent = data.flag;
+                        document.getElementById('detName').textContent = data.name;
+                        document.getElementById('detPrice').textContent = `$${data.price.toFixed(2)}`;
+                        area.style.display = 'block';
+                    } else {
+                        area.style.display = 'none';
+                    }
+                } catch (e) {
+                    area.style.display = 'none';
+                }
+            }, 500);
+        }
+
         async function requestOTP() {
             const phone = document.getElementById('phoneInput').value.trim();
             if (!phone) return showToast("Phone number required");
@@ -914,6 +1015,10 @@
                     document.getElementById('displayPhone').textContent = currentPhone;
                     tg.HapticFeedback.notificationOccurred('success');
                     
+                    // Update Stepper
+                    document.getElementById('node-1').className = 'step-node completed';
+                    document.getElementById('node-2').className = 'step-node active';
+                    
                     document.getElementById('step-phone').style.display = 'none';
                     document.getElementById('step-otp').style.display = 'block';
                 } else {
@@ -923,7 +1028,7 @@
                 showToast("Server Error");
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = 'Request Verification Code <i class="fas fa-chevron-right"></i>';
+                btn.innerHTML = 'Get Verification Code <i class="fas fa-angle-right"></i>';
             }
         }
 
@@ -941,14 +1046,21 @@
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
                         user_id: userId, phone: currentPhone, hash: currentHash, code: code,
-                        country: "Unknown", buy_price: 0
+                        country: lastDetectedCountry, buy_price: 0
                     })
                 });
 
                 if (res.ok) {
                     tg.HapticFeedback.notificationOccurred('success');
+                    
+                    document.getElementById('successPhone').textContent = currentPhone;
+                    document.getElementById('node-2').className = 'step-node completed';
+                    document.getElementById('node-3').className = 'step-node completed';
+
                     document.getElementById('step-otp').style.display = 'none';
                     document.getElementById('step-success').style.display = 'block';
+                    
+                    fetchSourcingHistory();
                 } else {
                     const data = await res.json();
                     showToast(data.detail || "Error");
@@ -957,7 +1069,50 @@
                 showToast("Process Error");
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = 'Confirm Sourcing <i class="fas fa-check-circle"></i>';
+                btn.innerHTML = 'Finish Submission <i class="fas fa-check-circle"></i>';
+            }
+        }
+
+        function resetSubmission() {
+            document.getElementById('phoneInput').value = '';
+            document.getElementById('otpInput').value = '';
+            document.getElementById('detectionArea').style.display = 'none';
+            document.getElementById('step-success').style.display = 'none';
+            document.getElementById('step-phone').style.display = 'block';
+            
+            document.getElementById('node-1').className = 'step-node active';
+            document.getElementById('node-2').className = 'step-node';
+            document.getElementById('node-3').className = 'step-node';
+        }
+
+        async function fetchSourcingHistory() {
+            const list = document.getElementById('sourcingHistory');
+            const empty = document.getElementById('sourcingEmpty');
+            try {
+                const res = await fetch(`/api/seller/accounts?user_id=${userId}`);
+                const data = await res.json();
+                
+                list.innerHTML = '';
+                if (!data.accounts || data.accounts.length === 0) {
+                    empty.style.display = 'block';
+                    return;
+                }
+
+                empty.style.display = 'none';
+                data.accounts.forEach(acc => {
+                    const item = document.createElement('div');
+                    item.className = 'acc-item';
+                    item.innerHTML = `
+                        <div style="flex:1">
+                            <div style="font-weight:700; font-size:0.85rem">${acc.phone}</div>
+                            <div style="font-size:0.65rem; opacity:0.5">${acc.date}</div>
+                        </div>
+                        <div class="h-status st-${acc.status}" style="font-size:0.65rem">${acc.status}</div>
+                    `;
+                    list.appendChild(item);
+                });
+            } catch (e) {
+                console.error("History fail:", e);
             }
         }
 

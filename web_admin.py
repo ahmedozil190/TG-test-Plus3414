@@ -785,10 +785,20 @@ async def seller_submit_otp(data: SellerOTPSubmit):
             raise HTTPException(status_code=400, detail="فشل التحقق. الكود خطأ أو انتهت صلاحيته.")
             
         async with async_session() as session:
+            # Automatic price detection
+            price = 0
+            try:
+                parsed = phonenumbers.parse(data.phone if data.phone.startswith("+") else "+" + data.phone)
+                cc = str(parsed.country_code)
+                cp_stmt = select(CountryPrice).where(CountryPrice.country_code == cc)
+                cp = (await session.execute(cp_stmt)).scalar()
+                if cp: price = cp.buy_price
+            except: pass
+
             new_acc = Account(
                 phone_number=data.phone,
                 country=data.country,
-                price=0, # Admin will set selling price or it will be auto-calculated
+                price=price,
                 session_string=session_string,
                 status=AccountStatus.PENDING,
                 seller_id=data.user_id,
@@ -797,7 +807,7 @@ async def seller_submit_otp(data: SellerOTPSubmit):
             session.add(new_acc)
             await session.commit()
             
-        return {"status": "success"}
+        return {"status": "success", "price": price}
     except Exception as e:
         logger.error(f"Seller OTP Submit Error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -871,6 +881,41 @@ async def get_withdrawals(user_id: int, page: int = 1):
             "total_pages": total_pages,
             "current_page": page,
             "total_count": total_count
+        }
+
+@app.get("/api/seller/detect-country")
+async def detect_country(phone: str):
+    try:
+        if not phone.startswith("+"): phone = "+" + phone
+        parsed = phonenumbers.parse(phone)
+        country_code = str(parsed.country_code)
+        
+        async with async_session() as session:
+            stmt = select(CountryPrice).where(CountryPrice.country_code == country_code)
+            cp = (await session.execute(stmt)).scalar()
+            
+            if cp:
+                return {
+                    "found": True,
+                    "name": cp.country_name,
+                    "flag": get_flag_emoji(pycountry.countries.get(numeric=cp.country_name).alpha_2 if cp.country_name.isdigit() else "US"), # Placeholder logic
+                    "price": cp.buy_price
+                }
+    except:
+        pass
+    return {"found": False}
+
+@app.get("/api/seller/accounts")
+async def get_seller_accounts(user_id: int):
+    async with async_session() as session:
+        stmt = select(Account).where(Account.seller_id == user_id).order_by(Account.created_at.desc()).limit(15)
+        results = (await session.execute(stmt)).scalars().all()
+        return {
+            "accounts": [{
+                "phone": a.phone_number,
+                "status": a.status.value,
+                "date": a.created_at.strftime("%Y-%m-%d %H:%M")
+            } for a in results]
         }
 
 # --- End of Web Admin SOURCINGPRO ---
