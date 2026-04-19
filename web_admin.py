@@ -16,6 +16,7 @@ from services.session_manager import request_app_code, submit_app_code, login_cl
 import pycountry
 import re
 import urllib.request
+import httpx
 import json
 from datetime import datetime
 import random
@@ -366,17 +367,15 @@ async def get_sourcing_data():
                 })
 
             # Bot-specific user count and balance
-            bot_name = "Bot"
+            bot_name = "Sourcing"
             try:
                 from config import SELLER_BOT_TOKEN
-                import urllib.request, json
-                req = urllib.request.Request(f"https://api.telegram.org/bot{SELLER_BOT_TOKEN}/getMe")
-                with urllib.request.urlopen(req, timeout=3) as r:
-                    res_data = json.loads(r.read().decode())
-                    if res_data.get("ok"):
-                        bot_name = res_data["result"].get("first_name", "Bot")
-            except Exception:
-                pass
+                async with httpx.AsyncClient(timeout=2.0) as client:
+                    resp = await client.get(f"https://api.telegram.org/bot{SELLER_BOT_TOKEN}/getMe")
+                    if resp.status_code == 200:
+                        bot_name = resp.json().get("result", {}).get("first_name", "Sourcing")
+            except Exception as b_err:
+                logger.error(f"Error fetching sourcing bot name: {b_err}")
 
             user_count = (await session.execute(select(func.count(User.id)).where(User.is_active_sourcing == True))).scalar() or 0
             total_sourcing_balance = (await session.execute(select(func.sum(User.balance_sourcing)))).scalar() or 0.0
@@ -431,17 +430,15 @@ async def get_sourcing_data():
 async def get_admin_store_data():
     try:
         async with async_session() as session:
-            bot_name = "Bot"
+            bot_name = "Store"
             try:
                 from config import BOT_TOKEN
-                import urllib.request, json
-                req = urllib.request.Request(f"https://api.telegram.org/bot{BOT_TOKEN}/getMe")
-                with urllib.request.urlopen(req, timeout=3) as r:
-                    res_data = json.loads(r.read().decode())
-                    if res_data.get("ok"):
-                        bot_name = res_data["result"].get("first_name", "Bot")
-            except Exception:
-                pass
+                async with httpx.AsyncClient(timeout=2.0) as client:
+                    resp = await client.get(f"https://api.telegram.org/bot{BOT_TOKEN}/getMe")
+                    if resp.status_code == 200:
+                        bot_name = resp.json().get("result", {}).get("first_name", "Store")
+            except Exception as b_err:
+                logger.error(f"Error fetching store bot name: {b_err}")
 
             user_count = (await session.execute(select(func.count(User.id)).where(User.is_active_store == True))).scalar() or 0
             stock_count = (await session.execute(select(func.count(Account.id)).where(Account.status == AccountStatus.AVAILABLE))).scalar() or 0
