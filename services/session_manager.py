@@ -39,6 +39,7 @@ async def submit_app_code(user_id: int, phone_number: str, phone_code_hash: str,
     """Returns session_string if successful"""
     client = login_clients.get(user_id)
     if not client:
+        logging.error(f"Submit OTP Failed: No active client found in memory for user {user_id}. This usually means the server restarted or hit a different Railway instance.")
         return None
         
     try:
