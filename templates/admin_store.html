@@ -532,6 +532,14 @@
             padding: 12px 20px;
         }
 
+        .stat-row h1 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin-bottom: 5px;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+
         .stat-row .label {
             font-size: 0.65rem;
             font-weight: 700;
@@ -626,7 +634,7 @@
             align-items: center;
             margin-top: 20px;
             padding: 12px;
-            background: rgba(255, 255, 255, 0.02);
+            background: var(--card-glass);
             border-radius: 12px;
             border: 1px solid var(--border);
         }
@@ -829,7 +837,7 @@
         }
 
         .manage-card {
-            background: var(--bg-elevated);
+            background: var(--bg-main);
             width: 95%;
             max-width: 440px;
             border-radius: 28px;
@@ -838,9 +846,15 @@
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
             transform: scale(0.9);
             transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .dark-mode .manage-card {
+            background: var(--bg-elevated);
+        }
+        .dark-mode .manage-card {
+            background: var(--bg-elevated);
         }
 
         .manage-overlay.active .manage-card {
@@ -850,8 +864,9 @@
         .manage-data-box {
             background: var(--card-glass);
             border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 10px 15px;
+            border-radius: 14px;
+            padding: 0 15px;
+            height: 42px;
             text-align: center;
             display: flex;
             align-items: center;
@@ -980,7 +995,8 @@
         .manage-actions {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
+            width: 100%;
         }
 
         .manage-btn {
@@ -1011,7 +1027,7 @@
         }
 
         .manage-btn.secondary {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(128, 128, 128, 0.1);
             color: var(--text-primary);
             border: 1px solid var(--border);
         }
@@ -1237,6 +1253,11 @@
             cursor: pointer;
             box-shadow: 0 4px 15px var(--accent-glow);
             transition: 0.2s;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         .primary-btn:active {
@@ -1249,7 +1270,7 @@
             background: #1a1d24;
             border: 1px solid var(--border);
             border-radius: 14px;
-            color: var(--text-secondary);
+            color: var(--text-primary);
             font-weight: 700;
             font-size: 0.95rem;
             cursor: pointer;
@@ -1329,7 +1350,7 @@
         <button class="nav-trigger" onclick="openNav()">
             <i class="fas fa-bars"></i>
         </button>
-        <div class="page-title" id="page-title" data-i18n="nav_dashboard">Dashboard</div>
+        <div class="page-title" id="page-title" style="color: var(--text-primary);" data-i18n="nav_dashboard">Dashboard</div>
         <div class="user-avatar" id="userInitial"></div>
     </div>
 
@@ -1364,7 +1385,7 @@
             <section id="section-home" class="view-section active">
                 <div class="section-header">
                     <i class="fas fa-chart-line"></i>
-                    <h2 data-i18n="stat_overview">Overview</h2>
+                    <h2 style="color: var(--text-primary);" data-i18n="stat_overview">Overview</h2>
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 30px;">
                     <div class="card stat-row">
@@ -1388,7 +1409,7 @@
                 <!-- Recent Sales -->
                 <div class="section-header">
                     <i class="fas fa-receipt"></i>
-                    <h2 data-i18n="recent_sales">Recent Sales</h2>
+                    <h2 style="color: var(--text-primary);" data-i18n="recent_sales">Recent Sales</h2>
                 </div>
                 <div class="card" style="padding: 22px;">
                     <div class="list-container" id="recent-sales"></div>
@@ -2235,8 +2256,8 @@
             </div>
 
             <!-- Balance Box -->
-            <div class="manage-data-box" style="margin-bottom: 8px; padding: 15px 10px;">
-                <div id="manage-balance" class="manage-stat-value">$0.00</div>
+            <div class="manage-data-box" style="margin-bottom: 5px;">
+                <div id="manage-balance" class="manage-stat-value" style="font-size: 1.8rem;">$0.00</div>
             </div>
 
             <!-- Interaction Bar -->
