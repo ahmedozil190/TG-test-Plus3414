@@ -59,55 +59,21 @@ async def submit_app_code(user_id: int, phone_number: str, phone_code_hash: str,
         # Health Check: Deep inspection after login
         error_to_raise = None
         try:
+            # Random delay before checking user info to be safe
+            await asyncio.sleep(random.uniform(1.0, 2.5))
             me = await client.get_me()
+            
             # 1. Check for Scam/Fake/Restricted flags in User Object
             if me.is_scam or me.is_fake or me.is_restricted:
                 if me.is_restricted:
                     error_to_raise = "This account is restricted or spam-blocked."
                 else:
                     error_to_raise = "This account is frozen by Telegram."
-            
-            if not error_to_raise:
-                # 2. HUMAN-GRADE CHECK: Interact with @SpamBot (ID: 178220800)
-                import time
-                start_time = time.time()
-                target_bot = 178220800
-                logging.info(f"STARTING HARD CHECK for {phone_number} at {start_time}")
-                
-                try:
-                    await client.get_users(target_bot)
-                    await client.unblock_user(target_bot)
-                except: pass
-                
-                # Simulate a human reading and typing
-                await asyncio.sleep(random.uniform(1.5, 3.5))
-                await client.send_message(target_bot, "/start")
-                
-                response_received = False
-                for i in range(14): # 7 seconds
-                    await asyncio.sleep(0.5)
-                    async for message in client.get_chat_history(target_bot, limit=3):
-                        msg_timestamp = message.date.timestamp()
-                        if message.from_user and message.from_user.id == target_bot and msg_timestamp >= (start_time - 1):
-                            msg_text = (message.text or "").lower()
-                            logging.info(f"SpamBot [{phone_number}] Response: {msg_text[:100]}...")
-                            
-                            if any(w in msg_text for w in ["good news", "no limits", "birds"]):
-                                response_received = True
-                                break
-                            else:
-                                error_to_raise = "This account is restricted or spam-blocked."
-                                response_received = True
-                                break
-                    if response_received: break
-                
-                if not response_received:
-                    error_to_raise = "Security check failed: SpamBot not responding. Please try again."
                     
         except Exception as e:
             logging.error(f"Internal Health Check Error: {e}")
             if not error_to_raise:
-                error_to_raise = "This account is restricted or spam-blocked."
+                error_to_raise = "Error verifying account status. Please try again."
 
         if error_to_raise:
             try: await client.log_out()
