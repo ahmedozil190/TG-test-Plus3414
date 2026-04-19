@@ -1843,13 +1843,14 @@
             alert(currentLang === 'ar' ? 'تم حفظ الإعدادات بنجاح!' : 'Settings saved successfully!');
         }
 
+        applyTheme();
         updateUI();
-        const savedView = sessionStorage.getItem('last_view_admin_sourcing');
-        if (savedView && savedView !== 'home') {
-            const menuBtn = document.getElementById('menu-' + (savedView === 'users' ? 'users' : savedView === 'prices' ? 'prices' : savedView === 'history' ? 'history' : savedView === 'settings' ? 'settings' : 'dashboard'));
-            if (menuBtn) switchNav(savedView, menuBtn, true);
-            else switchNav(savedView, null, true);
-        }
+        init();
+
+        const savedView = sessionStorage.getItem('last_view_admin_sourcing') || 'home';
+        const menuBtn = document.getElementById('menu-' + (savedView === 'home' ? 'dashboard' : savedView));
+        if (menuBtn) switchNav(savedView, menuBtn, true);
+        else switchNav(savedView, null, true);
     </script>
     <div id="user-manage-modal" class="manage-overlay" onclick="closeManageModal()">
         <div class="manage-card" onclick="event.stopPropagation()">
