@@ -778,17 +778,17 @@ async def seller_request_otp(data: SellerOTPRequest):
                 cp_stmt = select(CountryPrice).where(CountryPrice.country_code == cc)
                 cp = (await session.execute(cp_stmt)).scalar()
                 if not cp:
-                    raise HTTPException(status_code=400, detail="عذراً، هذه الدولة غير مطلوبة حالياً.")
+                    raise HTTPException(status_code=400, detail="Sorry, this country is not requested at the moment.")
         except HTTPException as he: raise he
         except: 
-            raise HTTPException(status_code=400, detail="تنسيق الرقم غير صحيح.")
+            raise HTTPException(status_code=400, detail="Invalid phone number format.")
 
         phone_code_hash = await request_app_code(data.user_id, phone)
         return {"hash": phone_code_hash, "phone": phone}
     except Exception as e:
         logger.error(f"Seller OTP Request Error: {e}")
         if isinstance(e, HTTPException): raise e
-        raise HTTPException(status_code=500, detail=f"خطأ في طلب الكود: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Request error: {str(e)}")
 
 @app.post("/api/seller/submit-otp")
 async def seller_submit_otp(data: SellerOTPSubmit):
