@@ -14,12 +14,15 @@
         :root {
             --accent: #5865F2;
             --accent-glow: rgba(88, 101, 242, 0.3);
+            --accent-purple: #8b5cf6;
+            --accent-dark: #4338ca;
             --success: #10b981;
             --warning: #f59e0b;
             --error: #ef4444;
             --radius-sm: 12px;
             --radius-md: 20px;
             --radius-lg: 28px;
+            --radius: 18px;
             --ease: cubic-bezier(0.16, 1, 0.3, 1);
             --sidebar-width: 280px;
         }
@@ -32,9 +35,13 @@
             --border: rgba(255, 255, 255, 0.06);
             --text-p: #fafafa;
             --text-s: #a1a1aa;
+            --text-primary: var(--text-p);
+            --text-secondary: var(--text-s);
+            --sidebar-bg: var(--bg-elevated);
             --modal-bg: #09090b;
             --input-bg: #09090b;
             --shadow: 0 10px 40px rgba(0,0,0,0.4);
+            --tab-bg: rgba(255, 255, 255, 0.05);
         }
 
         .light-mode {
@@ -44,9 +51,13 @@
             --border: rgba(0, 0, 0, 0.06);
             --text-p: #0f172a;
             --text-s: #64748b;
+            --text-primary: var(--text-p);
+            --text-secondary: var(--text-s);
+            --sidebar-bg: var(--bg-elevated);
             --modal-bg: #ffffff;
             --input-bg: #f1f2f6;
             --shadow: 0 10px 40px rgba(0,0,0,0.06);
+            --tab-bg: rgba(0, 0, 0, 0.05);
         }
 
         * {
@@ -495,7 +506,7 @@
         .card {
             background: var(--bg-elevated);
             border: 1px solid var(--border);
-            border-radius: var(--radius-md);
+            border-radius: var(--radius);
             padding: 20px;
             transition: all 0.3s var(--ease);
             box-shadow: var(--shadow);
@@ -532,7 +543,7 @@
         }
 
         .list-item {
-            background: var(--bg-card);
+            background: var(--bg-elevated);
             backdrop-filter: blur(14px);
             border: 1px solid var(--border);
             border-radius: 16px;
@@ -642,14 +653,13 @@
         }
 
         /* ========== Tabs ========== */
-        .tabs-row {
+        .tab-box {
             display: flex;
-            gap: 0;
             margin-bottom: 25px;
             padding: 5px;
             border-radius: 14px;
             border: 1px solid var(--border);
-            background: rgba(0, 0, 0, 0.35);
+            background: var(--tab-bg);
         }
 
         .tab-btn {
@@ -1155,7 +1165,7 @@
         .sale-card {
             background: var(--bg-elevated);
             backdrop-filter: blur(14px);
-            border: 1px solid var(--border-card);
+            border: 1px solid var(--border);
             border-radius: 16px;
             padding: 18px;
             display: flex;

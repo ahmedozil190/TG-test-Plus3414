@@ -14,12 +14,15 @@
         :root {
             --accent: #5865F2;
             --accent-glow: rgba(88, 101, 242, 0.3);
+            --accent-purple: #8b5cf6;
+            --accent-dark: #4338ca;
             --success: #10b981;
             --warning: #f59e0b;
             --error: #ef4444;
             --radius-sm: 12px;
             --radius-md: 20px;
             --radius-lg: 28px;
+            --radius: 18px;
             --ease: cubic-bezier(0.16, 1, 0.3, 1);
             --sidebar-width: 280px;
         }
@@ -32,9 +35,13 @@
             --border: rgba(255, 255, 255, 0.06);
             --text-p: #fafafa;
             --text-s: #a1a1aa;
+            --text-primary: var(--text-p);
+            --text-secondary: var(--text-s);
+            --sidebar-bg: var(--bg-elevated);
             --modal-bg: #09090b;
             --input-bg: #09090b;
             --shadow: 0 10px 40px rgba(0,0,0,0.4);
+            --tab-bg: rgba(255, 255, 255, 0.05);
         }
 
         .light-mode {
@@ -44,9 +51,13 @@
             --border: rgba(0, 0, 0, 0.06);
             --text-p: #0f172a;
             --text-s: #64748b;
+            --text-primary: var(--text-p);
+            --text-secondary: var(--text-s);
+            --sidebar-bg: var(--bg-elevated);
             --modal-bg: #ffffff;
             --input-bg: #f1f2f6;
             --shadow: 0 10px 40px rgba(0,0,0,0.06);
+            --tab-bg: rgba(0, 0, 0, 0.05);
         }
 
         * {
@@ -411,7 +422,7 @@
         .confirm-no {
             background: rgba(255, 255, 255, 0.05);
             color: var(--text-primary);
-            border: 1px solid var(--border-card);
+            border: 1px solid var(--border);
         }
 
         .confirm-yes:hover {
@@ -638,14 +649,13 @@
         }
 
         /* ========== Tabs ========== */
-        .tabs-row {
+        .tab-box {
             display: flex;
-            gap: 0;
             margin-bottom: 25px;
             padding: 5px;
             border-radius: 14px;
-            border: 1px solid var(--border-card);
-            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid var(--border);
+            background: var(--tab-bg);
         }
 
         .tab-btn {
@@ -676,7 +686,7 @@
             width: 100%;
             padding: 14px;
             background: var(--sidebar-bg);
-            border: 1px solid var(--border-card);
+            border: 1px solid var(--border);
             border-radius: 12px;
             color: var(--text-primary);
             font-size: 0.95rem;
@@ -718,10 +728,9 @@
 
         /* ========== User Card (Rich) ========== */
         .user-card {
-            background: var(--bg-card);
-            backdrop-filter: blur(14px);
-            border: 1px solid var(--border-card);
-            border-radius: 16px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
             padding: 18px;
             margin-top: 15px;
             position: relative;
@@ -763,7 +772,7 @@
             width: 100%;
             max-width: 450px;
             border-radius: 24px;
-            border: 1px solid var(--border-card);
+            border: 1px solid var(--border);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             overflow: hidden;
             transform: translateY(30px);
@@ -1036,7 +1045,7 @@
         .modal-card {
             background: rgba(19, 23, 34, 0.98);
             backdrop-filter: blur(15px);
-            border: 1px solid var(--border-card);
+            border: 1px solid var(--border);
             border-radius: 30px;
             padding: 30px;
             width: 90%;
@@ -1074,7 +1083,7 @@
 
         .input-field {
             width: 100%;
-            background: var(--bg-card);
+            background: var(--bg-elevated);
             border: 1px solid #2e3248;
             color: var(--text-primary);
             padding: 12px;
@@ -1110,7 +1119,7 @@
             width: 100%;
             padding: 14px;
             background: #1a1d24;
-            border: 1px solid var(--border-card);
+            border: 1px solid var(--border);
             border-radius: 14px;
             color: var(--text-secondary);
             font-weight: 700;
