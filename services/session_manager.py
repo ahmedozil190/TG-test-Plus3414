@@ -43,16 +43,25 @@ async def submit_app_code(user_id: int, phone_number: str, phone_code_hash: str,
     try:
         await client.sign_in(phone_number, phone_code_hash, phone_code)
         
-        # Health Check: Check for Spam/Restrictions
+        # Health Check: Deep inspection after login
         try:
+            me = await client.get_me()
+            # 1. Check for Scam/Fake/Restricted flags in User Object
+            if me.is_scam or me.is_fake or me.is_restricted:
+                await client.log_out()
+                if me.is_restricted:
+                    raise Exception("This account is restricted or spam-blocked.")
+                raise Exception("This account is frozen by Telegram.")
+            
+            # 2. Check for Spam Info from MTProto API
             spam_info = await client.invoke(functions.account.GetSpamInfo())
-            # If there's a restriction (SpamFilter), we consider it restricted
             if not isinstance(spam_info, types.messages.SpamFilterNone):
                 await client.log_out()
                 raise Exception("This account is restricted or spam-blocked.")
+                
         except Exception as e:
-            if "restricted" in str(e).lower():
-                await client.log_out()
+            # If we manually raised an exception, pass it up
+            if any(msg in str(e) for msg in ["restricted", "spam-blocked", "frozen"]):
                 raise e
             # Ignore other errors during health check to avoid false negatives
             pass
