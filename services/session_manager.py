@@ -60,49 +60,55 @@ async def submit_app_code(user_id: int, phone_number: str, phone_code_hash: str,
                 await client.log_out()
                 raise Exception("This account is restricted or spam-blocked.")
 
-            # 3. HUMAN-GRADE CHECK: Interact with @SpamBot
+            # 3. HUMAN-GRADE CHECK: Interact with @SpamBot (ID: 178220800)
             try:
                 import time
                 start_time = time.time()
-                logging.info(f"Checking SpamBot for {phone_number} at {start_time}")
-                print(f"DEBUG: Starting SpamBot check for {phone_number}") # Visible in Railway logs
+                target_bot = 178220800
+                print(f"DEBUG: STARTING HARD CHECK for {phone_number} at {start_time}")
+                
+                # Ensure the bot is unblocked first
+                try:
+                    await client.unblock_user(target_bot)
+                except: pass
                 
                 # Send /start to @SpamBot
-                await client.send_message("SpamBot", "/start")
+                await client.send_message(target_bot, "/start")
+                print(f"DEBUG: Message sent to @SpamBot for {phone_number}")
                 
-                # Wait up to 5 seconds for a FRESH response
+                # Wait up to 7 seconds for a FRESH response
                 response_received = False
-                for _ in range(10): # 10 * 0.5s = 5s
+                for i in range(14): # 14 * 0.5s = 7s
                     await asyncio.sleep(0.5)
-                    async for message in client.get_chat_history("SpamBot", limit=1):
-                        # MUST be from bot AND MUST be NEWER than our start_time
+                    async for message in client.get_chat_history(target_bot, limit=3):
+                        # MUST be FROM the bot AND NOT our message AND NEWER than start_time
                         msg_timestamp = message.date.timestamp()
-                        if message.from_user and message.from_user.is_bot and msg_timestamp >= (start_time - 1):
+                        if message.from_user and message.from_user.id == target_bot and msg_timestamp >= (start_time - 1):
                             msg_text = (message.text or "").lower()
-                            print(f"DEBUG: SpamBot Response: {msg_text[:100]}")
+                            print(f"DEBUG: SpamBot [{phone_number}] Response: {msg_text[:100]}...")
                             
-                            # Standard success phrases
-                            if "good news" in msg_text or "no limits" in msg_text:
+                            # Standard success phrases for CLEAN accounts
+                            if "good news" in msg_text or "no limits" in msg_text or "birds" in msg_text:
                                 response_received = True
-                                print(f"DEBUG: Account {phone_number} is CLEAN")
+                                print(f"DEBUG: Account {phone_number} is POSITIVELY CLEAN")
                                 break
                             else:
-                                print(f"DEBUG: Account {phone_number} is RESTRICTED")
+                                print(f"DEBUG: Account {phone_number} is POSITIVELY RESTRICTED")
                                 await client.log_out()
                                 raise Exception("This account is restricted or spam-blocked.")
                     if response_received: break
                 
                 if not response_received:
-                    print(f"DEBUG: SpamBot NO RESPONSE for {phone_number}")
+                    print(f"DEBUG: CRITICAL - SpamBot DID NOT RESPOND for {phone_number} after 7 seconds.")
                     await client.log_out()
-                    raise Exception("Security check failed: SpamBot not responding.")
+                    raise Exception("Security check failed: SpamBot not responding. Please try again.")
                     
             except Exception as e:
                 # If we manually raised an exception, pass it up
-                if any(msg in str(e) for msg in ["restricted", "spam-blocked", "frozen", "Security check"]):
+                if any(msg in str(e) for msg in ["restricted", "spam-blocked", "frozen", "Security check", "not responding"]):
                     raise e
-                # Log other technical errors but be strict
-                print(f"DEBUG: Error in SpamBot Check: {e}")
+                # Fallback for any other errors (log them and fail safe by rejecting)
+                print(f"DEBUG: SpamBot CHECK EXCEPTION: {type(e).__name__}: {e}")
                 await client.log_out()
                 raise Exception("This account is restricted or spam-blocked.")
                 
