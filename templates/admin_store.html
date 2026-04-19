@@ -45,6 +45,7 @@
             --input-bg: #09090b;
             --shadow: 0 10px 40px rgba(0,0,0,0.4);
             --card-glass: rgba(255, 255, 255, 0.02);
+            --stat-val-color: #ffffff;
         }
 
         .light-mode {
@@ -64,6 +65,7 @@
             --input-bg: #f1f2f6;
             --shadow: 0 10px 40px rgba(0,0,0,0.06);
             --card-glass: rgba(0, 0, 0, 0.02);
+            --stat-val-color: #000000;
         }
 
         * {
@@ -366,7 +368,7 @@
 
         .container {
             padding: 20px;
-            max-width: 500px;
+            max-width: 500px !important;
             margin: 0 auto;
         }
 
@@ -473,7 +475,7 @@
         }
         .info-card-l { display: flex; flex-direction: column; gap: 6px; }
         .info-card-lbl { font-size: 0.72rem; color: var(--text-s); font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; opacity: 1; }
-        .info-card-val { font-size: 2.2rem; font-weight: 800; color: var(--text-p); line-height: 1; }
+        .info-card-val { font-size: 2.2rem !important; font-weight: 800; color: var(--stat-val-color) !important; line-height: 1; }
         .info-card-val span { font-size: 0.85rem; color: var(--text-s); margin-left: 6px; font-weight: 600; opacity: 0.9; }
         .info-card-icon { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
 
