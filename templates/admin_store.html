@@ -129,7 +129,7 @@
         /* ─── Top Bar ─── */
         .top-bar {
             height: 70px;
-            background: var(--bg);
+            background: var(--bg-elevated);
             border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
@@ -1453,7 +1453,7 @@
         function applyTheme() {
             const scheme = tg.colorScheme;
             document.body.className = scheme === 'light' ? 'light-mode' : 'dark-mode';
-            tg.headerColor = scheme === 'light' ? '#f8f9fa' : '#09090b';
+            tg.headerColor = scheme === 'light' ? '#ffffff' : '#111113';
             tg.backgroundColor = scheme === 'light' ? '#f8f9fa' : '#09090b';
         }
         tg.onEvent('themeChanged', applyTheme);
