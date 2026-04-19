@@ -16,8 +16,8 @@ from services.session_manager import request_app_code, submit_app_code, login_cl
 import pycountry
 import re
 import urllib.request
-import httpx
 import json
+import asyncio
 from datetime import datetime
 import random
 import string
@@ -367,13 +367,18 @@ async def get_sourcing_data():
                 })
 
             # Bot-specific user count and balance
-            bot_name = "Sourcing"
+            bot_name = "Bot"
             try:
                 from config import SELLER_BOT_TOKEN
-                async with httpx.AsyncClient(timeout=2.0) as client:
-                    resp = await client.get(f"https://api.telegram.org/bot{SELLER_BOT_TOKEN}/getMe")
-                    if resp.status_code == 200:
-                        bot_name = resp.json().get("result", {}).get("first_name", "Sourcing")
+                def fetch_bot_name():
+                    try:
+                        req = urllib.request.Request(f"https://api.telegram.org/bot{SELLER_BOT_TOKEN}/getMe")
+                        with urllib.request.urlopen(req, timeout=2) as r:
+                            res_data = json.loads(r.read().decode())
+                            if res_data.get("ok"):
+                                return res_data["result"].get("first_name", "Bot")
+                    except: return "Bot"
+                bot_name = await asyncio.to_thread(fetch_bot_name)
             except Exception as b_err:
                 logger.error(f"Error fetching sourcing bot name: {b_err}")
 
@@ -430,13 +435,18 @@ async def get_sourcing_data():
 async def get_admin_store_data():
     try:
         async with async_session() as session:
-            bot_name = "Store"
+            bot_name = "Bot"
             try:
                 from config import BOT_TOKEN
-                async with httpx.AsyncClient(timeout=2.0) as client:
-                    resp = await client.get(f"https://api.telegram.org/bot{BOT_TOKEN}/getMe")
-                    if resp.status_code == 200:
-                        bot_name = resp.json().get("result", {}).get("first_name", "Store")
+                def fetch_bot_name_store():
+                    try:
+                        req = urllib.request.Request(f"https://api.telegram.org/bot{BOT_TOKEN}/getMe")
+                        with urllib.request.urlopen(req, timeout=2) as r:
+                            res_data = json.loads(r.read().decode())
+                            if res_data.get("ok"):
+                                return res_data["result"].get("first_name", "Bot")
+                    except: return "Bot"
+                bot_name = await asyncio.to_thread(fetch_bot_name_store)
             except Exception as b_err:
                 logger.error(f"Error fetching store bot name: {b_err}")
 
