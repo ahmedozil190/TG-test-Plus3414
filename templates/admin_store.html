@@ -34,8 +34,8 @@
             --card-glass: rgba(255, 255, 255, 0.02);
             --border: rgba(255, 255, 255, 0.06);
             --text-p: #fafafa;
-            --text-s: #a1a1aa;Pending
-            --text-primary: var(--text-p);
+            --text-s: #a1a1aa;
+            Pending --text-primary: var(--text-p);
             --text-secondary: var(--text-s);
             --sidebar-bg: var(--bg-elevated);
             --modal-bg: #09090b;
@@ -108,6 +108,7 @@
             scroll-behavior: smooth;
             background: var(--bg);
         }
+
         /* Background removed */
 
         /* ========== Loader ========== */
@@ -834,9 +835,6 @@
             align-items: center;
             opacity: 0;
             transition: all 0.4s ease;
-            padding: 20px;
-        }
-
         .manage-overlay.active {
             display: flex;
             opacity: 1;
@@ -848,14 +846,15 @@
             max-width: 440px;
             border-radius: 28px;
             border: 1px solid var(--border);
-            padding: 24px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            padding: 30px 25px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
             display: flex;
             flex-direction: column;
             gap: 10px;
             transform: scale(0.9);
             transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
+
         .dark-mode .manage-card {
             background: var(--bg-elevated);
         }
@@ -865,11 +864,11 @@
         }
 
         .manage-data-box {
-            background: var(--bg-elevated) !important;
+            background: var(--card-glass);
             border: 1px solid var(--border);
-            border-radius: 12px;
+            border-radius: 14px;
             padding: 0 15px;
-            height: 40px;
+            height: 42px;
             text-align: center;
             display: flex;
             align-items: center;
@@ -948,7 +947,7 @@
 
         .manage-input {
             width: 100%;
-            background: var(--bg-elevated);
+            background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--border);
             border-radius: 16px;
             padding: 16px;
@@ -979,7 +978,6 @@
             cursor: pointer;
             transition: 0.3s;
             color: #fff;
-            flex-shrink: 0;
         }
 
         .adjust-btn.plus {
@@ -1029,7 +1027,7 @@
 
         .manage-btn.success {
             background: #32d74b;
-            color: #fff;
+            color: #ffffff;
         }
 
         .manage-btn.secondary {
@@ -1037,6 +1035,7 @@
             color: var(--text-primary) !important;
             border: 1px solid var(--border);
         }
+
         .dark-mode .manage-btn.secondary {
             color: #ffffff !important;
         }
@@ -1361,7 +1360,8 @@
         <button class="nav-trigger" onclick="openNav()">
             <i class="fas fa-bars"></i>
         </button>
-        <div class="page-title" id="page-title" style="color: var(--text-primary);" data-i18n="nav_dashboard">Dashboard</div>
+        <div class="page-title" id="page-title" style="color: var(--text-primary);" data-i18n="nav_dashboard">Dashboard
+        </div>
         <div class="user-avatar" id="userInitial"></div>
     </div>
 
@@ -2008,7 +2008,7 @@
             const input = document.getElementById('adjust-amount');
             const val = parseFloat(input.value);
             if (isNaN(val) || val <= 0) return;
-            
+
             const adjustment = type === 'plus' ? val : -val;
             const newBalance = parseFloat(currentUser.balance_store) + adjustment;
 
@@ -2255,10 +2255,11 @@
     </script>
     <div id="user-manage-modal" class="manage-overlay" onclick="closeManageModal()">
         <div class="manage-card" onclick="event.stopPropagation()">
-            
+
             <!-- Name Box -->
             <div class="manage-data-box">
-                <div id="manage-name" style="color: #ffca28; font-weight: 900; font-size: 1.3rem; letter-spacing: 1px;">USER NAME</div>
+                <div id="manage-name" style="color: #ffca28; font-weight: 900; font-size: 1.3rem; letter-spacing: 1px;">
+                    USER NAME</div>
             </div>
 
             <!-- ID Box -->
@@ -2274,7 +2275,8 @@
             <!-- Interaction Bar -->
             <div class="manage-control-group">
                 <div class="manage-input-wrapper">
-                    <input type="number" id="adjust-amount" class="manage-input" data-i18n-placeholder="ph_amount" placeholder="Amount...">
+                    <input type="number" id="adjust-amount" class="manage-input" data-i18n-placeholder="ph_amount"
+                        placeholder="Amount...">
                 </div>
                 <button class="adjust-btn plus" onclick="adjustBalanceInline('plus')">
                     <i class="fas fa-plus"></i>
