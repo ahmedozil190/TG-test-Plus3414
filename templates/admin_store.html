@@ -1813,8 +1813,8 @@
                 renderSalesList(allTransactions);
                 renderUsers(filteredUsers || allUsers);
 
-                // Fetch sell prices from store endpoint
-                allPrices = data.prices || [];
+                // Fetch sell prices from store endpoint (Show newest first)
+                allPrices = (data.prices || []).reverse();
                 renderPrices(allPrices);
             } catch (e) { console.error(e); }
             finally { document.getElementById('loader').style.display = 'none'; }
@@ -2218,10 +2218,15 @@
                 document.getElementById('price-page-info').innerText = currentLang === 'ar' ? `صفحة ${currentPricePage} من ${totalPages}` : `Page ${currentPricePage} of ${totalPages}`;
                 const prevBtn = pagContainer.querySelector('button[onclick="prevPricePage()"]');
                 const nextBtn = pagContainer.querySelector('button[onclick="nextPricePage()"]');
-                if (currentPricePage === 1) { prevBtn.style.opacity = '0.3'; prevBtn.style.cursor = 'not-allowed'; }
-                else { prevBtn.style.opacity = '1'; prevBtn.style.cursor = 'pointer'; }
-                if (currentPricePage === totalPages) { nextBtn.style.opacity = '0.3'; nextBtn.style.cursor = 'not-allowed'; }
-                else { nextBtn.style.opacity = '1'; nextBtn.style.cursor = 'pointer'; }
+                
+                prevBtn.disabled = (currentPricePage === 1);
+                nextBtn.disabled = (currentPricePage === totalPages);
+                
+                // Visual feedback for disabled buttons
+                prevBtn.style.opacity = prevBtn.disabled ? '0.3' : '1';
+                prevBtn.style.cursor = prevBtn.disabled ? 'not-allowed' : 'pointer';
+                nextBtn.style.opacity = nextBtn.disabled ? '0.3' : '1';
+                nextBtn.style.cursor = nextBtn.disabled ? 'not-allowed' : 'pointer';
             } else {
                 pagContainer.style.display = 'none';
             }

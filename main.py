@@ -41,7 +41,7 @@ async def auto_approve_task(bot_seller: Bot):
                         cp = (await session.execute(cp_stmt)).scalar()
                         if not cp: continue
                         
-                        delay_delta = timedelta(minutes=cp.approve_delay)
+                        delay_delta = timedelta(seconds=cp.approve_delay)
                         if datetime.utcnow() >= (acc.created_at + delay_delta):
                             # Auto-Approve!
                             acc.status = AccountStatus.AVAILABLE

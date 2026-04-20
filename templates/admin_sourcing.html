@@ -1612,7 +1612,7 @@
                 modal_title: "Add New Country",
                 lbl_code: "Code",
                 lbl_buy: "Price ($)",
-                lbl_delay: "Approval Delay (min)",
+                lbl_delay: "Approval Delay (sec)",
                 no_ops: "No items found",
                 no_users: "No users found",
                 no_countries: "No countries found",
@@ -1659,7 +1659,7 @@
                 modal_title: "إضافة دولة جديدة",
                 lbl_code: "كود",
                 lbl_buy: "السعر ($)",
-                lbl_delay: "تأخير الموافقة (دقيقة)",
+                lbl_delay: "تأخير الموافقة (ثانية)",
                 no_ops: "لا توجد عمليات",
                 no_users: "لا يوجد مستخدمين",
                 no_countries: "لا توجد دول مضافة",
@@ -1764,7 +1764,7 @@
 
                 renderRecent(data.recent);
                 renderHistory(data.recent);
-                allPrices = data.prices || [];
+                allPrices = (data.prices || []).reverse();
                 renderPrices(allPrices);
 
                 allUsers = (data.users || []).reverse();
@@ -2144,10 +2144,15 @@
                 document.getElementById('price-page-info').innerText = currentLang === 'ar' ? `صفحة ${currentPricePage} من ${totalPages}` : `Page ${currentPricePage} of ${totalPages}`;
                 const prevBtn = pagContainer.querySelector('button[onclick="prevPricePage()"]');
                 const nextBtn = pagContainer.querySelector('button[onclick="nextPricePage()"]');
-                if (currentPricePage === 1) { prevBtn.style.opacity = '0.3'; prevBtn.style.cursor = 'not-allowed'; }
-                else { prevBtn.style.opacity = '1'; prevBtn.style.cursor = 'pointer'; }
-                if (currentPricePage === totalPages) { nextBtn.style.opacity = '0.3'; nextBtn.style.cursor = 'not-allowed'; }
-                else { nextBtn.style.opacity = '1'; nextBtn.style.cursor = 'pointer'; }
+                
+                prevBtn.disabled = (currentPricePage === 1);
+                nextBtn.disabled = (currentPricePage === totalPages);
+                
+                // Visual feedback for disabled buttons
+                prevBtn.style.opacity = prevBtn.disabled ? '0.3' : '1';
+                prevBtn.style.cursor = prevBtn.disabled ? 'not-allowed' : 'pointer';
+                nextBtn.style.opacity = nextBtn.disabled ? '0.3' : '1';
+                nextBtn.style.cursor = nextBtn.disabled ? 'not-allowed' : 'pointer';
             } else {
                 pagContainer.style.display = 'none';
             }

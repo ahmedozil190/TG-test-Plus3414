@@ -65,7 +65,7 @@ class CountryPrice(Base):
     country_name = Column(String, nullable=False) # e.g. "Egypt"
     price = Column(Float, nullable=False, default=1.0) # Selling Price
     buy_price = Column(Float, nullable=False, default=0.5) # Buying Price from people
-    approve_delay = Column(Integer, nullable=False, default=0) # Auto-approval delay in minutes
+    approve_delay = Column(Integer, nullable=False, default=0) # Auto-approval delay in seconds
 
 class WithdrawalRequest(Base):
     __tablename__ = 'withdrawal_requests'
