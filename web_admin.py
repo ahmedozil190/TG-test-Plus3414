@@ -356,7 +356,6 @@ async def get_sourcing_data():
 
             prices_result = await session.execute(
                 select(CountryPrice)
-                .where(CountryPrice.buy_price > 0)
                 .order_by(CountryPrice.updated_at.desc())
             )
             prices = []
@@ -528,10 +527,9 @@ async def get_admin_store_data():
             for tx in tx_result.scalars().all():
                 transactions.append({"buyer_id": tx.user_id, "price": abs(tx.amount)})
 
-            # Fetch sell prices only (price > 0 means it's configured for selling)
+            # Fetch all prices (Filtering handled by frontend tabs)
             prices_result = await session.execute(
                 select(CountryPrice)
-                .where(CountryPrice.price > 0)
                 .order_by(CountryPrice.updated_at.desc())
             )
             prices = []
