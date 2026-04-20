@@ -1421,7 +1421,8 @@
                             <div class="info-card-val"><span id="stat-total-countries">0</span> <span
                                     data-i18n="unit_countries">COUNTRIES</span></div>
                         </div>
-                        <div class="info-card-icon" style="background: rgba(139, 92, 246, 0.1); color: var(--accent-purple);">
+                        <div class="info-card-icon"
+                            style="background: rgba(139, 92, 246, 0.1); color: var(--accent-purple);">
                             <i class="fas fa-globe"></i>
                         </div>
                     </div>
@@ -2069,8 +2070,8 @@
         }
 
         function prevPricePage() {
-            if (currentPricePage > 1) { 
-                currentPricePage--; 
+            if (currentPricePage > 1) {
+                currentPricePage--;
                 renderPrices(filteredPrices || allPrices);
                 document.getElementById('section-prices').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
@@ -2079,8 +2080,8 @@
         function nextPricePage() {
             const list = filteredPrices || allPrices;
             const totalPages = Math.ceil(list.length / PRICES_PER_PAGE);
-            if (currentPricePage < totalPages) { 
-                currentPricePage++; 
+            if (currentPricePage < totalPages) {
+                currentPricePage++;
                 renderPrices(list);
                 document.getElementById('section-prices').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
@@ -2144,10 +2145,10 @@
                 document.getElementById('price-page-info').innerText = currentLang === 'ar' ? `صفحة ${currentPricePage} من ${totalPages}` : `Page ${currentPricePage} of ${totalPages}`;
                 const prevBtn = pagContainer.querySelector('button[onclick="prevPricePage()"]');
                 const nextBtn = pagContainer.querySelector('button[onclick="nextPricePage()"]');
-                
+
                 prevBtn.disabled = (currentPricePage === 1);
                 nextBtn.disabled = (currentPricePage === totalPages);
-                
+
                 // Visual feedback for disabled buttons
                 prevBtn.style.opacity = prevBtn.disabled ? '0.3' : '1';
                 prevBtn.style.cursor = prevBtn.disabled ? 'not-allowed' : 'pointer';

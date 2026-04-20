@@ -626,14 +626,16 @@ async def update_sourcing_price(data: dict):
     async with async_session() as session:
         cp = (await session.execute(select(CountryPrice).where(CountryPrice.country_code == code))).scalar()
         if cp:
+            # PARTIAL UPDATE: Only touch sourcing fields
             cp.buy_price = buy_p
             cp.approve_delay = delay
-            cp.country_name = name_only
+            if name_only and name_only != "Unknown":
+                cp.country_name = name_only
         else:
             cp = CountryPrice(
                 country_code=code, 
                 country_name=name_only, 
-                price=0,
+                price=0, # Initial store price is 0
                 buy_price=buy_p,
                 approve_delay=delay
             )
@@ -657,16 +659,16 @@ async def update_price(data: PriceUpdate):
     async with async_session() as session:
         cp = (await session.execute(select(CountryPrice).where(CountryPrice.country_code == data.country_code))).scalar()
         if cp:
+            # PARTIAL UPDATE: Only touch store price and name
             cp.price = data.price
-            # If name is Unknown, try to resolve it
-            if not data.country_name or data.country_name == "Unknown":
+            if data.country_name and data.country_name != "Unknown":
+                cp.country_name = data.country_name
+            elif not cp.country_name or cp.country_name == "Unknown":
                 name, _ = resolve_country_info(data.country_code)
                 cp.country_name = name
-            elif data.country_name:
-                cp.country_name = data.country_name
-                
-            cp.buy_price = data.buy_price
-            cp.approve_delay = data.approve_delay
+            
+            # CRITICAL: Do NOT overwrite buy_price or approve_delay if update is from store dashboard
+            # We keep whatever is currently there.
         else:
             name = data.country_name
             if not name or name == "Unknown":
@@ -676,8 +678,8 @@ async def update_price(data: PriceUpdate):
                 country_code=data.country_code, 
                 country_name=name, 
                 price=data.price,
-                buy_price=data.buy_price,
-                approve_delay=data.approve_delay
+                buy_price=0, # Initial sourcing buy price is 0
+                approve_delay=0
             )
             session.add(cp)
         await session.commit()
