@@ -1231,13 +1231,14 @@
             width: 100%;
             background: var(--input-bg);
             border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
             color: var(--text-primary);
-            padding: 12px;
-            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
             outline: none;
-            font-size: 0.95rem;
             transition: 0.3s;
-            height: 42px;
+            text-align: center;
         }
 
         .input-field:focus {
@@ -1265,15 +1266,23 @@
         .cancel-btn {
             width: 100%;
             padding: 14px;
-            background: #1a1d24;
+            background: rgba(128, 128, 128, 0.1);
             border: 1px solid var(--border);
             border-radius: 14px;
-            color: #ffffff;
+            color: var(--text-primary);
             font-weight: 700;
             font-size: 0.95rem;
             cursor: pointer;
             transition: 0.3s;
             margin-top: 10px;
+            height: 42px !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dark-mode .cancel-btn {
+            color: #ffffff;
         }
 
         /* Hide number input arrows */
@@ -1585,7 +1594,7 @@
                 nav_dashboard: "Dashboard",
                 nav_prices: "Buying Prices",
                 nav_users: "Customers",
-                nav_close: "Close Panel",
+                nav_close: "Close",
                 stat_section: "Inventory",
                 stat_total: "TOTAL ACCOUNTS",
                 stat_pending: "PENDING APPROVAL",
@@ -1593,7 +1602,7 @@
                 recent_ops: "Recent Operations",
                 buying_prices: "Buying Prices",
                 btn_add: "Add",
-                btn_save: "Save Changes",
+                btn_save: "Add Country",
                 btn_reset: "Reset",
                 modal_title: "Add New Country",
                 lbl_code: "Code",
@@ -1632,7 +1641,7 @@
                 nav_dashboard: "الرئيسية",
                 nav_prices: "أسعار الشراء",
                 nav_users: "العملاء",
-                nav_close: "إغلاق اللوحة",
+                nav_close: "إغلاق",
                 stat_section: "المخزون",
                 stat_total: "إجمالي الحسابات",
                 stat_pending: "بانتظار الموافقة",
@@ -1640,7 +1649,7 @@
                 recent_ops: "أحدث العمليات",
                 buying_prices: "أسعار الشراء",
                 btn_add: "إضافة",
-                btn_save: "حفظ التعديلات",
+                btn_save: "إضافة دولة",
                 btn_reset: "إعادة ضبط",
                 modal_title: "إضافة دولة جديدة",
                 lbl_code: "كود",

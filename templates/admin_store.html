@@ -1238,13 +1238,14 @@
             width: 100%;
             background: var(--input-bg);
             border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
             color: var(--text-primary);
-            padding: 12px;
-            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
             outline: none;
-            font-size: 0.95rem;
             transition: 0.3s;
-            height: 42px;
+            text-align: center;
         }
 
         .input-field:focus {
@@ -1277,15 +1278,23 @@
         .cancel-btn {
             width: 100%;
             padding: 14px;
-            background: #1a1d24;
+            background: rgba(128, 128, 128, 0.1);
             border: 1px solid var(--border);
             border-radius: 14px;
-            color: #ffffff;
+            color: var(--text-primary);
             font-weight: 700;
             font-size: 0.95rem;
             cursor: pointer;
             transition: 0.3s;
             margin-top: 10px;
+            height: 42px !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dark-mode .cancel-btn {
+            color: #ffffff;
         }
 
         /* Hide number input arrows */
@@ -1617,7 +1626,7 @@
                 nav_users: "Customers",
                 nav_prices: "Selling Prices",
                 nav_sales: "Sales History",
-                nav_close: "Close Panel",
+                nav_close: "Close",
                 stat_overview: "Overview",
                 stat_users: "TOTAL CLIENTS",
                 stat_stock: "STOCK",
@@ -1628,7 +1637,7 @@
                 no_sales: "No sales recorded yet",
                 by_user: "By User",
                 btn_add: "Add",
-                btn_save: "Save Selling Price",
+                btn_save: "Add Country",
                 btn_reset: "Reset",
                 modal_title: "Add New Country",
                 lbl_code: "Code",
@@ -1670,7 +1679,7 @@
                 nav_users: "إدارة العملاء",
                 nav_prices: "أسعار البيع",
                 nav_sales: "سجل المبيعات",
-                nav_close: "إغلاق اللوحة",
+                nav_close: "إغلاق",
                 stat_overview: "نظرة عامة",
                 stat_users: "إجمالي العملاء",
                 stat_stock: "المخزون",
@@ -1681,7 +1690,7 @@
                 no_sales: "لا توجد مبيعات حالياً",
                 by_user: "بواسطة",
                 btn_add: "إضافة",
-                btn_save: "حفظ سعر البيع",
+                btn_save: "إضافة دولة",
                 btn_reset: "إعادة ضبط",
                 modal_title: "إضافة دولة جديدة",
                 lbl_code: "كود",
