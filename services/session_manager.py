@@ -158,3 +158,27 @@ async def get_telegram_login_code(session_string: str) -> str | None:
             await client.disconnect()
             
     return code
+
+async def is_session_alive(session_string: str) -> bool:
+    try:
+        client = await create_client(session_string)
+        await client.connect()
+        me = await client.get_me()
+        if not me or me.is_scam or me.is_fake or me.is_restricted:
+            raise Exception("Account Restricted/Fake")
+        
+        await asyncio.sleep(0.5)
+        test_msg = await client.send_message("me", "Ping")
+        await test_msg.delete()
+        
+        return True
+    except Exception as e:
+        err_msg = str(e).lower()
+        logging.warning(f"Session failed keep-alive check: {err_msg}")
+        return False
+    finally:
+        try:
+            if 'client' in locals() and client.is_connected:
+                await client.disconnect()
+        except:
+            pass

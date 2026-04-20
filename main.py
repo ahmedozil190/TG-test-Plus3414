@@ -12,6 +12,7 @@ from uvicorn import Config, Server
 from config import BOT_TOKEN, SELLER_BOT_TOKEN
 from database.engine import init_db, async_session
 from database.models import Account, AccountStatus, CountryPrice, User, Transaction, TransactionType
+from services.session_manager import is_session_alive
 from sqlalchemy import select
 from handlers import main_router
 from web_admin import app
@@ -43,29 +44,49 @@ async def auto_approve_task(bot_seller: Bot):
                         
                         delay_delta = timedelta(seconds=cp.approve_delay)
                         if datetime.utcnow() >= (acc.created_at + delay_delta):
-                            # Auto-Approve!
-                            acc.status = AccountStatus.AVAILABLE
-                            acc.price = cp.price # Set the selling price
+                            # Pre-Approval Verification Check
+                            is_alive = await is_session_alive(acc.session_string)
                             
-                            # Pay the seller
                             seller = await session.get(User, acc.seller_id)
-                            if seller:
-                                seller.balance_sourcing += cp.buy_price
-                                tx = Transaction(user_id=seller.id, type=TransactionType.SELL, amount=cp.buy_price)
-                                session.add(tx)
+                            
+                            if is_alive:
+                                # Auto-Approve!
+                                acc.status = AccountStatus.AVAILABLE
+                                acc.price = cp.price # Set the selling price
                                 
-                                # Notify via seller bot
-                                try:
-                                    await bot_seller.send_message(
-                                        seller.id,
-                                        f"✅ **تمت الموافقة التلقائية!**\n\n"
-                                        f"رقم: `{acc.phone_number}` أصبح متاحاً الآن.\n"
-                                        f"💰 تم إضافة **${cp.buy_price}** لرصيدك.\n"
-                                        f"استمر في التوريد وجني الأرباح! 💸",
-                                        parse_mode="Markdown"
-                                    )
-                                except Exception as n_err:
-                                    logger.error(f"Failed to notify seller {seller.id}: {n_err}")
+                                # Pay the seller
+                                if seller:
+                                    seller.balance_sourcing += cp.buy_price
+                                    tx = Transaction(user_id=seller.id, type=TransactionType.SELL, amount=cp.buy_price)
+                                    session.add(tx)
+                                    
+                                    # Notify via seller bot
+                                    try:
+                                        await bot_seller.send_message(
+                                            seller.id,
+                                            f"✅ **تمت الموافقة التلقائية!**\n\n"
+                                            f"رقم: `{acc.phone_number}` أصبح متاحاً الآن.\n"
+                                            f"💰 تم إضافة **${cp.buy_price}** لرصيدك.\n"
+                                            f"استمر في التوريد وجني الأرباح! 💸",
+                                            parse_mode="Markdown"
+                                        )
+                                    except Exception as n_err:
+                                        logger.error(f"Failed to notify seller {seller.id}: {n_err}")
+                            else:
+                                # Reject due to ban/freeze
+                                acc.status = AccountStatus.REJECTED
+                                if seller:
+                                    try:
+                                        await bot_seller.send_message(
+                                            seller.id,
+                                            f"❌ **تم رفض الرقم**\n\n"
+                                            f"الرقم: `{acc.phone_number}`\n"
+                                            f"السبب: *حساب محظور أو مجمد من تيليجرام أثناء فترة الاختبار.*\n"
+                                            f"لم يتم إضافة رصيد لهذا الرقم.",
+                                            parse_mode="Markdown"
+                                        )
+                                    except Exception as n_err:
+                                        logger.error(f"Failed to notify seller {seller.id}: {n_err}")
                     except Exception as item_err:
                         logger.error(f"Error processing pending account {acc.id}: {item_err}")
                 
