@@ -517,14 +517,24 @@ async def get_admin_store_data():
             ]
             
             tx_result = await session.execute(
-                select(Transaction)
-                .where(Transaction.type == TransactionType.BUY)
-                .order_by(Transaction.timestamp.desc())
-                .limit(20)
+                select(Account)
+                .where(Account.status == AccountStatus.SOLD)
+                .order_by(Account.id.desc())
+                .limit(50)
             )
             transactions = []
-            for tx in tx_result.scalars().all():
-                transactions.append({"buyer_id": tx.user_id, "price": abs(tx.amount)})
+            for acc in tx_result.scalars().all():
+                flag = "🌐"
+                try:
+                    p = phonenumbers.parse(acc.phone_number)
+                    flag = get_flag_emoji(phonenumbers.region_code_for_number(p))
+                except: pass
+                transactions.append({
+                    "buyer_id": acc.buyer_id, 
+                    "price": acc.price, 
+                    "phone": acc.phone_number,
+                    "country": f"{flag} {acc.country}"
+                })
 
             # Fetch all prices (Filtering handled by frontend tabs)
             prices_result = await session.execute(
