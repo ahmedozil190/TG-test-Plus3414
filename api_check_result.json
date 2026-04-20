@@ -1,0 +1,57 @@
+{
+    "bot_name": "𝗠𝗔𝗫 𝗧𝗚 | 𝗔𝗣𝗜",
+    "stats": {
+        "user_count": 1,
+        "stock_count": 0,
+        "total_balance": 0.0
+    },
+    "users": [
+        {
+            "id": 8741285999,
+            "full_name": "Ahmed Medhat",
+            "username": "@A_M_E_15",
+            "balance_store": 0.0,
+            "balance_sourcing": 0.0,
+            "join_date": "2026-04-05",
+            "banned": false,
+            "sold_count": 0,
+            "accepted_count": 0,
+            "rejected_count": 0,
+            "bought_count": 0,
+            "spent_total": 0.0
+        }
+    ],
+    "transactions": [],
+    "prices": [
+        {
+            "code": "20",
+            "name": "🇪🇬 Egypt",
+            "price": 1.5,
+            "is_active_store": true
+        },
+        {
+            "code": "1",
+            "name": "🇺🇸 ",
+            "price": 2.0,
+            "is_active_store": true
+        },
+        {
+            "code": "44",
+            "name": "🇬🇧 United Kingdom",
+            "price": 1.8,
+            "is_active_store": true
+        },
+        {
+            "code": "966",
+            "name": "🇸🇦 Saudi Arabia",
+            "price": 2.2,
+            "is_active_store": true
+        },
+        {
+            "code": "971",
+            "name": "🇦🇪 ",
+            "price": 2.5,
+            "is_active_store": true
+        }
+    ]
+}
