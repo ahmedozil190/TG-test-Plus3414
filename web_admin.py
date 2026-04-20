@@ -336,7 +336,7 @@ async def get_sourcing_data():
             pending_count = (await session.execute(select(func.count(Account.id)).where(Account.status == AccountStatus.PENDING))).scalar() or 0
             
             recent_result = await session.execute(
-                select(Account).order_by(Account.id.desc()).limit(20)
+                select(Account).order_by(Account.id.desc()).limit(50)
             )
             recent = []
             for a in recent_result.scalars().all():
@@ -346,12 +346,22 @@ async def get_sourcing_data():
                     flag = get_flag_emoji(phonenumbers.region_code_for_number(p))
                 except: pass
                 
-                # Fetch buy_price simplified
+                # Fetch actual buy_price from CountryPrice
+                actual_buy_price = 0
+                try:
+                    parsed = phonenumbers.parse(a.phone_number)
+                    cc = str(parsed.country_code)
+                    cp_row = (await session.execute(select(CountryPrice).where(CountryPrice.country_code == cc))).scalar()
+                    if cp_row:
+                        actual_buy_price = cp_row.buy_price
+                except: pass
+                
                 recent.append({
                     "phone": a.phone_number,
                     "country": f"{flag} {a.country}",
-                    "buy_price": a.price * 0.5, # Simplified logic if CP not found
-                    "status": a.status.name
+                    "buy_price": actual_buy_price,
+                    "status": a.status.name,
+                    "seller_id": a.seller_id
                 })
 
             prices_result = await session.execute(

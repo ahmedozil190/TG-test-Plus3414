@@ -2251,23 +2251,29 @@
 
         function renderHistory(list) {
             const container = document.getElementById('history-list');
-            if (!list.length) {
+            if (!list || !list.length) {
                 container.innerHTML = `
                 <div style="text-align: center; padding: 40px 20px; background: rgba(0,0,0,0.15); border-radius: 16px; border: 1px dashed rgba(255,255,255,0.05); margin-top: 10px;">
-                    <i class="fas fa-clock-rotate-left" style="font-size: 2.5rem; color: rgba(255,255,255,0.1); margin-bottom: 12px;"></i>
+                    <i class="fas fa-history" style="font-size: 2.5rem; color: rgba(255,255,255,0.1); margin-bottom: 12px;"></i>
                     <p style="color: var(--text-secondary); font-weight: 600; font-size: 0.95rem;">${translations[currentLang].no_ops}</p>
                 </div>`;
                 return;
             }
-            container.innerHTML = list.map(item => `
+            container.innerHTML = list.map(item => {
+                let statusClass = 'badge-warning';
+                if (item.status === 'AVAILABLE' || item.status === 'SOLD') statusClass = 'badge-success';
+                if (item.status === 'REJECTED') statusClass = 'badge-danger';
+
+                return `
                 <div class="list-item">
                     <div class="item-info">
-                        <h4>${item.phone}</h4>
-                        <p>${item.country} | <span style="color: var(--accent); font-weight: 700;">$${item.buy_price}</span></p>
+                        <h4 style="direction: ltr; text-align: left;"><i class="fas fa-phone" style="font-size: 0.8rem; margin-right: 5px; color: var(--accent-purple);"></i> ${item.phone}</h4>
+                        <p style="margin-top: 4px;">${item.country} | <span style="color: var(--accent); font-weight: 700;">$${Number(item.buy_price).toFixed(2)}</span> <span style="color: var(--text-secondary); font-size: 0.8rem; margin-left: 8px;">(User: ${item.seller_id})</span></p>
                     </div>
-                    <span class="badge ${item.status === 'AVAILABLE' ? 'badge-success' : 'badge-warning'}">${item.status}</span>
+                    <span class="badge ${statusClass}">${item.status}</span>
                 </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function closeConfirm(result) {
@@ -2276,23 +2282,6 @@
                 confirmResolve(result);
                 confirmResolve = null;
             }
-        }
-
-        function renderHistory(list) {
-            const container = document.getElementById('history-list');
-            if (!list || !list.length) {
-                container.innerHTML = `<p style="text-align: center; color: var(--text-secondary); padding: 20px;">${translations[currentLang].no_ops}</p>`;
-                return;
-            }
-            container.innerHTML = list.map(item => `
-                <div class="list-item">
-                    <div class="item-info">
-                        <h4>${item.phone}</h4>
-                        <p>${item.country} | <span style="color: var(--accent); font-weight: 700;">$${item.buy_price}</span></p>
-                    </div>
-                    <span class="badge ${item.status === 'AVAILABLE' ? 'badge-success' : 'badge-warning'}">${item.status}</span>
-                </div>
-            `).join('');
         }
 
         function saveSettings() {
