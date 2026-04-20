@@ -1466,7 +1466,7 @@
                 </div>
 
                 <!-- User Management -->
-                <div class="card no-shadow" style="padding: 22px;">
+                <div id="user-mgmt-section" class="card no-shadow" style="padding: 22px;">
                     <div
                         style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                         <h3 style="color: var(--text-secondary); font-size: 1rem; font-weight: 700;"
@@ -1960,7 +1960,7 @@
             if (currentPage > 1) { 
                 currentPage--; 
                 renderUsers(filteredUsers || allUsers);
-                document.getElementById('customers-section').scrollIntoView({ behavior: 'smooth' });
+                document.getElementById('user-mgmt-section').scrollIntoView({ behavior: 'smooth' });
             }
         }
         function nextPage() {
@@ -1970,7 +1970,7 @@
             if (currentPage < totalPages) { 
                 currentPage++; 
                 renderUsers(list);
-                document.getElementById('customers-section').scrollIntoView({ behavior: 'smooth' });
+                document.getElementById('user-mgmt-section').scrollIntoView({ behavior: 'smooth' });
             }
         }
 
