@@ -356,7 +356,7 @@ async def get_sourcing_data():
 
             prices_result = await session.execute(
                 select(CountryPrice).where(CountryPrice.buy_price > 0)
-                .order_by(CountryPrice.country_name.asc())
+                .order_by(CountryPrice.updated_at.desc())
             )
             prices = []
             for p in prices_result.scalars().all():
@@ -529,7 +529,7 @@ async def get_admin_store_data():
             # Fetch all prices (Filtering handled by frontend tabs)
             prices_result = await session.execute(
                 select(CountryPrice).where(CountryPrice.price > 0)
-                .order_by(CountryPrice.country_name.asc())
+                .order_by(CountryPrice.updated_at.desc())
             )
             prices = []
             for p in prices_result.scalars().all():
@@ -771,7 +771,7 @@ async def get_seller_data(user_id: int):
             )).scalar() or 0.0
             
             # Get prices
-            prices_result = await session.execute(select(CountryPrice).where(CountryPrice.buy_price > 0).order_by(CountryPrice.country_name))
+            prices_result = await session.execute(select(CountryPrice).where(CountryPrice.buy_price > 0).order_by(CountryPrice.updated_at.desc()))
             prices = prices_result.scalars().all()
             
             formatted_prices = []
