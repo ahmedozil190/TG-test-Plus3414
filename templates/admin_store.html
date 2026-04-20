@@ -820,37 +820,6 @@
             transform: scale(0.98);
         }
 
-        .data-row {
-            background: var(--bg-elevated);
-            border: 1px solid var(--border);
-            padding: 14px 18px;
-            border-radius: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 15px;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        .data-label {
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            flex-shrink: 0;
-        }
-
-        .data-value {
-            font-weight: 700;
-            font-size: 1rem;
-            text-align: right;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            flex-grow: 1;
-        }
-
         /* ========== Management Modal ========== */
         .manage-overlay {
             position: fixed;
@@ -1940,41 +1909,35 @@
                 <div class="user-card" onclick='openManageModal(${JSON.stringify(u)})'>
                     <div style="display: flex; flex-direction: column; gap: 10px;">
                         <!-- Account Status -->
-                        <div class="data-row">
-                            <span class="data-label">${currentLang === 'ar' ? 'الحالة' : 'Status'}</span>
-                            <span class="data-value" style="color: ${statusColor}; font-weight: 900; font-size: 0.9rem; display: flex; align-items: center; justify-content: flex-end; gap: 8px; letter-spacing: 0.5px;">
+                        <div style="background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'الحالة' : 'Status'}</span>
+                            <span style="color: ${statusColor}; font-weight: 900; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; letter-spacing: 0.5px;">
                                 ${statusIcon} ${statusText}
                             </span>
                         </div>
-                        <!-- Name -->
-                        <div class="data-row">
-                            <span class="data-label">${currentLang === 'ar' ? 'الاسم' : 'Name'}</span>
-                            <span class="data-value" style="color: #00d2ff;" title="${u.full_name || ''}">${u.full_name || 'N/A'}</span>
+                        <div style="background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                            <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'الاسم' : 'Name'}</span>
+                            <span style="color: #00d2ff; font-weight: 700; font-size: 1rem; text-align: right; word-break: break-word;">${u.full_name || 'N/A'}</span>
                         </div>
-                        <!-- Username -->
-                        <div class="data-row">
-                            <span class="data-label">${currentLang === 'ar' ? 'المعرف' : 'Username'}</span>
-                            <span class="data-value" style="color: #bf5af2;" title="${u.username ? '@' + u.username : ''}">${u.username ? '@' + u.username : 'N/A'}</span>
+                        <div style="background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                            <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'المعرف' : 'Username'}</span>
+                            <span style="color: #bf5af2; font-weight: 700; font-size: 1rem; text-align: right; word-break: break-word;">${u.username ? '@' + u.username : 'N/A'}</span>
                         </div>
-                        <!-- User ID -->
-                        <div class="data-row">
-                            <span class="data-label">${currentLang === 'ar' ? 'رقم المعرف' : 'User ID'}</span>
-                            <span class="data-value" style="color: #ff9f0a; font-weight: 800;">${u.id}</span>
+                        <div style="background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'رقم المعرف' : 'User ID'}</span>
+                            <span style="color: #ff9f0a; font-weight: 800; font-size: 1rem;">${u.id}</span>
                         </div>
-                        <!-- Balance -->
-                        <div class="data-row">
-                            <span class="data-label">${currentLang === 'ar' ? 'الرصيد' : 'Balance'}</span>
-                            <span class="data-value" style="color: #30d158; font-weight: 900; font-size: 1.1rem;">$${Number(u.balance_store).toFixed(2)}</span>
+                        <div style="background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'الرصيد' : 'Balance'}</span>
+                            <span style="color: #30d158; font-weight: 900; font-size: 1.1rem;">$${Number(u.balance_store).toFixed(2)}</span>
                         </div>
-                        <!-- Total Spent -->
-                        <div class="data-row">
-                            <span class="data-label">${currentLang === 'ar' ? 'إجمالي المنفق' : 'Total Spent'}</span>
-                            <span class="data-value" style="color: #bf5af2; font-weight: 900; font-size: 1.1rem;">$${Number(u.total_spent || 0).toFixed(2)}</span>
+                        <div style="background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'إجمالي المنفق' : 'Total Spent'}</span>
+                            <span style="color: #bf5af2; font-weight: 900; font-size: 1.1rem;">$${Number(u.total_spent || 0).toFixed(2)}</span>
                         </div>
-                        <!-- Purchased -->
-                        <div class="data-row">
-                            <span class="data-label">${currentLang === 'ar' ? 'أرقام اشتراها' : 'Purchased'}</span>
-                            <span class="data-value" style="color: #ffcc00; font-weight: 800;">${u.purchased_count || 0}</span>
+                        <div style="background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'أرقام اشتراها' : 'Purchased'}</span>
+                            <span style="color: #ffcc00; font-weight: 800; font-size: 1rem;">${u.purchased_count || 0}</span>
                         </div>
                     </div>
                 </div>`;
@@ -2045,11 +2008,11 @@
             if (!currentUser) return;
             const btn = document.querySelector('.sync-btn');
             if (btn) btn.style.transform = 'rotate(360deg)';
-            
+
             try {
                 const res = await fetch('/api/admin/user/sync', {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ user_id: currentUser.id, bot_type: "store" })
                 });
                 const data = await res.json();
@@ -2057,10 +2020,10 @@
                     currentUser.full_name = data.full_name;
                     currentUser.username = data.username.startsWith('@') ? data.username.substring(1) : data.username;
                     document.getElementById('manage-name').innerText = data.full_name.toUpperCase();
-                    
+
                     const dispId = (data.username || currentUser.id).toString();
                     document.getElementById('manage-id').innerText = dispId.startsWith('@') ? dispId : '@' + dispId;
-                    init(); 
+                    init();
                 }
             } catch (e) { console.error(e); }
             finally { if (btn) btn.style.transform = 'rotate(0deg)'; }
@@ -2320,15 +2283,14 @@
         <div class="manage-card" onclick="event.stopPropagation()">
 
             <!-- Name Box -->
-            <div class="manage-data-box" style="position: relative;">
+            <div class="manage-data-box">
                 <div id="manage-name"
-                    style="color: #ffca28; font-weight: 600; font-size: 0.95rem; letter-spacing: 0.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80%; padding-right: 30px;">USER NAME</div>
-                <i class="fas fa-sync-alt sync-btn" onclick="syncUserIdentity()" style="position: absolute; right: 15px; color: var(--text-secondary); cursor: pointer; font-size: 0.8rem; transition: 0.3s; padding: 5px;"></i>
+                    style="color: #ffca28; font-weight: 600; font-size: 0.95rem; letter-spacing: 0.5px; text-align: center;">USER NAME</div>
             </div>
 
             <!-- ID Box -->
             <div class="manage-data-box">
-                <div id="manage-id" style="color: #64b5f6; font-weight: 500; font-size: 0.85rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">@username</div>
+                <div id="manage-id" style="color: #64b5f6; font-weight: 500; font-size: 0.85rem;">@username</div>
             </div>
 
             <!-- Balance Box -->
