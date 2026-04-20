@@ -126,10 +126,11 @@ async def main():
         except Exception as e:
             logger.error(f"Seller Bot configuration failed: {e}")
             bot_seller = None
-    else:
-        logger.warning("⚠️ WARNING: SELLER_BOT_TOKEN is empty! Seller Bot will not start.")
-
-    # 3. Web Server Task
+    # 3. Attach bots to app state for Web Admin panel access
+    app.state.bot_buyer = bot_buyer
+    app.state.bot_seller = bot_seller
+    
+    # 4. Web Server Task
     port = int(os.environ.get("PORT", 8000))
     config = Config(app=app, host="0.0.0.0", port=port, log_level="info")
     server = Server(config)

@@ -1917,7 +1917,7 @@
                         </div>
                         <div style="background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
                             <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'الاسم' : 'Name'}</span>
-                            <span style="color: #00d2ff; font-weight: 700; font-size: 1rem;">${u.full_name ? u.full_name.split(' ')[0] : 'N/A'}</span>
+                            <span style="color: #00d2ff; font-weight: 700; font-size: 1rem;">${u.full_name || 'N/A'}</span>
                         </div>
                         <div style="background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
                             <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'المعرف' : 'Username'}</span>
@@ -2002,6 +2002,31 @@
             }
 
             document.getElementById('user-manage-modal').classList.add('active');
+        }
+
+        async function syncUserIdentity() {
+            if (!currentUser) return;
+            const btn = document.querySelector('.sync-btn');
+            if (btn) btn.style.transform = 'rotate(360deg)';
+            
+            try {
+                const res = await fetch('/api/admin/user/sync', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ user_id: currentUser.id, bot_type: "store" })
+                });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    currentUser.full_name = data.full_name;
+                    currentUser.username = data.username.startsWith('@') ? data.username.substring(1) : data.username;
+                    document.getElementById('manage-name').innerText = data.full_name.toUpperCase();
+                    
+                    const dispId = (data.username || currentUser.id).toString();
+                    document.getElementById('manage-id').innerText = dispId.startsWith('@') ? dispId : '@' + dispId;
+                    init(); 
+                }
+            } catch (e) { console.error(e); }
+            finally { if (btn) btn.style.transform = 'rotate(0deg)'; }
         }
 
         async function adjustBalanceInline(type) {
@@ -2258,9 +2283,10 @@
         <div class="manage-card" onclick="event.stopPropagation()">
 
             <!-- Name Box -->
-            <div class="manage-data-box">
+            <div class="manage-data-box" style="position: relative;">
                 <div id="manage-name"
                     style="color: #ffca28; font-weight: 600; font-size: 0.95rem; letter-spacing: 0.5px;">USER NAME</div>
+                <i class="fas fa-sync-alt sync-btn" onclick="syncUserIdentity()" style="position: absolute; right: 15px; color: var(--text-secondary); cursor: pointer; font-size: 0.8rem; transition: 0.3s; padding: 5px;"></i>
             </div>
 
             <!-- ID Box -->

@@ -226,6 +226,10 @@ class StoreBuy(BaseModel):
     user_id: int
     country: str
 
+class UserSync(BaseModel):
+    user_id: int
+    bot_type: str # "store" or "sourcing"
+
 @app.get("/admin/sourcing", response_class=HTMLResponse)
 async def admin_sourcing(request: Request):
     try:
@@ -995,5 +999,41 @@ async def get_seller_accounts(user_id: int):
                 "date": a.created_at.strftime("%Y-%m-%d %H:%M")
             } for a in results]
         }
+
+@app.post("/api/admin/user/sync")
+async def sync_user_identity(data: UserSync):
+    try:    
+        # 1. Select the correct bot based on bot_type
+        bot = app.state.bot_buyer if data.bot_type == "store" else app.state.bot_seller
+        
+        if not bot:
+            raise HTTPException(status_code=500, detail="Bot instance not found for sync")
+            
+        # 2. Fetch latest data from Telegram
+        chat = await bot.get_chat(data.user_id)
+        
+        # 3. Format name and username
+        new_full_name = f"{chat.first_name or ''} {chat.last_name or ''}".strip() or "N/A"
+        new_username = chat.username or None
+        
+        # 4. Update Database
+        async with async_session() as session:
+            user = await session.get(User, data.user_id)
+            if user:
+                user.full_name = new_full_name
+                user.username = new_username
+                await session.commit()
+                
+                return {
+                    "status": "success",
+                    "full_name": new_full_name,
+                    "username": f"@{new_username}" if new_username else "N/A"
+                }
+        
+        raise HTTPException(status_code=404, detail="User not found in database")
+        
+    except Exception as e:
+        logger.error(f"Identity Sync Error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 # --- End of Web Admin SOURCINGPRO ---
