@@ -2150,7 +2150,7 @@
             if (currentPricePage > 1) {
                 currentPricePage--;
                 renderPrices(filteredPrices || allPrices);
-                document.getElementById('price-list').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                document.getElementById('section-prices').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
 
@@ -2160,7 +2160,7 @@
             if (currentPricePage < totalPages) {
                 currentPricePage++;
                 renderPrices(list);
-                document.getElementById('price-list').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                document.getElementById('section-prices').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
 
@@ -2203,7 +2203,7 @@
                         <!-- Name -->
                         <div style="background: var(--card-glass); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
                             <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'الاسم' : 'Name'}</span>
-                            <span style="color: var(--success); font-weight: 800; font-size: 1.1rem; text-align: right; word-break: break-word;">${(() => {
+                            <span style="color: var(--success); font-weight: 800; font-size: 1.1rem; text-align: right; word-break: break-word; white-space: normal; flex: 1;">${(() => {
                         let n = p.name || '';
                         const map = { "EG": "Egypt", "US": "United States", "UK": "United Kingdom", "SA": "Saudi Arabia" };
                         // Strip existing flag if any for internal check
