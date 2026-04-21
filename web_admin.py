@@ -206,14 +206,25 @@ async def run_migrations():
                 await conn.execute(sqlalchemy.text("ALTER TABLE country_prices ADD COLUMN iso_code TEXT DEFAULT 'XX'"))
             except: pass
             
+            # Drop unique constraint on country_code if it exists (SQLite workaround)
+            try:
+                # Check if unique index exists
+                idx_result = await conn.execute(sqlalchemy.text("SELECT name FROM sqlite_master WHERE type='index' AND tbl_name='country_prices' AND sql LIKE '%UNIQUE%'"))
+                for idx_row in idx_result.fetchall():
+                    idx_name = idx_row[0]
+                    if idx_name and 'autoindex' not in idx_name:
+                        try:
+                            await conn.execute(sqlalchemy.text(f"DROP INDEX IF EXISTS {idx_name}"))
+                        except: pass
+            except: pass
+
             try:
                 await conn.execute(sqlalchemy.text("ALTER TABLE country_prices ADD COLUMN updated_at DATETIME"))
             except: pass
 
             # One-time resolution: Fix 'XX' iso_codes for legacy data
             try:
-                # Get all records with XX
-                cursor = await conn.execute(sqlalchemy.text("SELECT id, country_code FROM country_prices WHERE iso_code = 'XX'"))
+                cursor = await conn.execute(sqlalchemy.text("SELECT id, country_code FROM country_prices WHERE iso_code = 'XX' OR iso_code IS NULL"))
                 rows = cursor.fetchall()
                 for row_id, c_code in rows:
                     try:
@@ -320,7 +331,8 @@ async def get_store_data(user_id: int = None):
                     # but let's just find the price entry or name match
                     cp = (await session.execute(select(CountryPrice).where(CountryPrice.country_name == name))).scalar()
                     if cp:
-                        flag = get_flag_emoji(cp.iso_code)
+                        iso = getattr(cp, 'iso_code', None) or 'XX'
+                        flag = get_flag_emoji(iso)
                 except: pass
                 
                 countries.append({
@@ -421,10 +433,11 @@ async def get_sourcing_data():
             )
             prices = []
             for p in prices_result.scalars().all():
-                flag = get_flag_emoji(p.iso_code)
+                iso = getattr(p, 'iso_code', None) or 'XX'
+                flag = get_flag_emoji(iso)
                 prices.append({
                     "code": p.country_code, 
-                    "iso": p.iso_code,
+                    "iso": iso,
                     "name": f"{flag} {clean_display_name(p.country_name)}", 
                     "buy_price": p.buy_price,
                     "price": p.price,
@@ -603,10 +616,11 @@ async def get_admin_store_data():
             )
             prices = []
             for p in prices_result.scalars().all():
-                flag = get_flag_emoji(p.iso_code)
+                iso = getattr(p, 'iso_code', None) or 'XX'
+                flag = get_flag_emoji(iso)
                 prices.append({
                     "code": p.country_code,
-                    "iso": p.iso_code,
+                    "iso": iso,
                     "name": f"{flag} {clean_display_name(p.country_name)}",
                     "price": p.price
                 })
