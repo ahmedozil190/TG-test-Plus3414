@@ -1202,13 +1202,11 @@
                 </div>
             </div>
 
-            <!-- New Sourcing History Section -->
-            <div class="withdraw-card" style="margin-top:30px; padding:20px">
-                <h3
-                    style="font-size:1rem; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center">
-                    Submission History
-                </h3>
-                <div id="sourcingHistory" style="display:flex; flex-direction:column; gap:8px">
+            <div class="user-card" style="margin-top:30px; padding: 22px;">
+                <div class="section-header" style="margin-top: 0; margin-bottom: 25px; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
+                    <h3 style="font-size:1.1rem; margin: 0;">Submission History</h3>
+                </div>
+                <div id="sourcingHistory" style="display:flex; flex-direction:column; gap:15px">
                     <!-- JS Data -->
                 </div>
                 <div id="sourcingEmpty" style="text-align:center; padding:30px; opacity:0.3; display:none">
@@ -1825,8 +1823,13 @@
                 empty.style.display = 'none';
                 data.accounts.forEach(acc => {
                     const item = document.createElement('div');
-                    item.className = 'user-card';
-                    item.style = "margin-bottom: 25px; padding-top: 24px; display: flex; flex-direction: column; gap: 10px;";
+                    item.className = 'history-item';
+                    item.style = "display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px dashed var(--border);";
+                    if (data.accounts.indexOf(acc) === data.accounts.length - 1) {
+                        item.style.borderBottom = 'none';
+                        item.style.paddingBottom = '0';
+                        item.style.marginBottom = '0';
+                    }
                     
                     let statusColor = '#f59e0b';
                     let statusIcon = 'fa-clock';
@@ -1849,21 +1852,22 @@
 
                     const rowS = "background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px;";
                     const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;";
+                    const valS = "font-weight: 800; font-size: 1.1rem; text-align: right;";
 
                     item.innerHTML = `
                         <div style="${rowS}">
                             <span style="${lblS}">${labels.status}</span>
-                            <div style="font-size: 0.7rem; font-weight: 800; padding: 4px 10px; border-radius: 20px; background: ${statusColor}15; color: ${statusColor}; border: 1px solid ${statusColor}30; text-transform: uppercase;">
-                                <i class="fas ${statusIcon}" style="margin-right: 4px; font-size: 0.6rem;"></i> ${acc.status}
+                            <div style="font-size: 0.75rem; font-weight: 800; padding: 5px 12px; border-radius: 20px; background: ${statusColor}15; color: ${statusColor}; border: 1px solid ${statusColor}30; text-transform: uppercase;">
+                                <i class="fas ${statusIcon}" style="margin-right: 4px; font-size: 0.65rem;"></i> ${acc.status}
                             </div>
                         </div>
                         <div style="${rowS}">
                             <span style="${lblS}">${labels.number}</span>
-                            <span style="color: #8b5cf6; font-weight: 800; font-size: 1.1rem; direction: ltr; text-align: right;">${acc.phone}</span>
+                            <span style="color: #8b5cf6; ${valS} direction: ltr;">${acc.phone}</span>
                         </div>
                         <div style="${rowS}">
                             <span style="${lblS}">${labels.country}</span>
-                            <span style="color: #10b981; font-weight: 800; font-size: 1.1rem; text-align: right;">${acc.country}</span>
+                            <span style="color: #10b981; ${valS}">${acc.country}</span>
                         </div>
                         <div style="${rowS}">
                             <span style="${lblS}">${labels.price}</span>
@@ -1871,7 +1875,7 @@
                         </div>
                         <div style="${rowS}">
                             <span style="${lblS}">${labels.date}</span>
-                            <span style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 500; text-align: right;">${acc.date}</span>
+                            <span style="color: var(--text-secondary); ${valS}">${acc.date}</span>
                         </div>
                     `;
                     list.appendChild(item);
