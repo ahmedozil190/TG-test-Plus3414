@@ -598,13 +598,42 @@
             box-shadow: 0 0 15px var(--accent-glow);
         }
 
-        .user-card,
-        .acc-item {
+        /* ─── Shared Components ─── */
+        .card {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            transition: all 0.3s var(--ease);
+            box-shadow: var(--shadow);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 25px 0 15px 0;
+            color: var(--text-secondary);
+        }
+
+        .section-header h2, .section-header h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin: 0;
+        }
+
+        .list-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .user-card, .acc-item {
             background: var(--bg);
             border: 1px solid var(--border);
             border-radius: 18px;
-            padding: 22px 18px;
-            margin-bottom: 20px;
+            padding: 24px 20px 20px;
             width: 100%;
         }
 
@@ -1213,12 +1242,11 @@
             </div>
 
             <!-- New Sourcing History Section -->
-            <div class="withdraw-card" style="margin-top:30px; padding: 22px;">
-                <h3
-                    style="font-size:1rem; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center; color: var(--text-secondary); width: 100%;">
-                    Submission History
-                </h3>
-                <div id="sourcingHistory" style="display:flex; flex-direction:column; gap:20px; width: 100%;">
+            <div class="card" style="padding: 22px; margin-top: 30px;">
+                <div class="section-header" style="margin-top: 0; margin-bottom: 20px;">
+                    <h3 style="font-weight: 800;">Submission History</h3>
+                </div>
+                <div class="list-container" id="sourcingHistory">
                     <!-- JS Data -->
                 </div>
                 <div id="sourcingEmpty" style="text-align:center; padding:30px; opacity:0.3; display:none">
@@ -1836,53 +1864,55 @@
                 data.accounts.forEach(acc => {
                     const item = document.createElement('div');
                     item.className = 'user-card';
-                    item.style = "margin-bottom: 25px; display: flex; flex-direction: column; gap: 10px; width: 100%;";
-
-                    let statusColor = '#f59e0b';
+                    item.style = "margin-bottom: 25px; padding-top: 24px;";
+                    
+                    let statusClass = 'badge-warning';
                     let statusIcon = 'fa-clock';
-                    if (acc.status === 'AVAILABLE' || acc.status === 'SOLD') {
-                        statusColor = '#10b981';
-                        statusIcon = 'fa-check-circle';
-                    } else if (acc.status === 'REJECTED') {
-                        statusColor = '#ef4444';
-                        statusIcon = 'fa-times-circle';
+                    let statusColor = 'var(--warning)';
+                    if (acc.status === 'AVAILABLE') { 
+                        statusColor = '#10b981'; 
+                        statusIcon = 'fa-check-circle'; 
+                        statusClass = 'badge-success';
+                    } else if (acc.status === 'SOLD') { 
+                        statusColor = '#3b82f6'; 
+                        statusIcon = 'fa-shopping-cart'; 
+                        statusClass = 'badge-success';
+                    } else if (acc.status === 'REJECTED') { 
+                        statusColor = '#ef4444'; 
+                        statusIcon = 'fa-times-circle'; 
+                        statusClass = 'badge-danger';
                     }
 
-                    const isRtl = document.dir === 'rtl';
-                    const labels = {
-                        status: isRtl ? 'الحالة' : 'Status',
-                        number: isRtl ? 'الرقم' : 'Number',
-                        country: isRtl ? 'الدولة' : 'Country',
-                        price: isRtl ? 'السعر' : 'Price',
-                        date: isRtl ? 'التاريخ' : 'Date'
-                    };
+                    const isSold = acc.status === 'SOLD';
+                    const badgeStyle = isSold ? 'style="background: #3b82f6; color: white;"' : '';
 
-                    const rowS = "background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; width: 100%;";
+                    const rowS = "background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;";
                     const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;";
-                    const valS = "font-weight: 800; font-size: 1.1rem; text-align: right;";
 
                     item.innerHTML = `
-                        <div style="${rowS}">
-                            <span style="${lblS}">${labels.status}</span>
-                            <div style="font-size: 0.75rem; font-weight: 800; padding: 5px 12px; border-radius: 20px; background: ${statusColor}15; color: ${statusColor}; border: 1px solid ${statusColor}30; text-transform: uppercase;">
-                                <i class="fas ${statusIcon}" style="margin-right: 4px; font-size: 0.65rem;"></i> ${acc.status}
+                        <div style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
+                            <div style="${rowS}">
+                                <span style="${lblS}">STATUS</span>
+                                <span class="badge ${statusClass}" ${badgeStyle} style="font-size: 0.75rem; padding: 5px 12px;">
+                                    <i class="fas ${statusIcon}" style="margin-right: 5px;"></i> ${acc.status}
+                                </span>
                             </div>
-                        </div>
-                        <div style="${rowS}">
-                            <span style="${lblS}">${labels.number}</span>
-                            <span style="color: #8b5cf6; ${valS} direction: ltr;">${acc.phone}</span>
-                        </div>
-                        <div style="${rowS}">
-                            <span style="${lblS}">${labels.country}</span>
-                            <span style="color: #10b981; ${valS}">${acc.country}</span>
-                        </div>
-                        <div style="${rowS}">
-                            <span style="${lblS}">${labels.price}</span>
-                            <span style="color: #3b82f6; font-weight: 900; font-size: 1.2rem; text-align: right;">$${Number(acc.price).toFixed(2)}</span>
-                        </div>
-                        <div style="${rowS}">
-                            <span style="${lblS}">${labels.date}</span>
-                            <span style="color: var(--text-secondary); ${valS}">${acc.date}</span>
+                            <div style="${rowS}">
+                                <span style="${lblS}">NUMBER</span>
+                                <span style="color: #8b5cf6; font-weight: 800; font-size: 1.1rem; text-align: right; direction: ltr;">${acc.phone}</span>
+                            </div>
+                            <div style="${rowS}">
+                                <span style="${lblS}">COUNTRY</span>
+                                <span style="color: #10b981; font-weight: 800; font-size: 1.1rem; text-align: right;">${acc.country}</span>
+                            </div>
+                            <div style="${rowS}">
+                                <span style="${lblS}">PRICE</span>
+                                <span style="color: #3b82f6; font-weight: 900; font-size: 1.2rem; text-align: right;">$${Number(acc.price).toFixed(2)}</span>
+                            </div>
+                            <div style="${rowS}">
+                                <span style="${lblS}">DATE</span>
+                                <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.85rem; text-align: right;">${acc.date}</span>
+                            </div>
                         </div>
                     `;
                     list.appendChild(item);
