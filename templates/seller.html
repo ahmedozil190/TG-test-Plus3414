@@ -1825,8 +1825,8 @@
                 empty.style.display = 'none';
                 data.accounts.forEach(acc => {
                     const item = document.createElement('div');
-                    item.className = 'acc-item';
-                    item.style = "margin-bottom: 30px; display: flex; flex-direction: column; gap: 8px;";
+                    item.className = 'user-card';
+                    item.style = "margin-bottom: 25px; padding-top: 24px; display: flex; flex-direction: column; gap: 10px;";
                     
                     let statusColor = '#f59e0b';
                     let statusIcon = 'fa-clock';
@@ -1847,8 +1847,8 @@
                         date: isRtl ? 'التاريخ' : 'Date'
                     };
 
-                    const rowS = "background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px;";
-                    const lblS = "color: #6a6c70; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;";
+                    const rowS = "background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px;";
+                    const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;";
 
                     item.innerHTML = `
                         <div style="${rowS}">
@@ -1859,19 +1859,19 @@
                         </div>
                         <div style="${rowS}">
                             <span style="${lblS}">${labels.number}</span>
-                            <span style="color: #8b5cf6; font-weight: 800; font-size: 1rem; direction: ltr; text-align: right;">${acc.phone}</span>
+                            <span style="color: #8b5cf6; font-weight: 800; font-size: 1.1rem; direction: ltr; text-align: right;">${acc.phone}</span>
                         </div>
                         <div style="${rowS}">
                             <span style="${lblS}">${labels.country}</span>
-                            <span style="color: #10b981; font-weight: 800; font-size: 1rem; text-align: right;">${acc.country}</span>
+                            <span style="color: #10b981; font-weight: 800; font-size: 1.1rem; text-align: right;">${acc.country}</span>
                         </div>
                         <div style="${rowS}">
                             <span style="${lblS}">${labels.price}</span>
-                            <span style="color: #3b82f6; font-weight: 900; font-size: 1.1rem; text-align: right;">$${Number(acc.price).toFixed(2)}</span>
+                            <span style="color: #3b82f6; font-weight: 900; font-size: 1.2rem; text-align: right;">$${Number(acc.price).toFixed(2)}</span>
                         </div>
                         <div style="${rowS}">
                             <span style="${lblS}">${labels.date}</span>
-                            <span style="color: #6a6c70; font-size: 0.8rem; font-weight: 500; text-align: right;">${acc.date}</span>
+                            <span style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 500; text-align: right;">${acc.date}</span>
                         </div>
                     `;
                     list.appendChild(item);

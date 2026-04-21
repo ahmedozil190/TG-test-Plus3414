@@ -2308,8 +2308,8 @@
             const container = document.getElementById('history-list');
             if (!list || !list.length) {
                 container.innerHTML = `
-                <div style="text-align: center; padding: 40px 20px; background: rgba(0,0,0,0.15); border-radius: 16px; border: 1px dashed rgba(255,255,255,0.05); margin-top: 10px;">
-                    <i class="fas fa-history" style="font-size: 2.5rem; color: rgba(255,255,255,0.1); margin-bottom: 12px;"></i>
+                <div style="text-align: center; padding: 40px 20px; background: var(--card-glass); border-radius: 16px; border: 1px dashed var(--border); margin-top: 10px;">
+                    <i class="fas fa-history" style="font-size: 2.5rem; color: var(--text-secondary); opacity: 0.15; margin-bottom: 12px;"></i>
                     <p style="color: var(--text-secondary); font-weight: 600; font-size: 0.95rem;">${translations[currentLang].no_ops}</p>
                 </div>`;
                 return;
@@ -2318,43 +2318,45 @@
                 let statusClass = 'badge-warning';
                 let statusIcon = 'fa-clock';
                 let statusColor = 'var(--warning)';
-                if (item.status === 'AVAILABLE') { statusClass = 'badge-success'; statusIcon = 'fa-check-circle'; statusColor = '#10b981'; } // Emerald
-                if (item.status === 'SOLD') { statusClass = 'badge-success'; statusIcon = 'fa-shopping-cart'; statusColor = '#3b82f6'; } // Blue
+                if (item.status === 'AVAILABLE') { statusClass = 'badge-success'; statusIcon = 'fa-check-circle'; statusColor = '#10b981'; } 
+                if (item.status === 'SOLD') { statusClass = 'badge-success'; statusIcon = 'fa-shopping-cart'; statusColor = '#3b82f6'; } 
                 if (item.status === 'REJECTED') { statusClass = 'badge-danger'; statusIcon = 'fa-times-circle'; statusColor = '#ef4444'; }
 
                 const isSold = item.status === 'SOLD';
                 const badgeStyle = isSold ? 'style="background: #3b82f6; color: white;"' : '';
 
-                const rowStyle = "background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;";
-                const lblStyle = "color: #6a6c70; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; white-space: nowrap;";
-                
+                const rowS = "background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;";
+                const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;";
+
                 return `
-                <div class="operation-card" style="margin-bottom: 30px; display: flex; flex-direction: column; gap: 10px;">
-                    <div style="${rowStyle}">
-                        <span style="${lblStyle}">${translations[currentLang].lbl_status}</span>
-                        <span class="badge ${statusClass}" ${badgeStyle} style="font-size: 0.75rem; padding: 5px 12px;">
-                            <i class="fas ${statusIcon}" style="margin-right: 5px;"></i> ${item.status}
-                        </span>
-                    </div>
-                    <div style="${rowStyle}">
-                        <span style="${lblStyle}">${translations[currentLang].lbl_user}</span>
-                        <span style="color: #8b5cf6; font-weight: 800; font-size: 1.1rem; text-align: right;">${item.seller_id}</span>
-                    </div>
-                    <div style="${rowStyle}">
-                        <span style="${lblStyle}">${translations[currentLang].lbl_number}</span>
-                        <span style="color: #8b5cf6; font-weight: 800; font-size: 1.1rem; text-align: right; direction: ltr;">${item.phone}</span>
-                    </div>
-                    <div style="${rowStyle}">
-                        <span style="${lblStyle}">${translations[currentLang].lbl_country}</span>
-                        <span style="color: #10b981; font-weight: 800; font-size: 1.1rem; text-align: right;">${item.country}</span>
-                    </div>
-                    <div style="${rowStyle}">
-                        <span style="${lblStyle}">${translations[currentLang].lbl_price}</span>
-                        <span style="color: #3b82f6; font-weight: 900; font-size: 1.2rem; text-align: right;">$${Number(item.buy_price).toFixed(2)}</span>
-                    </div>
-                    <div style="${rowStyle}">
-                        <span style="${lblStyle}">${translations[currentLang].lbl_date}</span>
-                        <span style="color: #6a6c70; font-weight: 500; font-size: 0.85rem; text-align: right;">${item.date}</span>
+                <div class="user-card" style="margin-bottom: 25px; padding-top: 24px;">
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <div style="${rowS}">
+                            <span style="${lblS}">${translations[currentLang].lbl_status}</span>
+                            <span class="badge ${statusClass}" ${badgeStyle} style="font-size: 0.75rem; padding: 5px 12px;">
+                                <i class="fas ${statusIcon}" style="margin-right: 5px;"></i> ${item.status}
+                            </span>
+                        </div>
+                        <div style="${rowS}">
+                            <span style="${lblS}">${translations[currentLang].lbl_user}</span>
+                            <span style="color: #8b5cf6; font-weight: 800; font-size: 1.1rem; text-align: right;">${item.seller_id}</span>
+                        </div>
+                        <div style="${rowS}">
+                            <span style="${lblS}">${translations[currentLang].lbl_number}</span>
+                            <span style="color: #8b5cf6; font-weight: 800; font-size: 1.1rem; text-align: right; direction: ltr;">${item.phone}</span>
+                        </div>
+                        <div style="${rowS}">
+                            <span style="${lblS}">${translations[currentLang].lbl_country}</span>
+                            <span style="color: #10b981; font-weight: 800; font-size: 1.1rem; text-align: right;">${item.country}</span>
+                        </div>
+                        <div style="${rowS}">
+                            <span style="${lblS}">${translations[currentLang].lbl_price}</span>
+                            <span style="color: #3b82f6; font-weight: 900; font-size: 1.2rem; text-align: right;">$${Number(item.buy_price).toFixed(2)}</span>
+                        </div>
+                        <div style="${rowS}">
+                            <span style="${lblS}">${translations[currentLang].lbl_date}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.85rem; text-align: right;">${item.date}</span>
+                        </div>
                     </div>
                 </div>
                 `;
