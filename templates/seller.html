@@ -1737,23 +1737,15 @@
                     item.className = 'history-item';
                     item.style.marginBottom = "15px";
 
-                    let statusClass = 'badge-warning';
-                    let statusIcon = 'fa-clock';
+                    let statusColor = '#f59e0b'; // PENDING (Orange)
                     let statusText = 'PENDING';
-                    let badgeStyle = '';
 
                     if (h.status === 'approved') {
-                        statusClass = 'badge-success';
-                        statusIcon = 'fa-check-circle';
+                        statusColor = '#10b981'; // APPROVED (Green)
                         statusText = 'APPROVED';
-                        badgeStyle = 'style="background: #10b981; color: white;"';
                     } else if (h.status === 'rejected') {
-                        statusClass = 'badge-danger';
-                        statusIcon = 'fa-times-circle';
+                        statusColor = '#ef4444'; // REJECTED (Red)
                         statusText = 'REJECTED';
-                        badgeStyle = 'style="background: #ef4444; color: white;"';
-                    } else {
-                        badgeStyle = 'style="background: #f59e0b; color: white;"';
                     }
 
                     const rowS = "background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;";
@@ -1766,8 +1758,8 @@
                         <div style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
                             <div style="${rowS}">
                                 <span style="${lblS}">STATUS</span>
-                                <span class="badge ${statusClass}" ${badgeStyle} style="font-size: 0.75rem; padding: 5px 12px;">
-                                    <i class="fas ${statusIcon}" style="margin-right: 5px;"></i> ${statusText}
+                                <span style="color: ${statusColor}; font-weight: 800; font-size: 0.85rem; text-transform: uppercase;">
+                                    ${statusText}
                                 </span>
                             </div>
                             <div style="${rowS}">
@@ -1996,29 +1988,19 @@
                     item.className = 'user-card';
                     item.style = "margin-bottom: 25px; padding-top: 24px;";
 
-                    let statusClass = 'badge-warning';
+                    let statusColor = '#f59e0b'; // PENDING
                     let statusIcon = 'fa-clock';
                     let statusText = 'PENDING';
 
                     if (acc.status === 'AVAILABLE' || acc.status === 'SOLD') {
-                        statusClass = 'badge-success';
-                        statusIcon = 'fa-check-circle';
+                        statusColor = '#10b981'; // ACCEPTED
                         statusText = 'ACCEPTED';
                     } else if (acc.status === 'REJECTED') {
-                        statusClass = 'badge-danger';
-                        statusIcon = 'fa-times-circle';
+                        statusColor = '#ef4444'; // REJECTED
                         statusText = 'REJECTED';
                     }
 
-                    const isAccepted = acc.status === 'AVAILABLE' || acc.status === 'SOLD';
-                    const isSold = acc.status === 'SOLD';
                     const isPending = acc.status === 'PENDING';
-                    const badgeStyle = isSold
-                        ? 'style="background: #3b82f6; color: white;"'
-                        : isAccepted
-                            ? 'style="background: #10b981; color: white;"'
-                            : '';
-
                     const rowS = "background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;";
                     const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;";
 
@@ -2026,8 +2008,8 @@
                         <div style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
                             <div style="${rowS}">
                                 <span style="${lblS}">STATUS</span>
-                                <span class="badge ${statusClass}" ${badgeStyle} style="font-size: 0.75rem; padding: 5px 12px;">
-                                    <i class="fas ${statusIcon}" style="margin-right: 5px;"></i> ${statusText}
+                                <span style="color: ${statusColor}; font-weight: 800; font-size: 0.85rem; text-transform: uppercase;">
+                                    ${statusText}
                                 </span>
                             </div>
                             <div style="${rowS}">
