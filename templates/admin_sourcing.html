@@ -1536,7 +1536,8 @@
                     <div class="info-card">
                         <div class="info-card-l">
                             <span class="info-card-lbl" data-i18n="stat_total_ops">TOTAL OPERATIONS</span>
-                            <div class="info-card-val"><span id="stat-history-total">0</span> <span data-i18n="unit_ops">OPS</span></div>
+                            <div class="info-card-val"><span id="stat-history-total">0</span> <span
+                                    data-i18n="unit_ops">OPS</span></div>
                         </div>
                         <div class="info-card-icon" style="background: rgba(88, 101, 242, 0.1); color: var(--accent);">
                             <i class="fas fa-list-check"></i>
@@ -1545,7 +1546,8 @@
                     <div class="info-card">
                         <div class="info-card-l">
                             <span class="info-card-lbl" data-i18n="stat_accepted_ops">ACCEPTED ACCOUNTS</span>
-                            <div class="info-card-val"><span id="stat-history-accepted">0</span> <span data-i18n="unit_accs">ACCS</span></div>
+                            <div class="info-card-val"><span id="stat-history-accepted">0</span> <span
+                                    data-i18n="unit_accs">ACCS</span></div>
                         </div>
                         <div class="info-card-icon" style="background: rgba(34, 197, 94, 0.1); color: var(--success);">
                             <i class="fas fa-check-double"></i>
@@ -1554,7 +1556,8 @@
                     <div class="info-card">
                         <div class="info-card-l">
                             <span class="info-card-lbl" data-i18n="stat_rejected_ops">REJECTED ACCOUNTS</span>
-                            <div class="info-card-val"><span id="stat-history-rejected">0</span> <span data-i18n="unit_accs">ACCS</span></div>
+                            <div class="info-card-val"><span id="stat-history-rejected">0</span> <span
+                                    data-i18n="unit_accs">ACCS</span></div>
                         </div>
                         <div class="info-card-icon" style="background: rgba(239, 68, 68, 0.1); color: var(--error);">
                             <i class="fas fa-ban"></i>
@@ -1562,7 +1565,8 @@
                     </div>
                 </div>
                 <div class="card" style="padding: 22px;">
-                    <div class="section-header" style="margin-top: 0; margin-bottom: 20px;">
+                    <div class="section-header"
+                        style="margin-top: 0; margin-bottom: 25px; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
                         <h2 data-i18n="nav_history" style="margin: 0; font-size: 1.1rem;">Operations History</h2>
                     </div>
                     <div class="list-container" id="history-list"></div>
@@ -2318,8 +2322,8 @@
                 let statusClass = 'badge-warning';
                 let statusIcon = 'fa-clock';
                 let statusColor = 'var(--warning)';
-                if (item.status === 'AVAILABLE') { statusClass = 'badge-success'; statusIcon = 'fa-check-circle'; statusColor = '#10b981'; } 
-                if (item.status === 'SOLD') { statusClass = 'badge-success'; statusIcon = 'fa-shopping-cart'; statusColor = '#3b82f6'; } 
+                if (item.status === 'AVAILABLE') { statusClass = 'badge-success'; statusIcon = 'fa-check-circle'; statusColor = '#10b981'; }
+                if (item.status === 'SOLD') { statusClass = 'badge-success'; statusIcon = 'fa-shopping-cart'; statusColor = '#3b82f6'; }
                 if (item.status === 'REJECTED') { statusClass = 'badge-danger'; statusIcon = 'fa-times-circle'; statusColor = '#ef4444'; }
 
                 const isSold = item.status === 'SOLD';
@@ -2355,7 +2359,7 @@
                         </div>
                         <div style="${rowS}">
                             <span style="${lblS}">${translations[currentLang].lbl_date}</span>
-                            <span style="color: var(--text-secondary); font-weight: 800; font-size: 1.1rem; text-align: right;">${item.date}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.85rem; text-align: right;">${item.date}</span>
                         </div>
                     </div>
                 </div>
