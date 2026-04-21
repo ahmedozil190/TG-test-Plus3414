@@ -1826,7 +1826,7 @@
                 data.accounts.forEach(acc => {
                     const item = document.createElement('div');
                     item.className = 'acc-item';
-                    item.style = "background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 0; margin-bottom: 15px; border-radius: 18px; display: block; overflow: hidden;";
+                    item.style = "margin-bottom: 25px; display: flex; flex-direction: column; gap: 8px;";
                     
                     let statusColor = 'var(--warning)';
                     let statusIcon = 'fa-clock';
@@ -1847,33 +1847,32 @@
                         date: isRtl ? 'التاريخ' : 'Date'
                     };
 
+                    const rowS = "background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 12px 14px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px;";
+                    const lblS = "color: var(--text-s); font-size: 0.7rem; font-weight: 700; text-transform: uppercase; opacity: 0.6;";
+                    const valS = "color: var(--text-p); font-weight: 700; font-size: 0.85rem; text-align: right;";
+
                     item.innerHTML = `
-                        <div style="padding: 10px 15px; background: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between;">
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <i class="fas fa-hashtag" style="color: var(--accent); font-size: 0.75rem; opacity: 0.6;"></i>
-                                <span style="font-size: 0.7rem; font-weight: 700; color: var(--text-s);">${labels.status}</span>
-                            </div>
+                        <div style="${rowS} border-left: 3px solid ${statusColor};">
+                            <span style="${lblS}">${labels.status}</span>
                             <div style="font-size: 0.65rem; font-weight: 800; padding: 4px 10px; border-radius: 20px; background: ${statusColor}15; color: ${statusColor}; border: 1px solid ${statusColor}30; text-transform: uppercase;">
                                 <i class="fas ${statusIcon}" style="margin-right: 4px; font-size: 0.6rem;"></i> ${acc.status}
                             </div>
                         </div>
-                        <div style="padding: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                            <div>
-                                <label style="display: block; font-size: 0.6rem; color: var(--text-s); text-transform: uppercase; margin-bottom: 4px; font-weight: 700; opacity: 0.7;">${labels.number}</label>
-                                <div style="font-size: 0.9rem; font-weight: 800; color: var(--text-p); direction: ltr; text-align: ${isRtl ? 'right' : 'left'};">${acc.phone}</div>
-                            </div>
-                            <div>
-                                <label style="display: block; font-size: 0.6rem; color: var(--text-s); text-transform: uppercase; margin-bottom: 4px; font-weight: 700; opacity: 0.7;">${labels.country}</label>
-                                <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-p);">${acc.country}</div>
-                            </div>
-                            <div>
-                                <label style="display: block; font-size: 0.6rem; color: var(--text-s); text-transform: uppercase; margin-bottom: 4px; font-weight: 700; opacity: 0.7;">${labels.price}</label>
-                                <div style="font-size: 0.95rem; font-weight: 800; color: var(--success);">$${Number(acc.price).toFixed(2)}</div>
-                            </div>
-                            <div>
-                                <label style="display: block; font-size: 0.6rem; color: var(--text-s); text-transform: uppercase; margin-bottom: 4px; font-weight: 700; opacity: 0.7;">${labels.date}</label>
-                                <div style="font-size: 0.75rem; font-weight: 500; color: var(--text-s);">${acc.date}</div>
-                            </div>
+                        <div style="${rowS}">
+                            <span style="${lblS}">${labels.number}</span>
+                            <span style="${valS} direction: ltr;">${acc.phone}</span>
+                        </div>
+                        <div style="${rowS}">
+                            <span style="${lblS}">${labels.country}</span>
+                            <span style="${valS}">${acc.country}</span>
+                        </div>
+                        <div style="${rowS}">
+                            <span style="${lblS}">${labels.price}</span>
+                            <span style="${valS} color: var(--success); font-weight: 800;">$${Number(acc.price).toFixed(2)}</span>
+                        </div>
+                        <div style="${rowS}">
+                            <span style="${lblS}">${labels.date}</span>
+                            <span style="${valS} font-size: 0.75rem; opacity: 0.7;">${acc.date}</span>
                         </div>
                     `;
                     list.appendChild(item);

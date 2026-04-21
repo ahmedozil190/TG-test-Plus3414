@@ -1562,9 +1562,8 @@
                     </div>
                 </div>
                 <div class="card" style="padding: 22px;">
-                    <div class="section-header" style="margin-top: 0; margin-bottom: 20px;">
-                        <i class="fas fa-history"></i>
-                        <h2 data-i18n="nav_history">Operations History</h2>
+                    <div class="section-header" style="margin-top: 0; margin-bottom: 25px; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
+                        <h2 data-i18n="nav_history" style="margin: 0; font-size: 1.1rem;">Operations History</h2>
                     </div>
                     <div class="list-container" id="history-list"></div>
                 </div>
@@ -2318,41 +2317,45 @@
             container.innerHTML = list.map(item => {
                 let statusClass = 'badge-warning';
                 let statusIcon = 'fa-clock';
-                if (item.status === 'AVAILABLE') { statusClass = 'badge-success'; statusIcon = 'fa-check-circle'; }
-                if (item.status === 'SOLD') { statusClass = 'badge-success'; statusIcon = 'fa-shopping-cart'; }
-                if (item.status === 'REJECTED') { statusClass = 'badge-danger'; statusIcon = 'fa-times-circle'; }
+                let statusColor = 'var(--warning)';
+                if (item.status === 'AVAILABLE') { statusClass = 'badge-success'; statusIcon = 'fa-check-circle'; statusColor = 'var(--success)'; }
+                if (item.status === 'SOLD') { statusClass = 'badge-success'; statusIcon = 'fa-shopping-cart'; statusColor = 'var(--accent)'; }
+                if (item.status === 'REJECTED') { statusClass = 'badge-danger'; statusIcon = 'fa-times-circle'; statusColor = 'var(--error)'; }
 
                 const isSold = item.status === 'SOLD';
                 const badgeStyle = isSold ? 'style="background: var(--accent); color: white;"' : '';
 
+                const rowStyle = "background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 12px 16px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;";
+                const lblStyle = "color: var(--text-secondary); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; white-space: nowrap;";
+                const valStyle = "color: var(--text-primary); font-weight: 700; font-size: 0.95rem; text-align: right; word-break: break-all;";
+
                 return `
-                <div class="list-item" style="padding: 0; margin-bottom: 15px; border-radius: 18px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); overflow: hidden; display: block;">
-                    <div style="padding: 12px 15px; background: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between;">
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <i class="fas fa-fingerprint" style="color: var(--accent); font-size: 0.8rem; opacity: 0.7;"></i>
-                            <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-secondary);">${translations[currentLang].lbl_user}: ${item.seller_id}</span>
-                        </div>
-                        <span class="badge ${statusClass}" ${badgeStyle} style="font-size: 0.65rem; padding: 4px 10px;">
-                            <i class="fas ${statusIcon}" style="margin-right: 4px;"></i> ${item.status}
+                <div class="operation-card" style="margin-bottom: 30px; display: flex; flex-direction: column; gap: 10px;">
+                    <div style="${rowStyle} border-left: 4px solid ${statusColor};">
+                        <span style="${lblStyle}">${translations[currentLang].lbl_status}</span>
+                        <span class="badge ${statusClass}" ${badgeStyle} style="font-size: 0.75rem; padding: 5px 12px;">
+                            <i class="fas ${statusIcon}" style="margin-right: 5px;"></i> ${item.status}
                         </span>
                     </div>
-                    <div style="padding: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                        <div>
-                            <label style="display: block; font-size: 0.65rem; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 4px; font-weight: 700;">${translations[currentLang].lbl_number}</label>
-                            <div style="font-size: 0.95rem; font-weight: 800; color: var(--text-primary); direction: ltr; text-align: left;">${item.phone}</div>
-                        </div>
-                        <div>
-                            <label style="display: block; font-size: 0.65rem; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 4px; font-weight: 700;">${translations[currentLang].lbl_country}</label>
-                            <div style="font-size: 0.9rem; font-weight: 600; color: var(--text-primary);">${item.country}</div>
-                        </div>
-                        <div>
-                            <label style="display: block; font-size: 0.65rem; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 4px; font-weight: 700;">${translations[currentLang].lbl_price}</label>
-                            <div style="font-size: 1rem; font-weight: 800; color: var(--success);">$${Number(item.buy_price).toFixed(2)}</div>
-                        </div>
-                        <div>
-                            <label style="display: block; font-size: 0.65rem; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 4px; font-weight: 700;">${translations[currentLang].lbl_date}</label>
-                            <div style="font-size: 0.8rem; font-weight: 500; color: var(--text-secondary);">${item.date}</div>
-                        </div>
+                    <div style="${rowStyle}">
+                        <span style="${lblStyle}">${translations[currentLang].lbl_user}</span>
+                        <span style="${valStyle}">${item.seller_id}</span>
+                    </div>
+                    <div style="${rowStyle}">
+                        <span style="${lblStyle}">${translations[currentLang].lbl_number}</span>
+                        <span style="${valStyle} direction: ltr;">${item.phone}</span>
+                    </div>
+                    <div style="${rowStyle}">
+                        <span style="${lblStyle}">${translations[currentLang].lbl_country}</span>
+                        <span style="${valStyle}">${item.country}</span>
+                    </div>
+                    <div style="${rowStyle}">
+                        <span style="${lblStyle}">${translations[currentLang].lbl_price}</span>
+                        <span style="${valStyle} color: var(--success); font-weight: 800;">$${Number(item.buy_price).toFixed(2)}</span>
+                    </div>
+                    <div style="${rowStyle}">
+                        <span style="${lblStyle}">${translations[currentLang].lbl_date}</span>
+                        <span style="${valStyle}; font-size: 0.85rem; opacity: 0.8;">${item.date}</span>
                     </div>
                 </div>
                 `;
