@@ -363,7 +363,8 @@ async def get_sourcing_data():
                     "country": f"{flag} {a.country}",
                     "buy_price": actual_buy_price,
                     "status": a.status.name,
-                    "seller_id": a.seller_id
+                    "seller_id": a.seller_id,
+                    "date": a.created_at.strftime("%Y-%m-%d %H:%M")
                 })
 
             prices_result = await session.execute(
@@ -1028,12 +1029,31 @@ async def get_seller_accounts(user_id: int):
     async with async_session() as session:
         stmt = select(Account).where(Account.seller_id == user_id).order_by(Account.created_at.desc()).limit(15)
         results = (await session.execute(stmt)).scalars().all()
-        return {
-            "accounts": [{
+        accounts_data = []
+        for a in results:
+            # Detect reward price for seller
+            actual_buy_price = 0
+            flag = "🌐"
+            try:
+                parsed = phonenumbers.parse(a.phone_number)
+                cc = str(parsed.country_code)
+                region = phonenumbers.region_code_for_number(parsed)
+                flag = get_flag_emoji(region)
+                cp_row = (await session.execute(select(CountryPrice).where(CountryPrice.country_code == cc))).scalar()
+                if cp_row:
+                    actual_buy_price = cp_row.buy_price
+            except: pass
+
+            accounts_data.append({
                 "phone": a.phone_number,
                 "status": a.status.value,
+                "country": f"{flag} {a.country}",
+                "price": actual_buy_price,
                 "date": a.created_at.strftime("%Y-%m-%d %H:%M")
-            } for a in results]
+            })
+
+        return {
+            "accounts": accounts_data
         }
 
 @app.post("/api/admin/user/sync")
