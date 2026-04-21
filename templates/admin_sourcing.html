@@ -327,12 +327,13 @@
         }
 
         .user-card {
-            background: var(--bg);
+            background: var(--bg-elevated);
             border: 1px solid var(--border);
             border-radius: 20px;
             padding: 24px 20px 20px;
             position: relative;
             margin-top: 15px;
+            margin-bottom: 0;
             transition: transform 0.2s;
         }
 
@@ -550,7 +551,7 @@
         .list-container {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 0;
         }
 
         .no-shadow {
@@ -1987,7 +1988,7 @@
             if (currentPage > 1) {
                 currentPage--;
                 renderUsers(filteredUsers || allUsers);
-                document.getElementById('user-mgmt-section').scrollIntoView({ behavior: 'smooth' });
+                document.getElementById('user-mgmt-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
         function nextPage() {
@@ -1997,7 +1998,7 @@
             if (currentPage < totalPages) {
                 currentPage++;
                 renderUsers(list);
-                document.getElementById('user-mgmt-section').scrollIntoView({ behavior: 'smooth' });
+                document.getElementById('user-mgmt-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
 
@@ -2166,8 +2167,7 @@
             if (currentPricePage > 1) {
                 currentPricePage--;
                 renderPrices(filteredPrices || allPrices);
-                const scroller = document.getElementById('app-content-scroller');
-                if (scroller) scroller.scrollTop = 0;
+                document.getElementById('price-mgmt-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
 
@@ -2177,8 +2177,7 @@
             if (currentPricePage < totalPages) {
                 currentPricePage++;
                 renderPrices(list);
-                const scroller = document.getElementById('app-content-scroller');
-                if (scroller) scroller.scrollTop = 0;
+                document.getElementById('price-mgmt-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
 
@@ -2216,7 +2215,7 @@
             container.innerHTML = paged.map((p, i) => {
                 const idx = start + i + 1;
                 return `
-                <div class="user-card" style="position: relative; margin-top: 15px; margin-bottom: 0; cursor: default;">
+                <div class="user-card" style="position: relative; cursor: default;">
                     <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
                         <!-- Name -->
                         <div style="background: transparent; border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">

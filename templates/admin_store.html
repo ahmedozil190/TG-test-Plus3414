@@ -333,6 +333,7 @@
             padding: 24px 20px 20px;
             position: relative;
             margin-top: 15px;
+            margin-bottom: 0;
             transition: transform 0.2s;
         }
 
@@ -559,7 +560,7 @@
         .list-container {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 0;
         }
 
         .list-item {
@@ -1946,7 +1947,7 @@
                     ? (currentLang === 'ar' ? 'محظور' : 'BANNED')
                     : (currentLang === 'ar' ? 'نشط' : 'ACTIVE');
                 return `
-                <div class="user-card" onclick='openManageModal(${JSON.stringify(u)})' style="margin-top: 15px; margin-bottom: 0;">
+                <div class="user-card" onclick='openManageModal(${JSON.stringify(u)})'>
                     <div style="display: flex; flex-direction: column; gap: 10px;">
                         <!-- Account Status -->
                         <div style="background: transparent; border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
@@ -2000,8 +2001,7 @@
             if (currentPage > 1) {
                 currentPage--;
                 renderUsers(filteredUsers || allUsers);
-                const scroller = document.getElementById('app-content-scroller');
-                if (scroller) scroller.scrollTop = 0;
+                document.getElementById('user-mgmt-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
         function nextPage() {
@@ -2011,8 +2011,7 @@
             if (currentPage < totalPages) {
                 currentPage++;
                 renderUsers(list);
-                const scroller = document.getElementById('app-content-scroller');
-                if (scroller) scroller.scrollTop = 0;
+                document.getElementById('user-mgmt-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
 
@@ -2159,8 +2158,7 @@
             if (currentPricePage > 1) {
                 currentPricePage--;
                 renderPrices(filteredPrices || allPrices);
-                const scroller = document.getElementById('app-content-scroller');
-                if (scroller) scroller.scrollTop = 0;
+                document.getElementById('price-mgmt-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
 
@@ -2170,8 +2168,7 @@
             if (currentPricePage < totalPages) {
                 currentPricePage++;
                 renderPrices(list);
-                const scroller = document.getElementById('app-content-scroller');
-                if (scroller) scroller.scrollTop = 0;
+                document.getElementById('price-mgmt-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
 
@@ -2209,7 +2206,7 @@
             container.innerHTML = paged.map((p, i) => {
                 const idx = start + i + 1;
                 return `
-                <div class="user-card" style="position: relative; margin-top: 15px; margin-bottom: 0; cursor: default;">
+                <div class="user-card" style="position: relative; cursor: default;">
                     <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
                         <!-- Name -->
                         <div style="background: transparent; border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
