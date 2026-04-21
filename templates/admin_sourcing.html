@@ -1536,6 +1536,35 @@
                     <i class="fas fa-clock-rotate-left"></i>
                     <h2 data-i18n="nav_history">Operations History</h2>
                 </div>
+                <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px;">
+                    <div class="info-card">
+                        <div class="info-card-l">
+                            <span class="info-card-lbl" data-i18n="stat_total_ops">TOTAL OPERATIONS</span>
+                            <div class="info-card-val"><span id="stat-history-total">0</span> <span data-i18n="unit_ops">OPS</span></div>
+                        </div>
+                        <div class="info-card-icon" style="background: rgba(88, 101, 242, 0.1); color: var(--accent);">
+                            <i class="fas fa-list-check"></i>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-l">
+                            <span class="info-card-lbl" data-i18n="stat_accepted_ops">ACCEPTED ACCOUNTS</span>
+                            <div class="info-card-val"><span id="stat-history-accepted">0</span> <span data-i18n="unit_accs">ACCS</span></div>
+                        </div>
+                        <div class="info-card-icon" style="background: rgba(34, 197, 94, 0.1); color: var(--success);">
+                            <i class="fas fa-check-double"></i>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-l">
+                            <span class="info-card-lbl" data-i18n="stat_rejected_ops">REJECTED ACCOUNTS</span>
+                            <div class="info-card-val"><span id="stat-history-rejected">0</span> <span data-i18n="unit_accs">ACCS</span></div>
+                        </div>
+                        <div class="info-card-icon" style="background: rgba(239, 68, 68, 0.1); color: var(--error);">
+                            <i class="fas fa-ban"></i>
+                        </div>
+                    </div>
+                </div>
                 <div class="card" style="padding: 22px;">
                     <div class="list-container" id="history-list"></div>
                 </div>
@@ -1627,6 +1656,11 @@
                 tab_active: "Active",
                 tab_banned: "Banned",
                 nav_history: "Operations History",
+                stat_total_ops: "TOTAL OPERATIONS",
+                stat_accepted_ops: "ACCEPTED ACCOUNTS",
+                stat_rejected_ops: "REJECTED ACCOUNTS",
+                unit_ops: "OPS",
+                unit_accs: "ACCS",
                 nav_settings: "Settings",
                 pg_prev: "Prev",
                 pg_next: "Next",
@@ -1678,6 +1712,11 @@
                 tab_inactive: "غير نشط",
                 tab_banned: "محظور",
                 nav_history: "سجل العمليات",
+                stat_total_ops: "إجمالي العمليات",
+                stat_accepted_ops: "الأرقام المقبولة",
+                stat_rejected_ops: "الأرقام المرفوضة",
+                unit_ops: "عملية",
+                unit_accs: "رقم",
                 nav_settings: "الإعدادات",
                 pg_prev: "السابق",
                 pg_next: "التالي",
@@ -1769,6 +1808,11 @@
                 if (uIEl) uIEl.textContent = uname.charAt(0).toUpperCase();
                 document.getElementById('stat-pending').innerText = data.stats.pending_count;
                 document.getElementById('stat-total-balance').innerText = `$${Number(data.stats.total_balance).toFixed(2)}`;
+
+                // History Stats
+                document.getElementById('stat-history-total').innerText = data.stats.total_sourced;
+                document.getElementById('stat-history-accepted').innerText = data.stats.accepted_sourced;
+                document.getElementById('stat-history-rejected').innerText = data.stats.rejected_sourced;
 
                 renderRecent(data.recent);
                 renderHistory(data.recent);
@@ -2261,16 +2305,26 @@
             }
             container.innerHTML = list.map(item => {
                 let statusClass = 'badge-warning';
-                if (item.status === 'AVAILABLE' || item.status === 'SOLD') statusClass = 'badge-success';
-                if (item.status === 'REJECTED') statusClass = 'badge-danger';
+                let statusIcon = 'fa-clock';
+                if (item.status === 'AVAILABLE') { statusClass = 'badge-success'; statusIcon = 'fa-check-circle'; }
+                if (item.status === 'SOLD') { statusClass = 'badge-success'; style="background: var(--accent);"; statusIcon = 'fa-shopping-cart'; }
+                if (item.status === 'REJECTED') { statusClass = 'badge-danger'; statusIcon = 'fa-times-circle'; }
+
+                const isSold = item.status === 'SOLD';
+                const badgeStyle = isSold ? 'style="background: var(--accent); color: white;"' : '';
 
                 return `
-                <div class="list-item">
-                    <div class="item-info">
-                        <h4 style="direction: ltr; text-align: left;"><i class="fas fa-phone" style="font-size: 0.8rem; margin-right: 5px; color: var(--accent-purple);"></i> ${item.phone}</h4>
-                        <p style="margin-top: 4px;">${item.country} | <span style="color: var(--accent); font-weight: 700;">$${Number(item.buy_price).toFixed(2)}</span> <span style="color: var(--text-secondary); font-size: 0.8rem; margin-left: 8px;">(User: ${item.seller_id})</span></p>
+                <div class="list-item" style="padding: 15px; margin-bottom: 10px; border-radius: 16px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="width: 45px; height: 45px; border-radius: 12px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                            <i class="fas ${statusIcon}" style="color: ${item.status === 'REJECTED' ? 'var(--error)' : 'var(--success)'}"></i>
+                        </div>
+                        <div class="item-info">
+                            <h4 style="direction: ltr; text-align: left; margin: 0; font-size: 1rem; color: var(--text-primary); font-weight: 700;">${item.phone}</h4>
+                            <p style="margin: 4px 0 0 0; font-size: 0.85rem; color: var(--text-secondary);">${item.country} | <span style="color: var(--success); font-weight: 700;">$${Number(item.buy_price).toFixed(2)}</span> <span style="font-size: 0.75rem; opacity: 0.6; margin-left: 5px;">(User: ${item.seller_id})</span></p>
+                        </div>
                     </div>
-                    <span class="badge ${statusClass}">${item.status}</span>
+                    <span class="badge ${statusClass}" ${badgeStyle}>${item.status}</span>
                 </div>
                 `;
             }).join('');

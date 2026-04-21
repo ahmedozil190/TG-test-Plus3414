@@ -334,6 +334,8 @@ async def get_sourcing_data():
         async with async_session() as session:
             total_sourced = (await session.execute(select(func.count(Account.id)))).scalar() or 0
             pending_count = (await session.execute(select(func.count(Account.id)).where(Account.status == AccountStatus.PENDING))).scalar() or 0
+            accepted_sourced = (await session.execute(select(func.count(Account.id)).where(Account.status.in_([AccountStatus.AVAILABLE, AccountStatus.SOLD])))).scalar() or 0
+            rejected_sourced = (await session.execute(select(func.count(Account.id)).where(Account.status == AccountStatus.REJECTED))).scalar() or 0
             
             recent_result = await session.execute(
                 select(Account).order_by(Account.id.desc()).limit(50)
@@ -436,6 +438,8 @@ async def get_sourcing_data():
                 "stats": {
                     "total_sourced": total_sourced, 
                     "pending_count": pending_count,
+                    "accepted_sourced": accepted_sourced,
+                    "rejected_sourced": rejected_sourced,
                     "total_balance": round(total_sourcing_balance, 2),
                     "user_count": user_count
                 },
