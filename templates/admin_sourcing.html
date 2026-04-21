@@ -1584,7 +1584,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="card" style="padding: 22px;">
+                <div class="card" id="history-section-card" style="padding: 22px;">
                     <div class="section-header" style="margin-top: 0; margin-bottom: 20px;">
                         <h2 data-i18n="nav_history" style="margin: 0; font-size: 1rem;">Operations History</h2>
                     </div>
@@ -1687,6 +1687,7 @@
                 user_mgmt: "User Management",
                 tab_active: "Active",
                 tab_banned: "Banned",
+                nav_history: "Operations History",
                 pg_next: "Next",
                 stat_pending_ops: "PENDING OPERATIONS",
                 stat_total_ops: "TOTAL OPERATIONS",
@@ -2184,7 +2185,7 @@
             const nextP = currentAdminHistoryPage + delta;
             if (nextP >= 1 && nextP <= totalAdminHistoryPages) {
                 await fetchAdminHistory(nextP);
-                document.getElementById('section-history').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                document.getElementById('history-section-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
 
