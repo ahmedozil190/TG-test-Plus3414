@@ -288,7 +288,7 @@ async def get_store_data(user_id: int = None):
                 countries.append({
                     "name": name,
                     "flag": flag,
-                    "price": price,
+                    "buy_price": price,
                     "count": count
                 })
             
@@ -1101,7 +1101,7 @@ async def get_admin_sourcing_history(page: int = 1, limit: int = 10):
                 "id": a.id,
                 "phone": a.phone_number,
                 "country": f"{flag} {a.country}",
-                "price": price,
+                "buy_price": price,
                 "status": a.status.name,
                 "seller_id": a.seller_id,
                 "date": a.created_at.strftime("%Y-%m-%d %H:%M") if a.created_at else "N/A"
