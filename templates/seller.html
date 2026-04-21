@@ -961,15 +961,18 @@
             background: transparent;
             color: var(--text-p);
             border: 1px solid var(--border);
-            width: 40px;
+            min-width: 40px;
             height: 40px;
-            border-radius: 10px;
-            font-size: 0.9rem;
+            padding: 0 16px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
             cursor: pointer;
             transition: 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
+            gap: 8px;
         }
 
         .pg-btn:hover:not(:disabled) {
@@ -1306,12 +1309,12 @@
                 <!-- Pagination -->
                 <div id="sourcingPagination" class="pagination-ctrls"
                     style="display: none; margin-top: 25px; background: transparent;">
-                    <button class="pg-btn" style="background: transparent;" id="pgPrevSourcing"
+                    <button class="pg-btn" style="background: transparent; height: 42px; padding: 0 16px;" id="pgPrevSourcing"
                         onclick="moveSourcingPage(-1)">
                         <i class="fas fa-chevron-left"></i> <span>Prev</span>
                     </button>
                     <span id="pgInfoSourcing" class="pg-info">Page 1 of 1</span>
-                    <button class="pg-btn" style="background: transparent;" id="pgNextSourcing"
+                    <button class="pg-btn" style="background: transparent; height: 42px; padding: 0 16px;" id="pgNextSourcing"
                         onclick="moveSourcingPage(1)">
                         <span>Next</span> <i class="fas fa-chevron-right"></i>
                     </button>
@@ -1326,91 +1329,92 @@
             </div>
         </div>
 
-    <!-- View: Withdrawal -->
-    <div class="view-panel" id="view-withdraw">
-        <div class="withdraw-card" id="withdrawalForm">
-            <h2 class="w-title" style="text-align:left; margin-bottom:10px">Payout Request</h2>
-            <p class="w-desc" style="text-align:left; margin-bottom:25px">Select your preferred method and enter the
-                amount. Requests are processed within 24-48h.</p>
+        <!-- View: Withdrawal -->
+        <div class="view-panel" id="view-withdraw">
+            <div class="withdraw-card" id="withdrawalForm">
+                <h2 class="w-title" style="text-align:left; margin-bottom:10px">Payout Request</h2>
+                <p class="w-desc" style="text-align:left; margin-bottom:25px">Select your preferred method and enter the
+                    amount. Requests are processed within 24-48h.</p>
 
-            <div class="method-selectors">
-                <div class="method-card active" onclick="setWithdrawMethod('TRX - TRC20', 4)" id="method-TRX">
-                    <div class="m-icon"><i class="fas fa-coins"></i></div>
-                    <div class="m-name">TRX (TRC20)</div>
-                    <div class="m-min">Min $4.00</div>
+                <div class="method-selectors">
+                    <div class="method-card active" onclick="setWithdrawMethod('TRX - TRC20', 4)" id="method-TRX">
+                        <div class="m-icon"><i class="fas fa-coins"></i></div>
+                        <div class="m-name">TRX (TRC20)</div>
+                        <div class="m-min">Min $4.00</div>
+                    </div>
+                    <div class="method-card" onclick="setWithdrawMethod('USDT - BEP20', 10)" id="method-USDT">
+                        <div class="m-icon"><i class="fab fa-ethereum"></i></div>
+                        <div class="m-name">USDT (BEP20)</div>
+                        <div class="m-min">Min $10.00</div>
+                    </div>
                 </div>
-                <div class="method-card" onclick="setWithdrawMethod('USDT - BEP20', 10)" id="method-USDT">
-                    <div class="m-icon"><i class="fab fa-ethereum"></i></div>
-                    <div class="m-name">USDT (BEP20)</div>
-                    <div class="m-min">Min $10.00</div>
+
+                <div class="input-group">
+                    <label>Withdraw Amount (USD)</label>
+                    <input type="number" id="withdrawAmount" class="w-input" placeholder="0.00"
+                        oninput="validateWithdraw()">
+                    <div id="minWarning" style="font-size:0.7rem; color:var(--error); margin-top:5px; display:none">
+                        Minimum amount not reached.</div>
                 </div>
-            </div>
 
-            <div class="input-group">
-                <label>Withdraw Amount (USD)</label>
-                <input type="number" id="withdrawAmount" class="w-input" placeholder="0.00"
-                    oninput="validateWithdraw()">
-                <div id="minWarning" style="font-size:0.7rem; color:var(--error); margin-top:5px; display:none">
-                    Minimum amount not reached.</div>
-            </div>
+                <div class="input-group">
+                    <label>Wallet Address</label>
+                    <input type="text" id="paymentDetails" class="w-input" placeholder="Enter address here...">
+                </div>
 
-            <div class="input-group">
-                <label>Wallet Address</label>
-                <input type="text" id="paymentDetails" class="w-input" placeholder="Enter address here...">
-            </div>
-
-            <button class="btn-action" id="submitWithdrawBtn" onclick="requestWithdraw()">
-                Confirm Withdrawal <i class="fas fa-paper-plane"></i>
-            </button>
-        </div>
-
-        <div class="card" id="withdraw-history-section" style="padding: 22px; margin-top: 30px; margin-bottom: 0;">
-            <div class="section-header" style="margin-top: 0; margin-bottom: 35px;">
-                <h2 style="font-weight: 600; margin: 0; font-size: 1rem; letter-spacing: 0.5px;">Withdrawal History</h2>
-            </div>
-            <div class="history-list" id="withdrawalHistory">
-                <!-- Data from JS -->
-            </div>
-            <div id="historyEmpty"
-                style="text-align: center; padding: 40px 20px; background: var(--card-glass); border-radius: 16px; border: 1px dashed var(--border); margin-top: 0; backdrop-filter: blur(10px); display: none;">
-                <i class="fas fa-history"
-                    style="font-size: 2.5rem; color: var(--text-secondary); opacity: 0.15; margin-bottom: 12px;"></i>
-                <p style="color: var(--text-secondary); font-weight: 600; font-size: 0.95rem;">No withdrawal records
-                    found.</p>
-            </div>
-
-            <!-- Pagination Controls -->
-            <div id="historyPagination" class="pagination-ctrls" style="display: none;">
-                <button class="pg-btn" id="pgPrevWithdraw" onclick="moveWithdrawPage(-1)">
-                    <i class="fas fa-chevron-left"></i> Prev
-                </button>
-                <span class="pg-info" id="pgInfoWithdraw">Page 1 of 1</span>
-                <button class="pg-btn" id="pgNextWithdraw" onclick="moveWithdrawPage(1)">
-                    Next <i class="fas fa-chevron-right"></i>
+                <button class="btn-action" id="submitWithdrawBtn" onclick="requestWithdraw()">
+                    Confirm Withdrawal <i class="fas fa-paper-plane"></i>
                 </button>
             </div>
-        </div>
-    </div>
 
-    <!-- View: Pricing -->
-    <div class="view-panel" id="view-pricing">
-        <div class="search-area">
-            <div class="search-box" style="margin-bottom: 20px;">
-                <i class="fas fa-search"></i>
-                <input type="text" class="search-input" id="priceSearch" placeholder="Search by country or code..."
-                    oninput="filterPrices()">
+            <div class="card" id="withdraw-history-section" style="padding: 22px; margin-top: 30px; margin-bottom: 0;">
+                <div class="section-header" style="margin-top: 0; margin-bottom: 35px;">
+                    <h2 style="font-weight: 600; margin: 0; font-size: 1rem; letter-spacing: 0.5px;">Withdrawal History
+                    </h2>
+                </div>
+                <div class="history-list" id="withdrawalHistory">
+                    <!-- Data from JS -->
+                </div>
+                <div id="historyEmpty"
+                    style="text-align: center; padding: 40px 20px; background: var(--card-glass); border-radius: 16px; border: 1px dashed var(--border); margin-top: 0; backdrop-filter: blur(10px); display: none;">
+                    <i class="fas fa-history"
+                        style="font-size: 2.5rem; color: var(--text-secondary); opacity: 0.15; margin-bottom: 12px;"></i>
+                    <p style="color: var(--text-secondary); font-weight: 600; font-size: 0.95rem;">No withdrawal records
+                        found.</p>
+                </div>
+
+                <!-- Pagination Controls -->
+                <div id="historyPagination" class="pagination-ctrls" style="display: none;">
+                    <button class="pg-btn" id="pgPrevWithdraw" onclick="moveWithdrawPage(-1)">
+                        <i class="fas fa-chevron-left"></i> Prev
+                    </button>
+                    <span class="pg-info" id="pgInfoWithdraw">Page 1 of 1</span>
+                    <button class="pg-btn" id="pgNextWithdraw" onclick="moveWithdrawPage(1)">
+                        Next <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
             </div>
         </div>
 
-        <div class="pricing-list" id="priceList">
-            <!-- Data populated by JS -->
-        </div>
+        <!-- View: Pricing -->
+        <div class="view-panel" id="view-pricing">
+            <div class="search-area">
+                <div class="search-box" style="margin-bottom: 20px;">
+                    <i class="fas fa-search"></i>
+                    <input type="text" class="search-input" id="priceSearch" placeholder="Search by country or code..."
+                        oninput="filterPrices()">
+                </div>
+            </div>
 
-        <div class="empty-state" id="priceEmpty">
-            <div class="empty-icon"><i class="fas fa-map-location-dot"></i></div>
-            <div class="empty-text">No results found for your search.</div>
+            <div class="pricing-list" id="priceList">
+                <!-- Data populated by JS -->
+            </div>
+
+            <div class="empty-state" id="priceEmpty">
+                <div class="empty-icon"><i class="fas fa-map-location-dot"></i></div>
+                <div class="empty-text">No results found for your search.</div>
+            </div>
         </div>
-    </div>
 
     </div>
 
