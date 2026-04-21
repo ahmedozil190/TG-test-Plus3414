@@ -1788,7 +1788,8 @@
         }
 
         function switchNav(id, btn, skipToggle = false) {
-            window.scrollTo(0, 0); // Reset scroll position
+            const scroller = document.getElementById('app-content-scroller');
+            if (scroller) scroller.scrollTop = 0;
             if (!skipToggle) closeNav();
             document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
             document.getElementById('section-' + id).classList.add('active');
@@ -1942,7 +1943,7 @@
                     ? (currentLang === 'ar' ? 'محظور' : 'BANNED')
                     : (currentLang === 'ar' ? 'نشط' : 'ACTIVE');
                 return `
-                <div class="user-card" onclick='openManageModal(${JSON.stringify(u)})'>
+                <div class="user-card" onclick='openManageModal(${JSON.stringify(u)})' style="margin-top: 15px;">
                     <div style="display: flex; flex-direction: column; gap: 10px;">
                         <!-- Account Status -->
                         <div style="background: transparent; border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
@@ -2201,7 +2202,7 @@
             container.innerHTML = paged.map((p, i) => {
                 const idx = start + i + 1;
                 return `
-                <div class="user-card" style="position: relative; margin-top: 25px; margin-bottom: 15px; cursor: default;">
+                <div class="user-card" style="position: relative; margin-top: 15px; cursor: default;">
                     <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
                         <!-- Name -->
                         <div style="background: transparent; border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
