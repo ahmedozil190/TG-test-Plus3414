@@ -1060,7 +1060,7 @@ async def get_seller_accounts(user_id: int, page: int = 1, limit: int = 10):
 
             accounts_data.append({
                 "phone": a.phone_number,
-                "status": a.status.value,
+                "status": a.status.name,
                 "country": f"{flag} {a.country}",
                 "buy_price": actual_buy_price,
                 "ready_at": ready_at.isoformat() if ready_at else None,
