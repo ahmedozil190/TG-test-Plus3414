@@ -628,18 +628,15 @@
             background: transparent;
             color: var(--text-p);
             border: 1px solid var(--border);
-            min-width: 40px;
-            height: 40px;
-            padding: 0 16px;
-            border-radius: 12px;
-            font-size: 0.85rem;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.8rem;
             font-weight: 600;
             cursor: pointer;
             transition: 0.2s;
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 8px;
+            gap: 6px;
             outline: none;
         }
 
@@ -1598,7 +1595,8 @@
                     </div>
                     <div class="list-container" id="history-list"></div>
                     <!-- Pagination -->
-                    <div id="history-pagination" class="pagination-ctrls" id="admin-history-start" style="display: none; margin-top: 20px;">
+                    <div id="history-pagination" class="pagination-ctrls" id="admin-history-start"
+                        style="display: none; margin-top: 20px;">
                         <button class="pg-btn" id="pgPrevAdminHist" onclick="moveAdminHistoryPage(-1)">
                             <i class="fas fa-chevron-left"></i> <span data-i18n="pg_prev">Prev</span>
                         </button>
