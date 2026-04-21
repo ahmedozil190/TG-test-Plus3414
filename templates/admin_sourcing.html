@@ -2420,26 +2420,18 @@
                 return;
             }
             container.innerHTML = list.map(item => {
-                let statusClass = 'badge-warning';
-                let statusIcon = 'fa-clock';
+                let statusColor = '#f59e0b'; // PENDING
                 let statusText = translations[currentLang].st_pending;
 
                 if (item.status === 'AVAILABLE' || item.status === 'SOLD') {
-                    statusClass = 'badge-success';
-                    statusIcon = 'fa-check-circle';
+                    statusColor = '#10b981'; // ACCEPTED
                     statusText = translations[currentLang].st_accepted;
-                }
-                if (item.status === 'REJECTED') {
-                    statusClass = 'badge-danger';
-                    statusIcon = 'fa-times-circle';
+                } else if (item.status === 'REJECTED') {
+                    statusColor = '#ef4444'; // REJECTED
                     statusText = translations[currentLang].st_rejected;
                 }
 
-                const isAccepted = item.status === 'AVAILABLE' || item.status === 'SOLD';
-                const isRejected = item.status === 'REJECTED';
                 const isPending = item.status === 'PENDING' || item.status === 'pending';
-
-                const badgeStyle = isAccepted ? 'style="background: #10b981; color: white;"' : '';
 
                 const rowS = "background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;";
                 const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;";
@@ -2449,8 +2441,8 @@
                     <div style="display: flex; flex-direction: column; gap: 10px;">
                         <div style="${rowS}">
                             <span style="${lblS}">${translations[currentLang].lbl_status}</span>
-                            <span class="badge ${statusClass}" ${badgeStyle} style="font-size: 0.75rem; padding: 5px 12px;">
-                                <i class="fas ${statusIcon}" style="margin-right: 5px;"></i> ${statusText}
+                            <span style="color: ${statusColor}; font-weight: 800; font-size: 0.85rem; text-transform: uppercase;">
+                                ${statusText}
                             </span>
                         </div>
                         <div style="${rowS}">
@@ -2470,7 +2462,7 @@
                             <span style="${lblS}">${translations[currentLang].lbl_date}</span>
                             <span class="${isPending ? 'countdown-timer' : ''}" 
                                   data-ready="${item.ready_at}" 
-                                  style="color: ${isPending ? 'var(--warning)' : 'var(--text-secondary)'}; font-weight: 600; font-size: 0.85rem; text-align: right;">
+                                  style="color: #fdd835; font-weight: 600; font-size: 0.85rem; text-align: right;">
                                 ${isPending ? '...' : item.date}
                             </span>
                         </div>
