@@ -456,10 +456,10 @@
         /* ─── Search Bar Styling ─── */
         .search-area {
             position: sticky;
-            top: -25px; /* Offset the parent view-panel padding */
+            top: -25px; /* Offset parent view-panel padding */
             background: var(--bg);
             padding-top: 25px;
-            padding-bottom: 15px;
+            padding-bottom: 20px;
             margin-top: -25px;
             margin-left: -20px;
             margin-right: -20px;
@@ -1321,11 +1321,11 @@
                     style="text-align: center; padding: 40px 20px; background: var(--card-glass); border-radius: 16px; border: 1px dashed var(--border); margin-top: 0; backdrop-filter: blur(10px); display: none;">
                     <i class="fas fa-history"
                         style="font-size: 2.5rem; color: var(--text-secondary); opacity: 0.15; margin-bottom: 12px;"></i>
-                    <p style="color: var(--text-secondary); font-weight: 600; font-size: 0.95rem;">No submissions found</p>
+                    <p style="color: var(--text-secondary); font-weight: 600; font-size: 0.95rem;">No submissions found
+                    </p>
                 </div>
             </div>
         </div>
-    </div>
 
     <!-- View: Withdrawal -->
     <div class="view-panel" id="view-withdraw">
@@ -1365,7 +1365,7 @@
             </button>
         </div>
 
-        <div class="withdraw-card" id="historyCard" style="padding-top:25px; margin-bottom:0">
+        <div class="withdraw-card" style="padding-top:25px; margin-bottom:0">
             <h3 class="w-title" style="font-size:1.1rem; text-align:left; margin-bottom:15px">Withdrawal History
             </h3>
             <div class="history-list" id="withdrawalHistory">
@@ -1721,7 +1721,6 @@
 
                 empty.style.display = 'none';
                 list.style.display = 'flex';
-                document.getElementById('historyCard').style.display = 'block';
 
                 // Update Pagination Controls
                 totalWithdrawPages = data.total_pages;
@@ -2034,7 +2033,7 @@
             document.querySelectorAll('.countdown-timer').forEach(el => {
                 const readyStr = el.getAttribute('data-ready');
                 if (!readyStr || readyStr === 'null') return;
-                
+
                 // Parse numeric timestamp if possible, otherwise use as string
                 const readyAt = isNaN(readyStr) ? new Date(readyStr).getTime() : parseInt(readyStr);
                 const diff = readyAt - now;
