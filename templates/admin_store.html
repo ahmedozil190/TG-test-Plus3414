@@ -2190,14 +2190,6 @@
             }
         }
 
-        function switchPriceTab(tab, btn) {
-            currentPriceTab = tab;
-            document.querySelectorAll('#section-prices .tab-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            currentPricePage = 1;
-            renderPrices(allPrices);
-        }
-
         let currentPriceTab = 'active';
         function setPriceTab(tab, btn) {
             currentPriceTab = tab;
@@ -2481,14 +2473,6 @@
             </div>
         </div>
     </div>
-</body>
-
-</html> data-i18n="btn_cancel">Cancel</button>
-<button class="confirm-btn confirm-yes" onclick="closeConfirm(true)" data-i18n="btn_confirm">Delete
-    Now</button>
-</div>
-</div>
-</div>
 </body>
 
 </html>
