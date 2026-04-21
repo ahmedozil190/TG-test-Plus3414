@@ -1,5 +1,6 @@
 import os
 import logging
+import math
 import traceback
 import phonenumbers
 from phonenumbers import geocoder
@@ -1033,7 +1034,7 @@ async def get_seller_accounts(user_id: int, page: int = 1, limit: int = 10):
         total_count = (await session.execute(
             select(func.count(Account.id)).where(Account.seller_id == user_id)
         )).scalar() or 0
-        total_pages = Math.ceil(total_count / limit) if total_count > 0 else 1
+        total_pages = math.ceil(total_count / limit) if total_count > 0 else 1
         
         stmt = select(Account).where(Account.seller_id == user_id).order_by(Account.created_at.desc()).offset(offset).limit(limit)
         results = (await session.execute(stmt)).scalars().all()
@@ -1074,7 +1075,7 @@ async def get_admin_sourcing_history(page: int = 1, limit: int = 10):
         total_count = (await session.execute(
             select(func.count(Account.id))
         )).scalar() or 0
-        total_pages = Math.ceil(total_count / limit) if total_count > 0 else 1
+        total_pages = math.ceil(total_count / limit) if total_count > 0 else 1
         
         stmt = select(Account).order_by(Account.id.desc()).offset(offset).limit(limit)
         results = (await session.execute(stmt)).scalars().all()
