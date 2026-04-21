@@ -1469,6 +1469,7 @@
             closeNav();
             // Hide all first to prevent visual jump
             document.querySelectorAll('.view-panel').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(v => v.classList.remove('active'));
 
             const scroller = document.querySelector('.main-content');
             if (scroller) scroller.scrollTop = 0;
