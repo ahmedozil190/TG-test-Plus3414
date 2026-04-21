@@ -2318,20 +2318,19 @@
                 let statusClass = 'badge-warning';
                 let statusIcon = 'fa-clock';
                 let statusColor = 'var(--warning)';
-                if (item.status === 'AVAILABLE') { statusClass = 'badge-success'; statusIcon = 'fa-check-circle'; statusColor = 'var(--success)'; }
-                if (item.status === 'SOLD') { statusClass = 'badge-success'; statusIcon = 'fa-shopping-cart'; statusColor = 'var(--accent)'; }
-                if (item.status === 'REJECTED') { statusClass = 'badge-danger'; statusIcon = 'fa-times-circle'; statusColor = 'var(--error)'; }
+                if (item.status === 'AVAILABLE') { statusClass = 'badge-success'; statusIcon = 'fa-check-circle'; statusColor = '#10b981'; } // Emerald
+                if (item.status === 'SOLD') { statusClass = 'badge-success'; statusIcon = 'fa-shopping-cart'; statusColor = '#3b82f6'; } // Blue
+                if (item.status === 'REJECTED') { statusClass = 'badge-danger'; statusIcon = 'fa-times-circle'; statusColor = '#ef4444'; }
 
                 const isSold = item.status === 'SOLD';
-                const badgeStyle = isSold ? 'style="background: var(--accent); color: white;"' : '';
+                const badgeStyle = isSold ? 'style="background: #3b82f6; color: white;"' : '';
 
-                const rowStyle = "background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 12px 16px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;";
-                const lblStyle = "color: var(--text-secondary); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; white-space: nowrap;";
-                const valStyle = "color: var(--text-primary); font-weight: 700; font-size: 0.95rem; text-align: right; word-break: break-all;";
-
+                const rowStyle = "background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;";
+                const lblStyle = "color: #6a6c70; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; white-space: nowrap;";
+                
                 return `
                 <div class="operation-card" style="margin-bottom: 30px; display: flex; flex-direction: column; gap: 10px;">
-                    <div style="${rowStyle} border-left: 4px solid ${statusColor};">
+                    <div style="${rowStyle}">
                         <span style="${lblStyle}">${translations[currentLang].lbl_status}</span>
                         <span class="badge ${statusClass}" ${badgeStyle} style="font-size: 0.75rem; padding: 5px 12px;">
                             <i class="fas ${statusIcon}" style="margin-right: 5px;"></i> ${item.status}
@@ -2339,23 +2338,23 @@
                     </div>
                     <div style="${rowStyle}">
                         <span style="${lblStyle}">${translations[currentLang].lbl_user}</span>
-                        <span style="${valStyle}">${item.seller_id}</span>
+                        <span style="color: #8b5cf6; font-weight: 800; font-size: 1.1rem; text-align: right;">${item.seller_id}</span>
                     </div>
                     <div style="${rowStyle}">
                         <span style="${lblStyle}">${translations[currentLang].lbl_number}</span>
-                        <span style="${valStyle} direction: ltr;">${item.phone}</span>
+                        <span style="color: #8b5cf6; font-weight: 800; font-size: 1.1rem; text-align: right; direction: ltr;">${item.phone}</span>
                     </div>
                     <div style="${rowStyle}">
                         <span style="${lblStyle}">${translations[currentLang].lbl_country}</span>
-                        <span style="${valStyle}">${item.country}</span>
+                        <span style="color: #10b981; font-weight: 800; font-size: 1.1rem; text-align: right;">${item.country}</span>
                     </div>
                     <div style="${rowStyle}">
                         <span style="${lblStyle}">${translations[currentLang].lbl_price}</span>
-                        <span style="${valStyle} color: var(--success); font-weight: 800;">$${Number(item.buy_price).toFixed(2)}</span>
+                        <span style="color: #3b82f6; font-weight: 900; font-size: 1.2rem; text-align: right;">$${Number(item.buy_price).toFixed(2)}</span>
                     </div>
                     <div style="${rowStyle}">
                         <span style="${lblStyle}">${translations[currentLang].lbl_date}</span>
-                        <span style="${valStyle}; font-size: 0.85rem; opacity: 0.8;">${item.date}</span>
+                        <span style="color: #6a6c70; font-weight: 500; font-size: 0.85rem; text-align: right;">${item.date}</span>
                     </div>
                 </div>
                 `;
