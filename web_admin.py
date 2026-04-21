@@ -358,24 +358,24 @@ async def get_sourcing_data():
                     flag = get_flag_emoji(phonenumbers.region_code_for_number(p))
                 except: pass
                 
-                    # Fetch actual buy_price from CountryPrice
-                    actual_buy_price = 0
-                    try:
-                        parsed = phonenumbers.parse(a.phone_number)
-                        cc = str(parsed.country_code)
-                        target_iso = phonenumbers.region_code_for_number(parsed)
-                        
-                        stmt = select(CountryPrice).where(
-                            CountryPrice.country_code == cc,
-                            CountryPrice.iso_code == target_iso
-                        )
-                        cp_row = (await session.execute(stmt)).scalar()
-                        if not cp_row:
-                             cp_row = (await session.execute(select(CountryPrice).where(CountryPrice.country_code == cc))).scalar()
-                             
-                        if cp_row:
-                            actual_buy_price = cp_row.buy_price
-                    except: pass
+                # Fetch actual buy_price from CountryPrice
+                actual_buy_price = 0
+                try:
+                    parsed = phonenumbers.parse(a.phone_number)
+                    cc = str(parsed.country_code)
+                    target_iso = phonenumbers.region_code_for_number(parsed)
+                    
+                    stmt = select(CountryPrice).where(
+                        CountryPrice.country_code == cc,
+                        CountryPrice.iso_code == target_iso
+                    )
+                    cp_row = (await session.execute(stmt)).scalar()
+                    if not cp_row:
+                         cp_row = (await session.execute(select(CountryPrice).where(CountryPrice.country_code == cc))).scalar()
+                         
+                    if cp_row:
+                        actual_buy_price = cp_row.buy_price
+                except: pass
                 
                 recent.append({
                     "phone": a.phone_number,
