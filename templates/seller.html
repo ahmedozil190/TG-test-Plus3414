@@ -1283,7 +1283,7 @@
             </div>
 
             <!-- New Sourcing History Section -->
-            <div class="card" style="padding: 22px; margin-top: 30px;">
+            <div class="card" id="sourcing-section" style="padding: 22px; margin-top: 30px;">
                 <div class="section-header" style="margin-top: 0; margin-bottom: 20px;">
                     <h2 style="font-weight: 600; margin: 0; font-size: 1rem; letter-spacing: 0.5px;">Submission History</h2>
                 </div>
@@ -1291,11 +1291,11 @@
                 </div>
                 <!-- Pagination -->
                 <div id="sourcingPagination" class="pagination-ctrls" style="display: none; margin-top: 20px;">
-                    <button class="pg-btn" id="pgPrevSourcing" onclick="moveSourcingPage(-1)">
+                    <button class="pg-btn" style="background: transparent;" id="pgPrevSourcing" onclick="moveSourcingPage(-1)">
                         <i class="fas fa-chevron-left"></i> <span>Prev</span>
                     </button>
                     <span id="pgInfoSourcing" class="pg-info">Page 1 of 1</span>
-                    <button class="pg-btn" id="pgNextSourcing" onclick="moveSourcingPage(1)">
+                    <button class="pg-btn" style="background: transparent;" id="pgNextSourcing" onclick="moveSourcingPage(1)">
                         <span>Next</span> <i class="fas fa-chevron-right"></i>
                     </button>
                 </div>
@@ -1591,6 +1591,7 @@
             if (target >= 1 && target <= totalWithdrawPages) {
                 currentWithdrawPage = target;
                 await fetchWithdrawals();
+                document.getElementById('view-withdraw').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
 
@@ -1911,7 +1912,7 @@
             if (target >= 1 && target <= totalSourcingPages) {
                 currentSourcingPage = target;
                 await fetchSourcingHistory();
-                document.getElementById('sourcingHistory').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                document.getElementById('sourcing-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
 
