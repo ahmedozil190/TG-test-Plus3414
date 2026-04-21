@@ -2279,7 +2279,7 @@
             // Filter based on tab
             const filteredByTab = list.filter(p => {
                 if (currentPriceTab === 'active') return p.buy_price > 0;
-                return p.buy_price <= 0;
+                return true;
             });
             const container = document.getElementById('price-list');
             const pagContainer = document.getElementById('price-pagination');
