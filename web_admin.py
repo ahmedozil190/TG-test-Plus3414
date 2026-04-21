@@ -20,7 +20,6 @@ import re
 import urllib.request
 import json
 import asyncio
-from datetime import datetime
 import random
 import string
 
@@ -366,7 +365,7 @@ async def get_sourcing_data():
                     "buy_price": actual_buy_price,
                     "status": a.status.name,
                     "seller_id": a.seller_id,
-                    "date": a.created_at.strftime("%Y-%m-%d %H:%M")
+                    "date": a.created_at.strftime("%Y-%m-%d %H:%M") if a.created_at else "N/A"
                 })
 
             prices_result = await session.execute(
@@ -994,7 +993,7 @@ async def get_withdrawals(user_id: int, page: int = 1):
                 "method": r.method,
                 "address": r.address,
                 "status": r.status.value,
-                "date": r.created_at.strftime("%Y-%m-%d")
+                "date": r.created_at.strftime("%Y-%m-%d") if r.created_at else "N/A"
             })
         return {
             "history": history,
