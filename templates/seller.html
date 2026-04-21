@@ -1759,6 +1759,9 @@
                     const rowS = "background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;";
                     const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;";
 
+                    // Format address to show start...end
+                    const shortAddr = h.address.length > 15 ? (h.address.substring(0, 8) + '...' + h.address.slice(-6)) : h.address;
+
                     item.innerHTML = `
                         <div style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
                             <div style="${rowS}">
@@ -1772,12 +1775,12 @@
                                 <span style="color: #10b981; font-weight: 800; font-size: 1.1rem; text-align: right;">$${h.amount.toFixed(2)}</span>
                             </div>
                             <div style="${rowS}">
-                                <span style="${lblS}">TRANSACTION ID</span>
-                                <span style="color: var(--text-p); font-weight: 600; font-size: 0.9rem; text-align: right; opacity: 0.8;">${h.transaction_id}</span>
+                                <span style="${lblS}">ID</span>
+                                <span style="color: #8b5cf6; font-weight: 600; font-size: 0.9rem; text-align: right;">${h.transaction_id}</span>
                             </div>
                             <div style="${rowS}">
                                 <span style="${lblS}">ADDRESS</span>
-                                <span style="color: var(--text-p); font-weight: 600; font-size: 0.85rem; text-align: right; opacity: 0.8; word-break: break-all; max-width: 60%;">${h.address}</span>
+                                <span style="color: #3b82f6; font-weight: 600; font-size: 0.85rem; text-align: right; direction: ltr;">${shortAddr}</span>
                             </div>
                             <div style="${rowS}">
                                 <span style="${lblS}">DATE</span>
