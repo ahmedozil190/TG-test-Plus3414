@@ -630,7 +630,7 @@
         }
 
         .user-card, .acc-item {
-            background: var(--bg);
+            background: transparent;
             border: 1px solid var(--border);
             border-radius: 18px;
             padding: 24px 20px 20px;
@@ -1864,7 +1864,7 @@
                 data.accounts.forEach(acc => {
                     const item = document.createElement('div');
                     item.className = 'user-card';
-                    item.style = "margin-bottom: 25px; padding-top: 24px;";
+                    item.style = "margin-bottom: 25px; padding-top: 24px; background: transparent;";
                     
                     let statusClass = 'badge-warning';
                     let statusIcon = 'fa-clock';
