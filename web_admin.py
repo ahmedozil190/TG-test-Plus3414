@@ -1088,7 +1088,7 @@ async def get_countries_for_code(code: str):
     try:
         clean_code = code.strip().lstrip('+').lstrip('0')
         numeric_code = int(clean_code)
-        regions = phonenumbers.country_code_to_region_ids(numeric_code)
+        regions = phonenumbers.COUNTRY_CODE_TO_REGION_CODE.get(numeric_code, [])
         
         results = []
         for r in regions:
