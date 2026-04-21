@@ -1633,16 +1633,8 @@
             <h3 data-i18n="modal_title">Buying Price Setup</h3>
             <div class="form-group">
                 <label data-i18n="lbl_code">Country Code (numeric)</label>
-                <input type="text" id="m-code" class="input-field" placeholder="1" oninput="onCountryCodeInput()">
+                <input type="text" id="m-code" class="input-field" placeholder="20">
             </div>
-            
-            <div id="m-region-select-area" class="form-group" style="display: none;">
-                <label>Select Precise Country</label>
-                <select id="m-iso-select" class="input-field" style="background: var(--bg); color: var(--text-p); border: 1px solid var(--border);">
-                    <!-- Populated by JS -->
-                </select>
-            </div>
-
             <div class="form-group">
                 <label data-i18n="lbl_buy">Buy Price ($)</label>
                 <input type="number" id="m-buy" class="input-field" step="0.1" placeholder="0.5">
@@ -2321,10 +2313,10 @@
                     </div>
                     <!-- Action Buttons -->
                     <div style="display: flex; gap: 10px;">
-                        <button class="primary-btn" style="flex: 1; background: rgba(96, 165, 250, 0.1); color: var(--accent); border: 1px solid rgba(96, 165, 250, 0.2); box-shadow: none; padding: 14px; font-size: 0.95rem;" onclick="editPrice('${p.code}', '${p.iso}', ${p.buy_price}, ${p.approve_delay})">
+                        <button class="primary-btn" style="flex: 1; background: rgba(96, 165, 250, 0.1); color: var(--accent); border: 1px solid rgba(96, 165, 250, 0.2); box-shadow: none; padding: 14px; font-size: 0.95rem;" onclick="editPrice('${p.code}', ${p.buy_price}, ${p.approve_delay})">
                             <i class="fas fa-pen" style="margin-right: 5px;"></i> ${currentLang === 'ar' ? 'تعديل' : 'Edit'}
                         </button>
-                        <button class="primary-btn" style="flex: 1; background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); box-shadow: none; padding: 14px; font-size: 0.95rem;" onclick="deletePrice('${p.code}', '${p.iso}')">
+                        <button class="primary-btn" style="flex: 1; background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); box-shadow: none; padding: 14px; font-size: 0.95rem;" onclick="deletePrice('${p.code}')">
                             <i class="fas fa-trash" style="margin-right: 5px;"></i> ${currentLang === 'ar' ? 'حذف' : 'Delete'}
                         </button>
                     </div>
@@ -2358,16 +2350,10 @@
             document.getElementById('price-modal').classList.add('active');
         }
 
-        async function editPrice(code, iso, buy, delay) {
+        function editPrice(code, buy, delay) {
             document.getElementById('m-code').value = code;
             document.getElementById('m-buy').value = buy;
             document.getElementById('m-delay').value = delay;
-            
-            // Trigger region detection then set ISO
-            await onCountryCodeInput();
-            const select = document.getElementById('m-iso-select');
-            if (select) select.value = iso;
-            
             document.getElementById('price-modal').classList.add('active');
         }
 
@@ -2376,54 +2362,12 @@
             document.getElementById('price-modal').classList.remove('active');
         }
 
-        async function onCountryCodeInput() {
-            const code = document.getElementById('m-code').value.trim();
-            const area = document.getElementById('m-region-select-area');
-            const select = document.getElementById('m-iso-select');
-            
-            if (!code || code.length < 1) {
-                area.style.display = 'none';
-                return;
-            }
-
-            try {
-                const res = await fetch(`/api/admin/countries-for-code/${code}`);
-                const data = await res.json();
-                
-                if (data && data.length > 1) {
-                    area.style.display = 'block';
-                    select.innerHTML = data.map(c => `<option value="${c.iso}" data-name="${c.name}">${c.flag} ${c.name}</option>`).join('');
-                } else if (data && data.length === 1) {
-                    area.style.display = 'block'; // Still show it for confirmation
-                    select.innerHTML = `<option value="${data[0].iso}" data-name="${data[0].name}">${data[0].flag} ${data[0].name}</option>`;
-                } else {
-                    area.style.display = 'none';
-                }
-            } catch (err) {
-                area.style.display = 'none';
-            }
-        }
-
         async function savePriceChanges() {
-            const codeInput = document.getElementById('m-code');
-            const select = document.getElementById('m-iso-select');
-            
-            const code = codeInput.value.trim().replace('+', '');
-            const selectedOpt = select.options[select.selectedIndex];
-            
             const payload = {
-                country_code: code,
-                iso_code: (selectedOpt && select.parentNode.style.display !== 'none') ? selectedOpt.value : "XX",
-                country_name: (selectedOpt && select.parentNode.style.display !== 'none') ? selectedOpt.getAttribute('data-name') : "Auto",
-                buy_price: parseFloat(document.getElementById('m-buy').value || 0),
-                approve_delay: parseInt(document.getElementById('m-delay').value || 0)
+                country_code: document.getElementById('m-code').value,
+                buy_price: parseFloat(document.getElementById('m-buy').value),
+                approve_delay: parseInt(document.getElementById('m-delay').value)
             };
-            
-            if (!payload.country_code) {
-                alert("Please enter a country code");
-                return;
-            }
-
             await fetch('/api/admin/sourcing/price/update', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -2433,17 +2377,23 @@
             closePriceModal();
         }
 
-        async function deletePrice(code, iso) {
+        async function deletePrice(code) {
             const confirmed = await showConfirm();
             if (!confirmed) return;
 
             try {
-                // Optimistic UI update
-                allPrices = allPrices.filter(p => !(p.code === code && p.iso === iso));
-                renderPrices(allPrices);
+                // Optimistic UI update: Remove from local array immediately
+                allPrices = allPrices.filter(p => p.code !== code);
+                if (filteredPrices) filteredPrices = filteredPrices.filter(p => p.code !== code);
 
-                await fetch(`/api/admin/prices/delete?code=${code}&iso=${iso}&bot=sourcing`, { method: 'DELETE' });
-                init();
+                // Re-render only the prices list (instant UI)
+                renderPrices(filteredPrices || allPrices);
+
+                // Perform deletion in background
+                fetch(`/api/admin/prices/delete/${code}?bot=sourcing`, { method: 'DELETE' }).catch(e => {
+                    console.error("Delete failed:", e);
+                    init(); // Re-sync if error
+                });
             } catch (e) {
                 console.error(e);
                 init();

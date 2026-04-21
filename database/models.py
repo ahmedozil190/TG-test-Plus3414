@@ -61,8 +61,7 @@ class Transaction(Base):
 class CountryPrice(Base):
     __tablename__ = 'country_prices'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    country_code = Column(String, nullable=False) # e.g. "20"
-    iso_code = Column(String, default="XX") # Add ISO Alpha-2 e.g. "EG"
+    country_code = Column(String, unique=True, nullable=False) # e.g. "20"
     country_name = Column(String, nullable=False) # e.g. "Egypt"
     price = Column(Float, nullable=False, default=1.0) # Selling Price
     buy_price = Column(Float, nullable=False, default=0.5) # Buying Price from people

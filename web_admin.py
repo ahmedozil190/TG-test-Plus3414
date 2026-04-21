@@ -56,46 +56,36 @@ def generate_transaction_id():
 
 def get_flag_emoji(country_code: str):
     """Convert ISO country code to flag emoji."""
-    try:
-        if not country_code or not isinstance(country_code, str) or len(country_code) != 2:
-            return "🌐"
-        return "".join(chr(ord(c) + 127397) for c in country_code.upper())
-    except:
+    if not country_code or len(country_code) != 2:
         return "🌐"
+    return "".join(chr(ord(c) + 127397) for c in country_code.upper())
 
-def resolve_country_info(country_code_str: str, full_phone: str = None):
-    """Resolve ISO code and Country Name. If full_phone is provided, detects specific region."""
+def resolve_country_info(country_code_str: str):
+    """Resolve ISO code and Country Name from a numeric calling code."""
     try:
-        if full_phone:
-            try:
-                parsed = phonenumbers.parse(full_phone if full_phone.startswith('+') else f"+{full_phone}")
-                iso_code = phonenumbers.region_code_for_number(parsed)
-                name = pycountry.countries.get(alpha_2=iso_code).name
-                name = re.sub(r'\s*\(?[A-Z]{2,3}\)?\s*$', '', name).strip()
-                return name, get_flag_emoji(iso_code), iso_code
-            except: pass
-
-        # Fallback to calling code prefix
+        # Clean input: remove +, leading zeros, spaces
         code = country_code_str.strip().lstrip('+').lstrip('0')
-        if not code: return "Unknown", "🌐", "XX"
+        if not code: return "Unknown", "🌐"
         
         numeric_code = int(code)
-        # For +1, region_code_for_country_code returns 'US'
         iso_code = phonenumbers.region_code_for_country_code(numeric_code)
         flag = get_flag_emoji(iso_code)
         
+        # Resolve name using pycountry for accuracy
         name = f"Country {numeric_code}"
         try:
             country = pycountry.countries.get(alpha_2=iso_code)
             if country:
+                # pycountry names are clean, but let's ensure no extra codes are appended
                 name = country.name
+                # Remove common suffixes like "EG", "(EG)", etc.
                 name = re.sub(r'\s*\(?[A-Z]{2,3}\)?\s*$', '', name).strip()
         except: pass
         
-        return name, flag, iso_code
+        return name, flag
     except Exception as e:
         logger.error(f"Error resolving country {country_code_str}: {e}")
-        return f"Code {country_code_str}", "🌐", "XX"
+        return f"Code {country_code_str}", "🌐"
 
 def clean_display_name(raw_name: str) -> str:
     """Removes trailing ISO codes like EG, (EG), or [EG], and resolves standalone codes."""
@@ -197,31 +187,8 @@ async def run_migrations():
             try:
                 await conn.execute(sqlalchemy.text("ALTER TABLE country_prices ADD COLUMN approve_delay INTEGER DEFAULT 0"))
             except: pass
-            # Add iso_code to country_prices if missing
-            try:
-                await conn.execute(sqlalchemy.text("ALTER TABLE country_prices ADD COLUMN iso_code TEXT DEFAULT 'XX'"))
-            except: pass
-            
             try:
                 await conn.execute(sqlalchemy.text("ALTER TABLE country_prices ADD COLUMN updated_at DATETIME"))
-            except: pass
-
-            # One-time resolution: Fix 'XX' iso_codes for legacy data
-            try:
-                # Get all records with XX
-                cursor = await conn.execute(sqlalchemy.text("SELECT id, country_code FROM country_prices WHERE iso_code = 'XX'"))
-                rows = cursor.fetchall()
-                for row_id, c_code in rows:
-                    try:
-                        clean_code = c_code.strip().lstrip('+').lstrip('0')
-                        numeric_code = int(clean_code)
-                        detected_iso = phonenumbers.region_code_for_country_code(numeric_code)
-                        if detected_iso:
-                            await conn.execute(sqlalchemy.text("UPDATE country_prices SET iso_code = :iso WHERE id = :id"), {"iso": detected_iso, "id": row_id})
-                    except: pass
-            except: pass
-
-            try:
                 await conn.execute(sqlalchemy.text("UPDATE country_prices SET updated_at = '" + datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S') + "' WHERE updated_at IS NULL"))
             except: pass
         logger.info("DB migration check complete.")
@@ -257,7 +224,6 @@ class BanToggle(BaseModel):
 class PriceUpdate(BaseModel):
     country_code: str
     country_name: str
-    iso_code: str = "XX"
     price: float
     buy_price: float
     approve_delay: int
@@ -389,16 +355,7 @@ async def get_sourcing_data():
                 try:
                     parsed = phonenumbers.parse(a.phone_number)
                     cc = str(parsed.country_code)
-                    target_iso = phonenumbers.region_code_for_number(parsed)
-                    
-                    stmt = select(CountryPrice).where(
-                        CountryPrice.country_code == cc,
-                        CountryPrice.iso_code == target_iso
-                    )
-                    cp_row = (await session.execute(stmt)).scalar()
-                    if not cp_row:
-                         cp_row = (await session.execute(select(CountryPrice).where(CountryPrice.country_code == cc))).scalar()
-                         
+                    cp_row = (await session.execute(select(CountryPrice).where(CountryPrice.country_code == cc))).scalar()
                     if cp_row:
                         actual_buy_price = cp_row.buy_price
                 except: pass
@@ -418,10 +375,13 @@ async def get_sourcing_data():
             )
             prices = []
             for p in prices_result.scalars().all():
-                flag = get_flag_emoji(p.iso_code)
+                flag = "🌐"
+                try:
+                    region = phonenumbers.region_code_for_country_code(int(p.country_code))
+                    flag = get_flag_emoji(region)
+                except: pass
                 prices.append({
                     "code": p.country_code, 
-                    "iso": p.iso_code,
                     "name": f"{flag} {clean_display_name(p.country_name)}", 
                     "buy_price": p.buy_price,
                     "price": p.price,
@@ -684,38 +644,28 @@ async def complete_login(data: StockLoginComplete):
 
 @app.post("/api/admin/sourcing/price/update")
 async def update_sourcing_price(data: dict):
-    # data: {country_code, buy_price, approve_delay, iso_code, country_name}
+    # data: {country_code, buy_price, approve_delay}
     code = data.get("country_code")
-    iso = data.get("iso_code", "XX")
     buy_p = float(data.get("buy_price", 0))
     delay = int(data.get("approve_delay", 0))
-    c_name = data.get("country_name")
 
-    # If iso/name not provided, auto-detect (legacy or basic add)
-    if iso == "XX" or not c_name:
-        name_only, _, detected_iso = resolve_country_info(code)
-        if not c_name: c_name = name_only
-        if iso == "XX": iso = detected_iso
+    # Auto-detect name more reliably
+    name_only, _ = resolve_country_info(code)
 
     async with async_session() as session:
-        # Match by both code and ISO to support shared prefixes like +1
-        stmt = select(CountryPrice).where(
-            CountryPrice.country_code == code,
-            CountryPrice.iso_code == iso
-        )
-        cp = (await session.execute(stmt)).scalar()
-        
+        cp = (await session.execute(select(CountryPrice).where(CountryPrice.country_code == code))).scalar()
         if cp:
+            # PARTIAL UPDATE: Only touch sourcing fields
             cp.buy_price = buy_p
             cp.approve_delay = delay
             cp.updated_at = datetime.utcnow()
-            if c_name: cp.country_name = c_name
+            if name_only and name_only != "Unknown":
+                cp.country_name = name_only
         else:
             cp = CountryPrice(
-                country_code=code,
-                iso_code=iso,
-                country_name=c_name, 
-                price=0,
+                country_code=code, 
+                country_name=name_only, 
+                price=0, # Initial store price is 0
                 buy_price=buy_p,
                 approve_delay=delay
             )
@@ -723,14 +673,10 @@ async def update_sourcing_price(data: dict):
         await session.commit()
     return {"status": "success"}
 
-@app.delete("/api/admin/prices/delete")
-async def delete_price_entry(code: str, iso: str, bot: str = "store"):
+@app.delete("/api/admin/prices/delete/{code}")
+async def delete_price_entry(code: str, bot: str = "store"):
     async with async_session() as session:
-        stmt = select(CountryPrice).where(
-            CountryPrice.country_code == code,
-            CountryPrice.iso_code == iso
-        )
-        cp = (await session.execute(stmt)).scalar()
+        cp = (await session.execute(select(CountryPrice).where(CountryPrice.country_code == code))).scalar()
         if cp:
             if bot == "sourcing":
                 cp.buy_price = 0
@@ -748,32 +694,29 @@ async def delete_price_entry(code: str, iso: str, bot: str = "store"):
 async def update_price(data: PriceUpdate):
     """General update (mostly used by Store admin now)"""
     async with async_session() as session:
-        # Identify by code and ISO
-        stmt = select(CountryPrice).where(
-            CountryPrice.country_code == data.country_code,
-            CountryPrice.iso_code == data.iso_code
-        )
-        cp = (await session.execute(stmt)).scalar()
-        
+        cp = (await session.execute(select(CountryPrice).where(CountryPrice.country_code == data.country_code))).scalar()
         if cp:
+            # PARTIAL UPDATE: Only touch store price and name
             cp.price = data.price
             if data.country_name and data.country_name != "Unknown":
                 cp.country_name = data.country_name
+            elif not cp.country_name or cp.country_name == "Unknown":
+                name, _ = resolve_country_info(data.country_code)
+                cp.country_name = name
+            
+            # CRITICAL: Do NOT overwrite buy_price or approve_delay if update is from store dashboard
+            # We keep whatever is currently there.
             cp.updated_at = datetime.utcnow()
         else:
             name = data.country_name
-            iso = data.iso_code
-            if not name or name == "Unknown" or iso == "XX":
-                name_det, _, iso_det = resolve_country_info(data.country_code)
-                if not name or name == "Unknown": name = name_det
-                if iso == "XX": iso = iso_det
+            if not name or name == "Unknown":
+                name, _ = resolve_country_info(data.country_code)
                 
             cp = CountryPrice(
-                country_code=data.country_code,
-                iso_code=iso,
+                country_code=data.country_code, 
                 country_name=name, 
                 price=data.price,
-                buy_price=0,
+                buy_price=0, # Initial sourcing buy price is 0
                 approve_delay=0
             )
             session.add(cp)
@@ -1061,57 +1004,27 @@ async def get_withdrawals(user_id: int, page: int = 1):
             "total_count": total_count
         }
 
-@app.get("/api/admin/countries-for-code/{code}")
-async def get_countries_for_code(code: str):
-    """Returns a list of matching countries for a given numeric code."""
-    try:
-        clean_code = code.strip().lstrip('+').lstrip('0')
-        numeric_code = int(clean_code)
-        regions = phonenumbers.country_code_to_region_ids(numeric_code)
-        
-        results = []
-        for r in regions:
-            try:
-                country = pycountry.countries.get(alpha_2=r)
-                if country:
-                    name = country.name
-                    name = re.sub(r'\s*\(?[A-Z]{2,3}\)?\s*$', '', name).strip()
-                    results.append({"iso": r, "name": name, "flag": get_flag_emoji(r)})
-            except: pass
-        return results
-    except:
-        return []
-
 @app.get("/api/seller/detect-country")
 async def detect_country(phone: str):
     try:
         if not phone.startswith("+"): phone = "+" + phone
         parsed = phonenumbers.parse(phone)
         country_code = str(parsed.country_code)
-        target_iso = phonenumbers.region_code_for_number(parsed)
+        iso_code = phonenumbers.region_code_for_number(parsed)
         
         async with async_session() as session:
-            # Try exact match for ISO code (most precise for +1, +7, etc)
-            stmt = select(CountryPrice).where(
-                CountryPrice.country_code == country_code,
-                CountryPrice.iso_code == target_iso
-            )
+            stmt = select(CountryPrice).where(CountryPrice.country_code == country_code)
             cp = (await session.execute(stmt)).scalar()
-            
-            # Fallback to any match for the country_code if specific ISO not found
-            if not cp:
-                stmt = select(CountryPrice).where(CountryPrice.country_code == country_code)
-                cp = (await session.execute(stmt)).scalar()
             
             if cp:
                 return {
                     "found": True,
                     "name": cp.country_name,
-                    "flag": get_flag_emoji(target_iso) if target_iso else "🌐",
+                    "flag": get_flag_emoji(iso_code) if iso_code else "🌐",
                     "price": cp.buy_price
                 }
-    except Exception as e:
-        logger.error(f"Detection Error: {e}")
+    except:
+        pass
     return {"found": False}
 
 @app.get("/api/seller/accounts")
