@@ -206,17 +206,29 @@ async def run_migrations():
                 await conn.execute(sqlalchemy.text("ALTER TABLE country_prices ADD COLUMN iso_code TEXT DEFAULT 'XX'"))
             except: pass
             
-            # Drop unique constraint on country_code if it exists (SQLite workaround)
+            # Drop unique constraint on country_code if it exists (SQLite workaround requires rebuilding table)
             try:
-                # Check if unique index exists
-                idx_result = await conn.execute(sqlalchemy.text("SELECT name FROM sqlite_master WHERE type='index' AND tbl_name='country_prices' AND sql LIKE '%UNIQUE%'"))
-                for idx_row in idx_result.fetchall():
-                    idx_name = idx_row[0]
-                    if idx_name and 'autoindex' not in idx_name:
-                        try:
-                            await conn.execute(sqlalchemy.text(f"DROP INDEX IF EXISTS {idx_name}"))
-                        except: pass
-            except: pass
+                table_sql_res = await conn.execute(sqlalchemy.text("SELECT sql FROM sqlite_master WHERE type='table' AND name='country_prices'"))
+                table_sql = table_sql_res.scalar()
+                if table_sql and 'UNIQUE' in table_sql.upper():
+                    logger.info("Rebuilding country_prices to remove UNIQUE constraint")
+                    await conn.execute(sqlalchemy.text("""
+                        CREATE TABLE country_prices_new (
+                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            country_code VARCHAR NOT NULL,
+                            iso_code VARCHAR DEFAULT 'XX',
+                            country_name VARCHAR NOT NULL,
+                            price FLOAT NOT NULL DEFAULT 1.0,
+                            buy_price FLOAT NOT NULL DEFAULT 0.5,
+                            approve_delay INTEGER NOT NULL DEFAULT 0,
+                            updated_at DATETIME
+                        )
+                    """))
+                    await conn.execute(sqlalchemy.text("INSERT INTO country_prices_new (id, country_code, iso_code, country_name, price, buy_price, approve_delay, updated_at) SELECT coalesce(id, 0), coalesce(country_code, ''), coalesce(iso_code, 'XX'), coalesce(country_name, 'Unknown'), coalesce(price, 0), coalesce(buy_price, 0), coalesce(approve_delay, 0), updated_at FROM country_prices"))
+                    await conn.execute(sqlalchemy.text("DROP TABLE country_prices"))
+                    await conn.execute(sqlalchemy.text("ALTER TABLE country_prices_new RENAME TO country_prices"))
+            except Exception as e:
+                logger.error(f"Failed to rebuild country_prices table: {e}")
 
             try:
                 await conn.execute(sqlalchemy.text("ALTER TABLE country_prices ADD COLUMN updated_at DATETIME"))
