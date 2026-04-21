@@ -1814,10 +1814,13 @@
         }
 
         function switchNav(id, btn, skipToggle = false) {
+            if (!skipToggle) closeNav();
+            // Hide all first
+            document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+
             const scroller = document.getElementById('app-content-scroller');
             if (scroller) scroller.scrollTop = 0;
-            if (!skipToggle) closeNav();
-            document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+
             document.getElementById('section-' + id).classList.add('active');
             document.querySelectorAll('.nav-item').forEach(m => m.classList.remove('active'));
             if (btn) btn.classList.add('active');
@@ -2163,7 +2166,8 @@
             if (currentPricePage > 1) {
                 currentPricePage--;
                 renderPrices(filteredPrices || allPrices);
-                document.getElementById('price-mgmt-section').scrollIntoView({ behavior: 'smooth' });
+                const scroller = document.getElementById('app-content-scroller');
+                if (scroller) scroller.scrollTop = 0;
             }
         }
 
@@ -2173,7 +2177,8 @@
             if (currentPricePage < totalPages) {
                 currentPricePage++;
                 renderPrices(list);
-                document.getElementById('price-mgmt-section').scrollIntoView({ behavior: 'smooth' });
+                const scroller = document.getElementById('app-content-scroller');
+                if (scroller) scroller.scrollTop = 0;
             }
         }
 
@@ -2211,7 +2216,7 @@
             container.innerHTML = paged.map((p, i) => {
                 const idx = start + i + 1;
                 return `
-                <div class="user-card" style="position: relative; margin-top: 15px; cursor: default;">
+                <div class="user-card" style="position: relative; margin-top: 15px; margin-bottom: 0; cursor: default;">
                     <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
                         <!-- Name -->
                         <div style="background: transparent; border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
