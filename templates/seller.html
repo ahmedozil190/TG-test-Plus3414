@@ -1943,20 +1943,21 @@
                     
                     let statusClass = 'badge-warning';
                     let statusIcon = 'fa-clock';
-                    let statusColor = 'var(--warning)';
-                    if (acc.status === 'AVAILABLE') { 
-                        statusColor = '#10b981'; 
+                    let statusText = 'PENDING';
+                    
+                    if (acc.status === 'AVAILABLE' || acc.status === 'SOLD') { 
+                        statusClass = 'badge-success'; 
                         statusIcon = 'fa-check-circle'; 
-                        statusClass = 'badge-success';
-                    } else if (acc.status === 'SOLD') { 
-                        statusColor = '#3b82f6'; 
-                        statusIcon = 'fa-shopping-cart'; 
-                        statusClass = 'badge-success';
+                        statusText = 'ACCEPTED';
                     } else if (acc.status === 'REJECTED') { 
-                        statusColor = '#ef4444'; 
+                        statusClass = 'badge-danger'; 
                         statusIcon = 'fa-times-circle'; 
-                        statusClass = 'badge-danger';
+                        statusText = 'REJECTED';
                     }
+
+                    const isAccepted = acc.status === 'AVAILABLE' || acc.status === 'SOLD';
+                    const isPending = acc.status === 'PENDING';
+                    const badgeStyle = isAccepted ? 'style="background: #10b981; color: white;"' : '';
 
                     const isSold = acc.status === 'SOLD';
                     const badgeStyle = isSold ? 'style="background: #3b82f6; color: white;"' : '';
@@ -1969,7 +1970,7 @@
                             <div style="${rowS}">
                                 <span style="${lblS}">STATUS</span>
                                 <span class="badge ${statusClass}" ${badgeStyle} style="font-size: 0.75rem; padding: 5px 12px;">
-                                    <i class="fas ${statusIcon}" style="margin-right: 5px;"></i> ${acc.status}
+                                    <i class="fas ${statusIcon}" style="margin-right: 5px;"></i> ${statusText}
                                 </span>
                             </div>
                             <div style="${rowS}">
@@ -1986,7 +1987,11 @@
                             </div>
                             <div style="${rowS}">
                                 <span style="${lblS}">DATE</span>
-                                <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.85rem; text-align: right;">${acc.date}</span>
+                                <span class="${isPending ? 'countdown-timer' : ''}" 
+                                      data-ready="${acc.ready_at}" 
+                                      style="color: ${isPending ? 'var(--warning)' : 'var(--text-secondary)'}; font-weight: 600; font-size: 0.85rem; text-align: right;">
+                                    ${isPending ? '...' : acc.date}
+                                </span>
                             </div>
                         </div>
                     `;
@@ -2003,6 +2008,33 @@
             t.classList.add('show');
             setTimeout(() => t.classList.remove('show'), 3000);
         }
+
+        function updateAllCountdowns() {
+            const now = new Date().getTime();
+            document.querySelectorAll('.countdown-timer').forEach(el => {
+                const readyStr = el.getAttribute('data-ready');
+                if (!readyStr || readyStr === 'null') return;
+                const readyAt = new Date(readyStr).getTime();
+                const diff = readyAt - now;
+                
+                if (diff <= 0) {
+                    el.innerText = "Processing...";
+                    el.style.color = '#10b981';
+                    return;
+                }
+                
+                const hours = Math.floor(diff / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                
+                let hStr = hours > 0 ? hours + ':' : '';
+                let mStr = (minutes < 10 && hours > 0 ? '0' : '') + minutes + ':';
+                let sStr = (seconds < 10 ? '0' : '') + seconds;
+                
+                el.innerText = hStr + mStr + sStr;
+            });
+        }
+        setInterval(updateAllCountdowns, 1000);
 
         fetchSellerData();
 

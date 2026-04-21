@@ -1042,6 +1042,7 @@ async def get_seller_accounts(user_id: int, page: int = 1, limit: int = 10):
         for a in results:
             # Detect reward price for seller
             actual_buy_price = 0
+            approve_delay = 0
             flag = "🌐"
             try:
                 parsed = phonenumbers.parse(a.phone_number)
@@ -1051,14 +1052,18 @@ async def get_seller_accounts(user_id: int, page: int = 1, limit: int = 10):
                 cp_row = (await session.execute(select(CountryPrice).where(CountryPrice.country_code == cc))).scalar()
                 if cp_row:
                     actual_buy_price = cp_row.buy_price
+                    approve_delay = cp_row.approve_delay
             except: pass
+
+            ready_at = (a.created_at + timedelta(seconds=approve_delay)) if a.created_at else None
 
             accounts_data.append({
                 "phone": a.phone_number,
                 "status": a.status.value,
                 "country": f"{flag} {a.country}",
-                "price": actual_buy_price,
-                "date": a.created_at.strftime("%Y-%m-%d %H:%M")
+                "buy_price": actual_buy_price,
+                "ready_at": ready_at.isoformat() if ready_at else None,
+                "date": a.created_at.strftime("%Y-%m-%d %H:%M") if a.created_at else "N/A"
             })
 
         return {
@@ -1083,20 +1088,21 @@ async def get_admin_sourcing_history(page: int = 1, limit: int = 10):
         history = []
         for a in results:
             flag = "🌐"
-            try:
-                p = phonenumbers.parse(a.phone_number)
-                flag = get_flag_emoji(phonenumbers.region_code_for_number(p))
-            except: pass
-            
-            # Actual buy_price
+            approve_delay = 0
             price = 0
             try:
                 parsed = phonenumbers.parse(a.phone_number)
                 cc = str(parsed.country_code)
+                region = phonenumbers.region_code_for_number(parsed)
+                flag = get_flag_emoji(region)
                 cp_row = (await session.execute(select(CountryPrice).where(CountryPrice.country_code == cc))).scalar()
-                if cp_row: price = cp_row.buy_price
+                if cp_row:
+                    price = cp_row.buy_price
+                    approve_delay = cp_row.approve_delay
             except: pass
-            
+
+            ready_at = (a.created_at + timedelta(seconds=approve_delay)) if a.created_at else None
+
             history.append({
                 "id": a.id,
                 "phone": a.phone_number,
@@ -1104,6 +1110,7 @@ async def get_admin_sourcing_history(page: int = 1, limit: int = 10):
                 "buy_price": price,
                 "status": a.status.name,
                 "seller_id": a.seller_id,
+                "ready_at": ready_at.isoformat() if ready_at else None,
                 "date": a.created_at.strftime("%Y-%m-%d %H:%M") if a.created_at else "N/A"
             })
             

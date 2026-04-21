@@ -1700,6 +1700,10 @@
                 lbl_country: "Country",
                 lbl_price: "Price",
                 lbl_date: "Date",
+                st_pending: "PENDING",
+                st_accepted: "ACCEPTED",
+                st_rejected: "REJECTED",
+                time_processing: "Processing...",
                 nav_settings: "Settings",
                 pg_prev: "Prev",
                 pg_next: "Next",
@@ -1738,6 +1742,10 @@
                 lbl_buy: "السعر ($)",
                 lbl_delay: "تأخير الموافقة (ثانية)",
                 no_ops: "لا توجد عمليات",
+                st_pending: "قيد المراجعة",
+                st_accepted: "تم القبول",
+                st_rejected: "تم الرفض",
+                time_processing: "جاري المعالجة...",
                 no_users: "لا يوجد مستخدمين",
                 no_countries: "لم يتم العثور على دول",
                 buy_lbl: "سعر الشراء",
@@ -2409,13 +2417,24 @@
             container.innerHTML = list.map(item => {
                 let statusClass = 'badge-warning';
                 let statusIcon = 'fa-clock';
-                let statusColor = 'var(--warning)';
-                if (item.status === 'AVAILABLE') { statusClass = 'badge-success'; statusIcon = 'fa-check-circle'; statusColor = '#10b981'; }
-                if (item.status === 'SOLD') { statusClass = 'badge-success'; statusIcon = 'fa-shopping-cart'; statusColor = '#3b82f6'; }
-                if (item.status === 'REJECTED') { statusClass = 'badge-danger'; statusIcon = 'fa-times-circle'; statusColor = '#ef4444'; }
+                let statusText = translations[currentLang].st_pending;
+                
+                if (item.status === 'AVAILABLE' || item.status === 'SOLD') { 
+                    statusClass = 'badge-success'; 
+                    statusIcon = 'fa-check-circle'; 
+                    statusText = translations[currentLang].st_accepted;
+                }
+                if (item.status === 'REJECTED') { 
+                    statusClass = 'badge-danger'; 
+                    statusIcon = 'fa-times-circle'; 
+                    statusText = translations[currentLang].st_rejected;
+                }
 
-                const isSold = item.status === 'SOLD';
-                const badgeStyle = isSold ? 'style="background: #3b82f6; color: white;"' : '';
+                const isAccepted = item.status === 'AVAILABLE' || item.status === 'SOLD';
+                const isRejected = item.status === 'REJECTED';
+                const isPending = item.status === 'PENDING' || item.status === 'pending';
+                
+                const badgeStyle = isAccepted ? 'style="background: #10b981; color: white;"' : '';
 
                 const rowS = "background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;";
                 const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;";
@@ -2426,7 +2445,7 @@
                         <div style="${rowS}">
                             <span style="${lblS}">${translations[currentLang].lbl_status}</span>
                             <span class="badge ${statusClass}" ${badgeStyle} style="font-size: 0.75rem; padding: 5px 12px;">
-                                <i class="fas ${statusIcon}" style="margin-right: 5px;"></i> ${item.status}
+                                <i class="fas ${statusIcon}" style="margin-right: 5px;"></i> ${statusText}
                             </span>
                         </div>
                         <div style="${rowS}">
@@ -2447,7 +2466,11 @@
                         </div>
                         <div style="${rowS}">
                             <span style="${lblS}">${translations[currentLang].lbl_date}</span>
-                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.85rem; text-align: right;">${item.date}</span>
+                            <span class="${isPending ? 'countdown-timer' : ''}" 
+                                  data-ready="${item.ready_at}" 
+                                  style="color: ${isPending ? 'var(--warning)' : 'var(--text-secondary)'}; font-weight: 600; font-size: 0.85rem; text-align: right;">
+                                ${isPending ? '...' : item.date}
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -2466,6 +2489,33 @@
         function saveSettings() {
             alert(currentLang === 'ar' ? 'تم حفظ الإعدادات بنجاح!' : 'Settings saved successfully!');
         }
+
+        function updateAllCountdowns() {
+            const now = new Date().getTime();
+            document.querySelectorAll('.countdown-timer').forEach(el => {
+                const readyStr = el.getAttribute('data-ready');
+                if (!readyStr || readyStr === 'null') return;
+                const readyAt = new Date(readyStr).getTime();
+                const diff = readyAt - now;
+                
+                if (diff <= 0) {
+                    el.innerText = translations[currentLang]?.time_processing || "Processing...";
+                    el.style.color = '#10b981';
+                    return;
+                }
+                
+                const hours = Math.floor(diff / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                
+                let hStr = hours > 0 ? hours + ':' : '';
+                let mStr = (minutes < 10 && (hours > 0) ? '0' : '') + minutes + ':';
+                let sStr = (seconds < 10 ? '0' : '') + seconds;
+                
+                el.innerText = hStr + mStr + sStr;
+            });
+        }
+        setInterval(updateAllCountdowns, 1000);
 
         applyTheme();
         updateUI();
