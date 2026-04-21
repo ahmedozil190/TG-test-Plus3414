@@ -1735,24 +1735,53 @@
                 data.history.forEach(h => {
                     const item = document.createElement('div');
                     item.className = 'history-item';
+                    item.style.marginBottom = "15px";
 
-                    // Format address to show start...end
-                    const shortAddr = h.address.length > 12 ? (h.address.substring(0, 6) + '...' + h.address.slice(-4)) : h.address;
+                    let statusClass = 'badge-warning';
+                    let statusIcon = 'fa-clock';
+                    let statusText = 'PENDING';
+                    let badgeStyle = '';
+
+                    if (h.status === 'approved') {
+                        statusClass = 'badge-success';
+                        statusIcon = 'fa-check-circle';
+                        statusText = 'APPROVED';
+                        badgeStyle = 'style="background: #10b981; color: white;"';
+                    } else if (h.status === 'rejected') {
+                        statusClass = 'badge-danger';
+                        statusIcon = 'fa-times-circle';
+                        statusText = 'REJECTED';
+                        badgeStyle = 'style="background: #ef4444; color: white;"';
+                    } else {
+                        badgeStyle = 'style="background: #f59e0b; color: white;"';
+                    }
+
+                    const rowS = "background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;";
+                    const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;";
 
                     item.innerHTML = `
-                        <div class="h-info" style="flex:1">
-                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px">
-                                <span class="h-amt" style="color:var(--text-p); font-size:1.1rem">$${h.amount.toFixed(2)}</span>
-                                <span class="h-status st-${h.status}">${h.status}</span>
-                            </div>
-                            <div style="margin-bottom:8px; text-align:left">
-                                <span class="h-meta" style="font-size:0.8rem; font-weight:600; color:var(--text-p); opacity:0.9">
-                                    <i class="fas fa-barcode" style="margin-right:4px; opacity:0.7"></i>${h.transaction_id}
+                        <div style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
+                            <div style="${rowS}">
+                                <span style="${lblS}">STATUS</span>
+                                <span class="badge ${statusClass}" ${badgeStyle} style="font-size: 0.75rem; padding: 5px 12px;">
+                                    <i class="fas ${statusIcon}" style="margin-right: 5px;"></i> ${statusText}
                                 </span>
                             </div>
-                            <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid rgba(255,255,255,0.05); padding-top:8px">
-                                <span class="h-meta" style="color:var(--text-p); opacity:0.8"><i class="far fa-calendar-alt" style="margin-right:4px; color:var(--accent)"></i>${h.date}</span>
-                                <span class="h-meta" style="color:var(--text-p); opacity:0.8"><i class="fas fa-wallet" style="margin-right:4px; color:var(--accent)"></i>${shortAddr}</span>
+                            <div style="${rowS}">
+                                <span style="${lblS}">AMOUNT</span>
+                                <span style="color: #10b981; font-weight: 800; font-size: 1.1rem; text-align: right;">$${h.amount.toFixed(2)}</span>
+                            </div>
+                            <div style="${rowS}">
+                                <span style="${lblS}">TRANSACTION ID</span>
+                                <span style="color: var(--text-p); font-weight: 600; font-size: 0.9rem; text-align: right; opacity: 0.8;">${h.transaction_id}</span>
+                            </div>
+                            <div style="${rowS}">
+                                <span style="${lblS}">ADDRESS</span>
+                                <span style="color: var(--text-p); font-weight: 600; font-size: 0.85rem; text-align: right; opacity: 0.8; word-break: break-all; max-width: 60%;">${h.address}</span>
+                            </div>
+                            <div style="${rowS}">
+                                <span style="${lblS}">DATE</span>
+                                <span style="color: var(--text-secondary); font-weight: 600; font-size: 0.85rem; text-align: right;">${h.date}</span>
                             </div>
                         </div>
                     `;
