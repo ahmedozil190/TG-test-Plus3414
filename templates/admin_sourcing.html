@@ -1555,8 +1555,8 @@
                 <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px;">
                     <div class="info-card">
                         <div class="info-card-l">
-                            <span class="info-card-lbl" data-i18n="stat_total_ops">TOTAL OPERATIONS</span>
-                            <div class="info-card-val"><span id="stat-history-total">0</span> <span
+                            <span class="info-card-lbl" data-i18n="stat_pending_ops">PENDING OPERATIONS</span>
+                            <div class="info-card-val"><span id="stat-history-pending">0</span> <span
                                     data-i18n="unit_ops">OPERATIONS</span></div>
                         </div>
                         <div class="info-card-icon" style="background: rgba(88, 101, 242, 0.1); color: var(--accent);">
@@ -1589,6 +1589,16 @@
                         <h2 data-i18n="nav_history" style="margin: 0; font-size: 1rem;">Operations History</h2>
                     </div>
                     <div class="list-container" id="history-list"></div>
+                    <!-- Pagination -->
+                    <div id="history-pagination" class="pagination-ctrls" style="display: none; margin-top: 20px;">
+                        <button class="pg-btn" id="pgPrevAdminHist" onclick="moveAdminHistoryPage(-1)">
+                            <i class="fas fa-chevron-left"></i> <span data-i18n="pg_prev">Prev</span>
+                        </button>
+                        <span id="pgInfoAdminHist" class="pg-info">Page 1 of 1</span>
+                        <button class="pg-btn" id="pgNextAdminHist" onclick="moveAdminHistoryPage(1)">
+                            <span data-i18n="pg_next">Next</span> <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
                 </div>
             </section>
 
@@ -1677,7 +1687,8 @@
                 user_mgmt: "User Management",
                 tab_active: "Active",
                 tab_banned: "Banned",
-                nav_history: "Operations History",
+                pg_next: "Next",
+                stat_pending_ops: "PENDING OPERATIONS",
                 stat_total_ops: "TOTAL OPERATIONS",
                 stat_accepted_ops: "ACCEPTED ACCOUNTS",
                 unit_ops: "OPERATIONS",
@@ -1727,6 +1738,25 @@
                 lbl_delay: "تأخير الموافقة (ثانية)",
                 no_ops: "لا توجد عمليات",
                 no_users: "لا يوجد مستخدمين",
+                no_countries: "لم يتم العثور على دول",
+                buy_lbl: "سعر الشراء",
+                stat_total_users: "إجمالي المستخدمين",
+                stat_banned: "المحظورين",
+                unit_users: "مستخدم",
+                btn_find: "بحث",
+                search_placeholder: "بحث عن مستخدم...",
+                user_mgmt: "إدارة المستخدمين",
+                tab_active: "نشط",
+                tab_banned: "محظور",
+                pg_next: "التالي",
+                pg_prev: "السابق",
+                nav_history: "سجل العمليات",
+                stat_pending_ops: "عمليات قيد الانتظار",
+                stat_total_ops: "إجمالي العمليات",
+                stat_accepted_ops: "الحسابات المقبولة",
+                stat_rejected_ops: "الحسابات المرفوضة",
+                unit_ops: "عملية",
+                unit_accs: "حساب",
                 no_countries: "لا توجد دول مضافة",
                 buy_lbl: "سعر الشراء",
                 stat_total_users: "إجمالي المستخدمين",
@@ -1849,12 +1879,12 @@
                 document.getElementById('stat-total-balance').innerText = `$${Number(data.stats.total_balance).toFixed(2)}`;
 
                 // History Stats
-                document.getElementById('stat-history-total').innerText = data.stats.total_sourced;
+                document.getElementById('stat-history-pending').innerText = data.stats.pending_count;
                 document.getElementById('stat-history-accepted').innerText = data.stats.accepted_sourced;
                 document.getElementById('stat-history-rejected').innerText = data.stats.rejected_sourced;
 
                 renderRecent(data.recent);
-                renderHistory(data.recent);
+                fetchAdminHistory(currentAdminHistoryPage);
                 allPrices = data.prices || [];
 
                 // Update counts
@@ -2125,6 +2155,39 @@
             } catch (e) { console.error(e); }
         }
 
+        let currentAdminHistoryPage = 1;
+        let totalAdminHistoryPages = 1;
+        const ADMIN_HISTORY_LIMIT = 1; // User requested 1 for testing
+
+        async function fetchAdminHistory(page) {
+            try {
+                const res = await fetch(`/api/admin/sourcing/history?page=${page}&limit=${ADMIN_HISTORY_LIMIT}`);
+                const data = await res.json();
+                
+                totalAdminHistoryPages = data.total_pages;
+                currentAdminHistoryPage = data.current_page;
+                
+                renderHistory(data.history);
+                updateAdminHistoryPagination();
+            } catch (e) { console.error("Admin History error:", e); }
+        }
+
+        function updateAdminHistoryPagination() {
+            const pg = document.getElementById('history-pagination');
+            pg.style.display = totalAdminHistoryPages > 1 ? 'flex' : 'none';
+            document.getElementById('pgInfoAdminHist').innerText = `Page ${currentAdminHistoryPage} of ${totalAdminHistoryPages}`;
+            document.getElementById('pgPrevAdminHist').disabled = (currentAdminHistoryPage <= 1);
+            document.getElementById('pgNextAdminHist').disabled = (currentAdminHistoryPage >= totalAdminHistoryPages);
+        }
+
+        async function moveAdminHistoryPage(delta) {
+            const nextP = currentAdminHistoryPage + delta;
+            if (nextP >= 1 && nextP <= totalAdminHistoryPages) {
+                await fetchAdminHistory(nextP);
+                document.getElementById('section-history').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
         function renderRecent(list) {
             const container = document.getElementById('recent-sourced');
             if (!list.length) {
@@ -2135,7 +2198,7 @@
                 </div>`;
                 return;
             }
-            container.innerHTML = list.map(item => `
+            container.innerHTML = list.slice(0, 5).map(item => `
                 <div class="list-item">
                     <div class="item-info">
                         <h4>${item.phone}</h4>

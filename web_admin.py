@@ -1025,9 +1025,17 @@ async def detect_country(phone: str):
     return {"found": False}
 
 @app.get("/api/seller/accounts")
-async def get_seller_accounts(user_id: int):
+async def get_seller_accounts(user_id: int, page: int = 1, limit: int = 10):
     async with async_session() as session:
-        stmt = select(Account).where(Account.seller_id == user_id).order_by(Account.created_at.desc()).limit(15)
+        offset = (page - 1) * limit
+        
+        # Get total count for pagination
+        total_count = (await session.execute(
+            select(func.count(Account.id)).where(Account.seller_id == user_id)
+        )).scalar() or 0
+        total_pages = Math.ceil(total_count / limit) if total_count > 0 else 1
+        
+        stmt = select(Account).where(Account.seller_id == user_id).order_by(Account.created_at.desc()).offset(offset).limit(limit)
         results = (await session.execute(stmt)).scalars().all()
         accounts_data = []
         for a in results:
@@ -1053,7 +1061,55 @@ async def get_seller_accounts(user_id: int):
             })
 
         return {
-            "accounts": accounts_data
+            "accounts": accounts_data,
+            "total_pages": total_pages,
+            "current_page": page
+        }
+
+@app.get("/api/admin/sourcing/history")
+async def get_admin_sourcing_history(page: int = 1, limit: int = 10):
+    async with async_session() as session:
+        offset = (page - 1) * limit
+        
+        total_count = (await session.execute(
+            select(func.count(Account.id))
+        )).scalar() or 0
+        total_pages = Math.ceil(total_count / limit) if total_count > 0 else 1
+        
+        stmt = select(Account).order_by(Account.id.desc()).offset(offset).limit(limit)
+        results = (await session.execute(stmt)).scalars().all()
+        
+        history = []
+        for a in results:
+            flag = "🌐"
+            try:
+                p = phonenumbers.parse(a.phone_number)
+                flag = get_flag_emoji(phonenumbers.region_code_for_number(p))
+            except: pass
+            
+            # Actual buy_price
+            price = 0
+            try:
+                parsed = phonenumbers.parse(a.phone_number)
+                cc = str(parsed.country_code)
+                cp_row = (await session.execute(select(CountryPrice).where(CountryPrice.country_code == cc))).scalar()
+                if cp_row: price = cp_row.buy_price
+            except: pass
+            
+            history.append({
+                "id": a.id,
+                "phone": a.phone_number,
+                "country": f"{flag} {a.country}",
+                "price": price,
+                "status": a.status.name,
+                "seller_id": a.seller_id,
+                "date": a.created_at.strftime("%Y-%m-%d %H:%M") if a.created_at else "N/A"
+            })
+            
+        return {
+            "history": history,
+            "total_pages": total_pages,
+            "current_page": page
         }
 
 @app.post("/api/admin/user/sync")
