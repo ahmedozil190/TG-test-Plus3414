@@ -950,15 +950,15 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 25px;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.02);
+            margin-top: 20px;
+            padding: 12px;
+            background: transparent;
             border-radius: 12px;
             border: 1px solid var(--border);
         }
 
         .pg-btn {
-            background: var(--bg-elevated);
+            background: transparent;
             color: var(--text-p);
             border: 1px solid var(--border);
             padding: 8px 16px;
@@ -1364,7 +1364,7 @@
             </button>
         </div>
 
-        <div class="card" style="padding: 22px; margin-top: 30px; margin-bottom: 0;">
+        <div class="card" id="withdraw-history-section" style="padding: 22px; margin-top: 30px; margin-bottom: 0;">
             <div class="section-header" style="margin-top: 0; margin-bottom: 35px;">
                 <h2 style="font-weight: 600; margin: 0; font-size: 1rem; letter-spacing: 0.5px;">Withdrawal History</h2>
             </div>
@@ -1614,7 +1614,7 @@
             if (target >= 1 && target <= totalWithdrawPages) {
                 currentWithdrawPage = target;
                 await fetchWithdrawals();
-                document.getElementById('view-withdraw').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                document.getElementById('withdraw-history-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
 
