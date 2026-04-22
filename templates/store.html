@@ -138,6 +138,23 @@
         }
         .nav-item:hover, .nav-item.active { background: var(--card-glass); color: var(--text-p); }
         .nav-item.active { border: 1px solid var(--border); color: var(--accent); }
+        .nav-item i { font-size: 1.1rem; width: 24px; text-align: center; }
+
+        .side-brand {
+            display: flex; align-items: center; gap: 12px;
+        }
+        .side-brand-dot {
+            width: 12px; height: 12px; border-radius: 50%;
+            background: var(--accent); box-shadow: 0 0 10px var(--accent);
+        }
+        .side-brand-name {
+            font-size: 1.2rem; font-weight: 800;
+        }
+        .side-footer {
+            border-top: 1px solid var(--border);
+            padding-top: 20px; font-size: 0.75rem;
+            color: var(--text-s); opacity: 0.6;
+        }
 
         /* ─── Content ─── */
         .main-content { flex: 1; overflow-y: auto; padding: 0; -webkit-overflow-scrolling: touch; }
@@ -215,9 +232,9 @@
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeNav()"></div>
 
     <div class="sidebar" id="navSidebar">
-        <div style="display: flex; align-items: center; gap: 12px;">
-            <div style="width: 12px; height: 12px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 10px var(--accent);"></div>
-            <span style="font-size: 1.2rem; font-weight: 800;">Numbers Store</span>
+        <div class="side-brand">
+            <div class="side-brand-dot"></div>
+            <span class="side-brand-name">Numbers Store</span>
         </div>
         <div class="side-nav">
             <div class="nav-item active" id="m-home" onclick="switchNav('home', this)">
@@ -233,14 +250,16 @@
                 <i class="fas fa-headset"></i> <span data-i18n="nav_support">Support</span>
             </div>
         </div>
-        <div style="border-top: 1px solid var(--border); padding-top: 20px; font-size: 0.7rem; color: var(--text-s); opacity: 0.5;">
-            Premium Numbers Solution v3.0
+        <div class="side-footer">
+            <div style="font-weight: 700; margin-bottom: 5px;">Numbers System</div>
+            <div id="side-bot-handle">@BotName</div>
+            <div style="margin-top: 10px; opacity: 0.5;">ID: <span id="side-user-id">0</span></div>
         </div>
     </div>
 
     <header class="top-bar">
         <div class="nav-trigger" onclick="openNav()">
-            <i class="fas fa-bars-staggered"></i>
+            <i class="fas fa-bars"></i>
         </div>
         <div class="page-title" id="view-title" data-i18n="nav_home">Dashboard</div>
         <div class="user-balance" onclick="switchNav('history', document.getElementById('m-history'))">
@@ -365,7 +384,7 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        let currentLang = 'ar';
+        let currentLang = 'en';
         let countries = [];
         let selectedCountry = null;
         const userId = tg.initDataUnsafe?.user?.id || 0;
@@ -452,10 +471,14 @@
                 // Set balance from nested structure
                 if (data.user) {
                     updateBalanceUI(data.user.balance || 0);
+                    document.getElementById('side-user-id').innerText = userId;
                 }
                 
                 // Load countries automatically if in store view
                 countries = data.countries || [];
+                if (data.bot_name) {
+                    document.getElementById('side-bot-handle').innerText = '@' + data.bot_name.replace(/\s+/g, '') + 'Bot';
+                }
                 if (document.getElementById('section-store').classList.contains('active')) {
                     renderCountries(countries);
                 }

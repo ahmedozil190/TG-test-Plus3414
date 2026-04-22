@@ -1561,10 +1561,43 @@
 
             <!-- ===== Withdrawals Section ===== -->
             <section id="section-withdrawals" class="view-section">
+                <!-- Stats Row -->
+                <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px;">
+                    <div class="info-card">
+                        <div class="info-card-l">
+                            <span class="info-card-lbl">PENDING REQUESTS</span>
+                            <div class="info-card-val"><span id="stat-withdraw-pending">0</span> <span>REQUESTS</span></div>
+                        </div>
+                        <div class="info-card-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--warning);">
+                            <i class="fas fa-hourglass-half"></i>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-l">
+                            <span class="info-card-lbl">APPROVED REQUESTS</span>
+                            <div class="info-card-val"><span id="stat-withdraw-approved">0</span> <span>REQUESTS</span></div>
+                        </div>
+                        <div class="info-card-icon" style="background: rgba(34, 197, 94, 0.1); color: var(--success);">
+                            <i class="fas fa-circle-check"></i>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-l">
+                            <span class="info-card-lbl">REJECTED REQUESTS</span>
+                            <div class="info-card-val"><span id="stat-withdraw-rejected">0</span> <span>REQUESTS</span></div>
+                        </div>
+                        <div class="info-card-icon" style="background: rgba(239, 68, 68, 0.1); color: var(--error);">
+                            <i class="fas fa-circle-xmark"></i>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="card" style="padding: 22px;">
                     <div class="section-header" style="margin-top: 0; margin-bottom: 25px;">
                         <h2 data-i18n="nav_withdrawals" style="margin: 0; font-size: 1rem;">Withdrawal Requests</h2>
-                        <select id="withdraw-filter" class="input-field" style="width: auto; height: 38px; padding: 0 15px; font-size: 0.85rem;" onchange="fetchAdminWithdrawals(1, this.value)">
+                        <select id="withdraw-filter" class="input-field"
+                            style="width: auto; height: 38px; padding: 0 15px; font-size: 0.85rem;"
+                            onchange="fetchAdminWithdrawals(1, this.value)">
                             <option value="all">All Status</option>
                             <option value="pending" selected>Pending</option>
                             <option value="approved">Approved</option>
@@ -1574,11 +1607,13 @@
                     <div class="list-container" id="withdrawals-list"></div>
                     <!-- Pagination -->
                     <div id="withdraw-pagination" class="pagination-ctrls" style="display: none; margin-top: 20px;">
-                        <button class="pg-btn" id="pgPrevWithdraw" onclick="fetchAdminWithdrawals(currentAdminWithdrawPage - 1)">
+                        <button class="pg-btn" id="pgPrevWithdraw"
+                            onclick="fetchAdminWithdrawals(currentAdminWithdrawPage - 1)">
                             <i class="fas fa-chevron-left"></i> <span data-i18n="pg_prev">Prev</span>
                         </button>
                         <span id="pgInfoWithdraw" class="pg-info">Page 1 of 1</span>
-                        <button class="pg-btn" id="pgNextWithdraw" onclick="fetchAdminWithdrawals(currentAdminWithdrawPage + 1)">
+                        <button class="pg-btn" id="pgNextWithdraw"
+                            onclick="fetchAdminWithdrawals(currentAdminWithdrawPage + 1)">
                             <span data-i18n="pg_next">Next</span> <i class="fas fa-chevron-right"></i>
                         </button>
                     </div>
@@ -1972,6 +2007,7 @@
                 if (data.status === 'success') {
                     showToast(currentLang === 'ar' ? 'تمت العملية بنجاح' : 'Success');
                     fetchAdminWithdrawals(currentAdminWithdrawPage);
+                    refreshDashboardStats(); // New function to refresh counters
                 } else {
                     alert(data.detail || 'Error');
                 }
@@ -2046,6 +2082,15 @@
                 document.getElementById('stat-history-accepted').innerText = data.stats.accepted_sourced;
                 document.getElementById('stat-history-rejected').innerText = data.stats.rejected_sourced;
 
+                // Withdrawal Stats
+                const ws = data.stats;
+                const wp = document.getElementById('stat-withdraw-pending');
+                const wa = document.getElementById('stat-withdraw-approved');
+                const wr = document.getElementById('stat-withdraw-rejected');
+                if(wp) wp.innerText = ws.withdraw_pending || 0;
+                if(wa) wa.innerText = ws.withdraw_approved || 0;
+                if(wr) wr.innerText = ws.withdraw_rejected || 0;
+
                 renderRecent(data.recent);
                 fetchAdminHistory(currentAdminHistoryPage);
                 allPrices = data.prices || [];
@@ -2061,6 +2106,24 @@
                 renderUsers(filteredUsers || allUsers);
             } catch (e) { console.error(e); }
             finally { document.getElementById('loader').style.display = 'none'; }
+        }
+
+        async function refreshDashboardStats() {
+            try {
+                const res = await fetch('/api/admin/sourcing/data');
+                const data = await res.json();
+                const ws = data.stats;
+                const wp = document.getElementById('stat-withdraw-pending');
+                const wa = document.getElementById('stat-withdraw-approved');
+                const wr = document.getElementById('stat-withdraw-rejected');
+                if(wp) wp.innerText = ws.withdraw_pending || 0;
+                if(wa) wa.innerText = ws.withdraw_approved || 0;
+                if(wr) wr.innerText = ws.withdraw_rejected || 0;
+                
+                document.getElementById('stat-history-pending').innerText = ws.pending_count;
+                document.getElementById('stat-history-accepted').innerText = ws.accepted_sourced;
+                document.getElementById('stat-history-rejected').innerText = ws.rejected_sourced;
+            } catch(e) {}
         }
 
         function switchTab(tab, btn) {

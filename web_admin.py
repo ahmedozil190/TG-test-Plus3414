@@ -433,6 +433,11 @@ async def get_sourcing_data():
             accepted_sourced = (await session.execute(select(func.count(Account.id)).where(Account.status.in_([AccountStatus.AVAILABLE, AccountStatus.SOLD])))).scalar() or 0
             rejected_sourced = (await session.execute(select(func.count(Account.id)).where(Account.status == AccountStatus.REJECTED))).scalar() or 0
             
+            # Withdrawal stats
+            withdraw_pending = (await session.execute(select(func.count(WithdrawalRequest.id)).where(WithdrawalRequest.status == WithdrawalStatus.PENDING))).scalar() or 0
+            withdraw_approved = (await session.execute(select(func.count(WithdrawalRequest.id)).where(WithdrawalRequest.status == WithdrawalStatus.APPROVED))).scalar() or 0
+            withdraw_rejected = (await session.execute(select(func.count(WithdrawalRequest.id)).where(WithdrawalRequest.status == WithdrawalStatus.REJECTED))).scalar() or 0
+            
             recent_result = await session.execute(
                 select(Account).order_by(Account.id.desc()).limit(50)
             )
@@ -544,7 +549,10 @@ async def get_sourcing_data():
                     "accepted_sourced": accepted_sourced,
                     "rejected_sourced": rejected_sourced,
                     "total_balance": round(total_sourcing_balance, 2),
-                    "user_count": user_count
+                    "user_count": user_count,
+                    "withdraw_pending": withdraw_pending,
+                    "withdraw_approved": withdraw_approved,
+                    "withdraw_rejected": withdraw_rejected
                 },
                 "recent": recent,
                 "prices": prices,
