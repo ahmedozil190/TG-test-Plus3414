@@ -1399,6 +1399,9 @@
             <div class="nav-item" id="menu-history" onclick="switchNav('history', this)">
                 <i class="fas fa-clock-rotate-left"></i> <span data-i18n="nav_history">Accounts History</span>
             </div>
+            <div class="nav-item" id="menu-withdrawals" onclick="switchNav('withdrawals', this)">
+                <i class="fas fa-hand-holding-dollar"></i> <span data-i18n="nav_withdrawals">Withdrawals</span>
+            </div>
         </div>
     </div>
 
@@ -1556,6 +1559,32 @@
                 </div>
             </section>
 
+            <!-- ===== Withdrawals Section ===== -->
+            <section id="section-withdrawals" class="view-section">
+                <div class="card" style="padding: 22px;">
+                    <div class="section-header" style="margin-top: 0; margin-bottom: 25px;">
+                        <h2 data-i18n="nav_withdrawals" style="margin: 0; font-size: 1rem;">Withdrawal Requests</h2>
+                        <select id="withdraw-filter" class="input-field" style="width: auto; height: 38px; padding: 0 15px; font-size: 0.85rem;" onchange="fetchAdminWithdrawals(1, this.value)">
+                            <option value="all">All Status</option>
+                            <option value="pending" selected>Pending</option>
+                            <option value="approved">Approved</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
+                    <div class="list-container" id="withdrawals-list"></div>
+                    <!-- Pagination -->
+                    <div id="withdraw-pagination" class="pagination-ctrls" style="display: none; margin-top: 20px;">
+                        <button class="pg-btn" id="pgPrevWithdraw" onclick="fetchAdminWithdrawals(currentAdminWithdrawPage - 1)">
+                            <i class="fas fa-chevron-left"></i> <span data-i18n="pg_prev">Prev</span>
+                        </button>
+                        <span id="pgInfoWithdraw" class="pg-info">Page 1 of 1</span>
+                        <button class="pg-btn" id="pgNextWithdraw" onclick="fetchAdminWithdrawals(currentAdminWithdrawPage + 1)">
+                            <span data-i18n="pg_next">Next</span> <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
             <!-- ===== History Section ===== -->
             <section id="section-history" class="view-section">
                 <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px;">
@@ -1676,6 +1705,7 @@
                 nav_dashboard: "Dashboard",
                 nav_prices: "Buying Prices",
                 nav_users: "Customers",
+                nav_withdrawals: "Withdrawals",
                 nav_close: "Close",
                 stat_section: "Inventory",
                 stat_total: "TOTAL ACCOUNTS",
@@ -1742,6 +1772,7 @@
                 nav_dashboard: "الرئيسية",
                 nav_prices: "أسعار الشراء",
                 nav_users: "العملاء",
+                nav_withdrawals: "طلبات السحب",
                 nav_close: "إغلاق",
                 stat_section: "المخزون",
                 stat_total: "إجمالي الحسابات",
@@ -1840,7 +1871,115 @@
         let currentPricePage = 1;
         let currentPriceTab = 'active';
 
+        let currentAdminWithdrawPage = 1;
+        let totalAdminWithdrawPages = 1;
+
+        async function fetchAdminWithdrawals(page = 1, status = null) {
+            const filter = status || document.getElementById('withdraw-filter').value;
+            try {
+                const res = await fetch(`/api/admin/withdrawals/all?page=${page}&status=${filter}`);
+                const data = await res.json();
+                currentAdminWithdrawPage = data.current_page;
+                totalAdminWithdrawPages = data.total_pages;
+                renderWithdrawals(data.history);
+                updateWithdrawPagination();
+            } catch (e) { console.error("Withdrawals fetch error:", e); }
+        }
+
+        function updateWithdrawPagination() {
+            const pg = document.getElementById('withdraw-pagination');
+            if (pg) pg.style.display = totalAdminWithdrawPages > 1 ? 'flex' : 'none';
+            const info = document.getElementById('pgInfoWithdraw');
+            if (info) info.innerText = `Page ${currentAdminWithdrawPage} of ${totalAdminWithdrawPages}`;
+            const prev = document.getElementById('pgPrevWithdraw');
+            if (prev) prev.disabled = (currentAdminWithdrawPage <= 1);
+            const next = document.getElementById('pgNextWithdraw');
+            if (next) next.disabled = (currentAdminWithdrawPage >= totalAdminWithdrawPages);
+        }
+
+        function renderWithdrawals(list) {
+            const container = document.getElementById('withdrawals-list');
+            if (!container) return;
+            if (!list || !list.length) {
+                container.innerHTML = `
+                <div style="text-align: center; padding: 40px 20px; background: var(--card-glass); border-radius: 16px; border: 1px dashed var(--border);">
+                    <i class="fas fa-money-bill-transfer" style="font-size: 2.5rem; color: var(--text-secondary); opacity: 0.15; margin-bottom: 12px;"></i>
+                    <p style="color: var(--text-secondary); font-weight: 600;">No withdrawal requests found</p>
+                </div>`;
+                return;
+            }
+
+            container.innerHTML = list.map(item => {
+                let statusColor = 'var(--warning)';
+                if (item.status === 'approved') statusColor = 'var(--success)';
+                if (item.status === 'rejected') statusColor = 'var(--error)';
+
+                const isPending = item.status === 'pending';
+                const rowS = "background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;";
+                const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; flex-shrink: 0;";
+                const valS = "font-weight: 700; font-size: 0.95rem; text-align: right; word-break: break-all;";
+
+                return `
+                <div class="user-card" style="margin-bottom: 15px;">
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <div style="${rowS}">
+                            <span style="${lblS}">${currentLang === 'ar' ? 'المستخدم' : 'User'}</span>
+                            <div style="text-align: right;">
+                                <div style="font-weight: 800; color: var(--text-p);">${item.user_name}</div>
+                                <div style="font-size: 0.8rem; color: var(--accent);">${item.user_handle} (${item.user_id})</div>
+                            </div>
+                        </div>
+                        <div style="${rowS}">
+                            <span style="${lblS}">${currentLang === 'ar' ? 'التفاصيل' : 'Details'}</span>
+                            <div style="text-align: right; color: var(--text-p);">
+                                <div style="font-weight: 800; color: var(--success); font-size: 1.1rem;">$${item.amount.toFixed(2)}</div>
+                                <div style="font-size: 0.85rem; opacity: 0.8;">${item.method}</div>
+                            </div>
+                        </div>
+                        <div style="${rowS}">
+                            <span style="${lblS}">${currentLang === 'ar' ? 'العنوان' : 'Address'}</span>
+                            <span style="${valS}; color: var(--accent-purple);">${item.address}</span>
+                        </div>
+                        <div style="${rowS}">
+                            <span style="${lblS}">${currentLang === 'ar' ? 'الحالة' : 'Status'}</span>
+                            <span style="${valS}; color: ${statusColor}; text-transform: uppercase;">${item.status}</span>
+                        </div>
+                        ${isPending ? `
+                        <div style="display: flex; gap: 10px; margin-top: 5px;">
+                            <button class="primary-btn" onclick="handleWithdrawAction(${item.id}, 'approve')" style="flex: 1; height: 44px; background: var(--success);">Approve</button>
+                            <button class="primary-btn" onclick="handleWithdrawAction(${item.id}, 'reject')" style="flex: 1; height: 44px; background: var(--error);">Reject</button>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        async function handleWithdrawAction(id, action) {
+            const confirmMsg = action === 'approve' 
+                ? (currentLang === 'ar' ? 'هل أنت متأكد من الموافقة؟' : 'Are you sure you want to approve?')
+                : (currentLang === 'ar' ? 'هل أنت متأكد من الرفض؟ (لن يتم إرجاع المبلغ رصيد)' : 'Are you sure you want to reject? (NO REFUND)');
+            
+            if (!confirm(confirmMsg)) return;
+
+            try {
+                const res = await fetch('/api/admin/withdrawals/action', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ request_id: id, action: action })
+                });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    showToast(currentLang === 'ar' ? 'تمت العملية بنجاح' : 'Success');
+                    fetchAdminWithdrawals(currentAdminWithdrawPage);
+                } else {
+                    alert(data.detail || 'Error');
+                }
+            } catch (e) { alert('Error: ' + e); }
+        }
+
         function updateUI() {
+
             document.documentElement.lang = currentLang;
             document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
             document.querySelectorAll('[data-i18n]').forEach(el => {

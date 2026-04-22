@@ -45,6 +45,10 @@ class WithdrawSubmit(BaseModel):
     method: str
     address: str
 
+class WithdrawAction(BaseModel):
+    request_id: int
+    action: str # 'approve' or 'reject'
+
 # Setup logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -390,6 +394,35 @@ async def store_buy(data: StoreBuy):
     except Exception as e:
         logger.error(f"Store Buy Error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/store/history")
+async def get_store_history(user_id: int):
+    try:
+        async with async_session() as session:
+            stmt = select(Account).where(Account.buyer_id == user_id).order_by(Account.id.desc())
+            results = (await session.execute(stmt)).scalars().all()
+            
+            history = []
+            for a in results:
+                # Resolve flag
+                flag = "🌐"
+                try:
+                    cp = (await session.execute(select(CountryPrice).where(CountryPrice.country_name == a.country))).scalar()
+                    if cp:
+                        flag = get_flag_emoji(cp.iso_code)
+                except: pass
+                
+                history.append({
+                    "phone": a.phone_number,
+                    "country": a.country,
+                    "flag": flag,
+                    "price": a.price,
+                    "date": a.created_at.strftime("%Y-%m-%d %H:%M") if a.created_at else "N/A"
+                })
+            return history
+    except Exception as e:
+        logger.error(f"Store History Error: {e}")
+        return []
 
 @app.get("/api/admin/sourcing/data")
 async def get_sourcing_data():
@@ -1102,6 +1135,107 @@ async def get_withdrawals(user_id: int, page: int = 1):
             "current_page": page,
             "total_count": total_count
         }
+
+@app.get("/api/admin/withdrawals/all")
+async def admin_get_all_withdrawals(page: int = 1, status: str = "all"):
+    page_size = 20
+    offset = (page - 1) * page_size
+    async with async_session() as session:
+        # Build query
+        stmt = select(WithdrawalRequest).order_by(WithdrawalRequest.created_at.desc())
+        if status != "all":
+            try:
+                stmt = stmt.where(WithdrawalRequest.status == WithdrawalStatus(status.lower()))
+            except: pass
+        
+        # Count total
+        count_stmt = select(func.count()).select_from(stmt.alias())
+        total_count = (await session.execute(count_stmt)).scalar() or 0
+        total_pages = (total_count + page_size - 1) // page_size if total_count > 0 else 1
+        
+        # Paginate results
+        results = (await session.execute(stmt.offset(offset).limit(page_size))).scalars().all()
+        
+        history = []
+        for r in results:
+            # Fetch user info for display
+            u = await session.get(User, r.user_id)
+            history.append({
+                "id": r.id,
+                "user_id": r.user_id,
+                "user_name": u.full_name if u else "N/A",
+                "user_handle": f"@{u.username}" if u and u.username else "N/A",
+                "transaction_id": r.transaction_id,
+                "amount": r.amount,
+                "method": r.method,
+                "address": r.address,
+                "status": r.status.value,
+                "date": r.created_at.strftime("%Y-%m-%d %H:%M")
+            })
+            
+        return {
+            "history": history,
+            "total_pages": total_pages,
+            "current_page": page,
+            "total_count": total_count
+        }
+
+@app.post("/api/admin/withdrawals/action")
+async def admin_withdrawal_action(data: WithdrawAction):
+    async with async_session() as session:
+        req = await session.get(WithdrawalRequest, data.request_id)
+        if not req:
+            raise HTTPException(status_code=404, detail="Request not found")
+            
+        if req.status != WithdrawalStatus.PENDING:
+            raise HTTPException(status_code=400, detail=f"Request is already {req.status.value}")
+            
+        # 1. Update Status
+        if data.action == "approve":
+            req.status = WithdrawalStatus.APPROVED
+            btn_text = "✅ Approved"
+            msg_theme = "🟢"
+        elif data.action == "reject":
+            # NO REFUND as per user request
+            req.status = WithdrawalStatus.REJECTED
+            btn_text = "❌ Rejected (No Refund)"
+            msg_theme = "🔴"
+        else:
+            raise HTTPException(status_code=400, detail="Invalid action")
+            
+        await session.commit()
+        
+        # 2. Notify User via Bot
+        bot = getattr(app.state, 'bot_seller', None)
+        if bot:
+            try:
+                # Localized message based on user preference
+                user = await session.get(User, req.user_id)
+                lang = user.language if user else "ar"
+                
+                if lang == "ar":
+                    msg = (
+                        f"📢 **تنبيه سحب جديد**\n\n"
+                        f"الحالة: {msg_theme} {data.action.upper()}\n"
+                        f"المبلغ: ${req.amount:.2f}\n"
+                        f"المعرف: <code>{req.transaction_id}</code>\n\n"
+                        f"{'✅ تم تحويل أموالك بنجاح.' if data.action == 'approve' else '❌ تم رفض طلب السحب الخاص بك.'}"
+                    )
+                else:
+                    msg = (
+                        f"📢 **Withdrawal Update**\n\n"
+                        f"Status: {msg_theme} {data.action.upper()}\n"
+                        f"Amount: ${req.amount:.2f}\n"
+                        f"ID: <code>{req.transaction_id}</code>\n\n"
+                        f"{'✅ Your funds have been transferred successfully.' if data.action == 'approve' else '❌ Your withdrawal request has been rejected.'}"
+                    )
+                
+                await bot.send_message(req.user_id, msg, parse_mode="HTML")
+            except Exception as e:
+                logger.error(f"Failed to send withdrawal notification: {e}")
+                
+        return {"status": "success", "message": f"Withdrawal {data.action}ed successfully"}
+
 
 @app.get("/api/admin/countries-for-code/{code}")
 async def get_countries_for_code(code: str):

@@ -1,38 +1,66 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#09090b">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Numbers Store</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Tajawal:wght@400;500;700;800&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&family=Plus Jakarta Sans:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
     <style>
         :root {
-            --bg-primary: #0a0a0f;
-            --bg-secondary: #12121a;
-            --bg-card: #1a1a25;
-            --bg-elevated: #22222f;
             --accent: #6c5ce7;
-            --accent-light: #a29bfe;
             --accent-glow: rgba(108, 92, 231, 0.3);
-            --green: #00b894;
-            --green-glow: rgba(0, 184, 148, 0.2);
-            --red: #ff6b6b;
-            --gold: #ffd32a;
-            --text-primary: #f0f0f5;
-            --text-secondary: #8888a0;
-            --text-dim: #55556a;
-            --border: rgba(255, 255, 255, 0.06);
-            --glass: rgba(255, 255, 255, 0.03);
+            --accent-purple: #8b5cf6;
+            --accent-dark: #4338ca;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
             --radius-sm: 12px;
-            --radius-md: 16px;
-            --radius-lg: 24px;
-            --radius-xl: 32px;
+            --radius-md: 20px;
+            --radius-lg: 28px;
+            --radius: 18px;
+            --ease: cubic-bezier(0.16, 1, 0.3, 1);
+            --sidebar-width: 280px;
+        }
+
+        .dark-mode {
+            --bg: #1a1a1c;
+            --bg-elevated: #111113;
+            --card-glass: rgba(255, 255, 255, 0.02);
+            --border: rgba(255, 255, 255, 0.06);
+            --text-p: #fafafa;
+            --text-s: #a1a1aa;
+            --text-primary: var(--text-p);
+            --text-secondary: var(--text-s);
+            --sidebar-bg: var(--bg-elevated);
+            --modal-bg: #09090b;
+            --input-bg: #09090b;
+            --shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            --tab-bg: rgba(255, 255, 255, 0.05);
+        }
+
+        .light-mode {
+            --bg: #f1f3f5;
+            --bg-elevated: #ffffff;
+            --card-glass: rgba(0, 0, 0, 0.02);
+            --border: rgba(0, 0, 0, 0.06);
+            --text-p: #0f172a;
+            --text-s: #64748b;
+            --text-primary: var(--text-p);
+            --text-secondary: var(--text-s);
+            --sidebar-bg: var(--bg-elevated);
+            --modal-bg: #ffffff;
+            --input-bg: #f1f2f6;
+            --shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+            --tab-bg: rgba(0, 0, 0, 0.05);
         }
 
         * {
@@ -42,1231 +70,540 @@
             -webkit-tap-highlight-color: transparent;
         }
 
+        [dir="ltr"] { font-family: 'Plus Jakarta Sans', sans-serif; }
+        [dir="rtl"] { font-family: 'Cairo', sans-serif; }
+
         body {
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            font-family: 'Inter', 'Tajawal', sans-serif;
-            overflow-x: hidden;
-            min-height: 100vh;
-        }
-
-        /* ─── Splash Loader ─── */
-        .splash {
-            position: fixed;
-            inset: 0;
-            z-index: 9999;
-            background: var(--bg-primary);
+            background-color: var(--bg);
+            color: var(--text-p);
+            height: 100vh;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            transition: opacity 0.5s, visibility 0.5s;
+            transition: background-color 0.4s var(--ease), color 0.4s var(--ease);
+            -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeLegibility;
         }
 
-        .splash.hide {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
-
-        .splash-logo {
-            width: 70px;
+        /* ─── Top Bar ─── */
+        .top-bar {
             height: 70px;
-            background: linear-gradient(135deg, var(--accent), var(--accent-light));
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            color: white;
-            animation: pulse-logo 1.5s ease-in-out infinite;
-            box-shadow: 0 10px 40px var(--accent-glow);
-        }
-
-        @keyframes pulse-logo {
-
-            0%,
-            100% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.08);
-            }
-        }
-
-        .splash-text {
-            margin-top: 20px;
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-
-        .splash-dots {
-            margin-top: 25px;
-            display: flex;
-            gap: 6px;
-        }
-
-        .splash-dots span {
-            width: 6px;
-            height: 6px;
-            background: var(--accent);
-            border-radius: 50%;
-            animation: dot-bounce 1.2s ease-in-out infinite;
-        }
-
-        .splash-dots span:nth-child(2) {
-            animation-delay: 0.15s;
-        }
-
-        .splash-dots span:nth-child(3) {
-            animation-delay: 0.3s;
-        }
-
-        @keyframes dot-bounce {
-
-            0%,
-            80%,
-            100% {
-                opacity: 0.3;
-                transform: scale(0.8);
-            }
-
-            40% {
-                opacity: 1;
-                transform: scale(1.2);
-            }
-        }
-
-        /* ─── Header ─── */
-        .header {
-            padding: 20px 20px 16px;
-            background: linear-gradient(180deg, rgba(108, 92, 231, 0.08) 0%, transparent 100%);
-        }
-
-        .header-top {
+            background: var(--bg-elevated);
+            border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 18px;
+            padding: 0 20px;
+            z-index: 1000;
+            flex-shrink: 0;
         }
 
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
+        .nav-trigger {
+            width: 44px; height: 44px; border-radius: 12px;
+            background: var(--card-glass); border: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; cursor: pointer; color: var(--text-p);
         }
 
-        .brand-icon {
-            width: 42px;
-            height: 42px;
-            background: linear-gradient(135deg, var(--accent), var(--accent-light));
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            color: white;
-            box-shadow: 0 4px 15px var(--accent-glow);
+        .page-title { font-size: 1rem; font-weight: 800; letter-spacing: 0.5px; opacity: 0.9; }
+
+        .user-balance {
+            padding: 8px 16px; border-radius: 12px;
+            background: var(--card-glass); border: 1px solid var(--border);
+            display: flex; align-items: center; gap: 8px; cursor: pointer;
         }
+        .balance-val { font-weight: 800; color: var(--success); }
 
-        .brand-text {
-            font-size: 1.15rem;
-            font-weight: 800;
-            letter-spacing: -0.5px;
+        /* ─── Sidebar ─── */
+        .sidebar {
+            position: fixed; top: 0; left: 0; width: var(--sidebar-width); height: 100%;
+            background: var(--bg-elevated); border-right: 1px solid var(--border);
+            z-index: 3000; transform: translateX(-100%);
+            transition: transform 0.4s var(--ease);
+            padding: 40px 20px; display: flex; flex-direction: column; gap: 40px;
+            box-shadow: 20px 0 60px rgba(0, 0, 0, 0.1);
         }
-
-        .brand-text span {
-            color: var(--accent-light);
+        .sidebar.open { transform: translateX(0); }
+        .sidebar-overlay {
+            position: fixed; inset: 0; z-index: 2500;
+            background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(4px);
+            opacity: 0; visibility: hidden; transition: all 0.4s var(--ease);
         }
-
-        .header-badge {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 50px;
-            padding: 6px 14px;
-            font-size: 0.7rem;
-            color: var(--green);
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+        .sidebar-overlay.show { opacity: 1; visibility: visible; }
+        .side-nav { display: flex; flex-direction: column; gap: 10px; flex: 1; }
+        .nav-item {
+            padding: 16px 20px; border-radius: 16px; display: flex; align-items: center;
+            gap: 14px; color: var(--text-s); font-weight: 600; font-size: 0.95rem;
+            cursor: pointer; transition: all 0.2s;
         }
+        .nav-item:hover, .nav-item.active { background: var(--card-glass); color: var(--text-p); }
+        .nav-item.active { border: 1px solid var(--border); color: var(--accent); }
 
-        .header-badge .dot {
-            width: 6px;
-            height: 6px;
-            background: var(--green);
-            border-radius: 50%;
-            animation: blink 2s infinite;
+        /* ─── Content ─── */
+        .main-content { flex: 1; overflow-y: auto; padding: 0; -webkit-overflow-scrolling: touch; }
+        .view-panel { display: none; padding: 25px 20px; animation: viewIn 0.5s var(--ease); }
+        .view-panel.active { display: block; }
+        @keyframes viewIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ─── High-End Cards ─── */
+        .info-card {
+            background: var(--bg-elevated); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: var(--shadow); margin-bottom: 15px;
         }
-
-        @keyframes blink {
-
-            0%,
-            100% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0.3;
-            }
-        }
-
-        /* Balance Widget */
-        .balance-widget {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 16px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .balance-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .balance-icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--green), #55efc4);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1rem;
-        }
-
-        .balance-label {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
-        .balance-amount {
-            font-size: 1.4rem;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-        }
-
-        .balance-amount .currency {
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-
-        .stock-info {
-            text-align: left;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 2px;
-        }
-
-        .stock-count {
-            font-size: 1.2rem;
-            font-weight: 800;
-            color: var(--accent-light);
-        }
-
-        .stock-label {
-            font-size: 0.7rem;
-            color: var(--text-dim);
-            font-weight: 500;
-        }
+        .info-card-val { font-size: 1.4rem; font-weight: 800; color: var(--text-p); }
+        .info-card-lbl { font-size: 0.7rem; color: var(--text-s); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
 
         /* ─── Search ─── */
-        .search-wrapper {
-            padding: 0 20px 12px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background: linear-gradient(180deg, var(--bg-primary) 60%, transparent);
-            padding-top: 10px;
-        }
-
+        .search-area { position: sticky; top: -25px; background: var(--bg); padding-top: 25px; padding-bottom: 15px; z-index: 10; padding-left: 2px; padding-right: 2px; }
         .search-box {
-            position: relative;
+            background: var(--bg-elevated); border: 1px solid var(--border);
+            border-radius: 16px; padding: 0 18px; display: flex; align-items: center;
+            gap: 12px; height: 54px; transition: all 0.3s;
         }
+        .search-box:focus-within { border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
+        .search-input { background: transparent; border: none; outline: none; color: var(--text-p); font-size: 0.95rem; font-weight: 600; width: 100%; font-family: inherit; }
 
-        .search-box input {
-            width: 100%;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 14px 20px 14px 45px;
-            color: var(--text-primary);
-            font-size: 0.9rem;
-            font-family: inherit;
-            outline: none;
-            transition: all 0.3s;
-        }
-
-        .search-box input:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px var(--accent-glow);
-        }
-
-        .search-box input::placeholder {
-            color: var(--text-dim);
-        }
-
-        .search-box .search-icon {
-            position: absolute;
-            left: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-dim);
-            font-size: 0.9rem;
-            transition: color 0.3s;
-        }
-
-        .search-box input:focus~.search-icon {
-            color: var(--accent);
-        }
-
-        /* ─── Stats Bar ─── */
-        .stats-bar {
-            padding: 0 20px 15px;
-            display: flex;
-            gap: 10px;
-        }
-
-        .stat-chip {
-            flex: 1;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            padding: 10px 14px;
-            text-align: center;
-        }
-
-        .stat-chip .stat-val {
-            font-size: 1.1rem;
-            font-weight: 800;
-            color: var(--accent-light);
-        }
-
-        .stat-chip .stat-lbl {
-            font-size: 0.65rem;
-            color: var(--text-dim);
-            font-weight: 500;
-            margin-top: 2px;
-        }
-
-        /* ─── Country Cards ─── */
-        .section-title {
-            padding: 0 20px 12px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .countries-grid {
-            padding: 0 20px 100px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
+        /* ─── Grid ─── */
+        .grid-container { display: flex; flex-direction: column; gap: 12px; }
         .country-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            position: relative;
-            overflow: hidden;
+            background: var(--bg-elevated); border: 1px solid var(--border);
+            padding: 18px 22px; border-radius: var(--radius-md);
+            display: flex; align-items: center; justify-content: space-between;
+            cursor: pointer; transition: all 0.2s;
         }
+        .country-card:active { transform: scale(0.98); background: var(--card-glass); }
+        .c-flag { font-size: 2.2rem; }
+        .c-name { font-size: 1rem; font-weight: 800; margin-bottom: 2px; }
+        .c-stock { font-size: 0.75rem; color: var(--text-s); font-weight: 600; }
+        .c-price { background: var(--accent-glow); color: var(--accent-purple); padding: 8px 16px; border-radius: 50px; font-weight: 800; }
 
-        .country-card::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, var(--accent-glow), transparent);
-            opacity: 0;
-            transition: opacity 0.3s;
+        /* ─── Buttons ─── */
+        .primary-btn {
+            background: var(--accent); color: white; border: none;
+            padding: 16px; border-radius: 16px; font-weight: 800; font-size: 1rem;
+            cursor: pointer; box-shadow: 0 8px 25px var(--accent-glow); transition: 0.3s;
+            width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
         }
+        .primary-btn:active { transform: scale(0.98); }
 
-        .country-card:active {
-            transform: scale(0.97);
-        }
-
-        .country-card:active::before {
-            opacity: 1;
-        }
-
-        .card-left {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .flag {
-            font-size: 2.2rem;
-            line-height: 1;
-            filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4));
-        }
-
-        .card-info h3 {
-            font-size: 0.95rem;
-            font-weight: 700;
-            margin-bottom: 3px;
-        }
-
-        .card-info .stock-text {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .card-info .stock-text .stock-dot {
-            width: 5px;
-            height: 5px;
-            border-radius: 50%;
-            background: var(--green);
-        }
-
-        .card-right {
-            position: relative;
-            z-index: 1;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .price-tag {
-            background: linear-gradient(135deg, var(--accent), #7c6cf0);
-            color: white;
-            padding: 8px 16px;
-            border-radius: var(--radius-sm);
-            font-weight: 800;
-            font-size: 0.9rem;
-            box-shadow: 0 4px 12px var(--accent-glow);
-            white-space: nowrap;
-        }
-
-        .buy-arrow {
-            color: var(--text-dim);
-            font-size: 0.8rem;
-        }
-
-        /* ─── Empty State ─── */
-        .empty-state {
-            text-align: center;
-            padding: 60px 30px;
-            display: none;
-        }
-
-        .empty-state i {
-            font-size: 3rem;
-            color: var(--text-dim);
-            margin-bottom: 15px;
-        }
-
-        .empty-state p {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-
-        /* ─── Skeleton Loading ─── */
-        .skeleton-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .skel-left {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-
-        .skel-circle {
-            width: 45px;
-            height: 45px;
-            border-radius: 12px;
-            background: var(--bg-elevated);
-            animation: shimmer 1.5s infinite;
-        }
-
-        .skel-lines {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .skel-line {
-            height: 12px;
-            border-radius: 6px;
-            background: var(--bg-elevated);
-            animation: shimmer 1.5s infinite;
-        }
-
-        .skel-line.w1 {
-            width: 100px;
-        }
-
-        .skel-line.w2 {
-            width: 65px;
-            animation-delay: 0.15s;
-        }
-
-        .skel-price {
-            width: 65px;
-            height: 36px;
-            border-radius: var(--radius-sm);
-            background: var(--bg-elevated);
-            animation: shimmer 1.5s infinite;
-            animation-delay: 0.3s;
-        }
-
-        @keyframes shimmer {
-            0% {
-                opacity: 0.4;
-            }
-
-            50% {
-                opacity: 0.8;
-            }
-
-            100% {
-                opacity: 0.4;
-            }
-        }
-
-        /* ─── Modal Overlay ─── */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 5000;
-            background: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(8px);
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s;
-        }
-
-        .modal-overlay.show {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal-sheet {
-            width: 100%;
-            max-width: 500px;
-            background: var(--bg-secondary);
-            border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-            padding: 30px 24px 40px;
-            transform: translateY(100%);
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .modal-overlay.show .modal-sheet {
-            transform: translateY(0);
-        }
-
-        .modal-handle {
-            width: 40px;
-            height: 4px;
-            background: var(--text-dim);
-            border-radius: 4px;
-            margin: 0 auto 24px;
-        }
-
-        /* Confirm Modal */
-        .confirm-header {
-            text-align: center;
-            margin-bottom: 24px;
-        }
-
-        .confirm-icon {
-            width: 64px;
-            height: 64px;
-            margin: 0 auto 16px;
-            background: linear-gradient(135deg, var(--accent-glow), rgba(108, 92, 231, 0.1));
-            border: 2px solid rgba(108, 92, 231, 0.3);
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-        }
-
-        .confirm-header h2 {
-            font-size: 1.2rem;
-            font-weight: 800;
-        }
-
-        .confirm-header p {
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-            margin-top: 6px;
-        }
-
-        .confirm-details {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 16px;
-            margin-bottom: 24px;
-        }
-
-        .detail-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-        }
-
-        .detail-row:not(:last-child) {
-            border-bottom: 1px solid var(--border);
-        }
-
-        .detail-row .label {
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-        }
-
-        .detail-row .value {
-            font-weight: 700;
-            font-size: 0.95rem;
-        }
-
-        .detail-row .value.price-highlight {
-            color: var(--accent-light);
-            font-size: 1.1rem;
-        }
-
-        .modal-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn {
-            flex: 1;
-            padding: 15px;
-            border-radius: var(--radius-md);
-            border: none;
-            font-family: inherit;
-            font-size: 0.95rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn:active {
-            transform: scale(0.97);
-        }
-
-        .btn-cancel {
-            background: var(--bg-card);
-            color: var(--text-secondary);
-            border: 1px solid var(--border);
-        }
-
-        .btn-confirm {
-            background: linear-gradient(135deg, var(--accent), #7c6cf0);
-            color: white;
-            box-shadow: 0 4px 15px var(--accent-glow);
-        }
-
-        .btn-confirm:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .btn-confirm .spinner-small {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
-            vertical-align: middle;
-            margin-left: 8px;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
+        /* ─── Loader ─── */
+        #splash { position: fixed; inset: 0; z-index: 9999; background: var(--bg); display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .spinner { width: 50px; height: 50px; border: 3px solid var(--border); border-top: 3px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
 
         /* ─── Success Modal ─── */
-        .success-icon {
-            width: 72px;
-            height: 72px;
-            margin: 0 auto 16px;
-            background: var(--green-glow);
-            border: 2px solid rgba(0, 184, 148, 0.4);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            color: var(--green);
-            animation: success-pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
+        .modal-overlay { position: fixed; inset: 0; z-index: 5000; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); display: none; align-items: flex-end; justify-content: center; }
+        .modal-sheet { width: 100%; max-width: 500px; background: var(--bg-elevated); border-radius: 24px 24px 0 0; padding: 30px; animation: slideUp 0.4s var(--ease); }
+        @keyframes slideUp { from { transform: translateY(100%); } }
+        .phone-display { background: var(--bg); border: 1px solid var(--border); border-radius: 16px; padding: 20px; text-align: center; margin: 20px 0; font-size: 1.6rem; font-weight: 800; position: relative; }
+        .copy-trigger { position: absolute; top: 10px; right: 10px; color: var(--text-s); font-size: 1rem; cursor: pointer; }
 
-        @keyframes success-pop {
-            0% {
-                transform: scale(0);
-            }
-
-            100% {
-                transform: scale(1);
-            }
-        }
-
-        .phone-display {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 16px;
-            text-align: center;
-            margin: 20px 0;
-            position: relative;
-        }
-
-        .phone-display .phone-label {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-        }
-
-        .phone-display .phone-number {
-            font-size: 1.5rem;
-            font-weight: 800;
-            letter-spacing: 1px;
-            font-family: 'Inter', monospace;
-            direction: ltr;
-        }
-
-        .copy-btn {
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            width: 36px;
-            height: 36px;
-            background: var(--bg-elevated);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .copy-btn:active {
-            transform: scale(0.9);
-        }
-
-        .copy-btn.copied {
-            color: var(--green);
-            border-color: var(--green);
-        }
-
-        .success-steps {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 16px;
-            margin-bottom: 20px;
-        }
-
-        .step {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            padding: 8px 0;
-        }
-
-        .step-num {
-            width: 24px;
-            height: 24px;
-            min-width: 24px;
-            background: var(--accent-glow);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.7rem;
-            font-weight: 800;
-            color: var(--accent-light);
-        }
-
-        .step-text {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            line-height: 1.5;
-        }
-
-        .btn-done {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, var(--green), #55efc4);
-            color: #000;
-            border: none;
-            border-radius: var(--radius-md);
-            font-family: inherit;
-            font-size: 1rem;
-            font-weight: 800;
-            cursor: pointer;
-            box-shadow: 0 4px 15px var(--green-glow);
-            transition: all 0.2s;
-        }
-
-        .btn-done:active {
-            transform: scale(0.97);
-        }
-
-        /* ─── Toast ─── */
-        .toast {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: var(--bg-elevated);
-            border: 1px solid var(--border);
-            padding: 12px 24px;
-            border-radius: 50px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            z-index: 9000;
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            white-space: nowrap;
-        }
-
-        .toast.show {
-            transform: translateX(-50%) translateY(0);
-        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
     </style>
 </head>
 
-<body>
-
-    <!-- Splash Screen -->
-    <div class="splash" id="splash">
-        <div class="splash-logo"><i class="fas fa-store"></i></div>
-        <p class="splash-text">جاري تحميل المتجر...</p>
-        <div class="splash-dots"><span></span><span></span><span></span></div>
+<body class="dark-mode">
+    <div id="splash">
+        <div class="spinner"></div>
+        <p style="margin-top: 20px; font-weight: 700; color: var(--text-s);" data-i18n="loading">Loading System...</p>
     </div>
 
-    <!-- Header -->
-    <div class="header">
-        <div class="header-top">
-            <div class="brand">
-                <div class="brand-icon"><i class="fas fa-bolt"></i></div>
-                <div class="brand-text">NUM<span>STORE</span></div>
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeNav()"></div>
+
+    <div class="sidebar" id="navSidebar">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 12px; height: 12px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 10px var(--accent);"></div>
+            <span style="font-size: 1.2rem; font-weight: 800;">Numbers Store</span>
+        </div>
+        <div class="side-nav">
+            <div class="nav-item active" id="m-home" onclick="switchNav('home', this)">
+                <i class="fas fa-chart-pie"></i> <span data-i18n="nav_home">Dashboard</span>
             </div>
-            <div class="header-badge">
-                <span class="dot"></span>
-                متصل
+            <div class="nav-item" id="m-store" onclick="switchNav('store', this)">
+                <i class="fas fa-shopping-bag"></i> <span data-i18n="nav_buy">Buy Numbers</span>
+            </div>
+            <div class="nav-item" id="m-history" onclick="switchNav('history', this)">
+                <i class="fas fa-clock-rotate-left"></i> <span data-i18n="nav_history">My Orders</span>
+            </div>
+            <div class="nav-item" id="m-support" onclick="switchNav('support', this)">
+                <i class="fas fa-headset"></i> <span data-i18n="nav_support">Support</span>
             </div>
         </div>
-        <div class="balance-widget">
-            <div class="balance-left">
-                <div class="balance-icon"><i class="fas fa-wallet"></i></div>
-                <div>
-                    <div class="balance-label">رصيدك الحالي</div>
-                    <div class="balance-amount" id="userBalance">0.00 <span class="currency">USD</span></div>
-                </div>
-            </div>
-            <div class="stock-info">
-                <div class="stock-count" id="totalStock">0</div>
-                <div class="stock-label">رقم متاح</div>
-            </div>
+        <div style="border-top: 1px solid var(--border); padding-top: 20px; font-size: 0.7rem; color: var(--text-s); opacity: 0.5;">
+            Premium Numbers Solution v3.0
         </div>
     </div>
 
-    <!-- Search -->
-    <div class="search-wrapper">
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="ابحث عن دولة..." oninput="filterCountries()">
-            <i class="fas fa-search search-icon"></i>
+    <header class="top-bar">
+        <div class="nav-trigger" onclick="openNav()">
+            <i class="fas fa-bars-staggered"></i>
         </div>
-    </div>
+        <div class="page-title" id="view-title" data-i18n="nav_home">Dashboard</div>
+        <div class="user-balance" onclick="switchNav('history', document.getElementById('m-history'))">
+            <i class="fas fa-wallet" style="color: var(--text-s);"></i>
+            <span class="balance-val" id="top-balance">$0.00</span>
+        </div>
+    </header>
 
-    <!-- Stats -->
-    <div class="stats-bar" id="statsBar">
-        <div class="stat-chip">
-            <div class="stat-val" id="countryCount">0</div>
-            <div class="stat-lbl">دول متاحة</div>
-        </div>
-        <div class="stat-chip">
-            <div class="stat-val" id="minPrice">-</div>
-            <div class="stat-lbl">أقل سعر</div>
-        </div>
-        <div class="stat-chip">
-            <div class="stat-val" id="maxPrice">-</div>
-            <div class="stat-lbl">أعلى سعر</div>
-        </div>
-    </div>
+    <main class="main-content">
+        <!-- Dashboard -->
+        <section id="section-home" class="view-panel active">
+            <div class="info-card">
+                <div style="display: flex; flex-direction: column;">
+                    <span class="info-card-lbl" data-i18n="balance">YOUR BALANCE</span>
+                    <span class="info-card-val" id="dash-balance">$0.00</span>
+                </div>
+                <div style="width: 45px; height: 45px; background: rgba(16, 185, 129, 0.1); color: var(--success); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-wallet"></i>
+                </div>
+            </div>
+            <div class="info-card">
+                <div style="display: flex; flex-direction: column;">
+                    <span class="info-card-lbl" data-i18n="total_orders">TOTAL ORDERS</span>
+                    <span class="info-card-val" id="dash-orders">0</span>
+                </div>
+                <div style="width: 45px; height: 45px; background: rgba(108, 92, 231, 0.1); color: var(--accent); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+            </div>
 
-    <!-- Section Title -->
-    <div class="section-title">الدول المتاحة</div>
+            <h3 style="margin: 25px 0 15px; font-size: 0.9rem; text-transform: uppercase; color: var(--text-s); letter-spacing: 1px;" data-i18n="quick_buy">Quick Access</h3>
+            <button class="primary-btn" onclick="switchNav('store', document.getElementById('m-store'))">
+                <i class="fas fa-rocket"></i> <span data-i18n="btn_start_shopping">Start Shopping</span>
+            </button>
+        </section>
 
-    <!-- Countries List -->
-    <div class="countries-grid" id="countriesGrid">
-        <!-- Skeleton cards while loading -->
-        <div class="skeleton-card">
-            <div class="skel-left">
-                <div class="skel-circle"></div>
-                <div class="skel-lines">
-                    <div class="skel-line w1"></div>
-                    <div class="skel-line w2"></div>
+        <!-- Store -->
+        <section id="section-store" class="view-panel">
+            <div class="search-area">
+                <div class="search-box">
+                    <i class="fas fa-search" style="color: var(--text-s);"></i>
+                    <input type="text" id="store-search" class="search-input" placeholder="Search countries..." oninput="filterStore()">
                 </div>
             </div>
-            <div class="skel-price"></div>
-        </div>
-        <div class="skeleton-card">
-            <div class="skel-left">
-                <div class="skel-circle"></div>
-                <div class="skel-lines">
-                    <div class="skel-line w1"></div>
-                    <div class="skel-line w2"></div>
-                </div>
+            <div class="grid-container" id="countries-grid">
+                <!-- Injected via JS -->
             </div>
-            <div class="skel-price"></div>
-        </div>
-        <div class="skeleton-card">
-            <div class="skel-left">
-                <div class="skel-circle"></div>
-                <div class="skel-lines">
-                    <div class="skel-line w1"></div>
-                    <div class="skel-line w2"></div>
-                </div>
-            </div>
-            <div class="skel-price"></div>
-        </div>
-        <div class="skeleton-card">
-            <div class="skel-left">
-                <div class="skel-circle"></div>
-                <div class="skel-lines">
-                    <div class="skel-line w1"></div>
-                    <div class="skel-line w2"></div>
-                </div>
-            </div>
-            <div class="skel-price"></div>
-        </div>
-    </div>
+        </section>
 
-    <!-- Empty State -->
-    <div class="empty-state" id="emptyState">
-        <i class="fas fa-box-open"></i>
-        <p>لا توجد أرقام متاحة حالياً</p>
-    </div>
+        <!-- History -->
+        <section id="section-history" class="view-panel">
+            <div class="grid-container" id="history-list">
+                <!-- Injected via JS -->
+            </div>
+        </section>
 
-    <!-- Confirm Purchase Modal -->
-    <div class="modal-overlay" id="confirmModal">
-        <div class="modal-sheet">
-            <div class="modal-handle"></div>
-            <div class="confirm-header">
-                <div class="confirm-icon" id="confirmFlag"></div>
-                <h2>تأكيد الشراء</h2>
-                <p>هل تريد شراء رقم من هذه الدولة؟</p>
-            </div>
-            <div class="confirm-details">
-                <div class="detail-row">
-                    <span class="label">الدولة</span>
-                    <span class="value" id="confirmCountry">-</span>
-                </div>
-                <div class="detail-row">
-                    <span class="label">المخزون</span>
-                    <span class="value" id="confirmStock">-</span>
-                </div>
-                <div class="detail-row">
-                    <span class="label">السعر</span>
-                    <span class="value price-highlight" id="confirmPrice">-</span>
-                </div>
-                <div class="detail-row">
-                    <span class="label">رصيدك بعد الشراء</span>
-                    <span class="value" id="confirmRemaining">-</span>
+        <!-- Support -->
+        <section id="section-support" class="view-panel">
+            <div class="info-card">
+                <div style="display: flex; flex-direction: column; gap: 5px;">
+                    <span style="font-weight: 800; font-size: 1.1rem;">Technical Support</span>
+                    <span style="color: var(--text-s); font-size: 0.85rem;">Available 24/7 for your assistance.</span>
                 </div>
             </div>
-            <div class="modal-actions">
-                <button class="btn btn-cancel" onclick="closeModal()">إلغاء</button>
-                <button class="btn btn-confirm" id="buyBtn" onclick="processPurchase()">
-                    شراء الآن <i class="fas fa-arrow-left"></i>
-                </button>
-            </div>
-        </div>
-    </div>
+            <button class="primary-btn" onclick="tg.openTelegramLink('https://t.me/FE4EE')" style="background: #229ED9;">
+                <i class="fab fa-telegram"></i> Contact Support
+            </button>
+        </section>
+    </main>
 
-    <!-- Success Modal -->
-    <div class="modal-overlay" id="successModal">
-        <div class="modal-sheet">
-            <div class="modal-handle"></div>
-            <div class="confirm-header">
-                <div class="success-icon"><i class="fas fa-check"></i></div>
-                <h2>تم الشراء بنجاح! 🎉</h2>
-                <p>تم خصم الرصيد وحجز الرقم لك</p>
-            </div>
-            <div class="phone-display">
-                <div class="phone-label">الرقم المشترى</div>
-                <div class="phone-number" id="boughtPhone">-</div>
-                <button class="copy-btn" onclick="copyPhone()"><i class="fas fa-copy"></i></button>
-            </div>
-            <div class="success-steps">
-                <div class="step">
-                    <div class="step-num">1</div>
-                    <div class="step-text">افتح تطبيق تلجرام الرسمي وابدأ تسجيل حساب جديد</div>
+    <!-- Buy Confirm Modal -->
+    <div id="buy-modal" class="modal-overlay" onclick="closeModal('buy-modal')">
+        <div class="modal-sheet" onclick="event.stopPropagation()">
+            <div style="text-align: center; margin-bottom: 25px;">
+                <div style="width: 60px; height: 60px; background: var(--accent-glow); border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 1.5rem; color: var(--accent);">
+                    <i class="fas fa-shopping-cart"></i>
                 </div>
-                <div class="step">
-                    <div class="step-num">2</div>
-                    <div class="step-text">أدخل الرقم أعلاه في خانة رقم الهاتف</div>
+                <h2 data-i18n="confirm_title">Confirm Purchase</h2>
+                <p style="color: var(--text-s); font-size: 0.9rem;" data-i18n="confirm_desc">You are about to buy a virtual number.</p>
+            </div>
+            <div style="background: var(--bg); border: 1px solid var(--border); border-radius: 16px; padding: 15px; margin-bottom: 25px;">
+                <div style="display: flex; justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid var(--border);">
+                    <span style="color: var(--text-s);" data-i18n="lbl_country">Country</span>
+                    <span id="buy-country-name" style="font-weight: 800;">-</span>
                 </div>
-                <div class="step">
-                    <div class="step-num">3</div>
-                    <div class="step-text">ارجع للبوت واضغط "أرسل الكود" لاستلام كود التفعيل</div>
+                <div style="display: flex; justify-content: space-between; padding-top: 10px;">
+                    <span style="color: var(--text-s);" data-i18n="lbl_price">Price</span>
+                    <span id="buy-price-val" style="font-weight: 800; color: var(--success);">$0.00</span>
                 </div>
             </div>
-            <button class="btn-done" onclick="closeSuccessAndReturn()">
-                <i class="fas fa-arrow-right"></i> العودة للبوت
+            <button id="btn-final-buy" class="primary-btn" onclick="execBuy()">
+                <span data-i18n="btn_confirm_pay">Confirm & Pay</span>
             </button>
         </div>
     </div>
 
-    <!-- Toast -->
-    <div class="toast" id="toast"></div>
+    <!-- Success Modal -->
+    <div id="success-modal" class="modal-overlay">
+        <div class="modal-sheet">
+            <div style="text-align: center;">
+                <div style="width: 60px; height: 60px; background: rgba(16,185,129,0.1); color: var(--success); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-size: 2rem;">
+                    <i class="fas fa-check"></i>
+                </div>
+                <h2 style="margin-top: 15px;" data-i18n="success_title">Purchase Successful!</h2>
+                <p style="color: var(--text-s); font-size: 0.9rem; margin-top: 5px;" data-i18n="success_desc">Your number is ready to use.</p>
+            </div>
+            <div class="phone-display">
+                <span id="success-phone">-----------</span>
+                <i class="fas fa-copy copy-trigger" onclick="copyPhone()"></i>
+            </div>
+            <div style="background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 12px; font-size: 0.8rem; color: var(--text-s); line-height: 1.5;">
+                <p data-i18n="step1">1. Copy the number and paste it in Telegram.</p>
+                <p data-i18n="step2">2. Wait for the OTP code to arrive in the bot.</p>
+            </div>
+            <button class="primary-btn" style="margin-top: 25px; background: var(--bg-elevated); box-shadow: none; border: 1px solid var(--border);" onclick="closeModal('success-modal')">
+                <span data-i18n="btn_close">Close</span>
+            </button>
+        </div>
+    </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
-        tg.headerColor = '#0a0a0f';
-        tg.backgroundColor = '#0a0a0f';
 
+        let currentLang = 'ar';
+        let countries = [];
+        let selectedCountry = null;
         const userId = tg.initDataUnsafe?.user?.id || 0;
-        let countriesData = [];
-        let currentCountry = null;
-        let currentPrice = 0;
-        let userBalance = 0;
 
-        // ─── Fetch Data ───
-        async function fetchStoreData() {
+        const translations = {
+            en: {
+                loading: "Optimizing Store...",
+                nav_home: "Dashboard",
+                nav_buy: "Store",
+                nav_history: "Orders",
+                nav_support: "Support",
+                balance: "Your Balance",
+                total_orders: "Success Orders",
+                quick_buy: "Quick Access",
+                btn_start_shopping: "Browse Numbers",
+                confirm_title: "Final Confirmation",
+                confirm_desc: "The amount will be deducted from your balance.",
+                lbl_country: "Country",
+                lbl_price: "Price",
+                btn_confirm_pay: "Buy Now",
+                success_title: "Payment Success!",
+                success_desc: "Wait for the code in your bot chat.",
+                btn_close: "Dismiss",
+                step1: "1. Paste number into Telegram.",
+                step2: "2. The OTP code will arrive shortly.",
+                available: "Available",
+                search_ph: "Search countries..."
+            },
+            ar: {
+                loading: "جاري تجهيز المتجر...",
+                nav_home: "الرئيسية",
+                nav_buy: "المتجر",
+                nav_history: "طلباتي",
+                nav_support: "الدعم",
+                balance: "رصيدك الحالي",
+                total_orders: "إجمالي المشتريات",
+                quick_buy: "وصول سريع",
+                btn_start_shopping: "تصفح الأرقام",
+                confirm_title: "تأكيد عملية الشراء",
+                confirm_desc: "سيتم خصم قيمة الرقم من رصيدك الحالي.",
+                lbl_country: "الدولة",
+                lbl_price: "السعر",
+                btn_confirm_pay: "إتمام الشراء",
+                success_title: "تم الشراء بنجاح!",
+                success_desc: "انتظر وصول الكود في محادثة البوت.",
+                btn_close: "إغلاق",
+                step1: "1. قم بنسخ الرقم ووضعه في التيليجرام.",
+                step2: "2. سيصلك كود التفعيل في البوت قريباً.",
+                available: "رقم متاح",
+                search_ph: "ابحث عن دولة..."
+            }
+        };
+
+        function openNav() {
+            document.getElementById('navSidebar').classList.add('open');
+            document.getElementById('sidebarOverlay').classList.add('show');
+        }
+
+        function closeNav() {
+            document.getElementById('navSidebar').classList.remove('open');
+            document.getElementById('sidebarOverlay').classList.remove('show');
+        }
+
+        function switchNav(id, btn) {
+            closeNav();
+            document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            
+            document.getElementById('section-' + id).classList.add('active');
+            if(btn) btn.classList.add('active');
+            
+            const titleKey = 'nav_' + (id === 'home' ? 'home' : (id === 'store' ? 'buy' : id));
+            document.getElementById('view-title').innerText = translations[currentLang][titleKey] || id;
+
+            if(id === 'store') fetchCountries();
+            if(id === 'history') fetchHistory();
+        }
+
+        async function init() {
             try {
                 const res = await fetch(`/api/store/data?user_id=${userId}`);
                 const data = await res.json();
-
-                userBalance = data.user.balance;
-                document.getElementById('userBalance').innerHTML =
-                    `${userBalance.toFixed(2)} <span class="currency">USD</span>`;
-
-                countriesData = data.countries;
-
-                // Stats
-                const totalStock = countriesData.reduce((s, c) => s + c.count, 0);
-                document.getElementById('totalStock').textContent = totalStock;
-                document.getElementById('countryCount').textContent = countriesData.length;
-
-                if (countriesData.length > 0) {
-                    const prices = countriesData.map(c => c.price);
-                    document.getElementById('minPrice').textContent = `$${Math.min(...prices)}`;
-                    document.getElementById('maxPrice').textContent = `$${Math.max(...prices)}`;
+                
+                // Set balance from nested structure
+                if (data.user) {
+                    updateBalanceUI(data.user.balance || 0);
                 }
-
-                renderCountries(countriesData);
-            } catch (err) {
-                console.error('Fetch error:', err);
-                showToast('❌ خطأ في الاتصال بالسيرفر');
-            } finally {
-                document.getElementById('splash').classList.add('hide');
-            }
+                
+                // Load countries automatically if in store view
+                countries = data.countries || [];
+                if (document.getElementById('section-store').classList.contains('active')) {
+                    renderCountries(countries);
+                }
+                
+                // Note: currentLang is still fetched from user data if needed, 
+                // but let's default to 'ar' like before or fetch it.
+                const userRes = await fetch(`/api/admin/user/sync`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({user_id: userId, bot_type: 'store'})
+                });
+                // This is just to ensure language exists in some cases, 
+                // but for now we'll stick to the current initialization.
+            } catch(e) { console.error(e); }
+            
+            updateTranslations();
+            setTimeout(() => {
+                document.getElementById('splash').style.display = 'none';
+            }, 800);
         }
 
-        // ─── Render ───
-        function renderCountries(list) {
-            const grid = document.getElementById('countriesGrid');
-            const empty = document.getElementById('emptyState');
+        function updateBalanceUI(val) {
+            const formatted = `$${parseFloat(val).toFixed(2)}`;
+            document.getElementById('top-balance').innerText = formatted;
+            document.getElementById('dash-balance').innerText = formatted;
+        }
 
-            if (list.length === 0) {
-                grid.innerHTML = '';
-                empty.style.display = 'block';
+        function updateTranslations() {
+            document.documentElement.lang = currentLang;
+            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                el.innerText = translations[currentLang][key] || key;
+            });
+            document.getElementById('store-search').placeholder = translations[currentLang].search_ph;
+        }
+
+        async function fetchCountries() {
+            // Data is already fetched in init, just render
+            renderCountries(countries);
+        }
+
+        function renderCountries(list) {
+            const grid = document.getElementById('countries-grid');
+            if(!list || !list.length) {
+                grid.innerHTML = '<p style="text-align:center; padding: 40px; opacity: 0.5;">No numbers available right now</p>';
                 return;
             }
-
-            empty.style.display = 'none';
-            grid.innerHTML = list.map((c, i) => `
-                <div class="country-card" onclick="openConfirm('${c.name.replace(/'/g, "\\'")}', ${c.price}, '${c.flag}', ${c.count})" style="animation: fadeIn 0.3s ease ${i * 0.04}s both;">
+            grid.innerHTML = list.map(c => `
+                <div class="country-card" onclick="openBuyModal(${JSON.stringify(c).replace(/"/g, '&quot;')})">
                     <div class="card-left">
-                        <div class="flag">${c.flag}</div>
-                        <div class="card-info">
-                            <h3>${c.name}</h3>
-                            <div class="stock-text">
-                                <span class="stock-dot"></span>
-                                ${c.count} رقم متاح
-                            </div>
+                        <span class="c-flag">${c.flag}</span>
+                        <div>
+                            <div class="c-name">${c.name}</div>
+                            <div class="c-stock">${c.count} ${translations[currentLang].available}</div>
                         </div>
                     </div>
-                    <div class="card-right">
-                        <div class="price-tag">$${c.price}</div>
-                        <i class="fas fa-chevron-left buy-arrow"></i>
-                    </div>
+                    <div class="c-price">$${c.buy_price.toFixed(2)}</div>
                 </div>
             `).join('');
         }
 
-        // ─── Search ───
-        function filterCountries() {
-            const q = document.getElementById('searchInput').value.toLowerCase().trim();
-            if (!q) return renderCountries(countriesData);
-            const filtered = countriesData.filter(c =>
-                c.name.toLowerCase().includes(q) || c.flag.includes(q)
-            );
+        function filterStore() {
+            const q = document.getElementById('store-search').value.toLowerCase();
+            const filtered = countries.filter(c => c.name.toLowerCase().includes(q));
             renderCountries(filtered);
         }
 
-        // ─── Confirm Modal ───
-        function openConfirm(country, price, flag, count) {
-            if (typeof tg.HapticFeedback !== 'undefined') {
-                tg.HapticFeedback.impactOccurred('medium');
-            }
-
-            currentCountry = country;
-            currentPrice = price;
-
-            document.getElementById('confirmFlag').textContent = flag;
-            document.getElementById('confirmCountry').textContent = country;
-            document.getElementById('confirmStock').textContent = `${count} رقم`;
-            document.getElementById('confirmPrice').textContent = `$${price}`;
-
-            const remaining = userBalance - price;
-            const remEl = document.getElementById('confirmRemaining');
-            remEl.textContent = `$${remaining.toFixed(2)}`;
-            remEl.style.color = remaining >= 0 ? 'var(--green)' : 'var(--red)';
-
-            const buyBtn = document.getElementById('buyBtn');
-            buyBtn.disabled = remaining < 0;
-
-            document.getElementById('confirmModal').classList.add('show');
+        function openBuyModal(c) {
+            selectedCountry = c;
+            document.getElementById('buy-country-name').innerText = c.name;
+            document.getElementById('buy-price-val').innerText = `$${c.buy_price.toFixed(2)}`;
+            document.getElementById('buy-modal').style.display = 'flex';
         }
 
-        function closeModal() {
-            document.getElementById('confirmModal').classList.remove('show');
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
         }
 
-        // ─── Purchase ───
-        async function processPurchase() {
-            const btn = document.getElementById('buyBtn');
-            const origText = btn.innerHTML;
-            btn.innerHTML = 'جاري الشراء... <span class="spinner-small"></span>';
+        async function execBuy() {
+            const btn = document.getElementById('btn-final-buy');
             btn.disabled = true;
-
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            
             try {
                 const res = await fetch('/api/store/buy', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ user_id: userId, country: currentCountry })
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        user_id: userId,
+                        country: selectedCountry.name
+                    })
                 });
-
-                const result = await res.json();
-
-                if (res.ok) {
-                    if (typeof tg.HapticFeedback !== 'undefined') {
-                        tg.HapticFeedback.notificationOccurred('success');
-                    }
-                    closeModal();
-
-                    // Show success
-                    document.getElementById('boughtPhone').textContent = result.phone;
-                    document.getElementById('successModal').classList.add('show');
-
+                const data = await res.json();
+                if(res.ok && data.status === 'success') {
+                    closeModal('buy-modal');
+                    document.getElementById('success-phone').innerText = data.phone;
+                    document.getElementById('success-modal').style.display = 'flex';
                     // Refresh data
-                    fetchStoreData();
+                    init();
                 } else {
-                    if (typeof tg.HapticFeedback !== 'undefined') {
-                        tg.HapticFeedback.notificationOccurred('error');
-                    }
-                    showToast(`❌ ${result.detail}`);
+                    alert(data.detail || data.message || 'Error');
                 }
-            } catch (err) {
-                showToast('❌ خطأ غير متوقع');
-            } finally {
-                btn.innerHTML = origText;
-                btn.disabled = false;
-            }
+            } catch(e) { alert(e); }
+            
+            btn.disabled = false;
+            btn.innerText = translations[currentLang].btn_confirm_pay;
         }
 
-        // ─── Success ───
+        async function fetchHistory() {
+            const list = document.getElementById('history-list');
+            list.innerHTML = '<div class="spinner" style="margin: 40px auto;"></div>';
+            try {
+                const res = await fetch(`/api/store/history?user_id=${userId}`);
+                const data = await res.json();
+                renderHistory(data);
+            } catch(e) { list.innerHTML = '<p style="text-align:center;">Error loading history</p>'; }
+        }
+
+        function renderHistory(data) {
+            const list = document.getElementById('history-list');
+            if(!data || !data.length) {
+                list.innerHTML = '<p style="text-align:center; padding: 40px; opacity: 0.5;">No history found</p>';
+                return;
+            }
+            list.innerHTML = data.map(h => `
+                <div class="info-card" style="padding: 15px;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span style="font-size: 1.5rem;">${h.flag}</span>
+                        <div>
+                            <div style="font-weight: 800; font-size: 0.95rem;">${h.phone}</div>
+                            <div style="font-size: 0.75rem; color: var(--text-s);">${h.date} - ${h.country}</div>
+                        </div>
+                    </div>
+                    <div style="font-weight: 700; color: var(--success);">$${h.price.toFixed(2)}</div>
+                </div>
+            `).join('');
+        }
+
         function copyPhone() {
-            const phone = document.getElementById('boughtPhone').textContent;
-            navigator.clipboard.writeText(phone).then(() => {
-                const btn = document.querySelector('.copy-btn');
-                btn.classList.add('copied');
-                btn.innerHTML = '<i class="fas fa-check"></i>';
-                showToast('✅ تم نسخ الرقم');
-                setTimeout(() => {
-                    btn.classList.remove('copied');
-                    btn.innerHTML = '<i class="fas fa-copy"></i>';
-                }, 2000);
+            const txt = document.getElementById('success-phone').innerText;
+            navigator.clipboard.writeText(txt).then(() => {
+                tg.HapticFeedback.notificationOccurred('success');
             });
         }
 
-        function closeSuccessAndReturn() {
-            document.getElementById('successModal').classList.remove('show');
-            tg.close();
-        }
-
-        // ─── Toast ───
-        function showToast(msg) {
-            const t = document.getElementById('toast');
-            t.textContent = msg;
-            t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 3000);
-        }
-
-        // ─── Init ───
-        window.onload = fetchStoreData;
-
-        // Close modals on overlay click
-        document.getElementById('confirmModal').addEventListener('click', function (e) {
-            if (e.target === this) closeModal();
-        });
-        document.getElementById('successModal').addEventListener('click', function (e) {
-            if (e.target === this) document.getElementById('successModal').classList.remove('show');
-        });
+        init();
     </script>
-
-    <style>
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-    </style>
 </body>
 
 </html>
