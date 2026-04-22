@@ -618,28 +618,29 @@
 
         .pagination-ctrls {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
-            margin-top: 20px;
-            padding: 12px;
+            gap: 20px;
+            margin-top: 35px;
+            padding: 0;
             background: transparent;
-            border-radius: 12px;
-            border: 1px solid var(--border);
+            border-radius: 0;
+            border: none;
         }
 
         .pg-btn {
-            background: transparent;
-            color: var(--text-p);
+            background: var(--bg-elevated);
             border: 1px solid var(--border);
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 0.8rem;
+            color: var(--text-p);
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-size: 0.85rem;
             font-weight: 600;
             cursor: pointer;
-            transition: 0.2s;
+            transition: all 0.3s var(--ease);
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             outline: none;
         }
 
@@ -2255,6 +2256,7 @@
 
             if (filtered.length > 0) {
                 resetBtn.style.display = 'block';
+                document.getElementById('withdraw-pagination').style.display = 'none';
                 renderAdminWithdrawals(filtered);
                 return;
             }
@@ -2277,6 +2279,7 @@
                     document.querySelectorAll('#section-withdrawals .tab-btn').forEach(b => b.classList.remove('active'));
                     document.getElementById(`withdraw-tab-${otherStatus}`).classList.add('active');
                     resetBtn.style.display = 'block';
+                    document.getElementById('withdraw-pagination').style.display = 'none';
                     renderAdminWithdrawals(filtered);
                 } else {
                     resetBtn.style.display = 'block';
