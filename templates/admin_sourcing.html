@@ -621,6 +621,10 @@
             flex-shrink: 0;
         }
 
+        #withdrawals-history-card {
+            scroll-margin-top: 20px;
+        }
+
         /* ========== Pagination ========== */
         .pagination-ctrls {
             display: flex;
@@ -1933,10 +1937,10 @@
                 renderAdminWithdrawals(allWithdrawals);
                 totalAdminWithdrawPages = data.total_pages;
                 updateWithdrawPagination();
-                // Scroll only if requested (e.g., from pagination arrows)
+                // Scroll only if requested (from pagination arrows)
                 if (doScroll) {
-                    const scroller = document.getElementById('app-content-scroller');
-                    if (scroller) scroller.scrollTo({ top: 0, behavior: 'smooth' });
+                    const el = document.getElementById('withdrawals-history-card');
+                    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
             } catch (e) { console.error(e); }
         }
