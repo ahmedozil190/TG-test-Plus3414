@@ -1957,7 +1957,7 @@
                 if (item.status === 'REJECTED') statusColor = 'var(--error)';
 
                 const isPending = item.status === 'PENDING';
-                const rowS = "background: var(--bg); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; margin-bottom: 8px;";
+                const rowS = "background: transparent; border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; margin-bottom: 8px;";
                 const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; flex-shrink: 0;";
                 const valS = "font-weight: 700; font-size: 0.95rem; text-align: right; word-break: break-all;";
                 
@@ -1984,9 +1984,13 @@
                                 <span style="${lblS}">Method</span>
                                 <span style="${valS}; color: var(--text-p);">${item.method}</span>
                             </div>
-                            <div style="${rowS}; margin-bottom: 0;">
+                            <div style="${rowS}">
                                 <span style="${lblS}">Address</span>
                                 <span style="${valS}; color: var(--text-s); font-size: 0.85rem;">${item.address}</span>
+                            </div>
+                            <div style="${rowS}; margin-bottom: 0;">
+                                <span style="${lblS}">Date</span>
+                                <span style="${valS}; color: #fdd835;">${item.date}</span>
                             </div>
                             
                             ${isPending ? `
@@ -2000,11 +2004,7 @@
                                     Reject
                                 </button>
                             </div>
-                            ` : `
-                            <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid var(--border); text-align: center; color: var(--text-s); font-size: 0.75rem;">
-                                Processed on ${item.date}
-                            </div>
-                            `}
+                            ` : ''}
                         </div>
                     </div>
                 `;
