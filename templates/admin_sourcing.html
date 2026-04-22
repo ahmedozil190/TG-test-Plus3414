@@ -1179,10 +1179,11 @@
             z-index: 3000;
             display: none;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             opacity: 0;
             transition: all 0.4s ease;
-            padding: 20px;
+            padding: 40px 15px;
+            overflow-y: auto;
         }
 
         .modal-overlay.active {
@@ -1194,8 +1195,7 @@
             background: var(--bg);
             width: 95%;
             max-width: 440px;
-            max-height: 90vh;
-            overflow-y: auto;
+            margin: auto;
             border-radius: 28px;
             border: 1px solid var(--border);
             padding: 30px 25px;
@@ -1637,7 +1637,7 @@
                 <label data-i18n="lbl_code">Country Code (numeric)</label>
                 <input type="text" id="m-code" class="input-field" placeholder="1" oninput="onCountryCodeInput()">
             </div>
-            
+
             <!-- Dynamic Country Field -->
             <div id="m-country-group" class="form-group" style="display: none;">
                 <label id="m-country-label">Detected Country</label>
@@ -2366,7 +2366,7 @@
             document.getElementById('m-code').value = code;
             document.getElementById('m-buy').value = buy;
             document.getElementById('m-delay').value = delay;
-            
+
             await onCountryCodeInput();
             const box = document.getElementById('m-iso-box');
             if (box) box.value = iso;
@@ -2383,7 +2383,7 @@
             const code = document.getElementById('m-code').value.trim().replace('+', '');
             const group = document.getElementById('m-country-group');
             const container = document.getElementById('m-country-container');
-            
+
             if (code.length < 1) {
                 group.style.display = 'none';
                 return;
@@ -2392,7 +2392,7 @@
             try {
                 const res = await fetch(`/api/admin/countries-for-code/${code}`);
                 const data = await res.json();
-                
+
                 if (data && data.length > 0) {
                     group.style.display = 'block';
                     if (data.length === 1) {
@@ -2431,7 +2431,7 @@
             });
             el.style.borderColor = 'var(--accent-purple)';
             el.style.background = 'rgba(139, 92, 246, 0.1)';
-            
+
             const hiddenInput = document.getElementById('m-iso-box');
             if (hiddenInput) {
                 hiddenInput.setAttribute('data-iso', el.getAttribute('data-iso'));
@@ -2442,7 +2442,7 @@
         async function savePriceChanges() {
             const code = document.getElementById('m-code').value.trim().replace('+', '');
             const isoBox = document.getElementById('m-iso-box');
-            
+
             if (!code || !isoBox) return;
 
             let iso, name;
