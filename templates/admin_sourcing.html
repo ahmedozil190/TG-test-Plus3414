@@ -1566,7 +1566,8 @@
                     <div class="info-card">
                         <div class="info-card-l">
                             <span class="info-card-lbl">PENDING REQUESTS</span>
-                            <div class="info-card-val"><span id="stat-withdraw-pending">0</span> <span>REQUESTS</span></div>
+                            <div class="info-card-val"><span id="stat-withdraw-pending">0</span> <span>REQUESTS</span>
+                            </div>
                         </div>
                         <div class="info-card-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--warning);">
                             <i class="fas fa-hourglass-half"></i>
@@ -1575,7 +1576,8 @@
                     <div class="info-card">
                         <div class="info-card-l">
                             <span class="info-card-lbl">APPROVED REQUESTS</span>
-                            <div class="info-card-val"><span id="stat-withdraw-approved">0</span> <span>REQUESTS</span></div>
+                            <div class="info-card-val"><span id="stat-withdraw-approved">0</span> <span>REQUESTS</span>
+                            </div>
                         </div>
                         <div class="info-card-icon" style="background: rgba(34, 197, 94, 0.1); color: var(--success);">
                             <i class="fas fa-circle-check"></i>
@@ -1593,8 +1595,8 @@
                 </div>
 
                 <div class="card no-shadow" style="padding: 18px; margin-bottom: 25px;">
-                    <input class="search-input" type="text" id="withdraw-search" placeholder="Search User ID or Transaction ID..." 
-                        oninput="searchWithdrawals()">
+                    <input class="search-input" type="text" id="withdraw-search"
+                        placeholder="Search User ID or Transaction ID..." oninput="searchWithdrawals()">
                     <button class="btn-find" onclick="searchWithdrawals()">
                         <i class="fas fa-search"></i> <span data-i18n="btn_find">Find</span>
                     </button>
@@ -1604,7 +1606,8 @@
                 </div>
 
                 <div class="card" style="padding: 22px;">
-                    <div class="section-header" style="margin-top: 0; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between;">
+                    <div class="section-header"
+                        style="margin-top: 0; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between;">
                         <h2 data-i18n="nav_withdrawals" style="margin: 0; font-size: 1rem;">Withdrawal Requests</h2>
                         <div style="position: relative; margin-left: auto;">
                             <select id="withdraw-filter" class="input-field"
@@ -1613,7 +1616,8 @@
                                 <option value="pending" selected>Pending</option>
                                 <option value="approved">Approved</option>
                             </select>
-                            <i class="fas fa-chevron-down" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); font-size: 0.7rem; color: var(--text-s); pointer-events: none;"></i>
+                            <i class="fas fa-chevron-down"
+                                style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); font-size: 0.7rem; color: var(--text-s); pointer-events: none;"></i>
                         </div>
                     </div>
                     <div class="list-container" id="withdrawals-list"></div>
@@ -1953,55 +1957,68 @@
 
             list.innerHTML = data.map(item => {
                 const statusUpper = item.status.toUpperCase();
-                let statusColor = 'var(--warning)';
-                if (statusUpper === 'APPROVED') statusColor = 'var(--success)';
-                if (statusUpper === 'REJECTED') statusColor = 'var(--error)';
+                let statusColor = '#f59e0b'; // PENDING
+                if (statusUpper === 'APPROVED') statusColor = '#10b981'; // SUCCESS
+                if (statusUpper === 'REJECTED') statusColor = '#ef4444'; // ERROR
 
-                const isPending = statusUpper === 'PENDING';
-                const rowS = "background: transparent; border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; margin-bottom: 8px;";
+                const rowS = "background: transparent; border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 8px;";
                 const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; flex-shrink: 0;";
-                const valS = "font-weight: 700; font-size: 0.95rem; text-align: right; word-break: break-all;";
                 
+                const shortAddr = item.address.length > 16 ? (item.address.substring(0, 8) + '...' + item.address.slice(-6)) : item.address;
+
                 return `
-                    <div class="user-card" style="margin-bottom: 25px; padding: 18px; border: 1px solid var(--border); background: var(--bg-elevated); border-radius: 20px;">
+                    <div class="user-card" style="margin-bottom: 25px; padding: 18px; border: 1px solid var(--border); background: var(--bg-elevated); border-radius: 20px;" 
+                         onclick='openWithdrawModal(${JSON.stringify(item)})'>
                         <div style="display: flex; flex-direction: column;">
                             <div style="${rowS}">
-                                <span style="${lblS}">Status</span>
-                                <span style="${valS}; color: ${statusColor}; text-transform: uppercase;">${statusUpper}</span>
+                                <span style="${lblS}">STATUS</span>
+                                <span style="color: ${statusColor}; font-weight: 800; font-size: 0.85rem; text-transform: uppercase;">${statusUpper}</span>
                             </div>
                             <div style="${rowS}">
-                                <span style="${lblS}">Amount</span>
-                                <span style="${valS}; color: var(--success); font-weight: 800;">$${parseFloat(item.amount).toFixed(2)}</span>
+                                <span style="${lblS}">AMOUNT</span>
+                                <span style="color: #10b981; font-weight: 800; font-size: 1.1rem; text-align: right;">$${parseFloat(item.amount).toFixed(2)}</span>
                             </div>
                             <div style="${rowS}">
                                 <span style="${lblS}">ID</span>
-                                <span style="${valS}; color: var(--accent-purple);">${item.transaction_id || item.id}</span>
+                                <span style="color: #8b5cf6; font-weight: 600; font-size: 0.9rem; text-align: right;">${item.transaction_id || item.id}</span>
                             </div>
                             <div style="${rowS}">
-                                <span style="${lblS}">Address</span>
-                                <span style="${valS}; color: var(--text-s); font-size: 0.85rem;">${item.address}</span>
+                                <span style="${lblS}">ADDRESS</span>
+                                <span style="color: #3b82f6; font-weight: 600; font-size: 0.85rem; text-align: right; direction: ltr;">${shortAddr}</span>
                             </div>
                             <div style="${rowS}; margin-bottom: 0;">
-                                <span style="${lblS}">Date</span>
-                                <span style="${valS}; color: #fdd835;">${item.date}</span>
+                                <span style="${lblS}">DATE</span>
+                                <span style="color: #fdd835; font-weight: 600; font-size: 0.85rem; text-align: right;">${item.date}</span>
                             </div>
-                            
-                            ${isPending ? `
-                            <div style="display: flex; gap: 10px; margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border);">
-                                <button class="primary-btn" style="flex: 1; height: 46px; background: var(--success); color: #ffffff !important; font-size: 0.9rem; font-weight: 800; border-radius: 12px;" 
-                                    onclick="confirmWithdrawAction(${item.id}, 'approve')">
-                                    Approve
-                                </button>
-                                <button class="primary-btn" style="flex: 1; height: 46px; background: var(--error); color: #ffffff !important; font-size: 0.9rem; font-weight: 800; border-radius: 12px;"
-                                    onclick="confirmWithdrawAction(${item.id}, 'reject')">
-                                    Reject
-                                </button>
-                            </div>
-                            ` : ''}
                         </div>
                     </div>
                 `;
             }).join('');
+        }
+
+        function openWithdrawModal(item) {
+            document.getElementById('wd-user-id').innerText = '#' + item.user_id;
+            document.getElementById('wd-method').innerText = item.method;
+            document.getElementById('wd-address').innerText = item.address;
+            
+            const actions = document.getElementById('wd-actions');
+            if (item.status.toUpperCase() === 'PENDING') {
+                actions.style.display = 'flex';
+                document.getElementById('wd-approve-btn').onclick = () => confirmWithdrawAction(item.id, 'approve');
+                document.getElementById('wd-reject-btn').onclick = () => confirmWithdrawAction(item.id, 'reject');
+            } else {
+                actions.style.display = 'none';
+            }
+
+            const modal = document.getElementById('withdrawal-manage-modal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('active'), 10);
+        }
+
+        function closeWithdrawModal() {
+            const modal = document.getElementById('withdrawal-manage-modal');
+            modal.classList.remove('active');
+            setTimeout(() => modal.style.display = 'none', 400);
         }
 
         let withdrawConfirmationData = null;
@@ -2009,10 +2026,10 @@
         function confirmWithdrawAction(id, type) {
             withdrawConfirmationData = { id, type };
             const title = type === 'approve' ? 'Approve Withdrawal' : 'Reject Withdrawal';
-            const msg = type === 'approve' 
+            const msg = type === 'approve'
                 ? 'Are you sure you want to approve this withdrawal request? This action cannot be undone.'
                 : 'Are you sure you want to reject this withdrawal request? The balance will be returned/kept based on system rules.';
-            
+
             showConfirm(title, msg, (confirmed) => {
                 if (confirmed && withdrawConfirmationData) {
                     if (withdrawConfirmationData.type === 'approve') approveWithdrawal(withdrawConfirmationData.id);
@@ -2023,10 +2040,10 @@
         }
 
         async function handleWithdrawAction(id, action) {
-            const confirmMsg = action === 'approve' 
+            const confirmMsg = action === 'approve'
                 ? (currentLang === 'ar' ? 'هل أنت متأكد من الموافقة؟' : 'Are you sure you want to approve?')
                 : (currentLang === 'ar' ? 'هل أنت متأكد من الرفض؟ (لن يتم إرجاع المبلغ رصيد)' : 'Are you sure you want to reject? (NO REFUND)');
-            
+
             if (!confirm(confirmMsg)) return;
 
             try {
@@ -2091,11 +2108,11 @@
             if (!skipToggle) closeNav();
 
             // Update page title
-            const titleMap = { 
-                home: 'nav_dashboard', 
-                prices: 'nav_prices', 
-                users: 'nav_users', 
-                history: 'nav_history', 
+            const titleMap = {
+                home: 'nav_dashboard',
+                prices: 'nav_prices',
+                users: 'nav_users',
+                history: 'nav_history',
                 settings: 'nav_settings',
                 withdrawals: 'nav_withdrawals'
             };
@@ -2103,7 +2120,7 @@
             titleEl.setAttribute('data-i18n', titleMap[id]);
             titleEl.innerText = translations[currentLang][titleMap[id]] || "Withdrawals";
 
-            if(id === 'withdrawals') fetchAdminWithdrawals(1, 'pending');
+            if (id === 'withdrawals') fetchAdminWithdrawals(1, 'pending');
         }
 
         async function init() {
@@ -2128,9 +2145,9 @@
                 const wp = document.getElementById('stat-withdraw-pending');
                 const wa = document.getElementById('stat-withdraw-approved');
                 const wtp = document.getElementById('stat-withdraw-total-paid');
-                if(wp) wp.innerText = ws.withdraw_pending || 0;
-                if(wa) wa.innerText = ws.withdraw_approved || 0;
-                if(wtp) wtp.innerText = parseFloat(ws.total_paid_amount || 0).toFixed(2);
+                if (wp) wp.innerText = ws.withdraw_pending || 0;
+                if (wa) wa.innerText = ws.withdraw_approved || 0;
+                if (wtp) wtp.innerText = parseFloat(ws.total_paid_amount || 0).toFixed(2);
 
                 renderRecent(data.recent);
                 fetchAdminHistory(currentAdminHistoryPage);
@@ -2154,24 +2171,24 @@
                 const res = await fetch('/api/admin/sourcing/data');
                 const data = await res.json();
                 const ws = data.stats;
-                
+
                 const wp = document.getElementById('stat-withdraw-pending');
                 const wa = document.getElementById('stat-withdraw-approved');
                 const wtp = document.getElementById('stat-withdraw-total-paid');
-                if(wp) wp.innerText = ws.withdraw_pending || 0;
-                if(wa) wa.innerText = ws.withdraw_approved || 0;
-                if(wtp) wtp.innerText = parseFloat(ws.total_paid_amount || 0).toFixed(2);
-                
+                if (wp) wp.innerText = ws.withdraw_pending || 0;
+                if (wa) wa.innerText = ws.withdraw_approved || 0;
+                if (wtp) wtp.innerText = parseFloat(ws.total_paid_amount || 0).toFixed(2);
+
                 document.getElementById('stat-history-pending').innerText = ws.pending_count;
                 document.getElementById('stat-history-accepted').innerText = ws.accepted_sourced;
                 document.getElementById('stat-history-rejected').innerText = ws.rejected_sourced;
-            } catch(e) {}
+            } catch (e) { }
         }
 
         function searchWithdrawals() {
             const q = document.getElementById('withdraw-search').value.trim().toLowerCase();
             const resetBtn = document.getElementById('reset-withdraw-search-container');
-            
+
             if (!q) {
                 resetBtn.style.display = 'none';
                 renderAdminWithdrawals(allWithdrawals);
@@ -2179,8 +2196,8 @@
             }
 
             resetBtn.style.display = 'block';
-            const filtered = allWithdrawals.filter(w => 
-                String(w.user_id).includes(q) || 
+            const filtered = allWithdrawals.filter(w =>
+                String(w.user_id).includes(q) ||
                 String(w.id).toLowerCase().includes(q)
             );
             renderAdminWithdrawals(filtered);
@@ -2869,6 +2886,38 @@
         if (menuBtn) switchNav(savedView, menuBtn, true);
         else switchNav(savedView, null, true);
     </script>
+    <div id="withdrawal-manage-modal" class="manage-overlay" onclick="closeWithdrawModal()">
+        <div class="manage-card" onclick="event.stopPropagation()">
+            <div style="text-align: center; margin-bottom: 10px;">
+                <h3 style="color: var(--text-p); font-size: 1.1rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">Withdrawal Details</h3>
+            </div>
+
+            <!-- User ID Box -->
+            <div class="manage-data-box">
+                <div style="color: var(--text-s); font-size: 0.75rem; font-weight: 700; margin-right: 10px; text-transform: uppercase;">User:</div>
+                <div id="wd-user-id" style="color: #ff9f0a; font-weight: 800; font-size: 0.95rem;">#0000</div>
+            </div>
+
+            <!-- Method Box -->
+            <div class="manage-data-box">
+                <div style="color: var(--text-s); font-size: 0.75rem; font-weight: 700; margin-right: 10px; text-transform: uppercase;">Method:</div>
+                <div id="wd-method" style="color: #bf5af2; font-weight: 700; font-size: 0.95rem;">TRX - TRC20</div>
+            </div>
+
+            <!-- Address Box -->
+            <div style="background: var(--card-glass); border: 1px solid var(--border); border-radius: 18px; padding: 15px; text-align: center; width: 100%; box-sizing: border-box; backdrop-filter: blur(10px);">
+                <div style="color: var(--text-s); font-size: 0.75rem; font-weight: 700; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">Wallet Address</div>
+                <div id="wd-address" style="color: #30d158; font-weight: 600; font-size: 0.85rem; word-break: break-all; font-family: monospace; line-height: 1.4;">0x...</div>
+            </div>
+
+            <div id="wd-actions" class="manage-actions" style="margin-top: 10px; padding-top: 15px; border-top: 1px solid var(--border); display: none;">
+                <button class="manage-btn" style="background: var(--success); color: #fff;" id="wd-approve-btn">Approve</button>
+                <button class="manage-btn danger" id="wd-reject-btn">Reject</button>
+            </div>
+            
+            <button class="manage-btn secondary" onclick="closeWithdrawModal()" data-i18n="nav_close" style="margin-top: 5px;">Close</button>
+        </div>
+    </div>
     <div id="user-manage-modal" class="manage-overlay" onclick="closeManageModal()">
         <div class="manage-card" onclick="event.stopPropagation()">
 
