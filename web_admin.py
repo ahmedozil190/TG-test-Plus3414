@@ -1171,11 +1171,7 @@ async def admin_get_all_withdrawals(page: int = 1, status: str = "all"):
         total_pages = (total_count + page_size - 1) // page_size if total_count > 0 else 1
         
         # Build results query
-        order_col = WithdrawalRequest.created_at.desc()
-        if status == "approved":
-            order_col = WithdrawalRequest.updated_at.desc()
-            
-        stmt = select(WithdrawalRequest).where(*filters).order_by(order_col).offset(offset).limit(page_size)
+        stmt = select(WithdrawalRequest).where(*filters).order_by(WithdrawalRequest.created_at.desc()).offset(offset).limit(page_size)
         results = (await session.execute(stmt)).scalars().all()
         
         history = []
