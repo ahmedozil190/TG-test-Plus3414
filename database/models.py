@@ -69,6 +69,14 @@ class CountryPrice(Base):
     approve_delay = Column(Integer, nullable=False, default=0) # Auto-approval delay in seconds
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+class UserCountryPrice(Base):
+    __tablename__ = 'user_country_prices'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, nullable=False)
+    country_code = Column(String, nullable=False) # e.g. "1"
+    buy_price = Column(Float, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
 class WithdrawalRequest(Base):
     __tablename__ = 'withdrawal_requests'
     id = Column(Integer, primary_key=True, autoincrement=True)

@@ -135,10 +135,13 @@ async def get_seller_panel(request: Request):
 
 @app.on_event("startup")
 async def run_migrations():
-    """Auto-migrate SQLite DB to add any missing columns."""
+    """Auto-migrate SQLite DB to add any missing columns and create new tables."""
     from database.engine import engine
+    from database.models import Base
     import sqlalchemy
     try:
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
         async with engine.begin() as conn:
             # Add full_name to users if missing
             try:
@@ -292,6 +295,11 @@ class PriceUpdate(BaseModel):
     price: float
     buy_price: float
     approve_delay: int
+
+class UserPriceCreate(BaseModel):
+    user_id: int
+    country_code: str
+    buy_price: float
 
 class StoreBuy(BaseModel):
     user_id: int
@@ -790,6 +798,74 @@ async def update_sourcing_price(data: dict):
         await session.commit()
     return {"status": "success"}
 
+@app.get("/api/admin/sourcing/user-prices")
+async def get_user_prices():
+    from database.models import UserCountryPrice, User
+    async with async_session() as session:
+        result = await session.execute(
+            select(UserCountryPrice, User)
+            .join(User, UserCountryPrice.user_id == User.id)
+            .order_by(UserCountryPrice.created_at.desc())
+        )
+        data = []
+        for ucp, user in result.all():
+            flag = "🌐"
+            name = f"Code {ucp.country_code}"
+            try:
+                n, f, _ = resolve_country_info(ucp.country_code)
+                if n != "Unknown":
+                    name = n
+                    flag = f
+            except: pass
+            
+            data.append({
+                "id": ucp.id,
+                "user_id": user.id,
+                "user_name": user.full_name or "N/A",
+                "user_handle": f"@{user.username}" if user.username else "N/A",
+                "country_code": ucp.country_code,
+                "country_name": f"{flag} {name}",
+                "buy_price": ucp.buy_price,
+                "date": ucp.created_at.strftime("%Y-%m-%d %H:%M")
+            })
+        return {"prices": data}
+
+@app.post("/api/admin/sourcing/user-prices")
+async def add_user_price(data: UserPriceCreate):
+    from database.models import UserCountryPrice, User
+    async with async_session() as session:
+        user = await session.get(User, data.user_id)
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+            
+        # Check if exists
+        stmt = select(UserCountryPrice).where(
+            UserCountryPrice.user_id == data.user_id,
+            UserCountryPrice.country_code == data.country_code
+        )
+        existing = (await session.execute(stmt)).scalar()
+        if existing:
+            existing.buy_price = data.buy_price
+        else:
+            new_ucp = UserCountryPrice(
+                user_id=data.user_id,
+                country_code=data.country_code,
+                buy_price=data.buy_price
+            )
+            session.add(new_ucp)
+        await session.commit()
+        return {"status": "success"}
+
+@app.delete("/api/admin/sourcing/user-prices/{id}")
+async def delete_user_price(id: int):
+    from database.models import UserCountryPrice
+    async with async_session() as session:
+        ucp = await session.get(UserCountryPrice, id)
+        if ucp:
+            await session.delete(ucp)
+            await session.commit()
+        return {"status": "success"}
+
 @app.delete("/api/admin/prices/delete")
 async def delete_price_entry(code: str, iso: str, bot: str = "store"):
     async with async_session() as session:
@@ -933,21 +1009,47 @@ async def get_seller_data(user_id: int):
             prices_result = await session.execute(select(CountryPrice).where(CountryPrice.buy_price > 0).order_by(CountryPrice.updated_at.desc()))
             prices = prices_result.scalars().all()
             
+            # Get custom user prices
+            from database.models import UserCountryPrice
+            custom_prices_result = await session.execute(select(UserCountryPrice).where(UserCountryPrice.user_id == user_id))
+            custom_prices = {cp.country_code: cp.buy_price for cp in custom_prices_result.scalars().all()}
+            
             formatted_prices = []
+            seen_codes = set()
+            
+            # First, add global prices, applying custom overrides if they exist
             for p in prices:
                 try:
                     iso = getattr(p, 'iso_code', None) or 'XX'
                     flag = get_flag_emoji(iso)
                     default_name = resolve_country_info(p.country_code)[0]
+                    name = p.country_name if p.country_name and p.country_name != "Unknown" else default_name
                     
-                    formatted_prices.append({
-                        "name": p.country_name if p.country_name and p.country_name != "Unknown" else default_name,
-                        "flag": flag,
-                        "code": p.country_code,
-                        "price": p.buy_price
-                    })
+                    price_val = custom_prices.get(p.country_code, p.buy_price)
+                    if price_val > 0:
+                        formatted_prices.append({
+                            "name": name,
+                            "flag": flag,
+                            "code": p.country_code,
+                            "price": price_val
+                        })
+                        seen_codes.add(p.country_code)
                 except Exception as inner_e:
                     logger.error(f"Error processing price for code {p.country_code}: {inner_e}")
+                    
+            # Next, add any custom prices that are NOT in the global active list
+            for cc, cp_buy_price in custom_prices.items():
+                if cc not in seen_codes and cp_buy_price > 0:
+                    try:
+                        n, f, _ = resolve_country_info(cc)
+                        name = n if n != "Unknown" else f"Code {cc}"
+                        formatted_prices.append({
+                            "name": name,
+                            "flag": f,
+                            "code": cc,
+                            "price": cp_buy_price
+                        })
+                    except: pass
                 
             return {
                 "user": {
@@ -999,7 +1101,15 @@ async def seller_request_otp(data: SellerOTPRequest):
                     CountryPrice.iso_code == target_iso
                 )
                 cp = (await session.execute(cp_stmt)).scalar()
-                if not cp or cp.buy_price <= 0:
+                
+                # Check custom user price override
+                from database.models import UserCountryPrice
+                ucp_stmt = select(UserCountryPrice).where(UserCountryPrice.user_id == data.user_id, UserCountryPrice.country_code == cc)
+                ucp = (await session.execute(ucp_stmt)).scalar()
+                
+                final_buy_price = ucp.buy_price if ucp else (cp.buy_price if cp else 0)
+                
+                if final_buy_price <= 0:
                     raise HTTPException(status_code=400, detail="Sorry, this country is not requested at the moment.")
         except HTTPException as he: raise he
         except: 
@@ -1036,7 +1146,13 @@ async def seller_submit_otp(data: SellerOTPSubmit):
                     CountryPrice.iso_code == target_iso
                 )
                 cp = (await session.execute(cp_stmt)).scalar()
-                if cp and cp.buy_price > 0: price = cp.buy_price
+                
+                # Check custom user price override
+                from database.models import UserCountryPrice
+                ucp_stmt = select(UserCountryPrice).where(UserCountryPrice.user_id == data.user_id, UserCountryPrice.country_code == cc)
+                ucp = (await session.execute(ucp_stmt)).scalar()
+                
+                price = ucp.buy_price if ucp else (cp.buy_price if cp else 0)
             except: pass
 
             new_acc = Account(
