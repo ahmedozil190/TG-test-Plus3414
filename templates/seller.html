@@ -1755,6 +1755,8 @@
 
                     const shortAddr = h.address.length > 16 ? (h.address.substring(0, 8) + '...' + h.address.slice(-6)) : h.address;
 
+                    const simpleMethod = h.method.split(' - ')[0];
+
                     item.innerHTML = `
                         <div style="display: flex; flex-direction: column;">
                             <div style="${rowS}">
@@ -1764,8 +1766,8 @@
                                 </span>
                             </div>
                             <div style="${rowS}">
-                                <span style="${lblS}">AMOUNT</span>
-                                <span style="color: #10b981; font-weight: 800; font-size: 1.1rem; text-align: right;">$${h.amount.toFixed(2)}</span>
+                                <span style="${lblS}">DETAILS</span>
+                                <span style="color: #10b981; font-weight: 800; font-size: 0.95rem; text-align: right;">$${h.amount.toFixed(2)} - ${simpleMethod}</span>
                             </div>
                             <div style="${rowS}">
                                 <span style="${lblS}">ID</span>
