@@ -1957,16 +1957,16 @@
                 if (item.status === 'REJECTED') statusColor = 'var(--error)';
 
                 const isPending = item.status === 'PENDING';
-                const rowS = "background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;";
+                const rowS = "background: var(--bg); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; margin-bottom: 8px;";
                 const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; flex-shrink: 0;";
                 const valS = "font-weight: 700; font-size: 0.95rem; text-align: right; word-break: break-all;";
                 
                 return `
-                    <div class="user-card" style="margin-bottom: 15px; padding: 0; background: transparent; border: none;">
-                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <div class="card no-shadow" style="margin-bottom: 25px; padding: 18px; border: 1px solid var(--border); background: var(--bg-elevated); border-radius: 20px;">
+                        <div style="display: flex; flex-direction: column;">
                             <div style="${rowS}">
                                 <span style="${lblS}">Status</span>
-                                <span style="${valS}; color: ${statusColor}; text-transform: uppercase;">${item.status}</span>
+                                <span style="${valS}; color: ${statusColor}; text-transform: uppercase;">● ${item.status}</span>
                             </div>
                             <div style="${rowS}">
                                 <span style="${lblS}">User ID</span>
@@ -1984,23 +1984,27 @@
                                 <span style="${lblS}">Method</span>
                                 <span style="${valS}; color: var(--text-p);">${item.method}</span>
                             </div>
-                            <div style="${rowS}">
+                            <div style="${rowS}; margin-bottom: 0;">
                                 <span style="${lblS}">Address</span>
                                 <span style="${valS}; color: var(--text-s); font-size: 0.85rem;">${item.address}</span>
                             </div>
                             
                             ${isPending ? `
-                            <div style="display: flex; gap: 10px; margin-top: 5px;">
-                                <button class="primary-btn" style="flex: 1; height: 44px; background: var(--success); color: #ffffff !important; font-size: 0.9rem; font-weight: 800;" 
+                            <div style="display: flex; gap: 10px; margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border);">
+                                <button class="primary-btn" style="flex: 1; height: 46px; background: var(--success); color: #ffffff !important; font-size: 0.9rem; font-weight: 800; border-radius: 12px;" 
                                     onclick="confirmWithdrawAction(${item.id}, 'approve')">
                                     Approve
                                 </button>
-                                <button class="primary-btn" style="flex: 1; height: 44px; background: var(--error); color: #ffffff !important; font-size: 0.9rem; font-weight: 800;"
+                                <button class="primary-btn" style="flex: 1; height: 46px; background: var(--error); color: #ffffff !important; font-size: 0.9rem; font-weight: 800; border-radius: 12px;"
                                     onclick="confirmWithdrawAction(${item.id}, 'reject')">
                                     Reject
                                 </button>
                             </div>
-                            ` : ''}
+                            ` : `
+                            <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid var(--border); text-align: center; color: var(--text-s); font-size: 0.75rem;">
+                                Processed on ${item.date}
+                            </div>
+                            `}
                         </div>
                     </div>
                 `;
