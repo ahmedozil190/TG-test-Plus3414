@@ -2269,20 +2269,7 @@
             }
         }
 
-        function switchPriceTab(tab, btn) {
-            currentPriceTab = tab;
-            document.querySelectorAll('#section-prices .tab-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            currentPricePage = 1;
-            renderPrices(allPrices);
-        }
-
         function renderPrices(list) {
-            // Filter based on tab
-            const filteredByTab = list.filter(p => {
-                if (currentPriceTab === 'active') return p.buy_price > 0;
-                return true;
-            });
             const container = document.getElementById('price-list');
             const pagContainer = document.getElementById('price-pagination');
 
@@ -2296,9 +2283,9 @@
                 return;
             }
 
-            const totalPages = Math.ceil(filteredByTab.length / PRICES_PER_PAGE);
+            const totalPages = Math.ceil(list.length / PRICES_PER_PAGE);
             const start = (currentPricePage - 1) * PRICES_PER_PAGE;
-            const paged = filteredByTab.slice(start, start + PRICES_PER_PAGE);
+            const paged = list.slice(start, start + PRICES_PER_PAGE);
 
             container.innerHTML = paged.map((p, i) => {
                 const idx = start + i + 1;

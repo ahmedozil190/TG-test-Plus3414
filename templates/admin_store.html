@@ -1550,14 +1550,7 @@
                         </button>
                     </div>
 
-                    <div class="tabs-row" style="margin-bottom: 25px;">
-                        <button class="tab-btn active" onclick="setPriceTab('active', this)">
-                            <i class="fas fa-check-circle"></i> <span data-i18n="tab_active">Active</span>
-                        </button>
-                        <button class="tab-btn" onclick="setPriceTab('all', this)">
-                            <i class="fas fa-globe"></i> <span data-i18n="tab_all">All</span>
-                        </button>
-                    </div>
+
 
 
 
@@ -2193,26 +2186,12 @@
         }
 
 
-        function setPriceTab(tab, btn) {
-            currentPriceTab = tab;
-            const row = btn.parentNode;
-            row.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            currentPricePage = 1;
-            renderPrices(allPrices);
-        }
-
         function renderPrices(list) {
-            // Filter based on tab
-            const filteredByTab = list.filter(p => {
-                if (currentPriceTab === 'active') return p.price > 0;
-                return true; // Show all in 'all' tab
-            });
 
             const container = document.getElementById('price-list');
             const pagContainer = document.getElementById('price-pagination');
 
-            if (!filteredByTab || !filteredByTab.length) {
+            if (!list || !list.length) {
                 container.innerHTML = `
                 <div style="text-align: center; padding: 40px 20px; background: var(--card-glass); border-radius: 16px; border: 1px dashed var(--border); margin-top: 0; backdrop-filter: blur(10px);">
                     <i class="fas fa-tags" style="font-size: 2.5rem; color: var(--text-secondary); opacity: 0.15; margin-bottom: 12px;"></i>
@@ -2222,9 +2201,9 @@
                 return;
             }
 
-            const totalPages = Math.ceil(filteredByTab.length / PRICES_PER_PAGE);
+            const totalPages = Math.ceil(list.length / PRICES_PER_PAGE);
             const start = (currentPricePage - 1) * PRICES_PER_PAGE;
-            const paged = filteredByTab.slice(start, start + PRICES_PER_PAGE);
+            const paged = list.slice(start, start + PRICES_PER_PAGE);
 
             container.innerHTML = paged.map((p, i) => {
                 return `
