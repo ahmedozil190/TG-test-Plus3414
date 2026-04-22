@@ -1160,25 +1160,23 @@ async def admin_get_all_withdrawals(page: int = 1, status: str = "all"):
     page_size = 20
     offset = (page - 1) * page_size
     async with async_session() as session:
-        # Build query
-        order_col = WithdrawalRequest.created_at.desc()
-        if status == "approved":
-            order_col = WithdrawalRequest.updated_at.desc()
-
-        stmt = select(WithdrawalRequest).order_by(order_col)
+        # Build base filter
+        filters = []
         if status != "all":
-            try:
-                # Use string comparison if enum mapping is tricky, but here status should match
-                stmt = stmt.where(WithdrawalRequest.status == WithdrawalStatus(status.lower()))
-            except: pass
-        
+            filters.append(WithdrawalRequest.status == status.lower())
+            
         # Count total
-        count_stmt = select(func.count()).select_from(stmt.alias())
+        count_stmt = select(func.count(WithdrawalRequest.id)).where(*filters)
         total_count = (await session.execute(count_stmt)).scalar() or 0
         total_pages = (total_count + page_size - 1) // page_size if total_count > 0 else 1
         
-        # Paginate results
-        results = (await session.execute(stmt.offset(offset).limit(page_size))).scalars().all()
+        # Build results query
+        order_col = WithdrawalRequest.created_at.desc()
+        if status == "approved":
+            order_col = WithdrawalRequest.updated_at.desc()
+            
+        stmt = select(WithdrawalRequest).where(*filters).order_by(order_col).offset(offset).limit(page_size)
+        results = (await session.execute(stmt)).scalars().all()
         
         history = []
         for r in results:
