@@ -2068,7 +2068,7 @@
 
             const msg = type === 'approve'
                 ? (currentLang === 'ar' ? 'هل تود بالفعل الموافقة على تحويل المبلغ لهذا المستخدم؟' : 'Are you sure you want to approve this payment request?')
-                : (currentLang === 'ar' ? 'هل تود حقاً رفض هذا الطلب؟ لن يتمكن المستخدم من المطالبة به مرة أخرى.' : 'Are you sure you want to reject this request? This action is final.');
+                : (currentLang === 'ar' ? 'هل تود حقاً رفض هذا الطلب؟ ' : 'Are you sure you want to reject this request?');
 
             const btnText = type === 'approve'
                 ? (currentLang === 'ar' ? 'قبول' : 'Approve')
