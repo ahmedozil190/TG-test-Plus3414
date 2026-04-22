@@ -1964,6 +1964,7 @@
                 const isPending = statusUpper === 'PENDING';
                 const rowS = "background: transparent; border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 8px;";
                 const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; flex-shrink: 0;";
+                const simpleMethod = item.method.split(' - ')[0];
                 
                 return `
                     <div class="user-card" style="margin-bottom: 25px; padding: 18px; border: 1px solid var(--border); background: var(--bg-elevated); border-radius: 20px; cursor: default;">
@@ -1974,7 +1975,7 @@
                             </div>
                             <div style="${rowS}">
                                 <span style="${lblS}">DETAILS</span>
-                                <span style="color: #10b981; font-weight: 800; font-size: 1.1rem; text-align: right;">$${parseFloat(item.amount).toFixed(2)} - ${item.method}</span>
+                                <span style="color: #10b981; font-weight: 800; font-size: 0.95rem; text-align: right;">$${parseFloat(item.amount).toFixed(2)} - ${simpleMethod}</span>
                             </div>
                             <div style="${rowS}">
                                 <span style="${lblS}">ID</span>
@@ -1995,12 +1996,12 @@
 
                             ${isPending ? `
                             <div style="display: flex; gap: 10px; margin-top: 15px;">
-                                <button class="primary-btn" style="flex: 1; height: 46px; background: var(--success); color: #ffffff !important; font-size: 0.9rem; font-weight: 800; border-radius: 12px;" 
-                                    onclick="confirmWithdrawAction(${item.id}, 'approve')">
+                                <button class="primary-btn" style="flex: 1; height: 46px; background: var(--success); color: #ffffff !important; font-size: 0.9rem; font-weight: 800; border-radius: 12px; cursor: pointer;" 
+                                    onclick="confirmWithdrawAction('${item.id}', 'approve')">
                                     Approve
                                 </button>
-                                <button class="primary-btn" style="flex: 1; height: 46px; background: var(--error); color: #ffffff !important; font-size: 0.9rem; font-weight: 800; border-radius: 12px;"
-                                    onclick="confirmWithdrawAction(${item.id}, 'reject')">
+                                <button class="primary-btn" style="flex: 1; height: 46px; background: var(--error); color: #ffffff !important; font-size: 0.9rem; font-weight: 800; border-radius: 12px; cursor: pointer;"
+                                    onclick="confirmWithdrawAction('${item.id}', 'reject')">
                                     Reject
                                 </button>
                             </div>
@@ -2051,8 +2052,7 @@
 
         let withdrawConfirmationData = null;
 
-        function confirmWithdrawAction(id, type) {
-            withdrawConfirmationData = { id, type };
+        async function confirmWithdrawAction(id, type) {
             const title = type === 'approve' 
                 ? (currentLang === 'ar' ? 'تأكيد القبول' : 'Approve Withdrawal') 
                 : (currentLang === 'ar' ? 'تأكيد الرفض' : 'Reject Withdrawal');
@@ -2061,13 +2061,11 @@
                 ? (currentLang === 'ar' ? 'هل أنت متأكد من قبول هذا السحب؟ لا يمكن التراجع عن هذا الإجراء.' : 'Are you sure you want to approve this withdrawal request? This action cannot be undone.')
                 : (currentLang === 'ar' ? 'هل أنت متأكد من رفض هذا السحب؟ سيتم التعامل مع الرصيد وفقاً للقواعد.' : 'Are you sure you want to reject this withdrawal request?');
 
-            showConfirm(title, msg, (confirmed) => {
-                if (confirmed && withdrawConfirmationData) {
-                    if (withdrawConfirmationData.type === 'approve') approveWithdrawal(withdrawConfirmationData.id);
-                    else rejectWithdrawal(withdrawConfirmationData.id);
-                }
-                withdrawConfirmationData = null;
-            });
+            const confirmed = await showConfirm(title, msg);
+            if (confirmed) {
+                if (type === 'approve') await approveWithdrawal(id);
+                else await rejectWithdrawal(id);
+            }
         }
 
         async function handleWithdrawAction(id, action) {
@@ -2796,9 +2794,11 @@
 
         // Confirm Modal Logic
         let confirmResolve = null;
-        function showConfirm() {
+        function showConfirm(title, msg) {
+            if (title) document.getElementById('confirm-title').innerText = title;
+            if (msg) document.getElementById('confirm-msg').innerText = msg;
+            
             document.getElementById('confirm-overlay').classList.add('active');
-            updateUI(); // Ensure translations are applied
             return new Promise((resolve) => {
                 confirmResolve = resolve;
             });
