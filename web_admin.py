@@ -1244,7 +1244,7 @@ async def admin_withdrawal_action(data: WithdrawAction):
             except Exception as e:
                 logger.error(f"Failed to send withdrawal notification: {e}")
                 
-        return {"status": "success", "message": f"Withdrawal {data.action}ed successfully"}
+        return {"ok": True, "status": "success", "message": f"Withdrawal {data.action}ed successfully"}
 
 
 @app.get("/api/admin/countries-for-code/{code}")
