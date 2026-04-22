@@ -164,8 +164,19 @@
             width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
         }
 
-        #splash { position: fixed; inset: 0; z-index: 9999; background: var(--bg); display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.4s; }
-        .spinner { width: 50px; height: 50px; border: 3px solid var(--border); border-top: 3px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+        #loader {
+            position: fixed; inset: 0; z-index: 9999;
+            background: var(--bg); display: flex;
+            flex-direction: column; justify-content: center;
+            align-items: center; transition: opacity 0.4s;
+        }
+        .spinner {
+            width: 50px; height: 50px;
+            border: 3px solid #1c1f2e;
+            border-top: 3px solid var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
         .modal-overlay { position: fixed; inset: 0; z-index: 5000; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); display: none; align-items: flex-end; justify-content: center; }
@@ -177,9 +188,8 @@
 </head>
 
 <body class="dark-mode">
-    <div id="splash">
+    <div id="loader">
         <div class="spinner"></div>
-        <p style="margin-top: 20px; font-weight: 700; color: var(--text-s);" data-i18n="loading">Loading Store...</p>
     </div>
 
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeNav()"></div>
@@ -388,8 +398,8 @@
             finally {
                 updateTranslations();
                 setTimeout(() => {
-                    const splash = document.getElementById('splash');
-                    if(splash) { splash.style.opacity = '0'; setTimeout(() => splash.style.display = 'none', 400); }
+                    const loader = document.getElementById('loader');
+                    if(loader) { loader.style.opacity = '0'; setTimeout(() => loader.style.display = 'none', 400); }
                 }, 500);
             }
         }
