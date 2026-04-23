@@ -1032,10 +1032,13 @@ async def get_seller_data(user_id: int):
             prices_result = await session.execute(select(CountryPrice).where(CountryPrice.buy_price > 0).order_by(CountryPrice.updated_at.desc()))
             prices = prices_result.scalars().all()
             
-            # Get custom user prices
+            # Get custom user prices (organized by code and ISO)
             from database.models import UserCountryPrice
             custom_prices_result = await session.execute(select(UserCountryPrice).where(UserCountryPrice.user_id == user_id))
-            custom_prices = {cp.country_code: cp.buy_price for cp in custom_prices_result.scalars().all()}
+            custom_rows = custom_prices_result.scalars().all()
+            
+            # Key: (country_code, iso_code)
+            custom_prices = {(cp.country_code, cp.iso_code): cp.buy_price for cp in custom_rows}
             
             formatted_prices = []
             seen_codes = set()
@@ -1048,7 +1051,10 @@ async def get_seller_data(user_id: int):
                     default_name = resolve_country_info(p.country_code)[0]
                     name = p.country_name if p.country_name and p.country_name != "Unknown" else default_name
                     
-                    price_val = custom_prices.get(p.country_code, p.buy_price)
+                    # Resolve price: Specific ISO override > Generic XX override > Global price
+                    price_val = custom_prices.get((p.country_code, iso), 
+                                                custom_prices.get((p.country_code, 'XX'), p.buy_price))
+                    
                     if price_val > 0:
                         formatted_prices.append({
                             "name": name,
@@ -1061,14 +1067,23 @@ async def get_seller_data(user_id: int):
                     logger.error(f"Error processing price for code {p.country_code}: {inner_e}")
                     
             # Next, add any custom prices that are NOT in the global active list
-            for cc, cp_buy_price in custom_prices.items():
+            for (cc, c_iso), cp_buy_price in custom_prices.items():
+                # Avoid duplicates if already added via the global prices loop
                 if cc not in seen_codes and cp_buy_price > 0:
                     try:
+                        # Use the specific ISO if available, else XX
                         n, f, _ = resolve_country_info(cc)
                         name = n if n != "Unknown" else f"Code {cc}"
+                        
+                        # If a custom ISO was specified, try to get a better name/flag
+                        if c_iso != 'XX':
+                            flag = get_flag_emoji(c_iso)
+                        else:
+                            flag = f
+
                         formatted_prices.append({
                             "name": name,
-                            "flag": f,
+                            "flag": flag,
                             "code": cc,
                             "price": cp_buy_price
                         })
@@ -1446,27 +1461,47 @@ async def get_countries_for_code(code: str):
         return []
 
 @app.get("/api/seller/detect-country")
-async def detect_country(phone: str):
+async def detect_country(phone: str, user_id: int = 0):
     try:
-        parsed = phonenumbers.parse(phone if phone.startswith('+') else f"+{phone}")
-        country_code = str(parsed.country_code)
+        phone_p = phone if phone.startswith('+') else f"+{phone}"
+        parsed = phonenumbers.parse(phone_p)
+        cc = str(parsed.country_code)
         target_iso = phonenumbers.region_code_for_number(parsed) or 'XX'
         
         async with async_session() as session:
-            # Enforce exact match for ISO code (crucial for shared codes like +1, +7)
-            stmt = select(CountryPrice).where(
-                CountryPrice.country_code == country_code,
-                CountryPrice.iso_code == target_iso
-            )
-            cp = (await session.execute(stmt)).scalar()
+            # 1. Custom User Price
+            ucp = None
+            if user_id > 0:
+                from sqlalchemy import select
+                from database.models import UserCountryPrice
+                ucp_stmt = select(UserCountryPrice).where(
+                    UserCountryPrice.user_id == user_id,
+                    UserCountryPrice.country_code == cc
+                )
+                ucp_list = (await session.execute(ucp_stmt)).scalars().all()
+                ucp = next((u for u in ucp_list if u.iso_code == target_iso), 
+                           next((u for u in ucp_list if u.iso_code == 'XX'), None))
             
-            # Ensure the country actually has an active buying price
-            if cp and cp.buy_price > 0:
+            # 2. Global Price
+            cp_stmt = select(CountryPrice).where(CountryPrice.country_code == cc)
+            cp_list = (await session.execute(cp_stmt)).scalars().all()
+            cp = next((c for c in cp_list if c.iso_code == target_iso), 
+                      next((c for c in cp_list if c.iso_code == 'XX'), None))
+            
+            # Resolution
+            price_val = ucp.buy_price if ucp else (cp.buy_price if cp else 0)
+            
+            if price_val > 0:
+                name = cp.country_name if cp else (ucp.country_name if hasattr(ucp, 'country_name') else "Requested Country")
+                if not cp and ucp:
+                    n, _, _ = resolve_country_info(cc)
+                    name = n if n != "Unknown" else f"Code {cc}"
+
                 return {
                     "found": True,
-                    "name": cp.country_name,
+                    "name": name,
                     "flag": get_flag_emoji(target_iso) if target_iso != 'XX' else "🌐",
-                    "price": cp.buy_price
+                    "price": price_val
                 }
     except Exception as e:
         logger.error(f"Detection Error: {e}")
