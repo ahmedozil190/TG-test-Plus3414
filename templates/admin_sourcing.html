@@ -1739,25 +1739,33 @@
     <!-- ===== User Price Modal ===== -->
     <div id="user-price-modal" class="modal-overlay" onclick="closeUserPriceModal(event)">
         <div class="modal-card" onclick="event.stopPropagation()">
-            <h3 id="user-price-modal-title" data-i18n="modal_add_custom">Add Custom Price</h3>
+            <h3 id="user-price-modal-title" data-i18n="modal_add_custom">Add Custom User</h3>
             <input type="hidden" id="up-id" value="">
             
             <div class="form-group">
                 <label data-i18n="lbl_user_id">User ID</label>
-                <input type="number" id="up-user-id" class="input-field" placeholder="Enter User ID">
+                <input type="number" id="up-user-id" class="input-field" placeholder="8741285995">
             </div>
             
             <div class="form-group">
-                <label data-i18n="lbl_code">Country Code (e.g. 1)</label>
-                <input type="text" id="up-country-code" class="input-field" placeholder="Enter Country Code">
+                <label data-i18n="lbl_code">Country Code (numeric)</label>
+                <input type="text" id="up-country-code" class="input-field" placeholder="1" oninput="onUpCountryCodeInput()">
+            </div>
+            
+            <!-- Dynamic Country Field -->
+            <div id="up-country-group" class="form-group" style="display: none;">
+                <label>Detected Country</label>
+                <div id="up-country-container">
+                    <!-- Text field or select will be injected here -->
+                </div>
             </div>
             
             <div class="form-group">
-                <label data-i18n="lbl_custom_price">Custom Buy Price</label>
-                <input type="number" id="up-buy-price" class="input-field" step="0.01" placeholder="Enter custom buy price">
+                <label data-i18n="lbl_custom_price">Custom Price</label>
+                <input type="number" id="up-buy-price" class="input-field" step="0.01" placeholder="1.0">
             </div>
             
-            <button class="primary-btn" onclick="saveUserPrice()" data-i18n="btn_save_custom">Save Custom Price</button>
+            <button class="primary-btn" onclick="saveUserPrice()" data-i18n="btn_save_custom">Save Custom User</button>
             <button class="cancel-btn" onclick="closeUserPriceModal(null)" data-i18n="nav_close">Close</button>
         </div>
     </div>
@@ -1816,7 +1824,7 @@
                 modal_add_custom: "Add Custom Price",
                 modal_edit_custom: "Edit Custom Price",
                 lbl_user_id: "User ID",
-                lbl_custom_price: "Custom Buy Price",
+                lbl_custom_price: "Custom Price",
                 btn_save_custom: "Save Custom Price",
                 stat_section: "Inventory",
                 stat_total: "TOTAL ACCOUNTS",
@@ -1889,7 +1897,7 @@
                 modal_add_custom: "إضافة سعر مخصص",
                 modal_edit_custom: "تعديل السعر المخصص",
                 lbl_user_id: "معرّف المستخدم",
-                lbl_custom_price: "سعر الشراء المخصص",
+                lbl_custom_price: "السعر المخصص",
                 btn_save_custom: "حفظ السعر",
                 stat_section: "المخزون",
                 stat_total: "إجمالي الحسابات",
@@ -2045,12 +2053,16 @@
 
         function openUserPriceModal(up = null) {
             document.getElementById('user-price-modal').classList.add('active');
+            document.getElementById('up-country-group').style.display = 'none';
+            document.getElementById('up-country-container').innerHTML = '';
+            
             if (up) {
                 document.getElementById('user-price-modal-title').innerText = translations[currentLang].modal_edit_custom;
                 document.getElementById('up-id').value = up.id;
                 document.getElementById('up-user-id').value = up.user_id;
                 document.getElementById('up-country-code').value = up.country_code;
                 document.getElementById('up-buy-price').value = up.buy_price;
+                onUpCountryCodeInput();
             } else {
                 document.getElementById('user-price-modal-title').innerText = translations[currentLang].modal_add_custom;
                 document.getElementById('up-id').value = '';
@@ -2071,21 +2083,82 @@
             if (up) openUserPriceModal(up);
         }
 
+        async function onUpCountryCodeInput() {
+            const code = document.getElementById('up-country-code').value.trim().replace('+', '');
+            const group = document.getElementById('up-country-group');
+            const container = document.getElementById('up-country-container');
+
+            if (code.length < 1) {
+                group.style.display = 'none';
+                return;
+            }
+
+            try {
+                const res = await fetch(`/api/admin/countries-for-code/${code}`);
+                const data = await res.json();
+
+                if (data && data.length > 0) {
+                    group.style.display = 'block';
+                    if (data.length === 1) {
+                        container.innerHTML = `
+                            <input type="text" id="up-iso-box" class="input-field" value="${data[0].flag} ${data[0].name}" readonly 
+                                   data-iso="${data[0].iso}" data-name="${data[0].name}"
+                                   style="background: var(--bg); opacity: 0.8; cursor: not-allowed;">
+                        `;
+                    } else {
+                        container.innerHTML = `
+                            <div style="max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 5px;">
+                                ${data.map(c => `
+                                    <div class="up-country-option-btn country-option-btn" data-iso="${c.iso}" data-name="${c.name}" onclick="selectUpCountryOption(this)" style="padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.2s; background: var(--bg);">
+                                        <span style="font-size: 1.4rem;">${c.flag}</span>
+                                        <span style="font-weight: 600; font-size: 0.95rem; color: var(--text-p);">${c.name}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <input type="hidden" id="up-iso-box" data-iso="" data-name="">
+                        `;
+                    }
+                } else {
+                    group.style.display = 'none';
+                }
+            } catch (err) {
+                group.style.display = 'none';
+            }
+        }
+
+        function selectUpCountryOption(el) {
+            document.querySelectorAll('.up-country-option-btn').forEach(b => {
+                b.style.borderColor = 'var(--border)';
+                b.style.background = 'var(--bg)';
+            });
+            el.style.borderColor = 'var(--accent-purple)';
+            el.style.background = 'rgba(139, 92, 246, 0.05)';
+            const box = document.getElementById('up-iso-box');
+            box.setAttribute('data-iso', el.getAttribute('data-iso'));
+            box.setAttribute('data-name', el.getAttribute('data-name'));
+        }
+
         async function saveUserPrice() {
             const userId = parseInt(document.getElementById('up-user-id').value);
-            const cc = document.getElementById('up-country-code').value;
+            const code = document.getElementById('up-country-code').value.trim().replace('+', '');
             const price = parseFloat(document.getElementById('up-buy-price').value);
+            const isoBox = document.getElementById('up-iso-box');
 
-            if (!userId || !cc || isNaN(price)) {
+            if (!userId || !code || isNaN(price)) {
                 alert(currentLang === 'ar' ? 'يرجى ملء جميع الخانات بشكل صحيح.' : 'Please fill all fields properly.');
                 return;
+            }
+
+            let iso = 'XX';
+            if (isoBox) {
+                iso = isoBox.getAttribute('data-iso') || 'XX';
             }
 
             try {
                 const res = await fetch('/api/admin/sourcing/user-prices', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ user_id: userId, country_code: cc, buy_price: price })
+                    body: JSON.stringify({ user_id: userId, country_code: code, iso_code: iso, buy_price: price })
                 });
                 if (res.ok) {
                     closeUserPriceModal();

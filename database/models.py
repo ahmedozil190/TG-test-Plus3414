@@ -74,6 +74,7 @@ class UserCountryPrice(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(Integer, nullable=False)
     country_code = Column(String, nullable=False) # e.g. "1"
+    iso_code = Column(String, default="XX") # e.g. "US"
     buy_price = Column(Float, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 

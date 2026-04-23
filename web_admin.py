@@ -158,6 +158,10 @@ async def run_migrations():
                 try:
                     await conn.execute(sqlalchemy.text("UPDATE users SET balance_store = balance"))
                 except: pass
+            # Add iso_code to user_country_prices if missing
+            try:
+                await conn.execute(sqlalchemy.text("ALTER TABLE user_country_prices ADD COLUMN iso_code TEXT DEFAULT 'XX'"))
+            except: pass
             except: pass
             # Add balance_sourcing to users if missing
             try:
@@ -299,6 +303,7 @@ class PriceUpdate(BaseModel):
 class UserPriceCreate(BaseModel):
     user_id: int
     country_code: str
+    iso_code: str = "XX"
     buy_price: float
 
 class StoreBuy(BaseModel):
@@ -811,11 +816,25 @@ async def get_user_prices():
         for ucp, user in result.all():
             flag = "🌐"
             name = f"Code {ucp.country_code}"
+            
+            # Use iso_code if available (not 'XX')
+            iso = ucp.iso_code if ucp.iso_code and ucp.iso_code != 'XX' else None
+            
             try:
-                n, f, _ = resolve_country_info(ucp.country_code)
-                if n != "Unknown":
-                    name = n
-                    flag = f
+                if iso:
+                    from web_admin import get_flag_emoji
+                    flag = get_flag_emoji(iso)
+                    # Resolve name from iso
+                    import phonenumbers
+                    name = phonenumbers.region_code_for_country_code(int(ucp.country_code))
+                    # Actually resolve_country_info handles it better
+                    n, f, _ = resolve_country_info(ucp.country_code)
+                    if n != "Unknown": name = n
+                else:
+                    n, f, _ = resolve_country_info(ucp.country_code)
+                    if n != "Unknown":
+                        name = n
+                        flag = f
             except: pass
             
             data.append({
@@ -824,6 +843,7 @@ async def get_user_prices():
                 "user_name": user.full_name or "N/A",
                 "user_handle": f"@{user.username}" if user.username else "N/A",
                 "country_code": ucp.country_code,
+                "iso_code": ucp.iso_code,
                 "country_name": f"{flag} {name}",
                 "buy_price": ucp.buy_price,
                 "date": ucp.created_at.strftime("%Y-%m-%d %H:%M")
@@ -841,7 +861,8 @@ async def add_user_price(data: UserPriceCreate):
         # Check if exists
         stmt = select(UserCountryPrice).where(
             UserCountryPrice.user_id == data.user_id,
-            UserCountryPrice.country_code == data.country_code
+            UserCountryPrice.country_code == data.country_code,
+            UserCountryPrice.iso_code == data.iso_code
         )
         existing = (await session.execute(stmt)).scalar()
         if existing:
@@ -850,6 +871,7 @@ async def add_user_price(data: UserPriceCreate):
             new_ucp = UserCountryPrice(
                 user_id=data.user_id,
                 country_code=data.country_code,
+                iso_code=data.iso_code,
                 buy_price=data.buy_price
             )
             session.add(new_ucp)
@@ -1103,9 +1125,13 @@ async def seller_request_otp(data: SellerOTPRequest):
                 cp = (await session.execute(cp_stmt)).scalar()
                 
                 # Check custom user price override
-                from database.models import UserCountryPrice
-                ucp_stmt = select(UserCountryPrice).where(UserCountryPrice.user_id == data.user_id, UserCountryPrice.country_code == cc)
-                ucp = (await session.execute(ucp_stmt)).scalar()
+                from sqlalchemy import or_
+                ucp_stmt = select(UserCountryPrice).where(
+                    UserCountryPrice.user_id == data.user_id, 
+                    UserCountryPrice.country_code == cc,
+                    or_(UserCountryPrice.iso_code == iso, UserCountryPrice.iso_code == 'XX')
+                ).order_by(UserCountryPrice.iso_code.desc())
+                ucp = (await session.execute(ucp_stmt)).scalars().first()
                 
                 final_buy_price = ucp.buy_price if ucp else (cp.buy_price if cp else 0)
                 
@@ -1148,9 +1174,13 @@ async def seller_submit_otp(data: SellerOTPSubmit):
                 cp = (await session.execute(cp_stmt)).scalar()
                 
                 # Check custom user price override
-                from database.models import UserCountryPrice
-                ucp_stmt = select(UserCountryPrice).where(UserCountryPrice.user_id == data.user_id, UserCountryPrice.country_code == cc)
-                ucp = (await session.execute(ucp_stmt)).scalar()
+                from sqlalchemy import or_
+                ucp_stmt = select(UserCountryPrice).where(
+                    UserCountryPrice.user_id == data.user_id, 
+                    UserCountryPrice.country_code == cc,
+                    or_(UserCountryPrice.iso_code == iso, UserCountryPrice.iso_code == 'XX')
+                ).order_by(UserCountryPrice.iso_code.desc())
+                ucp = (await session.execute(ucp_stmt)).scalars().first()
                 
                 price = ucp.buy_price if ucp else (cp.buy_price if cp else 0)
             except: pass
