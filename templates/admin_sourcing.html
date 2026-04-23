@@ -1739,32 +1739,26 @@
     <!-- ===== User Price Modal ===== -->
     <div id="user-price-modal" class="modal-overlay" onclick="closeUserPriceModal(event)">
         <div class="modal-card" onclick="event.stopPropagation()">
-            <div class="modal-header">
-                <h3 id="user-price-modal-title" style="margin-bottom: 0;">Add Custom User Price</h3>
+            <h3 id="user-price-modal-title" data-i18n="modal_add_custom">Add Custom Price</h3>
+            <input type="hidden" id="up-id" value="">
+            
+            <div class="form-group">
+                <label data-i18n="lbl_user_id">User ID</label>
+                <input type="number" id="up-user-id" class="input-field" placeholder="Enter User ID">
             </div>
-            <div class="modal-body">
-                <input type="hidden" id="up-id" value="">
-                
-                <div class="form-group">
-                    <label data-i18n="lbl_user_id">User ID</label>
-                    <input type="number" id="up-user-id" class="input-field" placeholder="Enter User ID">
-                </div>
-                
-                <div class="form-group">
-                    <label data-i18n="lbl_code">Country Code (e.g. 1)</label>
-                    <input type="text" id="up-country-code" class="input-field" placeholder="Enter Country Code">
-                </div>
-                
-                <div class="form-group">
-                    <label data-i18n="lbl_custom_price">Custom Buy Price</label>
-                    <input type="number" id="up-buy-price" class="input-field" step="0.01" placeholder="Enter custom buy price">
-                </div>
-                
-                <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
-                    <button class="btn-add" onclick="saveUserPrice()" style="width:100%; justify-content: center; padding: 14px; font-size: 1rem;" data-i18n="btn_save_custom">Save Custom Price</button>
-                    <button class="cancel-btn" onclick="closeUserPriceModal()" style="width:100%; background: transparent; border: 1px solid var(--border); color: var(--text-s); padding: 12px; border-radius: 14px; font-weight: 600;" data-i18n="btn_cancel">Cancel</button>
-                </div>
+            
+            <div class="form-group">
+                <label data-i18n="lbl_code">Country Code (e.g. 1)</label>
+                <input type="text" id="up-country-code" class="input-field" placeholder="Enter Country Code">
             </div>
+            
+            <div class="form-group">
+                <label data-i18n="lbl_custom_price">Custom Buy Price</label>
+                <input type="number" id="up-buy-price" class="input-field" step="0.01" placeholder="Enter custom buy price">
+            </div>
+            
+            <button class="primary-btn" onclick="saveUserPrice()" data-i18n="btn_save_custom">Save Custom Price</button>
+            <button class="cancel-btn" onclick="closeUserPriceModal(null)" data-i18n="nav_close">Close</button>
         </div>
     </div>
 
