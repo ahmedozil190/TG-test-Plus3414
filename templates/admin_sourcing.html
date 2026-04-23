@@ -2165,7 +2165,7 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
-                        id: upId ? parseInt(upId) : null,
+                        id: upId && upId.trim() !== '' ? parseInt(upId) : null,
                         user_id: userId, 
                         country_code: code, 
                         iso_code: iso, 
@@ -2177,7 +2177,9 @@
                     fetchUserPrices();
                 } else {
                     const err = await res.json();
-                    alert(err.detail || (currentLang === 'ar' ? 'خطأ في حفظ السعر المخصص' : 'Error saving custom price'));
+                    let msg = err.detail || (currentLang === 'ar' ? 'خطأ في حفظ السعر المخصص' : 'Error saving custom price');
+                    if (typeof msg === 'object') msg = JSON.stringify(msg);
+                    alert(msg);
                 }
             } catch (e) { alert('Error: ' + e); }
         }
