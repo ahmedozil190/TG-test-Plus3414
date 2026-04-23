@@ -1159,19 +1159,22 @@ async def seller_request_otp(data: SellerOTPRequest):
                 cp = next((c for c in cp_list if c.iso_code == target_iso), 
                           next((c for c in cp_list if c.iso_code == 'XX'), None))
                 
-                # Final resolution
-                final_buy_price = ucp.buy_price if ucp else (cp.buy_price if cp else 0)
+            # 3. Final Resolution
+            final_buy_price = ucp.buy_price if ucp else (cp.buy_price if cp else 0)
+            
+            if final_buy_price <= 0:
+                raise HTTPException(status_code=400, detail="Sorry, this country is not requested at the moment.")
                 
-                if final_buy_price <= 0:
-                    raise HTTPException(status_code=400, detail="Sorry, this country is not requested at the moment.")
+            # Clean number for Telegram (E164)
+            phone_clean = phonenumbers.format_number(parsed, phonenumbers.PhoneNumberFormat.E164)
                     
         except HTTPException as he: raise he
         except Exception as e:
             logger.error(f"Sourcing Price Error: {e}")
             raise HTTPException(status_code=400, detail="Error detecting country price. Please check number format.")
 
-        phone_code_hash = await request_app_code(data.user_id, phone)
-        return {"hash": phone_code_hash, "phone": phone}
+        phone_code_hash = await request_app_code(data.user_id, phone_clean)
+        return {"hash": phone_code_hash, "phone": phone_clean}
     except Exception as e:
         logger.error(f"Seller OTP Request Error: {e}")
         if isinstance(e, HTTPException): raise e
