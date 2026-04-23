@@ -2060,7 +2060,7 @@
                         <!-- User Name -->
                         <div style="background: transparent; border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
                             <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'المستخدم' : 'User'}</span>
-                            <span style="color: #3b82f6; font-weight: 800; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${up.user_name}</span>
+                            <span style="color: #3b82f6; font-weight: 800; font-size: 0.95rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${up.user_name}</span>
                         </div>
                         <!-- User ID -->
                         <div style="background: transparent; border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
@@ -2071,10 +2071,10 @@
                     <!-- Action Buttons -->
                     <div style="display: flex; gap: 10px;">
                         <button class="primary-btn" style="flex: 1; background: rgba(96, 165, 250, 0.1); color: var(--accent); border: 1px solid rgba(96, 165, 250, 0.2); box-shadow: none; padding: 14px; font-size: 0.95rem;" onclick="editUserPrice(${up.id})">
-                            <i class="fas fa-edit"></i> ${currentLang === 'ar' ? 'تعديل' : 'Edit'}
+                            <i class="fas fa-edit" style="${currentLang === 'ar' ? 'margin-left: 8px;' : 'margin-right: 8px;'}"></i> ${currentLang === 'ar' ? 'تعديل' : 'Edit'}
                         </button>
                         <button class="primary-btn" style="flex: 1; background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); box-shadow: none; padding: 14px; font-size: 0.95rem;" onclick="deleteUserPrice(${up.id})">
-                            <i class="fas fa-trash"></i> ${currentLang === 'ar' ? 'حذف' : 'Delete'}
+                            <i class="fas fa-trash" style="${currentLang === 'ar' ? 'margin-left: 8px;' : 'margin-right: 8px;'}"></i> ${currentLang === 'ar' ? 'حذف' : 'Delete'}
                         </button>
                     </div>
                 </div>`;
@@ -2123,21 +2123,10 @@
         }
 
         function openUserPriceModal(up = null) {
-            const modal = document.getElementById('user-price-modal');
-            modal.classList.add('active');
+            document.getElementById('user-price-modal').classList.add('active');
             document.getElementById('up-country-group').style.display = 'none';
             document.getElementById('up-country-container').innerHTML = '';
             
-            // Safety reset for inputs
-            const inputs = ['up-user-id', 'up-country-code', 'up-buy-price'];
-            inputs.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) {
-                    el.disabled = false;
-                    el.readOnly = false;
-                }
-            });
-
             if (up) {
                 document.getElementById('user-price-modal-title').innerText = translations[currentLang].modal_edit_custom;
                 document.getElementById('up-id').value = up.id;
@@ -2153,12 +2142,6 @@
                 document.getElementById('up-buy-price').value = '';
             }
             updateUI();
-            
-            // Auto-focus after a short delay
-            setTimeout(() => {
-                const firstInput = document.getElementById('up-user-id');
-                if (firstInput) firstInput.focus();
-            }, 300);
         }
 
         function closeUserPriceModal(e) {
@@ -2267,7 +2250,14 @@
                     const err = await res.json();
                     let msg = err.detail || (currentLang === 'ar' ? 'خطأ في حفظ السعر المخصص' : 'Error saving custom price');
                     if (typeof msg === 'object') msg = JSON.stringify(msg);
-                    alert(msg);
+                    
+                    showAlert(
+                        currentLang === 'ar' ? 'تنبيه' : 'Alert',
+                        msg,
+                        'fas fa-exclamation-triangle',
+                        'rgba(239, 68, 68, 0.1)',
+                        '#ef4444'
+                    );
                 }
             } catch (e) { alert('Error: ' + e); }
         }
@@ -3237,8 +3227,33 @@
             iconWrap.style.color = iconColor;
 
             const yesBtn = document.querySelector('.confirm-yes');
+            const noBtn = document.querySelector('.confirm-no');
+            noBtn.style.display = 'block'; // Ensure it's shown for confirm
+
             yesBtn.innerText = btnText || (currentLang === 'ar' ? 'تأكيد' : 'Confirm');
             yesBtn.className = 'confirm-btn confirm-yes ' + btnClass;
+
+            document.getElementById('confirm-overlay').classList.add('active');
+            return new Promise((resolve) => {
+                confirmResolve = resolve;
+            });
+        }
+
+        function showAlert(title, msg, icon = 'fas fa-info-circle', iconBg = 'rgba(59, 130, 246, 0.1)', iconColor = '#3b82f6') {
+            if (title) document.getElementById('confirm-title').innerText = title;
+            if (msg) document.getElementById('confirm-msg').innerText = msg;
+
+            const iconWrap = document.querySelector('.confirm-icon');
+            iconWrap.innerHTML = `<i class="${icon}"></i>`;
+            iconWrap.style.background = iconBg;
+            iconWrap.style.color = iconColor;
+
+            const yesBtn = document.querySelector('.confirm-yes');
+            const noBtn = document.querySelector('.confirm-no');
+            
+            noBtn.style.display = 'none'; // Hide Cancel for Alert
+            yesBtn.innerText = currentLang === 'ar' ? 'حسناً' : 'OK';
+            yesBtn.className = 'confirm-btn confirm-yes';
 
             document.getElementById('confirm-overlay').classList.add('active');
             return new Promise((resolve) => {
