@@ -1508,6 +1508,15 @@
                     </div>
                     <div class="info-card">
                         <div class="info-card-l">
+                            <span class="info-card-lbl" data-i18n="lbl_rejected_requests">REJECTED REQUESTS</span>
+                            <div class="info-card-val"><span id="home-stat-withdraw-rejected">0</span> <span>REQUESTS</span></div>
+                        </div>
+                        <div class="info-card-icon" style="background: rgba(239, 68, 68, 0.1); color: var(--error);">
+                            <i class="fas fa-circle-xmark"></i>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-l">
                             <span class="info-card-lbl" data-i18n="lbl_total_pending">TOTAL PENDING</span>
                             <div class="info-card-val"><span id="home-stat-withdraw-pending-amount">0.00</span> <span style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">USD</span></div>
                         </div>
@@ -1969,6 +1978,7 @@
                 recent_ops: "Recent Operations",
                 lbl_pending_requests: "PENDING REQUESTS",
                 lbl_approved_requests: "APPROVED REQUESTS",
+                lbl_rejected_requests: "REJECTED REQUESTS",
                 buying_prices: "Buying Prices",
                 btn_add: "Add",
                 btn_save: "Add Country",
@@ -2047,6 +2057,7 @@
                 recent_ops: "أحدث العمليات",
                 lbl_pending_requests: "طلبات قيد الانتظار",
                 lbl_approved_requests: "طلبات تمت الموافقة",
+                lbl_rejected_requests: "طلبات مرفوضة",
                 buying_prices: "أسعار الشراء",
                 btn_add: "إضافة",
                 btn_save: "إضافة دولة",
@@ -2702,10 +2713,12 @@
                 // Withdrawals (Home)
                 const hwp = document.getElementById('home-stat-withdraw-pending');
                 const hwa = document.getElementById('home-stat-withdraw-approved');
+                const hwr = document.getElementById('home-stat-withdraw-rejected');
                 const hwpa = document.getElementById('home-stat-withdraw-pending-amount');
                 const htp = document.getElementById('home-stat-total-paid');
                 if (hwp) hwp.innerText = data.stats.withdraw_pending || 0;
                 if (hwa) hwa.innerText = data.stats.withdraw_approved || 0;
+                if (hwr) hwr.innerText = data.stats.withdraw_rejected || 0;
                 if (hwpa) hwpa.innerText = parseFloat(data.stats.withdraw_pending_amount || 0).toFixed(2);
                 if (htp) htp.innerText = parseFloat(data.stats.total_paid_amount || 0).toFixed(2);
 
