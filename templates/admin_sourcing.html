@@ -2605,19 +2605,24 @@
             try {
                 const res = await fetch('/api/admin/sourcing/data');
                 const data = await res.json();
-                document.getElementById('stat-total-sourced').innerText = data.stats.total_sourced;
+                const totalSourcedEl = document.getElementById('stat-total-sourced');
+                if (totalSourcedEl) totalSourcedEl.innerText = data.stats.total_sourced;
                 if (data.bot_name) document.getElementById('sideBrandName').textContent = data.bot_name;
                 const uname = tg.initDataUnsafe?.user?.first_name || "AD";
                 const uIEl = document.getElementById('userInitial');
                 if (uIEl) uIEl.textContent = uname.charAt(0).toUpperCase();
-                document.getElementById('stat-pending').innerText = data.stats.pending_count;
+                const pendingEl = document.getElementById('stat-pending');
+                if (pendingEl) pendingEl.innerText = data.stats.pending_count;
                 const htpEl = document.getElementById('home-stat-total-paid');
                 if (htpEl) htpEl.innerText = `$${parseFloat(data.stats.total_paid_amount || 0).toFixed(2)}`;
 
                 // History Stats
-                document.getElementById('stat-history-pending').innerText = data.stats.pending_count;
-                document.getElementById('stat-history-accepted').innerText = data.stats.accepted_sourced;
-                document.getElementById('stat-history-rejected').innerText = data.stats.rejected_sourced;
+                const hpEl = document.getElementById('stat-history-pending');
+                const haEl = document.getElementById('stat-history-accepted');
+                const hrEl = document.getElementById('stat-history-rejected');
+                if (hpEl) hpEl.innerText = data.stats.pending_count;
+                if (haEl) haEl.innerText = data.stats.accepted_sourced;
+                if (hrEl) hrEl.innerText = data.stats.rejected_sourced;
 
                 // Home User Stats
                 const huTotal = document.getElementById('home-total-users');
@@ -3018,6 +3023,7 @@
 
         function renderRecent(list) {
             const container = document.getElementById('recent-sourced');
+            if (!container) return; // Prevent crash if element is removed
             if (!list.length) {
                 container.innerHTML = `
                 <div style="text-align: center; padding: 40px 20px; background: rgba(0,0,0,0.15); border-radius: 16px; border: 1px dashed rgba(255,255,255,0.05); margin-top: 0;">
