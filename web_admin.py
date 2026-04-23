@@ -822,15 +822,15 @@ async def get_user_prices():
             iso = ucp.iso_code if ucp.iso_code and ucp.iso_code != 'XX' else None
             
             try:
+                import pycountry
                 if iso:
                     from web_admin import get_flag_emoji
                     flag = get_flag_emoji(iso)
-                    # Resolve name from iso
-                    import phonenumbers
-                    name = phonenumbers.region_code_for_country_code(int(ucp.country_code))
-                    # Actually resolve_country_info handles it better
-                    n, f, _ = resolve_country_info(ucp.country_code)
-                    if n != "Unknown": name = n
+                    country = pycountry.countries.get(alpha_2=iso)
+                    if country:
+                        name = country.name
+                        import re
+                        name = re.sub(r'\s*\(?[A-Z]{2,3}\)?\s*$', '', name).strip()
                 else:
                     n, f, _ = resolve_country_info(ucp.country_code)
                     if n != "Unknown":

@@ -2038,11 +2038,11 @@
                         </div>
                     </div>
                     <!-- Action Buttons -->
-                    <div style="display: flex; gap: 10px;">
-                        <button class="btn-primary" style="flex: 1;" onclick="editUserPrice(${up.id})">
+                    <div style="display: flex; gap: 10px; margin-top: 5px;">
+                        <button class="btn-add" style="flex: 1; justify-content: center; padding: 10px; border-radius: 12px; font-size: 0.85rem; font-weight: 700;" onclick="editUserPrice(${up.id})">
                             <i class="fas fa-edit"></i> ${currentLang === 'ar' ? 'تعديل' : 'Edit'}
                         </button>
-                        <button class="reject-btn" style="flex: 1;" onclick="deleteUserPrice(${up.id})">
+                        <button class="reject-btn" style="flex: 1; justify-content: center; padding: 10px; border-radius: 12px; font-size: 0.85rem; font-weight: 700; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.15);" onclick="deleteUserPrice(${up.id})">
                             <i class="fas fa-trash"></i> ${currentLang === 'ar' ? 'حذف' : 'Delete'}
                         </button>
                     </div>
