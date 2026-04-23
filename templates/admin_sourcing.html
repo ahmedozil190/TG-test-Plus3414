@@ -2123,10 +2123,21 @@
         }
 
         function openUserPriceModal(up = null) {
-            document.getElementById('user-price-modal').classList.add('active');
+            const modal = document.getElementById('user-price-modal');
+            modal.classList.add('active');
             document.getElementById('up-country-group').style.display = 'none';
             document.getElementById('up-country-container').innerHTML = '';
             
+            // Safety reset for inputs
+            const inputs = ['up-user-id', 'up-country-code', 'up-buy-price'];
+            inputs.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.disabled = false;
+                    el.readOnly = false;
+                }
+            });
+
             if (up) {
                 document.getElementById('user-price-modal-title').innerText = translations[currentLang].modal_edit_custom;
                 document.getElementById('up-id').value = up.id;
@@ -2142,6 +2153,12 @@
                 document.getElementById('up-buy-price').value = '';
             }
             updateUI();
+            
+            // Auto-focus after a short delay
+            setTimeout(() => {
+                const firstInput = document.getElementById('up-user-id');
+                if (firstInput) firstInput.focus();
+            }, 300);
         }
 
         function closeUserPriceModal(e) {
