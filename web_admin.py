@@ -451,6 +451,8 @@ async def get_sourcing_data():
             total_sourced = (await session.execute(select(func.count(Account.id)))).scalar() or 0
             pending_count = (await session.execute(select(func.count(Account.id)).where(Account.status == AccountStatus.PENDING))).scalar() or 0
             accepted_sourced = (await session.execute(select(func.count(Account.id)).where(Account.status.in_([AccountStatus.AVAILABLE, AccountStatus.SOLD])))).scalar() or 0
+            available_count = (await session.execute(select(func.count(Account.id)).where(Account.status == AccountStatus.AVAILABLE))).scalar() or 0
+            sold_count = (await session.execute(select(func.count(Account.id)).where(Account.status == AccountStatus.SOLD))).scalar() or 0
             rejected_sourced = (await session.execute(select(func.count(Account.id)).where(Account.status == AccountStatus.REJECTED))).scalar() or 0
             
             # Withdrawal stats
@@ -576,6 +578,8 @@ async def get_sourcing_data():
                 "stats": {
                     "total_sourced": total_sourced, 
                     "pending_count": pending_count,
+                    "available_count": available_count,
+                    "sold_count": sold_count,
                     "accepted_sourced": accepted_sourced,
                     "rejected_sourced": rejected_sourced,
                     "total_balance": round(total_sourcing_balance, 2),

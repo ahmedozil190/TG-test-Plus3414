@@ -1420,6 +1420,15 @@
                 <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px;">
                     <div class="info-card">
                         <div class="info-card-l">
+                            <span class="info-card-lbl" data-i18n="lbl_ready_accs">READY ACCOUNTS</span>
+                            <div class="info-card-val"><span id="home-stat-ready">0</span> <span data-i18n="unit_accs">ACCOUNTS</span></div>
+                        </div>
+                        <div class="info-card-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">
+                            <i class="fas fa-check-to-slot"></i>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-l">
                             <span class="info-card-lbl" data-i18n="stat_pending_ops">PENDING ACCOUNTS</span>
                             <div class="info-card-val"><span id="home-stat-pending">0</span> <span data-i18n="unit_ops">ACCOUNTS</span></div>
                         </div>
@@ -2003,6 +2012,7 @@
                 nav_history: "Accounts History",
                 pg_next: "Next",
                 stat_pending_ops: "PENDING ACCOUNTS",
+                lbl_ready_accs: "READY ACCOUNTS",
                 stat_total_ops: "TOTAL ACCOUNTS",
                 stat_accepted_ops: "ACCEPTED ACCOUNTS",
                 stat_rejected_ops: "REJECTED ACCOUNTS",
@@ -2087,6 +2097,7 @@
                 pg_prev: "السابق",
                 nav_history: "سجل العمليات",
                 stat_pending_ops: "عمليات قيد الانتظار",
+                lbl_ready_accs: "حسابات جاهزة",
                 stat_total_ops: "إجمالي العمليات",
                 stat_accepted_ops: "الحسابات المقبولة",
                 stat_rejected_ops: "الحسابات المرفوضة",
@@ -2703,9 +2714,11 @@
                 const data = await res.json();
                 
                 // Inventory (Home)
+                const hsrdy = document.getElementById('home-stat-ready');
                 const hsp = document.getElementById('home-stat-pending');
                 const hsa = document.getElementById('home-stat-accepted');
                 const hsr = document.getElementById('home-stat-rejected');
+                if (hsrdy) hsrdy.innerText = data.stats.available_count || 0;
                 if (hsp) hsp.innerText = data.stats.pending_count;
                 if (hsa) hsa.innerText = data.stats.accepted_sourced;
                 if (hsr) hsr.innerText = data.stats.rejected_sourced;
