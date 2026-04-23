@@ -1115,25 +1115,30 @@ async def seller_request_otp(data: SellerOTPRequest):
 
         # Pre-check 2: Country availability
         try:
-            parsed = phonenumbers.parse(phone)
+            phone_clean = phone.strip()
+            if not phone_clean.startswith('+'): phone_clean = '+' + phone_clean
+            parsed = phonenumbers.parse(phone_clean)
             cc = str(parsed.country_code)
+            target_iso = phonenumbers.region_code_for_number(parsed) or 'XX'
+            
             async with async_session() as session:
-                target_iso = phonenumbers.region_code_for_number(parsed) or 'XX'
+                # 1. Try to find a specific CountryPrice
                 cp_stmt = select(CountryPrice).where(
                     CountryPrice.country_code == cc,
                     CountryPrice.iso_code == target_iso
                 )
                 cp = (await session.execute(cp_stmt)).scalar()
                 
-                # Check custom user price override
+                # 2. Check for custom user price (ISO specific or Global XX)
                 from sqlalchemy import or_
                 ucp_stmt = select(UserCountryPrice).where(
                     UserCountryPrice.user_id == data.user_id, 
                     UserCountryPrice.country_code == cc,
                     or_(UserCountryPrice.iso_code == target_iso, UserCountryPrice.iso_code == 'XX')
-            ).order_by(UserCountryPrice.iso_code.desc())
+                ).order_by(UserCountryPrice.iso_code.desc()) # Prefer specific ISO
                 ucp = (await session.execute(ucp_stmt)).scalars().first()
                 
+                # 3. Determine final price: Custom > Global > 0
                 final_buy_price = ucp.buy_price if ucp else (cp.buy_price if cp else 0)
                 
                 if final_buy_price <= 0:
@@ -1165,9 +1170,12 @@ async def seller_submit_otp(data: SellerOTPSubmit):
             # Automatic price detection
             price = 0
             try:
-                parsed = phonenumbers.parse(data.phone if data.phone.startswith("+") else "+" + data.phone)
+                phone_clean = data.phone.strip()
+                if not phone_clean.startswith('+'): phone_clean = '+' + phone_clean
+                parsed = phonenumbers.parse(phone_clean)
                 cc = str(parsed.country_code)
                 target_iso = phonenumbers.region_code_for_number(parsed) or 'XX'
+                
                 cp_stmt = select(CountryPrice).where(
                     CountryPrice.country_code == cc,
                     CountryPrice.iso_code == target_iso
