@@ -332,7 +332,21 @@
         </section>
 
         <section id="section-history" class="view-panel">
-            <div class="grid-container" id="history-list"></div>
+            <div class="info-card" style="box-shadow: none; margin-bottom: 25px;">
+                <div class="info-card-l">
+                    <span class="info-card-lbl">Total Orders</span>
+                    <div class="info-card-val">
+                        <span id="hist-total-orders">0</span>
+                        <span style="font-size: 0.85rem; color: var(--text-s); font-weight: 600;">ORDERS</span>
+                    </div>
+                </div>
+                <div class="info-card-icon" style="background: rgba(88, 101, 242, 0.1); color: var(--accent);">
+                    <i class="fas fa-shopping-bag"></i>
+                </div>
+            </div>
+            <div class="history-list" id="history-list">
+                <!-- History items here -->
+            </div>
         </section>
 
         <section id="section-support" class="view-panel">
@@ -576,16 +590,62 @@
 
         function renderHistory(data) {
             const list = document.getElementById('history-list');
+            document.getElementById('hist-total-orders').innerText = data ? data.length : 0;
             if (!data || !data.length) { list.innerHTML = '<p style="text-align:center; padding: 40px; opacity: 0.5;">No history found</p>'; return; }
             list.innerHTML = data.map(h => `
-                <div class="info-card" style="padding: 15px;">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <span style="font-size: 1.5rem;">${h.flag}</span>
-                        <div><div style="font-weight: 800; font-size: 0.95rem;">${h.phone}</div><div style="font-size: 0.75rem; color: var(--text-s);">${h.date} - ${h.country}</div></div>
+                <div class="history-item" style="flex-direction: column; align-items: stretch; gap: 12px; padding: 18px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span style="font-size: 1.8rem;">${h.flag}</span>
+                            <div>
+                                <div style="font-weight: 800; font-size: 1rem; color: var(--text-p);">${h.phone}</div>
+                                <div style="font-size: 0.75rem; color: var(--text-s); font-weight: 600;">${h.date} - ${h.country}</div>
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-weight: 800; color: var(--success); font-size: 1rem;">$${h.price.toFixed(2)}</div>
+                            <div style="font-size: 0.6rem; color: var(--text-s); font-weight: 700; text-transform: uppercase;">Paid</div>
+                        </div>
                     </div>
-                    <div style="font-weight: 700; color: var(--success);">$${h.price.toFixed(2)}</div>
+                    <div id="otp-res-${h.phone.replace(/\D/g, '')}" style="display:none; background: rgba(255,193,7,0.05); border: 1px dashed rgba(255,193,7,0.3); border-radius: 12px; padding: 10px; text-align: center;">
+                        <span style="color: #ffc107; font-size: 0.7rem; font-weight: 800; display: block;">LOGIN CODE</span>
+                        <span class="otp-val" style="font-size: 1.4rem; font-weight: 800; color: var(--text-p); letter-spacing: 4px;">-----</span>
+                    </div>
+                    <button class="btn-action" onclick="fetchHistoryOTP('${h.phone}', this)" style="padding: 10px; font-size: 0.8rem; border-radius: 12px; background: var(--card-glass); border: 1px solid var(--border); box-shadow: none; color: var(--text-p);">
+                        <i class="fas fa-key" style="font-size: 0.8rem;"></i> Get Login Code
+                    </button>
                 </div>
             `).join('');
+        }
+
+        async function fetchHistoryOTP(phone, btn) {
+            const safeId = phone.replace(/\D/g, '');
+            const otpBox = document.getElementById('otp-res-' + safeId);
+            const otpVal = otpBox.querySelector('.otp-val');
+            
+            btn.disabled = true;
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking...';
+            
+            try {
+                const res = await fetch(`/api/store/get-code?user_id=${userId}&phone=${encodeURIComponent(phone)}`);
+                const data = await res.json();
+                
+                if (data.status === 'success') {
+                    otpBox.style.display = 'block';
+                    otpVal.innerText = data.code;
+                    btn.innerHTML = '<i class="fas fa-check"></i> Code Received';
+                    tg.HapticFeedback.notificationOccurred('success');
+                } else {
+                    alert(data.message || 'Code not arrived yet.');
+                    btn.disabled = false;
+                    btn.innerHTML = originalHtml;
+                }
+            } catch (e) {
+                alert('Error');
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+            }
         }
 
         function copyPhone() {
