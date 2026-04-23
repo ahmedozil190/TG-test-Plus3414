@@ -649,7 +649,7 @@
                 } else { 
                     const msg = data.detail || data.message || 'Error';
                     if (msg.includes('رصيدك') || msg.toLowerCase().includes('balance')) {
-                        showToast(lang === 'ar' ? 'فشل الشراء' : 'Purchase Failed', lang === 'ar' ? 'رصيدك غير كافٍ لإتمام العملية' : 'Insufficient buy balance', 'error');
+                        showToast(currentLang === 'ar' ? 'فشل الشراء' : 'Purchase Failed', currentLang === 'ar' ? 'رصيدك غير كافٍ لإتمام العملية' : 'Insufficient buy balance', 'error');
                     } else {
                         alert(msg);
                     }
