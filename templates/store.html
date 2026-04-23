@@ -229,7 +229,7 @@
     <div class="sidebar" id="navSidebar">
         <div class="side-brand">
             <div class="side-brand-dot"></div>
-            <span class="side-brand-name">Numbers Store</span>
+            <span class="side-brand-name">Buy Number</span>
         </div>
         <div class="side-nav">
             <div class="nav-item active" id="m-home" onclick="switchNav('home', this)">
@@ -299,7 +299,7 @@
                 </div>
                 <div class="info-card" style="margin-bottom: 0; box-shadow: none;">
                     <div class="info-card-l">
-                        <span class="info-card-lbl" data-i18n="countries">Countries</span>
+                        <span class="info-card-lbl" data-i18n="countries">Total Countries</span>
                         <div class="info-card-val">
                             <span id="stat-countries">0</span>
                             <span style="font-size: 0.85rem; color: var(--text-s); font-weight: 600;">COUNTRIES</span>
@@ -416,7 +416,7 @@
                 confirm_title: "Confirmation", lbl_country: "Country", lbl_price: "Price", btn_confirm_pay: "Buy Now",
                 success_title: "Payment Success!", success_desc: "Wait for the code in your bot chat.", btn_close: "Dismiss",
                 available: "Available", search_ph: "Search countries...",
-                total_numbers: "Total Numbers", countries: "Countries", lowest_price: "Lowest Price"
+                total_numbers: "Total Numbers", countries: "Total Countries", lowest_price: "Lowest Price"
             },
             ar: {
                 loading: "جاري تجهيز المتجر...", nav_home: "الرئيسية", nav_buy: "شراء رقم", nav_history: "طلباتي", nav_support: "الدعم",
@@ -424,7 +424,7 @@
                 confirm_title: "تأكيد الشراء", lbl_country: "الدولة", lbl_price: "السعر", btn_confirm_pay: "إتمام الشراء",
                 success_title: "تم بنجاح!", success_desc: "انتظر وصول الكود في البوت.", btn_close: "إغلاق",
                 available: "رقم متاح", search_ph: "ابحث عن دولة...",
-                total_numbers: "إجمالي الأرقام", countries: "عدد الدول", lowest_price: "أقل سعر"
+                total_numbers: "إجمالي الأرقام", countries: "إجمالي الدول", lowest_price: "أقل سعر"
             }
         };
 
@@ -435,16 +435,31 @@
             closeNav();
             document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            document.getElementById('section-' + id).classList.add('active');
-            if(btn) btn.classList.add('active');
+            const section = document.getElementById('section-' + id);
+            if (section) section.classList.add('active');
+            if (btn) btn.classList.add('active');
+            else {
+                const targetBtn = document.getElementById('m-' + id);
+                if (targetBtn) targetBtn.classList.add('active');
+            }
             const titleKey = 'nav_' + id;
             document.getElementById('view-title').innerText = translations[currentLang][titleKey] || id;
+            
+            // Persist for refresh
+            sessionStorage.setItem('activeTab', id);
+
             if(id === 'store') fetchCountries();
             if(id === 'history') fetchHistory();
         }
 
         async function init() {
             try {
+                // Restore tab on refresh
+                const savedTab = sessionStorage.getItem('activeTab');
+                if (savedTab && savedTab !== 'home') {
+                    switchNav(savedTab, null);
+                }
+
                 // Identity Sync
                 const userData = tg.initDataUnsafe?.user;
                 if (userData) {
