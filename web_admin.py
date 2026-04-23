@@ -1121,17 +1121,20 @@ async def seller_request_otp(data: SellerOTPRequest):
             
             async with async_session() as session:
                 from sqlalchemy import or_
-                # 1. Try to find a global CountryPrice (Specific ISO or fallback XX)
+                # 1. Try to find a global CountryPrice (Specific ISO or fallback XX, with or without + in code)
+                cc_clean = cc.lstrip('+')
+                cc_with_plus = "+" + cc_clean
+                
                 cp_stmt = select(CountryPrice).where(
-                    CountryPrice.country_code == cc,
+                    or_(CountryPrice.country_code == cc_clean, CountryPrice.country_code == cc_with_plus),
                     or_(CountryPrice.iso_code == target_iso, CountryPrice.iso_code == 'XX')
-                ).order_by(CountryPrice.iso_code.asc()) # Prefer specific ISO (e.g. 'EG') over 'XX'
+                ).order_by(CountryPrice.iso_code.asc()) # Prefer specific ISO
                 cp = (await session.execute(cp_stmt)).scalars().first()
                 
                 # 2. Check for custom user price override
                 ucp_stmt = select(UserCountryPrice).where(
                     UserCountryPrice.user_id == data.user_id, 
-                    UserCountryPrice.country_code == cc,
+                    or_(UserCountryPrice.country_code == cc_clean, UserCountryPrice.country_code == cc_with_plus),
                     or_(UserCountryPrice.iso_code == target_iso, UserCountryPrice.iso_code == 'XX')
                 ).order_by(UserCountryPrice.iso_code.asc())
                 ucp = (await session.execute(ucp_stmt)).scalars().first()
@@ -1175,17 +1178,20 @@ async def seller_submit_otp(data: SellerOTPSubmit):
                 target_iso = phonenumbers.region_code_for_number(parsed) or 'XX'
                 
                 from sqlalchemy import or_
-                # 1. Global Price (Specific ISO or fallback XX)
+                # 1. Global Price (Specific ISO or fallback XX, with or without + in code)
+                cc_clean = cc.lstrip('+')
+                cc_with_plus = "+" + cc_clean
+                
                 cp_stmt = select(CountryPrice).where(
-                    CountryPrice.country_code == cc,
+                    or_(CountryPrice.country_code == cc_clean, CountryPrice.country_code == cc_with_plus),
                     or_(CountryPrice.iso_code == target_iso, CountryPrice.iso_code == 'XX')
-                ).order_by(CountryPrice.iso_code.asc()) # Prefer specific ISO over 'XX'
+                ).order_by(CountryPrice.iso_code.asc()) # Prefer specific ISO
                 cp = (await session.execute(cp_stmt)).scalars().first()
                 
                 # 2. Custom User Price
                 ucp_stmt = select(UserCountryPrice).where(
                     UserCountryPrice.user_id == data.user_id, 
-                    UserCountryPrice.country_code == cc,
+                    or_(UserCountryPrice.country_code == cc_clean, UserCountryPrice.country_code == cc_with_plus),
                     or_(UserCountryPrice.iso_code == target_iso, UserCountryPrice.iso_code == 'XX')
                 ).order_by(UserCountryPrice.iso_code.asc())
                 ucp = (await session.execute(ucp_stmt)).scalars().first()
