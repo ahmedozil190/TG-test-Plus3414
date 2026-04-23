@@ -1487,16 +1487,33 @@ async def get_countries_for_code(code: str):
 @app.get("/api/seller/detect-country")
 async def detect_country(phone: str, user_id: int = 0):
     try:
-        phone_p = phone if phone.startswith('+') else f"+{phone}"
-        parsed = phonenumbers.parse(phone_p)
-        cc = str(parsed.country_code)
-        target_iso = phonenumbers.region_code_for_number(parsed) or 'XX'
+        # Clean input
+        raw = phone.strip().lstrip('+')
+        if not raw: return {"found": False}
         
-        logger.info(f"Detecting: Phone={phone}, ParsedCC={cc}, ISO={target_iso}, User={user_id}")
+        # Immediate CC detection (best for short input like +20)
+        detected_cc = None
+        for i in range(4, 0, -1):
+            prefix = raw[:i]
+            if prefix.isdigit() and int(prefix) in phonenumbers.COUNTRY_CODE_TO_REGION_CODE:
+                detected_cc = prefix
+                break
         
+        # Fallback to full parsing if it's a long number
+        target_iso = 'XX'
+        try:
+            phone_p = phone if phone.startswith('+') else f"+{phone}"
+            parsed = phonenumbers.parse(phone_p)
+            detected_cc = str(parsed.country_code)
+            target_iso = phonenumbers.region_code_for_number(parsed) or 'XX'
+        except: pass
+
+        if not detected_cc:
+            return {"found": False}
+            
         async with async_session() as session:
             from sqlalchemy import or_
-            cc_clean = cc.lstrip("+")
+            cc_clean = detected_cc.lstrip("+")
             cc_plus = "+" + cc_clean
             
             # 1. Custom User Price
@@ -1507,7 +1524,6 @@ async def detect_country(phone: str, user_id: int = 0):
                     or_(UserCountryPrice.country_code == cc_clean, UserCountryPrice.country_code == cc_plus)
                 )
                 ucp_list = (await session.execute(ucp_stmt)).scalars().all()
-                logger.info(f"User Candidates: {[f'{u.country_code}/{u.iso_code}' for u in ucp_list]}")
                 ucp = next((u for u in ucp_list if u.iso_code == target_iso), 
                            next((u for u in ucp_list if u.iso_code == 'XX'), 
                                 (ucp_list[0] if ucp_list else None)))
@@ -1517,26 +1533,28 @@ async def detect_country(phone: str, user_id: int = 0):
                 or_(CountryPrice.country_code == cc_clean, CountryPrice.country_code == cc_plus)
             )
             cp_list = (await session.execute(cp_stmt)).scalars().all()
-            logger.info(f"Global Candidates: {[f'{c.country_code}/{c.iso_code}' for c in cp_list]}")
             cp = next((c for c in cp_list if c.iso_code == target_iso), 
                       next((c for c in cp_list if c.iso_code == 'XX'), 
                            (cp_list[0] if cp_list else None)))
             
             # Resolution
             price_val = ucp.buy_price if ucp else (cp.buy_price if cp else 0)
-            logger.info(f"Final Selection: UCP={'Yes' if ucp else 'No'}, CP={'Yes' if cp else 'No'}, Price={price_val}")
-
             
             if price_val > 0:
+                # Resolve Name & Flag
+                display_iso = target_iso
+                if display_iso == 'XX':
+                    display_iso = phonenumbers.region_code_for_country_code(int(detected_cc))
+                
                 name = cp.country_name if cp else (ucp.country_name if hasattr(ucp, 'country_name') else "Requested Country")
                 if not cp and ucp:
-                    n, _, _ = resolve_country_info(cc)
-                    name = n if n != "Unknown" else f"Code {cc}"
+                    n, _, _ = resolve_country_info(detected_cc)
+                    name = n if n != "Unknown" else f"Code {detected_cc}"
 
                 return {
                     "found": True,
                     "name": name,
-                    "flag": get_flag_emoji(target_iso) if target_iso != 'XX' else "🌐",
+                    "flag": get_flag_emoji(display_iso) if display_iso != 'XX' else "🌐",
                     "price": price_val
                 }
     except Exception as e:
