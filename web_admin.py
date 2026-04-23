@@ -1113,19 +1113,21 @@ async def seller_request_otp(data: SellerOTPRequest):
             if existing:
                 raise HTTPException(status_code=400, detail="This account already exists in the system.")
 
-        # Pre-check 2: Country availability
+        # Pre-check 2: Country availability & Pricing
         try:
             parsed = phonenumbers.parse(phone)
             cc = str(parsed.country_code)
+            target_iso = phonenumbers.region_code_for_number(parsed) or 'XX'
+            
             async with async_session() as session:
-                target_iso = phonenumbers.region_code_for_number(parsed) or 'XX'
+                # 1. Try to find a global CountryPrice
                 cp_stmt = select(CountryPrice).where(
                     CountryPrice.country_code == cc,
                     CountryPrice.iso_code == target_iso
                 )
                 cp = (await session.execute(cp_stmt)).scalar()
                 
-                # Check custom user price override
+                # 2. Check for custom user price override
                 from sqlalchemy import or_
                 ucp_stmt = select(UserCountryPrice).where(
                     UserCountryPrice.user_id == data.user_id, 
@@ -1134,20 +1136,21 @@ async def seller_request_otp(data: SellerOTPRequest):
                 ).order_by(UserCountryPrice.iso_code.desc())
                 ucp = (await session.execute(ucp_stmt)).scalars().first()
                 
+                # 3. Determine final buy price
                 final_buy_price = ucp.buy_price if ucp else (cp.buy_price if cp else 0)
                 
                 if final_buy_price <= 0:
                     raise HTTPException(status_code=400, detail="Sorry, this country is not requested at the moment.")
         except HTTPException as he: raise he
-        except: 
-            raise HTTPException(status_code=400, detail="Invalid phone number format.")
+        except Exception as inner_e:
+            logger.error(f"Pricing Check Error: {inner_e}")
+            raise HTTPException(status_code=400, detail="Invalid phone number format or country not supported.")
 
         phone_code_hash = await request_app_code(data.user_id, phone)
         return {"hash": phone_code_hash, "phone": phone}
     except Exception as e:
         logger.error(f"Seller OTP Request Error: {e}")
         if isinstance(e, HTTPException): raise e
-        # Map specific exceptions from session_manager
         err_msg = str(e)
         if "banned" in err_msg.lower() or "frozen" in err_msg.lower():
              raise HTTPException(status_code=400, detail=err_msg)
@@ -1165,16 +1168,20 @@ async def seller_submit_otp(data: SellerOTPSubmit):
             # Automatic price detection
             price = 0
             try:
-                parsed = phonenumbers.parse(data.phone if data.phone.startswith("+") else "+" + data.phone)
+                phone_clean = data.phone.strip()
+                if not phone_clean.startswith("+"): phone_clean = "+" + phone_clean
+                parsed = phonenumbers.parse(phone_clean)
                 cc = str(parsed.country_code)
                 target_iso = phonenumbers.region_code_for_number(parsed) or 'XX'
+                
+                # 1. Global Price
                 cp_stmt = select(CountryPrice).where(
                     CountryPrice.country_code == cc,
                     CountryPrice.iso_code == target_iso
                 )
                 cp = (await session.execute(cp_stmt)).scalar()
                 
-                # Check custom user price override
+                # 2. Custom User Price
                 from sqlalchemy import or_
                 ucp_stmt = select(UserCountryPrice).where(
                     UserCountryPrice.user_id == data.user_id, 
@@ -1183,8 +1190,10 @@ async def seller_submit_otp(data: SellerOTPSubmit):
                 ).order_by(UserCountryPrice.iso_code.desc())
                 ucp = (await session.execute(ucp_stmt)).scalars().first()
                 
+                # 3. Final Price
                 price = ucp.buy_price if ucp else (cp.buy_price if cp else 0)
-            except: pass
+            except Exception as inner_e:
+                logger.error(f"Submit OTP Pricing Error: {inner_e}")
 
             new_acc = Account(
                 phone_number=data.phone,
