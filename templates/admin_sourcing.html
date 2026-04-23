@@ -2760,6 +2760,7 @@
 
         function renderUsers(list) {
             const container = document.getElementById('user-list');
+            if (!container) return;
             const filtered = currentTab === 'banned' ? list.filter(u => u.banned) : list.filter(u => !u.banned);
 
             if (!filtered.length) {
@@ -3080,6 +3081,7 @@
 
         function renderPrices(list) {
             const container = document.getElementById('price-list');
+            if (!container) return;
             const pagContainer = document.getElementById('price-pagination');
 
             if (!list || !list.length) {
@@ -3336,6 +3338,7 @@
 
         function renderHistory(list) {
             const container = document.getElementById('history-list');
+            if (!container) return;
             if (!list || !list.length) {
                 container.innerHTML = `
                 <div style="text-align: center; padding: 40px 20px; background: var(--card-glass); border-radius: 16px; border: 1px dashed var(--border); margin-top: 0;">
