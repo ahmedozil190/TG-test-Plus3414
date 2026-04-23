@@ -158,10 +158,11 @@ async def run_migrations():
                 try:
                     await conn.execute(sqlalchemy.text("UPDATE users SET balance_store = balance"))
                 except: pass
+            except: pass
+
             # Add iso_code to user_country_prices if missing
             try:
                 await conn.execute(sqlalchemy.text("ALTER TABLE user_country_prices ADD COLUMN iso_code TEXT DEFAULT 'XX'"))
-            except: pass
             except: pass
             # Add balance_sourcing to users if missing
             try:
