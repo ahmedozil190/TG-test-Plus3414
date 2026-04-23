@@ -267,6 +267,25 @@ async def run_migrations():
             try:
                 await conn.execute(sqlalchemy.text("UPDATE country_prices SET updated_at = '" + datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S') + "' WHERE updated_at IS NULL"))
             except: pass
+
+            # Fix: Sync existing available accounts with CountryPrice selling prices
+            try:
+                await conn.execute(sqlalchemy.text("""
+                    UPDATE accounts 
+                    SET price = (
+                        SELECT price FROM country_prices 
+                        WHERE country_prices.country_name = accounts.country 
+                        LIMIT 1
+                    )
+                    WHERE status = 'available' 
+                    AND EXISTS (
+                        SELECT 1 FROM country_prices WHERE country_prices.country_name = accounts.country
+                    )
+                """))
+                logger.info("Successfully synced available account prices with CountryPrice table.")
+            except Exception as e:
+                logger.warning(f"Failed to sync account prices: {e}")
+
         logger.info("DB migration check complete.")
     except Exception as e:
         logger.warning(f"Migration warning: {e}")
@@ -349,32 +368,31 @@ async def store_page(request: Request):
 async def get_store_data(user_id: int = None):
     try:
         async with async_session() as session:
-            # Group available accounts by country
-            stmt = select(Account.country, Account.price, func.count(Account.id).label('cnt')).where(
+            # Group available accounts by country only (ignore Account.price, we'll fetch current price)
+            stmt = select(Account.country, func.count(Account.id).label('cnt')).where(
                 Account.status == AccountStatus.AVAILABLE
-            ).group_by(Account.country, Account.price)
+            ).group_by(Account.country)
             
             results = (await session.execute(stmt)).all()
             
             countries = []
             for row in results:
-                name, price, count = row
-                # Get flag
+                name, count = row
+                # Get current selling price and flag from CountryPrice
                 flag = "🌐"
+                price = 1.0 # Default
                 try:
-                    # Look up by name or find a region
-                    # For simplicity, we can parse a dummy number if we had one, 
-                    # but let's just find the price entry or name match
                     cp = (await session.execute(select(CountryPrice).where(CountryPrice.country_name == name))).scalar()
                     if cp:
                         iso = getattr(cp, 'iso_code', None) or 'XX'
                         flag = get_flag_emoji(iso)
+                        price = cp.price
                 except: pass
                 
                 countries.append({
                     "name": name,
                     "flag": flag,
-                    "buy_price": price,
+                    "buy_price": price, # This is the SELLING price for the store
                     "count": count
                 })
             
@@ -417,11 +435,17 @@ async def store_buy(data: StoreBuy):
             stmt = select(Account).where(Account.country == data.country, Account.status == AccountStatus.AVAILABLE).limit(1)
             account = (await session.execute(stmt)).scalar_one_or_none()
             if not account: raise HTTPException(status_code=400, detail="عذراً، نفدت الأرقام!")
-            if user.balance_store < account.price: raise HTTPException(status_code=400, detail="رصيدك غير كافٍ")
-            user.balance_store -= account.price
+            
+            # Fetch current price from CountryPrice to ensure it matches admin settings
+            cp = (await session.execute(select(CountryPrice).where(CountryPrice.country_name == account.country))).scalar()
+            final_price = cp.price if cp else account.price
+            
+            if user.balance_store < final_price: raise HTTPException(status_code=400, detail="رصيدك غير كافٍ")
+            user.balance_store -= final_price
             account.status = AccountStatus.SOLD
             account.buyer_id = user.id
-            txn = Transaction(user_id=user.id, type=TransactionType.BUY, amount=-account.price)
+            account.price = final_price # Log the actual price paid in the account record
+            txn = Transaction(user_id=user.id, type=TransactionType.BUY, amount=-final_price)
             session.add(txn)
             await session.commit()
             return {"status": "success", "phone": account.phone_number, "id": account.id}
@@ -793,8 +817,17 @@ async def start_login(data: StockLoginStart):
         raise HTTPException(status_code=400, detail="رقم هاتف غير صالح")
         
     async with async_session() as session:
-        cp = (await session.execute(select(CountryPrice).where(CountryPrice.country_code == country_code))).scalar()
-        price = cp.price if cp else 1.0 # Default fallback
+        # Match by both code and ISO for accurate price lookup
+        stmt = select(CountryPrice).where(
+            CountryPrice.country_code == country_code,
+            CountryPrice.iso_code == iso_code
+        )
+        cp = (await session.execute(stmt)).scalar()
+        if not cp:
+             # Fallback to code only
+             cp = (await session.execute(select(CountryPrice).where(CountryPrice.country_code == country_code))).scalar()
+        
+        price = cp.price if cp else 1.0
         
     try:
         # Use -1 as a special ID for Admin Login
