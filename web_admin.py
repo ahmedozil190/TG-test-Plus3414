@@ -1120,29 +1120,26 @@ async def seller_request_otp(data: SellerOTPRequest):
             target_iso = phonenumbers.region_code_for_number(parsed) or 'XX'
             
             async with async_session() as session:
-                # 1. Try to find a global CountryPrice
+                from sqlalchemy import or_
+                # 1. Try to find a global CountryPrice (Specific ISO or fallback XX)
                 cp_stmt = select(CountryPrice).where(
                     CountryPrice.country_code == cc,
-                    CountryPrice.iso_code == target_iso
-                )
-                cp = (await session.execute(cp_stmt)).scalar()
+                    or_(CountryPrice.iso_code == target_iso, CountryPrice.iso_code == 'XX')
+                ).order_by(CountryPrice.iso_code.asc()) # Prefer specific ISO (e.g. 'EG') over 'XX'
+                cp = (await session.execute(cp_stmt)).scalars().first()
                 
                 # 2. Check for custom user price override
-                from sqlalchemy import or_
                 ucp_stmt = select(UserCountryPrice).where(
                     UserCountryPrice.user_id == data.user_id, 
                     UserCountryPrice.country_code == cc,
                     or_(UserCountryPrice.iso_code == target_iso, UserCountryPrice.iso_code == 'XX')
-                ).order_by(UserCountryPrice.iso_code.desc())
+                ).order_by(UserCountryPrice.iso_code.asc())
                 ucp = (await session.execute(ucp_stmt)).scalars().first()
-                
-                logger.info(f"PRICING DEBUG: user={data.user_id}, cc={cc}, iso={target_iso} -> GlobalCP={cp.buy_price if cp else 'None'}, CustomUCP={ucp.buy_price if ucp else 'None'}")
                 
                 # 3. Determine final buy price
                 final_buy_price = ucp.buy_price if ucp else (cp.buy_price if cp else 0)
                 
                 if final_buy_price <= 0:
-                    logger.warning(f"REJECTED: No valid price for {cc}/{target_iso} for user {data.user_id}")
                     raise HTTPException(status_code=400, detail="Sorry, this country is not requested at the moment.")
         except HTTPException as he: raise he
         except Exception as inner_e:
@@ -1177,20 +1174,20 @@ async def seller_submit_otp(data: SellerOTPSubmit):
                 cc = str(parsed.country_code)
                 target_iso = phonenumbers.region_code_for_number(parsed) or 'XX'
                 
-                # 1. Global Price
+                from sqlalchemy import or_
+                # 1. Global Price (Specific ISO or fallback XX)
                 cp_stmt = select(CountryPrice).where(
                     CountryPrice.country_code == cc,
-                    CountryPrice.iso_code == target_iso
-                )
-                cp = (await session.execute(cp_stmt)).scalar()
+                    or_(CountryPrice.iso_code == target_iso, CountryPrice.iso_code == 'XX')
+                ).order_by(CountryPrice.iso_code.asc()) # Prefer specific ISO over 'XX'
+                cp = (await session.execute(cp_stmt)).scalars().first()
                 
                 # 2. Custom User Price
-                from sqlalchemy import or_
                 ucp_stmt = select(UserCountryPrice).where(
                     UserCountryPrice.user_id == data.user_id, 
                     UserCountryPrice.country_code == cc,
                     or_(UserCountryPrice.iso_code == target_iso, UserCountryPrice.iso_code == 'XX')
-                ).order_by(UserCountryPrice.iso_code.desc())
+                ).order_by(UserCountryPrice.iso_code.asc())
                 ucp = (await session.execute(ucp_stmt)).scalars().first()
                 
                 # 3. Final Price

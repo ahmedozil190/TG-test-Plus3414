@@ -1,15 +1,15 @@
 import asyncio
 from sqlalchemy.future import select
 from database.engine import async_session
-from database.models import UserCountryPrice
+from database.models import CountryPrice
 
 async def check():
     async with async_session() as session:
-        res = await session.execute(select(UserCountryPrice))
+        res = await session.execute(select(CountryPrice))
         rows = res.scalars().all()
-        print(f"Total Rows: {len(rows)}")
+        print(f"Total Global Prices: {len(rows)}")
         for r in rows:
-            print(f"ID: {r.id}, User: {r.user_id}, Code: {r.country_code}, ISO: {r.iso_code}, Price: {r.buy_price}")
+            print(f"Code: {r.country_code}, ISO: {r.iso_code}, BuyPrice: {r.buy_price}")
 
 if __name__ == "__main__":
     asyncio.run(check())
