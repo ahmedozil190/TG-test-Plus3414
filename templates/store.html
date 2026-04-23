@@ -236,7 +236,7 @@
                 <i class="fas fa-chart-pie"></i> <span data-i18n="nav_home">Dashboard</span>
             </div>
             <div class="nav-item" id="m-store" onclick="switchNav('store', this)">
-                <i class="fas fa-shopping-cart"></i> <span data-i18n="nav_buy">Buy Number</span>
+                <i class="fas fa-shopping-cart"></i> <span data-i18n="nav_store">Buy Number</span>
             </div>
             <div class="nav-item" id="m-history" onclick="switchNav('history', this)">
                 <i class="fas fa-clock-rotate-left"></i> <span data-i18n="nav_history">My Orders</span>
@@ -410,7 +410,7 @@
 
         const translations = {
             en: {
-                loading: "Optimizing Store...", nav_home: "Dashboard", nav_buy: "Buy Number", nav_history: "Orders", nav_support: "Support",
+                loading: "Optimizing Store...", nav_home: "Dashboard", nav_store: "Buy Number", nav_history: "Orders", nav_support: "Support",
                 balance: "YOUR BALANCE", total_orders: "SUCCESS ORDERS", quick_buy: "Quick Access", btn_start_shopping: "Browse Numbers",
                 confirm_title: "Confirmation", lbl_country: "Country", lbl_price: "Price", btn_confirm_pay: "Buy Now",
                 success_title: "Payment Success!", success_desc: "Wait for the code in your bot chat.", btn_close: "Dismiss",
@@ -418,7 +418,7 @@
                 total_numbers: "Total Numbers", countries: "Total Countries", lowest_price: "Lowest Price"
             },
             ar: {
-                loading: "جاري تجهيز المتجر...", nav_home: "الرئيسية", nav_buy: "شراء رقم", nav_history: "طلباتي", nav_support: "الدعم",
+                loading: "جاري تجهيز المتجر...", nav_home: "الرئيسية", nav_store: "شراء رقم", nav_history: "طلباتي", nav_support: "الدعم",
                 balance: "رصيدك الحالي", total_orders: "إجمالي المشتريات", quick_buy: "وصول سريع", btn_start_shopping: "تصفح الأرقام",
                 confirm_title: "تأكيد الشراء", lbl_country: "الدولة", lbl_price: "السعر", btn_confirm_pay: "إتمام الشراء",
                 success_title: "تم بنجاح!", success_desc: "انتظر وصول الكود في البوت.", btn_close: "إغلاق",
@@ -486,7 +486,7 @@
                 if (data.stats) {
                     document.getElementById('stat-total-numbers').innerText = data.stats.total_numbers || 0;
                     document.getElementById('stat-countries').innerText = data.stats.countries_count || 0;
-                    document.getElementById('stat-lowest-price').innerText = `$${parseFloat(data.stats.lowest_price || 0).toFixed(2)}`;
+                    document.getElementById('stat-lowest-price').innerText = parseFloat(data.stats.lowest_price || 0).toFixed(2);
                 }
                 if (document.getElementById('section-store').classList.contains('active')) renderCountries(countries);
             } catch(e) { console.error("Init Error:", e); }
