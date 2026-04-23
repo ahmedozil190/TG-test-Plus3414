@@ -1421,25 +1421,25 @@
                     <div class="info-card">
                         <div class="info-card-l">
                             <span class="info-card-lbl" data-i18n="stat_pending_ops">PENDING ACCOUNTS</span>
-                            <div class="info-card-val"><span id="home-stat-pending">0</span> <span style="font-size: 0.9rem; margin-left: 5px; opacity: 0.8;">PENDING</span></div>
+                            <div class="info-card-val"><span id="home-stat-pending">0</span> <span data-i18n="unit_ops">ACCOUNTS</span></div>
                         </div>
-                        <div class="info-card-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--warning);">
-                            <i class="fas fa-clock-rotate-left"></i>
+                        <div class="info-card-icon" style="background: rgba(88, 101, 242, 0.1); color: var(--accent);">
+                            <i class="fas fa-list-check"></i>
                         </div>
                     </div>
                     <div class="info-card">
                         <div class="info-card-l">
                             <span class="info-card-lbl" data-i18n="stat_accepted_ops">ACCEPTED ACCOUNTS</span>
-                            <div class="info-card-val"><span id="home-stat-accepted">0</span> <span style="font-size: 0.9rem; margin-left: 5px; opacity: 0.8;">ACCEPTED</span></div>
+                            <div class="info-card-val"><span id="home-stat-accepted">0</span> <span data-i18n="unit_accs">ACCOUNTS</span></div>
                         </div>
                         <div class="info-card-icon" style="background: rgba(34, 197, 94, 0.1); color: var(--success);">
-                            <i class="fas fa-circle-check"></i>
+                            <i class="fas fa-check-double"></i>
                         </div>
                     </div>
                     <div class="info-card">
                         <div class="info-card-l">
                             <span class="info-card-lbl" data-i18n="stat_rejected_ops">REJECTED ACCOUNTS</span>
-                            <div class="info-card-val"><span id="home-stat-rejected">0</span> <span style="font-size: 0.9rem; margin-left: 5px; opacity: 0.8;">REJECTED</span></div>
+                            <div class="info-card-val"><span id="home-stat-rejected">0</span> <span data-i18n="unit_accs">ACCOUNTS</span></div>
                         </div>
                         <div class="info-card-icon" style="background: rgba(239, 68, 68, 0.1); color: var(--error);">
                             <i class="fas fa-circle-xmark"></i>
@@ -1491,7 +1491,7 @@
                     <div class="info-card">
                         <div class="info-card-l">
                             <span class="info-card-lbl" data-i18n="lbl_pending_requests">PENDING REQUESTS</span>
-                            <div class="info-card-val"><span id="home-stat-withdraw-pending">0</span></div>
+                            <div class="info-card-val"><span id="home-stat-withdraw-pending">0</span> <span>REQUESTS</span></div>
                         </div>
                         <div class="info-card-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--warning);">
                             <i class="fas fa-hourglass-half"></i>
@@ -1500,18 +1500,18 @@
                     <div class="info-card">
                         <div class="info-card-l">
                             <span class="info-card-lbl" data-i18n="lbl_approved_requests">APPROVED REQUESTS</span>
-                            <div class="info-card-val"><span id="home-stat-withdraw-approved">0</span></div>
+                            <div class="info-card-val"><span id="home-stat-withdraw-approved">0</span> <span>REQUESTS</span></div>
                         </div>
                         <div class="info-card-icon" style="background: rgba(34, 197, 94, 0.1); color: var(--success);">
-                            <i class="fas fa-check-double"></i>
+                            <i class="fas fa-circle-check"></i>
                         </div>
                     </div>
                     <div class="info-card">
                         <div class="info-card-l">
                             <span class="info-card-lbl" data-i18n="stat_total_paid">TOTAL PAID</span>
-                            <div class="info-card-val"><span id="home-stat-total-paid">$0.00</span></div>
+                            <div class="info-card-val"><span id="home-stat-total-paid">0.00</span> <span style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">USD</span></div>
                         </div>
-                        <div class="info-card-icon" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                        <div class="info-card-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">
                             <i class="fas fa-file-invoice-dollar"></i>
                         </div>
                     </div>
@@ -1525,10 +1525,10 @@
                 <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px;">
                     <div class="info-card">
                         <div class="info-card-l">
-                            <span class="info-card-lbl" data-i18n="stat_total_countries">ACTIVE COUNTRIES</span>
-                            <div class="info-card-val"><span id="home-stat-active-countries">0</span></div>
+                            <span class="info-card-lbl" data-i18n="stat_active_countries">TOTAL COUNTRIES</span>
+                            <div class="info-card-val"><span id="home-stat-active-countries">0</span> <span data-i18n="unit_countries">COUNTRIES</span></div>
                         </div>
-                        <div class="info-card-icon" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">
+                        <div class="info-card-icon" style="background: rgba(34, 197, 94, 0.1); color: var(--success);">
                             <i class="fas fa-globe"></i>
                         </div>
                     </div>
@@ -1542,8 +1542,8 @@
                 <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px;">
                     <div class="info-card">
                         <div class="info-card-l">
-                            <span class="info-card-lbl" data-i18n="nav_user_prices">CUSTOM USERS</span>
-                            <div class="info-card-val"><span id="home-stat-total-custom-prices">0</span></div>
+                            <span class="info-card-lbl">TOTAL CUSTOM</span>
+                            <div class="info-card-val"><span id="home-stat-total-custom-prices">0</span> <span style="font-size: 0.9rem; margin-left: 5px; opacity: 0.8;">CUSTOM</span></div>
                         </div>
                         <div class="info-card-icon" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">
                             <i class="fas fa-user-tag"></i>
@@ -2694,7 +2694,7 @@
                 const htp = document.getElementById('home-stat-total-paid');
                 if (hwp) hwp.innerText = data.stats.withdraw_pending || 0;
                 if (hwa) hwa.innerText = data.stats.withdraw_approved || 0;
-                if (htp) htp.innerText = `$${parseFloat(data.stats.total_paid_amount || 0).toFixed(2)}`;
+                if (htp) htp.innerText = parseFloat(data.stats.total_paid_amount || 0).toFixed(2);
 
                 // Buying Prices (Home)
                 const hacEl = document.getElementById('home-stat-active-countries');
