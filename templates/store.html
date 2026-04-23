@@ -133,10 +133,15 @@
             display: flex; justify-content: space-between; align-items: center;
             box-shadow: var(--shadow); margin-bottom: 15px;
         }
-        .info-card-val { font-size: 1.4rem; font-weight: 800; color: var(--text-p); }
+        .info-card-l { display: flex; flex-direction: column; gap: 4px; }
+        .info-card-val { font-size: 1.4rem; font-weight: 800; color: var(--text-p); display: flex; align-items: baseline; gap: 6px; }
         .info-card-lbl { font-size: 0.7rem; color: var(--text-s); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        .info-card-icon {
+            width: 48px; height: 48px; border-radius: 14px;
+            display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+        }
 
-        .search-area { position: sticky; top: -25px; background: var(--bg); padding-top: 25px; padding-bottom: 15px; z-index: 10; }
+        .search-area { position: sticky; top: -25px; background: var(--bg); padding-top: 10px; padding-bottom: 15px; z-index: 10; }
         .search-box {
             background: var(--bg-elevated); border: 1px solid var(--border);
             border-radius: 16px; padding: 0 18px; display: flex; align-items: center;
@@ -278,31 +283,41 @@
         </section>
 
         <section id="section-store" class="view-panel">
-            <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px;">
+            <h2 style="font-weight: 800; margin-bottom: 20px;" data-i18n="nav_buy">Buy Number</h2>
+            <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 10px;">
                 <div class="info-card" style="margin-bottom: 0; box-shadow: none;">
                     <div class="info-card-l">
                         <span class="info-card-lbl" data-i18n="total_numbers">Total Numbers</span>
-                        <div class="info-card-val" id="stat-total-numbers">0</div>
+                        <div class="info-card-val">
+                            <span id="stat-total-numbers">0</span>
+                            <span style="font-size: 0.85rem; color: var(--text-s); font-weight: 600;">NUMBERS</span>
+                        </div>
                     </div>
-                    <div style="width: 45px; height: 45px; background: rgba(88, 101, 242, 0.1); color: var(--accent); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                    <div class="info-card-icon" style="background: rgba(88, 101, 242, 0.1); color: var(--accent);">
                         <i class="fas fa-list-ol"></i>
                     </div>
                 </div>
                 <div class="info-card" style="margin-bottom: 0; box-shadow: none;">
                     <div class="info-card-l">
                         <span class="info-card-lbl" data-i18n="countries">Countries</span>
-                        <div class="info-card-val" id="stat-countries">0</div>
+                        <div class="info-card-val">
+                            <span id="stat-countries">0</span>
+                            <span style="font-size: 0.85rem; color: var(--text-s); font-weight: 600;">COUNTRIES</span>
+                        </div>
                     </div>
-                    <div style="width: 45px; height: 45px; background: rgba(16, 185, 129, 0.1); color: var(--success); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                    <div class="info-card-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">
                         <i class="fas fa-globe"></i>
                     </div>
                 </div>
                 <div class="info-card" style="margin-bottom: 0; box-shadow: none;">
                     <div class="info-card-l">
                         <span class="info-card-lbl" data-i18n="lowest_price">Lowest Price</span>
-                        <div class="info-card-val" id="stat-lowest-price">$0.00</div>
+                        <div class="info-card-val">
+                            <span id="stat-lowest-price">$0.00</span>
+                            <span style="font-size: 0.85rem; color: var(--text-s); font-weight: 600;">USD</span>
+                        </div>
                     </div>
-                    <div style="width: 45px; height: 45px; background: rgba(139, 92, 246, 0.1); color: #8b5cf6; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                    <div class="info-card-icon" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">
                         <i class="fas fa-tags"></i>
                     </div>
                 </div>
