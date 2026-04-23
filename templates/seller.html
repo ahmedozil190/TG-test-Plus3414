@@ -1810,7 +1810,7 @@
 
             detectionTimeout = setTimeout(async () => {
                 try {
-                    const res = await fetch(`/api/seller/detect-country?phone=${encodeURIComponent(phone)}&user_id=${currentUserId}`);
+                    const res = await fetch(`/api/seller/detect-country?phone=${encodeURIComponent(phone)}&user_id=${userId}`);
                     const data = await res.json();
 
                     const btn = document.getElementById('requestCodeBtn');
