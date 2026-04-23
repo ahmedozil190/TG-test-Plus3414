@@ -539,10 +539,10 @@ async def get_sourcing_data():
             total_sourcing_balance = (await session.execute(select(func.sum(User.balance_sourcing)))).scalar() or 0.0
 
             users_result = await session.execute(select(User).order_by(User.id.desc()).limit(200))
-            active_users = users_result.scalars().all()
+            db_users = users_result.scalars().all()
             
             # Get seller stats for these users
-            u_ids = [u.id for u in active_users]
+            u_ids = [u.id for u in db_users]
             seller_stats = {uid: {"sold": 0, "accepted": 0, "rejected": 0} for uid in u_ids}
             if u_ids:
                 sold_stmt = select(Account.seller_id, func.count(Account.id)).where(Account.seller_id.in_(u_ids), Account.status == AccountStatus.SOLD).group_by(Account.seller_id)
@@ -554,7 +554,7 @@ async def get_sourcing_data():
                 for rid, cnt in (await session.execute(rej_stmt)).all(): seller_stats[rid]["rejected"] = cnt
 
             users_list = []
-            for u in active_users:
+            for u in db_users:
                 users_list.append({
                     "id": u.id,
                     "full_name": u.full_name or "N/A",
