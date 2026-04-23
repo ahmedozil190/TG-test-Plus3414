@@ -2151,7 +2151,8 @@
                 document.getElementById('up-user-id').value = '';
                 document.getElementById('up-country-code').value = '';
                 document.getElementById('up-buy-price').value = '';
-                document.getElementById('up-delay').value = '0';
+                document.getElementById('up-delay').value = ''; // Empty value
+                document.getElementById('up-delay').placeholder = '0'; // Set placeholder
             }
             updateUI();
         }
