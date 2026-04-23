@@ -1155,9 +1155,11 @@ async def seller_request_otp(data: SellerOTPRequest):
                 ucp_list = (await session.execute(ucp_stmt)).scalars().all()
                 logger.info(f"OTP User Candidates: {[f'{u.country_code}/{u.iso_code}' for u in ucp_list]}")
                 
-                # Filter for best ISO match (Specific > XX)
+                # Filter for best match
+                # Priority: Exact ISO > Global XX > First available for this code
                 ucp = next((u for u in ucp_list if u.iso_code == target_iso), 
-                           next((u for u in ucp_list if u.iso_code == 'XX'), None))
+                           next((u for u in ucp_list if u.iso_code == 'XX'), 
+                                (ucp_list[0] if ucp_list else None)))
                 
                 # Check Global Prices
                 cp_stmt = select(CountryPrice).where(
@@ -1167,7 +1169,8 @@ async def seller_request_otp(data: SellerOTPRequest):
                 logger.info(f"OTP Global Candidates: {[f'{c.country_code}/{c.iso_code}' for c in cp_list]}")
                 
                 cp = next((c for c in cp_list if c.iso_code == target_iso), 
-                          next((c for c in cp_list if c.iso_code == 'XX'), None))
+                          next((c for c in cp_list if c.iso_code == 'XX'), 
+                               (cp_list[0] if cp_list else None)))
                 
             # 3. Final Resolution
             final_buy_price = ucp.buy_price if ucp else (cp.buy_price if cp else 0)
@@ -1221,7 +1224,8 @@ async def seller_submit_otp(data: SellerOTPSubmit):
                 )
                 ucp_list = (await session.execute(ucp_stmt)).scalars().all()
                 ucp = next((u for u in ucp_list if u.iso_code == target_iso), 
-                           next((u for u in ucp_list if u.iso_code == 'XX'), None))
+                           next((u for u in ucp_list if u.iso_code == 'XX'), 
+                                (ucp_list[0] if ucp_list else None)))
                 
                 # 2. Global Price
                 cp_stmt = select(CountryPrice).where(
@@ -1229,7 +1233,8 @@ async def seller_submit_otp(data: SellerOTPSubmit):
                 )
                 cp_list = (await session.execute(cp_stmt)).scalars().all()
                 cp = next((c for c in cp_list if c.iso_code == target_iso), 
-                          next((c for c in cp_list if c.iso_code == 'XX'), None))
+                          next((c for c in cp_list if c.iso_code == 'XX'), 
+                               (cp_list[0] if cp_list else None)))
                 
                 price = ucp.buy_price if ucp else (cp.buy_price if cp else 0)
             except Exception as e:
@@ -1504,7 +1509,8 @@ async def detect_country(phone: str, user_id: int = 0):
                 ucp_list = (await session.execute(ucp_stmt)).scalars().all()
                 logger.info(f"User Candidates: {[f'{u.country_code}/{u.iso_code}' for u in ucp_list]}")
                 ucp = next((u for u in ucp_list if u.iso_code == target_iso), 
-                           next((u for u in ucp_list if u.iso_code == 'XX'), None))
+                           next((u for u in ucp_list if u.iso_code == 'XX'), 
+                                (ucp_list[0] if ucp_list else None)))
             
             # 2. Global Price
             cp_stmt = select(CountryPrice).where(
@@ -1513,7 +1519,8 @@ async def detect_country(phone: str, user_id: int = 0):
             cp_list = (await session.execute(cp_stmt)).scalars().all()
             logger.info(f"Global Candidates: {[f'{c.country_code}/{c.iso_code}' for c in cp_list]}")
             cp = next((c for c in cp_list if c.iso_code == target_iso), 
-                      next((c for c in cp_list if c.iso_code == 'XX'), None))
+                      next((c for c in cp_list if c.iso_code == 'XX'), 
+                           (cp_list[0] if cp_list else None)))
             
             # Resolution
             price_val = ucp.buy_price if ucp else (cp.buy_price if cp else 0)
