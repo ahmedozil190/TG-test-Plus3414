@@ -76,6 +76,7 @@ class UserCountryPrice(Base):
     country_code = Column(String, nullable=False) # e.g. "1"
     iso_code = Column(String, default="XX") # e.g. "US"
     buy_price = Column(Float, nullable=False)
+    approve_delay = Column(Integer, nullable=False, default=0) # Custom auto-approval delay
     created_at = Column(DateTime, default=datetime.utcnow)
 
 class WithdrawalRequest(Base):

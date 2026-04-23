@@ -307,6 +307,7 @@ class UserPriceCreate(BaseModel):
     country_code: str
     iso_code: str = "XX"
     buy_price: float
+    approve_delay: int = 0
 
 class StoreBuy(BaseModel):
     user_id: int
@@ -848,6 +849,7 @@ async def get_user_prices():
                 "iso_code": ucp.iso_code,
                 "country_name": f"{flag} {name}",
                 "buy_price": ucp.buy_price,
+                "approve_delay": ucp.approve_delay,
                 "date": ucp.created_at.strftime("%Y-%m-%d %H:%M")
             })
         return {"prices": data}
@@ -866,6 +868,7 @@ async def add_user_price(data: UserPriceCreate):
             if not ucp:
                 raise HTTPException(status_code=404, detail="Price record not found")
             ucp.buy_price = data.buy_price
+            ucp.approve_delay = data.approve_delay
             # If they changed the country/iso in the modal (though UI might prevent it)
             ucp.country_code = data.country_code
             ucp.iso_code = data.iso_code
@@ -884,7 +887,8 @@ async def add_user_price(data: UserPriceCreate):
                 user_id=data.user_id,
                 country_code=data.country_code,
                 iso_code=data.iso_code,
-                buy_price=data.buy_price
+                buy_price=data.buy_price,
+                approve_delay=data.approve_delay
             )
             session.add(new_ucp)
             

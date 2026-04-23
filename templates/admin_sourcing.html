@@ -1776,6 +1776,11 @@
                 <input type="number" id="up-buy-price" class="input-field" step="0.01" placeholder="1.0">
             </div>
             
+            <div class="form-group">
+                <label data-i18n="lbl_delay">Approval Delay (min)</label>
+                <input type="number" id="up-delay" class="input-field" placeholder="0">
+            </div>
+            
             <button class="primary-btn" onclick="saveUserPrice()" data-i18n="btn_save_custom">Save Custom User</button>
             <button class="cancel-btn" onclick="closeUserPriceModal(null)" data-i18n="nav_close">Close</button>
         </div>
@@ -1832,11 +1837,11 @@
                 nav_user_prices: "Custom Users",
                 nav_withdrawals: "Withdrawals",
                 nav_close: "Close",
-                modal_add_custom: "Add Custom Price",
-                modal_edit_custom: "Edit Custom Price",
+                modal_add_custom: "Add Custom User",
+                modal_edit_custom: "Edit Custom User",
                 lbl_user_id: "User ID",
                 lbl_custom_price: "Custom Price",
-                btn_save_custom: "Save Custom Price",
+                btn_save_custom: "Save Custom User",
                 stat_section: "Inventory",
                 stat_total: "TOTAL ACCOUNTS",
                 stat_pending: "PENDING APPROVAL",
@@ -1905,11 +1910,11 @@
                 nav_user_prices: "مستخدمين مخصصين",
                 nav_withdrawals: "طلبات السحب",
                 nav_close: "إغلاق",
-                modal_add_custom: "إضافة سعر مخصص",
-                modal_edit_custom: "تعديل السعر المخصص",
+                modal_add_custom: "إضافة مستخدم مخصص",
+                modal_edit_custom: "تعديل مستخدم مخصص",
                 lbl_user_id: "معرّف المستخدم",
                 lbl_custom_price: "السعر المخصص",
-                btn_save_custom: "حفظ السعر",
+                btn_save_custom: "حفظ مستخدم مخصص",
                 stat_section: "المخزون",
                 stat_total: "إجمالي الحسابات",
                 stat_pending: "بانتظار الموافقة",
@@ -2067,6 +2072,11 @@
                             <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'معرف المستخدم' : 'User ID'}</span>
                             <span style="color: #f59e0b; font-weight: 800; font-size: 1.1rem;"><code>${up.user_id}</code></span>
                         </div>
+                        <!-- Delay -->
+                        <div style="background: transparent; border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'تأخير الموافقة' : 'Delay'}</span>
+                            <span style="color: var(--text-p); font-weight: 700; font-size: 0.95rem;">${up.approve_delay} min</span>
+                        </div>
                     </div>
                     <!-- Action Buttons -->
                     <div style="display: flex; gap: 10px;">
@@ -2133,6 +2143,7 @@
                 document.getElementById('up-user-id').value = up.user_id;
                 document.getElementById('up-country-code').value = up.country_code;
                 document.getElementById('up-buy-price').value = up.buy_price;
+                document.getElementById('up-delay').value = up.approve_delay;
                 onUpCountryCodeInput(up.iso_code);
             } else {
                 document.getElementById('user-price-modal-title').innerText = translations[currentLang].modal_add_custom;
@@ -2140,6 +2151,7 @@
                 document.getElementById('up-user-id').value = '';
                 document.getElementById('up-country-code').value = '';
                 document.getElementById('up-buy-price').value = '';
+                document.getElementById('up-delay').value = '0';
             }
             updateUI();
         }
@@ -2218,6 +2230,7 @@
             const userId = parseInt(document.getElementById('up-user-id').value);
             const code = document.getElementById('up-country-code').value.trim().replace('+', '');
             const price = parseFloat(document.getElementById('up-buy-price').value);
+            const delay = parseInt(document.getElementById('up-delay').value) || 0;
             const isoBox = document.getElementById('up-iso-box');
 
             if (!userId || !code || isNaN(price)) {
@@ -2240,7 +2253,8 @@
                         user_id: userId, 
                         country_code: code, 
                         iso_code: iso, 
-                        buy_price: price 
+                        buy_price: price,
+                        approve_delay: delay
                     })
                 });
                 if (res.ok) {
