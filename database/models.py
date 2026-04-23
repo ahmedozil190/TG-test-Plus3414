@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Enum, Boolean
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Enum, Boolean, BigInteger
 from sqlalchemy.orm import declarative_base
 import enum
 from datetime import datetime
@@ -24,7 +24,7 @@ class TransactionType(enum.Enum):
 
 class User(Base):
     __tablename__ = 'users'
-    id = Column(Integer, primary_key=True) # Telegram User ID
+    id = Column(BigInteger, primary_key=True) # Telegram User ID
     balance_store = Column(Float, default=0.0)
     balance_sourcing = Column(Float, default=0.0)
     language = Column(String, default="ar")
@@ -46,14 +46,14 @@ class Account(Base):
     session_string = Column(String, nullable=False)
     status = Column(Enum(AccountStatus), default=AccountStatus.AVAILABLE)
     price = Column(Float, nullable=False)
-    seller_id = Column(Integer, ForeignKey('users.id'), nullable=True)
-    buyer_id = Column(Integer, ForeignKey('users.id'), nullable=True)
+    seller_id = Column(BigInteger, ForeignKey('users.id'), nullable=True)
+    buyer_id = Column(BigInteger, ForeignKey('users.id'), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
 class Transaction(Base):
     __tablename__ = 'transactions'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    user_id = Column(BigInteger, ForeignKey('users.id'), nullable=False)
     type = Column(Enum(TransactionType), nullable=False)
     amount = Column(Float, nullable=False)
     timestamp = Column(DateTime, default=datetime.utcnow)
@@ -72,7 +72,7 @@ class CountryPrice(Base):
 class UserCountryPrice(Base):
     __tablename__ = 'user_country_prices'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    user_id = Column(Integer, nullable=False)
+    user_id = Column(BigInteger, nullable=False)
     country_code = Column(String, nullable=False) # e.g. "1"
     iso_code = Column(String, default="XX") # e.g. "US"
     buy_price = Column(Float, nullable=False)
@@ -81,7 +81,7 @@ class UserCountryPrice(Base):
 class WithdrawalRequest(Base):
     __tablename__ = 'withdrawal_requests'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    user_id = Column(BigInteger, ForeignKey('users.id'), nullable=False)
     amount = Column(Float, nullable=False)
     method = Column(String, nullable=False) # e.g. "TRX - TRC20"
     address = Column(String, nullable=False) # Wallet Address
