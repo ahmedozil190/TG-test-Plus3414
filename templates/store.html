@@ -1114,6 +1114,10 @@
 
             if (id === 'store') fetchCountries();
             if (id === 'history') fetchHistory();
+
+            // Clear deposit input on navigation
+            const txInput = document.getElementById('deposit-txid');
+            if (txInput) txInput.value = '';
         }
 
         window.onhashchange = () => {
