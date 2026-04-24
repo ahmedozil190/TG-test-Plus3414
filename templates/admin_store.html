@@ -1807,11 +1807,23 @@
             currentPage = 1;
             currentPricePage = 1;
 
-            // 2. Reset Scroll Position
+            // 2. Reset Search & Filters to ensure clean state
+            filteredUsers = null;
+            filteredPrices = null;
+            const userSearch = document.getElementById('user-search');
+            if (userSearch) userSearch.value = '';
+            const priceSearch = document.getElementById('price-search');
+            if (priceSearch) priceSearch.value = '';
+            const resetSearchContainer = document.getElementById('reset-search-container');
+            if (resetSearchContainer) resetSearchContainer.style.display = 'none';
+            const resetPriceSearchContainer = document.getElementById('reset-price-search-container');
+            if (resetPriceSearchContainer) resetPriceSearchContainer.style.display = 'none';
+
+            // 3. Reset Scroll Position
             const scroller = document.getElementById('app-content-scroller');
             if (scroller) scroller.scrollTo({ top: 0, behavior: 'smooth' });
 
-            // 3. Update UI Visibility
+            // 4. Update UI Visibility
             document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
             const targetSection = document.getElementById('section-' + id);
             if (targetSection) targetSection.classList.add('active');
@@ -1819,11 +1831,11 @@
             document.querySelectorAll('.nav-item').forEach(m => m.classList.remove('active'));
             if (btn) btn.classList.add('active');
 
-            // 4. Update URL and Storage
+            // 5. Update URL and Storage
             sessionStorage.setItem('last_view_admin_store', id);
             if (location.hash !== '#' + id) location.hash = id;
 
-            // 5. Update Page Title
+            // 6. Update Page Title
             const titleMap = { home: 'nav_dashboard', users: 'nav_users', prices: 'nav_prices', sales: 'nav_sales', settings: 'nav_settings' };
             const titleEl = document.getElementById('page-title');
             if (titleEl) {
@@ -1832,10 +1844,14 @@
                 titleEl.innerText = translations[currentLang][translationKey] || id;
             }
 
-            // 6. Refresh Data for the active section to ensure Page 1 is displayed
+            // 7. Refresh Data for the active section to ensure Page 1 is displayed
             if (id === 'users') renderUsers(allUsers);
             if (id === 'prices') renderPrices(allPrices);
             if (id === 'sales') renderSalesList(allTransactions);
+            if (id === 'home') {
+                // If dashboard has lists that need refresh
+                renderSales(allTransactions);
+            }
         }
 
         window.onhashchange = function() {
