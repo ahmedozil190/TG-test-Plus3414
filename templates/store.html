@@ -1144,7 +1144,7 @@
                     tg.HapticFeedback.notificationOccurred('success');
                 } else {
                     const isAr = tg.initDataUnsafe?.user?.language_code === 'ar';
-                    showToast(isAr ? 'تنبيه' : 'Alert', isAr ? 'الكود لم يصل بعد، يرجى الانتظار قليلاً والمحاولة مرة أخرى.' : 'Code not arrived yet, please wait a moment and try again.', 'error');
+                    showToast(isAr ? 'تنبيه' : 'Alert', isAr ? 'الكود لم يصل بعد' : 'Code not arrived yet', 'error');
                     btn.disabled = false;
                     btn.innerHTML = originalHtml;
                 }
