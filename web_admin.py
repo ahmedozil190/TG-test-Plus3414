@@ -614,11 +614,15 @@ async def check_binance_deposit(txid: str, api_key: str, api_secret: str):
     if not api_key or not api_secret:
         return False, "Binance API keys not configured", 0
         
+    api_key = api_key.strip()
+    api_secret = api_secret.strip()
+    
     base_url = "https://api.binance.com"
     endpoint = "/sapi/v1/capital/deposit/hisrec"
     timestamp = int(time.time() * 1000)
     
-    query_string = f"txId={txid}&timestamp={timestamp}"
+    # Add recvWindow to handle clock desync
+    query_string = f"txId={txid}&recvWindow=60000&timestamp={timestamp}"
     signature = hmac.new(
         api_secret.encode('utf-8'),
         query_string.encode('utf-8'),
@@ -627,6 +631,8 @@ async def check_binance_deposit(txid: str, api_key: str, api_secret: str):
     
     headers = {"X-MBX-APIKEY": api_key}
     url = f"{base_url}{endpoint}?{query_string}&signature={signature}"
+    
+    logger.info(f"Binance Check - TxID: {txid}, URL: {url}")
     
     try:
         response = await asyncio.to_thread(requests.get, url, headers=headers)
