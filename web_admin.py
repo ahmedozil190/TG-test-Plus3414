@@ -704,15 +704,15 @@ async def store_deposit_verify(req: DepositSubmit):
             await session.commit()
             
             # Send notification via Bot (if available)
-            try:
-                bot_buyer = app.state.bot_buyer
-                if bot_buyer:
-                    await bot_buyer.send_message(
-                        chat_id=user.id,
-                        text=f"✅ **تم الإيداع بنجاح!**\n\n💰 المبلغ: **${amount}**\n🔖 رقم المعاملة: `{txid}`\nرصيدك الحالي: **${user.balance_store:.2f}**",
-                        parse_mode="Markdown"
-                    )
-            except: pass
+            # try:
+            #     bot_buyer = app.state.bot_buyer
+            #     if bot_buyer:
+            #         await bot_buyer.send_message(
+            #             chat_id=user.id,
+            #             text=f"✅ **تم الإيداع بنجاح!**\n\n💰 المبلغ: **${amount}**\n🔖 رقم المعاملة: `{txid}`\nرصيدك الحالي: **${user.balance_store:.2f}**",
+            #             parse_mode="Markdown"
+            #         )
+            # except: pass
             
             return {"status": "success", "message": f"Successfully deposited ${amount}", "new_balance": user.balance_store}
             
