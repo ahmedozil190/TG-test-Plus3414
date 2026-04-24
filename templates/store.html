@@ -320,11 +320,8 @@
 
 
         .search-area {
-            position: sticky;
-            top: -25px;
-            background: var(--bg);
-            padding: 15px 5px 20px 5px;
-            margin: 0 -5px;
+            position: relative;
+            padding: 10px 0 25px 0;
             z-index: 10;
         }
 
@@ -339,6 +336,9 @@
             height: 54px;
             transition: all 0.3s;
             box-shadow: var(--shadow);
+            position: sticky;
+            top: 10px;
+            z-index: 11;
         }
 
         .search-input {
