@@ -593,9 +593,35 @@ async def get_store_history(user_id: int, page: int = 1, limit: int = 10):
                 "current_page": page,
                 "total_count": total_count
             }
+@app.get("/api/store/deposits")
+async def get_deposit_history(user_id: int, page: int = 1, limit: int = 10):
+    try:
+        async with async_session() as session:
+            total_count = (await session.execute(
+                select(func.count(Deposit.id)).where(Deposit.user_id == user_id)
+            )).scalar() or 0
+            
+            total_pages = (total_count + limit - 1) // limit
+            
+            stmt = select(Deposit).where(Deposit.user_id == user_id).order_by(Deposit.id.desc()).offset((page - 1) * limit).limit(limit)
+            results = (await session.execute(stmt)).scalars().all()
+            
+            deposits = []
+            for d in results:
+                deposits.append({
+                    "txid": d.txid,
+                    "amount": d.amount,
+                    "date": d.created_at.strftime("%Y-%m-%d %H:%M") if d.created_at else "N/A"
+                })
+            return {
+                "deposits": deposits,
+                "total_pages": total_pages,
+                "current_page": page,
+                "total_count": total_count
+            }
     except Exception as e:
-        logger.error(f"Store History Error: {e}")
-        return {"orders": [], "total_pages": 0, "current_page": 1, "total_count": 0}
+        logger.error(f"Deposit History Error: {e}")
+        return {"deposits": [], "total_pages": 0, "current_page": 1, "total_count": 0}
 
 async def get_binance_price(coin: str):
     """Fetch current price of a coin in USDT."""

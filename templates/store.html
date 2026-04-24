@@ -912,6 +912,30 @@
                     </button>
                 </div>
             </div>
+
+            <!-- Deposit History Section -->
+            <div id="deposit-history-container" style="margin-top: 40px;">
+                <div class="section-header">
+                    <i class="fas fa-clock-rotate-left"></i>
+                    <h2 data-t="dep_title">Deposit History</h2>
+                </div>
+                
+                <div id="deposits-empty" class="empty-state" style="display: none; padding: 40px 20px;">
+                    <div class="empty-icon"><i class="fas fa-receipt"></i></div>
+                    <p data-t="dep_empty">No deposits found</p>
+                </div>
+
+                <div id="deposits-list" style="display: none; flex-direction: column; gap: 15px;">
+                    <!-- Deposits will be injected here -->
+                </div>
+
+                <!-- Pagination for Deposits -->
+                <div id="depositPagination" class="pagination" style="display: none; margin-top: 25px;">
+                    <button class="pg-btn" id="pgPrevDep" onclick="moveDepositPage(-1)"><i class="fas fa-chevron-left"></i></button>
+                    <span id="pgInfoDep" class="pg-info">Page 1 of 1</span>
+                    <button class="pg-btn" id="pgNextDep" onclick="moveDepositPage(1)"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
         </section>
 
         <section id="section-history" class="view-panel">
@@ -1072,6 +1096,7 @@
                 available: "Available", search_ph: "Search countries...",
                 total_numbers: "Total Numbers", countries: "Total Countries", lowest_price: "Lowest Price",
                 hist_title: "Orders History", hist_empty: "No orders history found",
+                dep_title: "Deposit History", dep_empty: "No deposits found",
                 insufficient_bal: "Insufficient balance"
             },
             ar: {
@@ -1082,6 +1107,7 @@
                 available: "رقم متاح", search_ph: "ابحث عن دولة...",
                 total_numbers: "إجمالي الأرقام", countries: "إجمالي الدول", lowest_price: "أقل سعر",
                 hist_title: "سجل الطلبات", hist_empty: "لا يوجد سجل طلبات حالياً",
+                dep_title: "سجل الإيداعات", dep_empty: "لا يوجد سجل إيداعات حالياً",
                 insufficient_bal: "رصيدك غير كافٍ"
             }
         };
@@ -1114,6 +1140,7 @@
 
             if (id === 'store') fetchCountries();
             if (id === 'history') fetchHistory();
+            if (id === 'deposit') fetchDeposits();
 
             // Clear deposit input on navigation
             const txInput = document.getElementById('deposit-txid');
@@ -1522,6 +1549,7 @@
                     if (data.new_balance !== undefined) {
                         updateBalanceUI(data.new_balance);
                     }
+                    await fetchDeposits();
                     tg.HapticFeedback.notificationOccurred('success');
                 } else {
                     showToast("Verification Failed", data.message || "Could not verify this deposit.", "error");
@@ -1536,6 +1564,68 @@
         }
 
         init();
+        let currentDepPage = 1;
+        let totalDepPages = 1;
+
+        async function fetchDeposits() {
+            const list = document.getElementById('deposits-list');
+            try {
+                const res = await fetch(`/api/store/deposits?user_id=${userId}&page=${currentDepPage}&limit=5`);
+                const data = await res.json();
+                renderDeposits(data);
+            } catch (e) { console.error("Fetch deposits error:", e); }
+        }
+
+        function renderDeposits(data) {
+            const list = document.getElementById('deposits-list');
+            const empty = document.getElementById('deposits-empty');
+            const pagination = document.getElementById('depositPagination');
+
+            const items = data.deposits || [];
+            totalDepPages = data.total_pages || 1;
+
+            if (!items.length) {
+                list.style.display = 'none';
+                pagination.style.display = 'none';
+                empty.style.display = 'block';
+                return;
+            }
+
+            empty.style.display = 'none';
+            list.style.display = 'flex';
+            pagination.style.display = totalDepPages > 1 ? 'flex' : 'none';
+            
+            document.getElementById('pgInfoDep').textContent = `Page ${data.current_page || 1} of ${totalDepPages}`;
+            document.getElementById('pgPrevDep').disabled = (data.current_page <= 1);
+            document.getElementById('pgNextDep').disabled = (data.current_page >= totalDepPages);
+
+            list.innerHTML = items.map(d => `
+                <div class="info-card" style="margin-bottom: 0; padding: 15px 18px;">
+                    <div style="display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0;">
+                        <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(50, 215, 75, 0.1); color: #32d74b; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <i class="fas fa-arrow-down-to-bracket"></i>
+                        </div>
+                        <div style="min-width: 0; flex: 1;">
+                            <div style="font-weight: 700; font-size: 0.9rem; color: var(--text-p); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                ${d.txid}
+                            </div>
+                            <div style="font-size: 0.75rem; color: var(--text-s);">${d.date}</div>
+                        </div>
+                    </div>
+                    <div style="font-weight: 800; color: #32d74b; font-size: 0.95rem; margin-left: 10px;">
+                        +$${d.amount.toFixed(2)}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function moveDepositPage(delta) {
+            const target = currentDepPage + delta;
+            if (target >= 1 && target <= totalDepPages) {
+                currentDepPage = target;
+                await fetchDeposits();
+            }
+        }
     </script>
 </body>
 
