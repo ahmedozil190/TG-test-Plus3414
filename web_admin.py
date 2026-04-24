@@ -557,6 +557,30 @@ async def get_store_history(user_id: int, page: int = 1, limit: int = 10):
         logger.error(f"Store History Error: {e}")
         return {"orders": [], "total_pages": 0, "current_page": 1, "total_count": 0}
 
+@app.get("/api/test/generate-orders")
+async def generate_test_orders(user_id: int):
+    """Temporary endpoint to generate test data for pagination"""
+    import random
+    from datetime import datetime
+    try:
+        async with async_session() as session:
+            countries = ["Egypt", "UK", "Russia", "Germany", "France"]
+            for i in range(15):
+                acc = Account(
+                    phone_number=f"+1{random.randint(100000000, 999999999)}",
+                    country=random.choice(countries),
+                    session_string="FAKE_SESSION",
+                    price=random.uniform(0.5, 5.0),
+                    status=AccountStatus.SOLD,
+                    buyer_id=user_id,
+                    created_at=datetime.utcnow()
+                )
+                session.add(acc)
+            await session.commit()
+            return {"status": "success", "message": "15 fake orders created"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
 @app.get("/api/admin/sourcing/data")
 async def get_sourcing_data():
     try:
