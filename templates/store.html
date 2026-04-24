@@ -1127,9 +1127,6 @@
 
         async function fetchHistoryOTP(phone, btn) {
             const safeId = phone.replace(/\D/g, '');
-            const otpBox = document.getElementById('otp-res-' + safeId);
-            const otpVal = otpBox.querySelector('.otp-val');
-
             btn.disabled = true;
             const originalHtml = btn.innerHTML;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking...';
