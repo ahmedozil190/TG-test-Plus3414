@@ -48,6 +48,7 @@ class Account(Base):
     price = Column(Float, nullable=False)
     seller_id = Column(BigInteger, ForeignKey('users.id'), nullable=True)
     buyer_id = Column(BigInteger, ForeignKey('users.id'), nullable=True)
+    otp_code = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
 class Transaction(Base):

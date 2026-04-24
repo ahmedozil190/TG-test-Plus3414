@@ -1194,8 +1194,8 @@
                     </div>
                     <div style="${rowS}">
                         <span style="${lblS}">CODE</span>
-                        <span id="otp-status-${phoneClean}" style="color: var(--warning); font-weight: 800; font-size: 0.85rem; display: flex; align-items: center; gap: 6px;">
-                            <i class="fas fa-clock"></i> WAITING
+                        <span id="otp-status-${phoneClean}" style="${h.otp_code ? 'color: var(--success); font-weight: 800; font-size: 1.1rem; letter-spacing: 2px;' : 'color: var(--warning); font-weight: 800; font-size: 0.85rem; display: flex; align-items: center; gap: 6px;'}">
+                            ${h.otp_code ? h.otp_code : '<i class="fas fa-clock"></i> WAITING'}
                         </span>
                     </div>
                     <div style="${rowS}">
@@ -1208,7 +1208,7 @@
                     </div>
 
                     <button id="btn-otp-${phoneClean}" class="btn-action" onclick="fetchHistoryOTP('${h.phone}', this)" 
-                        style="width: 100%; margin-top: 8px; height: 50px; font-size: 0.95rem; font-weight: 700; border-radius: 14px; background: var(--accent); color: white; display: flex; align-items: center; justify-content: center; gap: 10px; border: none; box-shadow: 0 4px 15px var(--accent-glow);">
+                        style="width: 100%; margin-top: 8px; height: 50px; font-size: 0.95rem; font-weight: 700; border-radius: 14px; background: var(--accent); color: white; display: flex; align-items: center; justify-content: center; gap: 10px; border: none; box-shadow: 0 4px 15px var(--accent-glow); ${h.otp_code ? 'display: none;' : ''}">
                         <i class="fas fa-key"></i> Get Login Code
                     </button>
                 </div>

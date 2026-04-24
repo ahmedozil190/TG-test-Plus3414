@@ -510,6 +510,8 @@ async def store_get_code(user_id: int, phone: str):
             
             code = await get_telegram_login_code(account.session_string)
             if code:
+                account.otp_code = code
+                await session.commit()
                 return {"status": "success", "code": code}
             return {"status": "pending", "message": "Code not found yet"}
     except Exception as e:
@@ -545,7 +547,8 @@ async def get_store_history(user_id: int, page: int = 1, limit: int = 10):
                     "country": a.country,
                     "flag": flag,
                     "price": a.price,
-                    "date": a.created_at.strftime("%Y-%m-%d %H:%M") if a.created_at else "N/A"
+                    "date": a.created_at.strftime("%Y-%m-%d %H:%M") if a.created_at else "N/A",
+                    "otp_code": a.otp_code
                 })
             return {
                 "orders": history,
