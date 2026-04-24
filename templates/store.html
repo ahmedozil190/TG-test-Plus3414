@@ -1104,13 +1104,9 @@
                     </div>
                     <div style="${rowS}">
                         <span style="${lblS}">CODE</span>
-                        <span id="otp-status-${phoneClean}" style="color: ${hasCode ? 'var(--text-p)' : 'var(--warning)'}; font-weight: 800; font-size: ${hasCode ? '1.1rem' : '0.85rem'}; display: flex; align-items: center; gap: 6px; letter-spacing: ${hasCode ? '2px' : '0px'};">
+                        <span id="otp-status-${phoneClean}" style="color: ${hasCode ? 'var(--success)' : 'var(--warning)'}; font-weight: 800; font-size: ${hasCode ? '1.1rem' : '0.85rem'}; display: flex; align-items: center; gap: 6px; letter-spacing: ${hasCode ? '2px' : '0px'};">
                             ${hasCode ? `<i class="fas fa-key" style="font-size:0.8rem; letter-spacing:0;"></i> ${savedCode}` : '<i class="fas fa-clock"></i> WAITING'}
                         </span>
-                    </div>
-                    <div style="${rowS}">
-                        <span style="${lblS}">COUNTRY</span>
-                        <span style="font-weight: 700; color: var(--text-p); text-align: right;">${h.flag} ${h.country}</span>
                     </div>
                     <div style="${rowS}">
                         <span style="${lblS}">PRICE</span>
@@ -1119,11 +1115,6 @@
                     <div style="${rowS}">
                         <span style="${lblS}">DATE</span>
                         <span style="color: #fdd835; font-weight: 600; font-size: 0.85rem; text-align: right;">${h.date}</span>
-                    </div>
-
-                    <div id="otp-res-${phoneClean}" style="display:none; background: rgba(255,193,7,0.05); border: 1px dashed rgba(255,193,7,0.3); border-radius: 12px; padding: 15px; text-align: center; margin-top: 5px;">
-                        <span style="color: #ffc107; font-size: 0.75rem; font-weight: 800; display: block; margin-bottom: 5px;">LOGIN CODE</span>
-                        <span class="otp-val" style="font-size: 1.6rem; font-weight: 800; color: var(--text-p); letter-spacing: 6px;">-----</span>
                     </div>
 
                     <button id="btn-otp-${phoneClean}" class="btn-action" onclick="fetchHistoryOTP('${h.phone}', this)" 
@@ -1152,13 +1143,11 @@
                     const statusEl = document.getElementById('otp-status-' + safeId);
                     if (statusEl) {
                         statusEl.innerHTML = `<i class="fas fa-key" style="font-size:0.8rem; letter-spacing:0;"></i> ${data.code}`;
-                        statusEl.style.color = 'var(--text-p)';
+                        statusEl.style.color = 'var(--success)';
                         statusEl.style.fontSize = '1.1rem';
                         statusEl.style.letterSpacing = '2px';
                     }
                     btn.style.display = 'none';
-                    otpBox.style.display = 'block';
-                    otpVal.innerText = data.code;
                     tg.HapticFeedback.notificationOccurred('success');
                 } else {
                     alert(data.message || 'Code not arrived yet.');
