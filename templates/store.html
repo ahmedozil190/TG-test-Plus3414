@@ -1071,31 +1071,49 @@
             }
 
             list.style.display = 'flex';
+            list.style.flexDirection = 'column';
+            list.style.gap = '20px';
             empty.style.display = 'none';
-            list.innerHTML = data.map(h => `
-                <div class="history-item" style="flex-direction: column; align-items: stretch; gap: 12px; padding: 18px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <span style="font-size: 1.8rem;">${h.flag}</span>
-                            <div>
-                                <div style="font-weight: 800; font-size: 1rem; color: var(--text-p);">${h.phone}</div>
-                                <div style="font-size: 0.75rem; color: var(--text-s); font-weight: 600;">${h.date} - ${h.country}</div>
-                            </div>
-                        </div>
-                        <div style="text-align: right;">
-                            <div style="font-weight: 800; color: var(--success); font-size: 1rem;">$${h.price.toFixed(2)}</div>
-                            <div style="font-size: 0.6rem; color: var(--text-s); font-weight: 700; text-transform: uppercase;">Paid</div>
-                        </div>
+
+            const rowS = "background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;";
+            const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;";
+
+            list.innerHTML = data.map(h => {
+                const phoneClean = h.phone.replace(/\D/g, '');
+                return `
+                <div class="card" style="display: flex; flex-direction: column; gap: 10px; padding: 20px;">
+                    <div style="${rowS}">
+                        <span style="${lblS}">STATUS</span>
+                        <span style="color: var(--success); font-weight: 800; font-size: 0.85rem; text-transform: uppercase;">PAID</span>
                     </div>
-                    <div id="otp-res-${h.phone.replace(/\D/g, '')}" style="display:none; background: rgba(255,193,7,0.05); border: 1px dashed rgba(255,193,7,0.3); border-radius: 12px; padding: 10px; text-align: center;">
-                        <span style="color: #ffc107; font-size: 0.7rem; font-weight: 800; display: block;">LOGIN CODE</span>
-                        <span class="otp-val" style="font-size: 1.4rem; font-weight: 800; color: var(--text-p); letter-spacing: 4px;">-----</span>
+                    <div style="${rowS}">
+                        <span style="${lblS}">NUMBER</span>
+                        <span style="color: #8b5cf6; font-weight: 800; font-size: 1.1rem; text-align: right; direction: ltr;">${h.phone}</span>
                     </div>
-                    <button class="btn-action" onclick="fetchHistoryOTP('${h.phone}', this)" style="padding: 10px; font-size: 0.8rem; border-radius: 12px; background: var(--card-glass); border: 1px solid var(--border); box-shadow: none; color: var(--text-p);">
-                        <i class="fas fa-key" style="font-size: 0.8rem;"></i> Get Login Code
+                    <div style="${rowS}">
+                        <span style="${lblS}">COUNTRY</span>
+                        <span style="font-weight: 700; color: var(--text-p); text-align: right;">${h.flag} ${h.country}</span>
+                    </div>
+                    <div style="${rowS}">
+                        <span style="${lblS}">PRICE</span>
+                        <span style="color: #3b82f6; font-weight: 900; font-size: 1.2rem; text-align: right;">$${h.price.toFixed(2)}</span>
+                    </div>
+                    <div style="${rowS}">
+                        <span style="${lblS}">DATE</span>
+                        <span style="color: #fdd835; font-weight: 600; font-size: 0.85rem; text-align: right;">${h.date}</span>
+                    </div>
+
+                    <div id="otp-res-${phoneClean}" style="display:none; background: rgba(255,193,7,0.05); border: 1px dashed rgba(255,193,7,0.3); border-radius: 12px; padding: 15px; text-align: center; margin-top: 5px;">
+                        <span style="color: #ffc107; font-size: 0.75rem; font-weight: 800; display: block; margin-bottom: 5px;">LOGIN CODE</span>
+                        <span class="otp-val" style="font-size: 1.6rem; font-weight: 800; color: var(--text-p); letter-spacing: 6px;">-----</span>
+                    </div>
+
+                    <button class="btn-action" onclick="fetchHistoryOTP('${h.phone}', this)" 
+                        style="width: 100%; margin-top: 8px; height: 50px; font-size: 0.95rem; font-weight: 700; border-radius: 14px; background: var(--accent); color: white; display: flex; align-items: center; justify-content: center; gap: 10px; border: none; box-shadow: 0 4px 15px var(--accent-glow);">
+                        <i class="fas fa-key"></i> Get Login Code
                     </button>
                 </div>
-            `).join('');
+            `}).join('');
         }
 
         async function fetchHistoryOTP(phone, btn) {
