@@ -818,15 +818,54 @@
         </section>
 
         <section id="section-deposit" class="view-panel">
-            <div class="tabs-row" style="margin-bottom: 25px; display: flex; flex-direction: column; gap: 10px;">
-                <button class="tab-btn active" onclick="switchDepositMethod('binance_pay', this)" style="justify-content: flex-start; padding: 15px 20px;">
-                    <i class="fas fa-bolt" style="width: 25px;"></i> Binance Pay
+        <section id="section-deposit" class="view-panel">
+            <div class="tabs-row" style="margin-bottom: 25px; display: flex; flex-direction: column; gap: 12px;">
+                <!-- Binance Pay -->
+                <button class="tab-btn active" onclick="switchDepositMethod('binance_pay', this)" style="padding: 18px 20px; text-align: left; position: relative;">
+                    <div style="display: flex; align-items: center; gap: 15px; width: 100%;">
+                        <div style="font-size: 1.5rem; color: #f3ba2f; background: rgba(243, 186, 47, 0.1); width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 800; font-size: 1rem; color: var(--text-p);">Binance Pay</div>
+                            <div style="font-size: 0.75rem; color: var(--text-s); font-weight: 500;">USDT Internal Transfer</div>
+                        </div>
+                        <div class="active-check" style="display: block; color: var(--accent);">
+                            <i class="fas fa-circle-check"></i>
+                        </div>
+                    </div>
                 </button>
-                <button class="tab-btn" onclick="switchDepositMethod('trx_trc20', this)" style="justify-content: flex-start; padding: 15px 20px;">
-                    <i class="fas fa-coins" style="width: 25px;"></i> TRX (TRC20)
+
+                <!-- TRX -->
+                <button class="tab-btn" onclick="switchDepositMethod('trx_trc20', this)" style="padding: 18px 20px; text-align: left; position: relative;">
+                    <div style="display: flex; align-items: center; gap: 15px; width: 100%;">
+                        <div style="font-size: 1.5rem; color: #ff0013; background: rgba(255, 0, 19, 0.1); width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 800; font-size: 1rem; color: var(--text-p);">TRX (TRC20)</div>
+                            <div style="font-size: 0.75rem; color: var(--text-s); font-weight: 500;">TRON Network Transfer</div>
+                        </div>
+                        <div class="active-check" style="display: none; color: var(--accent);">
+                            <i class="fas fa-circle-check"></i>
+                        </div>
+                    </div>
                 </button>
-                <button class="tab-btn" onclick="switchDepositMethod('usdt_bep20', this)" style="justify-content: flex-start; padding: 15px 20px;">
-                    <i class="fas fa-shield-halved" style="width: 25px;"></i> USDT (BEP20)
+
+                <!-- USDT -->
+                <button class="tab-btn" onclick="switchDepositMethod('usdt_bep20', this)" style="padding: 18px 20px; text-align: left; position: relative;">
+                    <div style="display: flex; align-items: center; gap: 15px; width: 100%;">
+                        <div style="font-size: 1.5rem; color: #32d74b; background: rgba(50, 215, 75, 0.1); width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <i class="fas fa-shield-halved"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 800; font-size: 1rem; color: var(--text-p);">USDT (BEP20)</div>
+                            <div style="font-size: 0.75rem; color: var(--text-s); font-weight: 500;">BSC Network Transfer</div>
+                        </div>
+                        <div class="active-check" style="display: none; color: var(--accent);">
+                            <i class="fas fa-circle-check"></i>
+                        </div>
+                    </div>
                 </button>
             </div>
 
@@ -1135,8 +1174,16 @@
             currentDepositMethod = method;
 
             // UI Update
-            document.querySelectorAll('#section-deposit .tab-btn').forEach(b => b.classList.remove('active'));
-            if (btn) btn.classList.add('active');
+            document.querySelectorAll('#section-deposit .tab-btn').forEach(b => {
+                b.classList.remove('active');
+                const check = b.querySelector('.active-check');
+                if (check) check.style.display = 'none';
+            });
+            if (btn) {
+                btn.classList.add('active');
+                const check = btn.querySelector('.active-check');
+                if (check) check.style.display = 'block';
+            }
 
             const iconEl = document.getElementById('deposit-method-icon');
             const titleEl = document.getElementById('deposit-method-title');
