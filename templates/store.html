@@ -131,7 +131,7 @@
             background: var(--bg-elevated); border: 1px solid var(--border);
             border-radius: var(--radius); padding: 20px;
             display: flex; justify-content: space-between; align-items: center;
-            box-shadow: var(--shadow); margin-bottom: 15px;
+            box-shadow: none; margin-bottom: 15px;
         }
         .info-card-l { display: flex; flex-direction: column; gap: 4px; }
         .info-card-val { font-size: 1.4rem; font-weight: 800; color: var(--text-p); display: flex; align-items: baseline; gap: 6px; }
@@ -311,7 +311,7 @@
     <div class="sidebar" id="navSidebar">
         <div class="side-brand">
             <div class="side-brand-dot"></div>
-            <span class="side-brand-name">Buy Number</span>
+            <span class="side-brand-name" id="side-bot-name">Buy Number</span>
         </div>
         <div class="side-nav">
             <div class="nav-item active" id="m-home" onclick="switchNav('home', this)">
@@ -444,10 +444,15 @@
         </section>
 
         <section id="section-support" class="view-panel">
-            <div class="info-card" style="flex-direction: column; align-items: flex-start; gap: 15px;">
-                <h2 style="font-weight: 800;">Contact Support</h2>
-                <p style="color: var(--text-s); font-size: 0.9rem;">Need help? Our team is available 24/7 to assist you.</p>
-                <button class="primary-btn" style="width: auto; padding: 12px 25px;" onclick="window.open('https://t.me/support_link', '_blank')">
+            <div class="card" style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 20px; padding: 40px 20px;">
+                <div style="width: 80px; height: 80px; background: rgba(88, 101, 242, 0.1); color: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem;">
+                    <i class="fas fa-headset"></i>
+                </div>
+                <div>
+                    <h2 style="font-weight: 800; margin-bottom: 10px;">Contact Support</h2>
+                    <p style="color: var(--text-s); font-size: 0.95rem; line-height: 1.6;">Our dedicated support team is available to help you with any questions or issues you may have.</p>
+                </div>
+                <button class="primary-btn" style="width: auto; padding: 16px 40px; border-radius: 50px;" onclick="window.open('https://t.me/ahmedozil190', '_blank')">
                     <i class="fab fa-telegram"></i> Message Support
                 </button>
             </div>
@@ -595,6 +600,10 @@
                 const res = await fetch(`/api/store/data?user_id=${userId}`);
                 const data = await res.json();
                 
+                if (data.bot_name) {
+                    document.getElementById('side-bot-name').innerText = data.bot_name;
+                }
+
                 if (data.user) {
                     updateBalanceUI(data.user.balance || 0);
                     document.getElementById('dash-orders').innerText = data.user.total_orders || 0;
