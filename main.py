@@ -165,27 +165,15 @@ async def main():
     # 4. Background Helper Tasks
     tasks = [web_task]
     
-    # 5. Main Polling (Buyer Bot)
-    # 5. Set Bot Commands (Side Menu)
-    from aiogram.types import BotCommandScopeAllPrivateChats
-    
-    buyer_commands = [BotCommand(command="start", description="/start")]
-    seller_commands = [
-        BotCommand(command="start", description="/start"),
-        BotCommand(command="coin", description="/coin"),
-        BotCommand(command="cancel", description="/cancel"),
-        BotCommand(command="language", description="/language"),
-        BotCommand(command="cap", description="/cap")
-    ]
-
+    # 5. Delete Bot Commands (Side Menu)
     try:
-        await bot_buyer.set_my_commands(buyer_commands, scope=BotCommandScopeAllPrivateChats())
-        logger.info("Buyer Bot commands set.")
+        await bot_buyer.delete_my_commands()
+        logger.info("Buyer Bot commands deleted globally.")
         if bot_seller:
-            await bot_seller.set_my_commands(seller_commands, scope=BotCommandScopeAllPrivateChats())
-            logger.info("Seller Bot commands set.")
+            await bot_seller.delete_my_commands()
+            logger.info("Seller Bot commands deleted globally.")
     except Exception as e:
-        logger.error(f"Failed to set commands: {e}")
+        logger.error(f"Failed to delete commands: {e}")
 
     # 6. Start Polling Tasks
     tasks.append(asyncio.create_task(start_bot_service(dp_buyer, bot_buyer, "Store/Buyer")))
