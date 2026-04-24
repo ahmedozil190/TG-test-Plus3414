@@ -617,27 +617,21 @@ async def check_binance_deposit(txid: str, api_key: str, api_secret: str):
     api_key = api_key.strip()
     api_secret = api_secret.strip()
     
-    # CRITICAL CHECK: Ensure we aren't using a masked secret (e.g. abcd****)
-    if "*" in api_secret:
-        return False, "Error: Masked API Secret detected. Please re-enter your full Binance API Secret in settings.", 0
-    
-    logger.info(f"Binance DEBUG - Using Key: {api_key[:4]}... (Len: {len(api_key)})")
-    
+    if "*" in api_secret or "Already Set" in api_secret:
+        return False, "Invalid API Secret format in database.", 0
+        
     base_url = "https://api.binance.com"
     
-    # NEW: Sync time with Binance Server to avoid "Signature for this request is not valid" (clock drift)
+    # Sync time with Binance Server to avoid clock drift issues
     try:
         time_res = await asyncio.to_thread(requests.get, f"{base_url}/api/v3/time", timeout=5)
         server_time = time_res.json().get("serverTime")
         timestamp = server_time if server_time else int(time.time() * 1000)
-    except Exception as te:
-        logger.error(f"Time Sync Error: {te}")
+    except:
         timestamp = int(time.time() * 1000)
 
     endpoint = "/sapi/v1/capital/deposit/hisrec"
     
-    # Binance requires parameters to be in a specific order or sorted for some endpoints.
-    # We will use a dict and sort it to be safe.
     params = {
         "txId": txid.strip(),
         "recvWindow": 60000,
@@ -653,9 +647,6 @@ async def check_binance_deposit(txid: str, api_key: str, api_secret: str):
     
     headers = {"X-MBX-APIKEY": api_key}
     url = f"{base_url}{endpoint}?{query_string}&signature={signature}"
-    
-    logger.info(f"Binance DEBUG - Query: {query_string}")
-    logger.info(f"Binance DEBUG - Signature: {signature}")
     
     try:
         response = await asyncio.to_thread(requests.get, url, headers=headers)
@@ -1050,12 +1041,8 @@ async def get_store_settings():
             api_key = settings.get("BINANCE_API_KEY") or BINANCE_API_KEY
             api_secret = settings.get("BINANCE_API_SECRET") or BINANCE_API_SECRET
             
-            # Mask the secret for security
-            masked_secret = ""
-            if api_secret and len(api_secret) > 8:
-                masked_secret = api_secret[:4] + "*" * (len(api_secret) - 8) + api_secret[-4:]
-            elif api_secret:
-                masked_secret = "***"
+            # Return a placeholder for the secret so the user knows it is set but cannot see it
+            masked_secret = "Already Set (Leave empty to keep current)" if api_secret else ""
 
             return {
                 "binance_api_key": api_key,
@@ -1078,7 +1065,7 @@ async def save_store_settings(req: StoreSettingsSubmit):
                 "TRX_ADDRESS": req.trx_address.strip(),
                 "USDT_BEP20_ADDRESS": req.usdt_bep20_address.strip()
             }
-            if req.binance_api_secret and not req.binance_api_secret.startswith("*"):
+            if req.binance_api_secret and "Already Set" not in req.binance_api_secret:
                 updates["BINANCE_API_SECRET"] = req.binance_api_secret.strip()
 
             for k, v in updates.items():
