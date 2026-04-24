@@ -237,32 +237,37 @@
         /* Toast Notification */
         .toast-container {
             position: fixed;
-            top: 20px;
-            right: 20px;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             z-index: 10000;
             display: flex;
             flex-direction: column;
             gap: 12px;
             pointer-events: none;
+            width: 100%;
+            align-items: center;
         }
 
         .toast {
-            background: #111113;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 12px 16px;
-            width: 75%;
-            max-width: 300px;
+            background: rgba(24, 24, 27, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 16px 20px;
+            width: 85%;
+            max-width: 320px;
             display: flex;
             align-items: center;
-            gap: 12px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-            transform: translateX(120%);
-            transition: transform 0.4s var(--ease);
+            gap: 15px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.4s var(--ease);
             pointer-events: auto;
         }
 
-        .toast.show { transform: translateX(0); }
+        .toast.show { opacity: 1; transform: scale(1); }
 
         .toast-icon {
             width: 44px;
