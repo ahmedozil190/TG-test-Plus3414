@@ -586,6 +586,7 @@
             opacity: 1;
             color: var(--text-p);
         }
+
         /* ─── Pagination Controls ─── */
         .pagination-ctrls {
             display: flex;
@@ -672,7 +673,8 @@
     <main class="main-content">
         <section id="section-home" class="view-panel active">
             <div class="section-header" style="margin-top: 0;">
-                <i class="fas fa-wallet"></i> <h2>FINANCIALS</h2>
+                <i class="fas fa-wallet"></i>
+                <h2>FINANCIALS</h2>
             </div>
             <div class="info-card">
                 <div style="display: flex; flex-direction: column;">
@@ -706,7 +708,8 @@
             </div>
 
             <div class="section-header">
-                <i class="fas fa-database"></i> <h2>INVENTORY</h2>
+                <i class="fas fa-database"></i>
+                <h2>INVENTORY</h2>
             </div>
             <div class="info-card">
                 <div style="display: flex; flex-direction: column;">
@@ -804,7 +807,7 @@
                 </div>
             </div>
 
-            <div id="history-card" class="card" style="padding: 22px; margin-top: 15px;">
+            <div id="history-section" class="card" style="padding: 22px; margin-top: 15px;">
                 <div class="section-header" style="margin-top: 0; margin-bottom: 35px;">
                     <h2 data-i18n="hist_title">Orders History</h2>
                 </div>
@@ -1117,13 +1120,12 @@
             if (target >= 1 && target <= totalHistoryPages) {
                 currentHistoryPage = target;
                 await fetchHistory();
-                document.getElementById('history-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                document.getElementById('history-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
 
         async function fetchHistory() {
             const list = document.getElementById('history-list');
-            list.innerHTML = '<div class="spinner" style="margin: 40px auto;"></div>';
             try {
                 const res = await fetch(`/api/store/history?user_id=${userId}&page=${currentHistoryPage}&limit=${HISTORY_LIMIT}`);
                 const data = await res.json();
@@ -1134,7 +1136,7 @@
         function renderHistory(data) {
             const list = document.getElementById('history-list');
             const empty = document.getElementById('history-empty');
-            
+
             const orders = data.orders || [];
             totalHistoryPages = data.total_pages || 1;
             document.getElementById('hist-total-orders').innerText = data.total_count || 0;
