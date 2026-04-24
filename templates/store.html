@@ -646,7 +646,7 @@
                 if (data.user) {
                     updateBalanceUI(data.user.balance || 0);
                     document.getElementById('dash-orders').innerText = data.user.total_orders || 0;
-                    document.getElementById('dash-spent').innerText = `${parseFloat(data.user.total_spent || 0).toFixed(2)} USD`;
+                    document.getElementById('dash-spent').innerHTML = `<span class="c-price">${parseFloat(data.user.total_spent || 0).toFixed(2)} USD</span>`;
                     const nameForUI = (data.user.full_name && data.user.full_name !== 'Unknown') ? data.user.full_name : (userData?.first_name || "User");
                     document.getElementById('userInitial').innerText = nameForUI.charAt(0).toUpperCase();
                 }
@@ -657,7 +657,7 @@
                     document.getElementById('stat-countries').innerText = data.stats.countries_count || 0;
                     document.getElementById('dash-countries').innerText = data.stats.countries_count || 0;
                     document.getElementById('stat-lowest-price').innerText = parseFloat(data.stats.lowest_price || 0).toFixed(2);
-                    document.getElementById('dash-lowest').innerText = `${parseFloat(data.stats.lowest_price || 0).toFixed(2)} USD`;
+                    document.getElementById('dash-lowest').innerHTML = `<span class="c-price">${parseFloat(data.stats.lowest_price || 0).toFixed(2)} USD</span>`;
                 }
                 if (document.getElementById('section-store').classList.contains('active')) renderCountries(countries);
             } catch(e) { console.error("Init Error:", e); }
@@ -668,7 +668,7 @@
 
         function updateBalanceUI(val) {
             const fval = parseFloat(val).toFixed(2);
-            document.getElementById('dash-balance').innerText = `${fval} USD`;
+            document.getElementById('dash-balance').innerHTML = `<span class="c-price">${fval} USD</span>`;
             const topBal = document.getElementById('top-balance');
             if (topBal) topBal.innerText = `${fval} USD`;
         }
