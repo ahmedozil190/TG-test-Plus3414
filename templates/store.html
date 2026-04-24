@@ -804,7 +804,7 @@
                 </div>
             </div>
 
-            <div class="card" style="padding: 22px; margin-top: 15px;">
+            <div id="history-card" class="card" style="padding: 22px; margin-top: 15px;">
                 <div class="section-header" style="margin-top: 0; margin-bottom: 35px;">
                     <h2 data-i18n="hist_title">Orders History</h2>
                 </div>
@@ -1117,7 +1117,7 @@
             if (target >= 1 && target <= totalHistoryPages) {
                 currentHistoryPage = target;
                 await fetchHistory();
-                document.getElementById('section-history').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                document.getElementById('history-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
 
