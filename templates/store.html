@@ -1513,7 +1513,7 @@
                 const data = await res.json();
 
                 if (data.status === 'success') {
-                    showToast("Success", data.message, "success", 8000);
+                    showToast("Success", data.message, "success", 5000);
                     txidInput.value = "";
                     if (data.new_balance !== undefined) {
                         updateBalanceUI(data.new_balance);

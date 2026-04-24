@@ -660,6 +660,15 @@ async def check_binance_deposit(txid: str, api_key: str, api_secret: str):
                         amount = float(record.get("amount", 0))
                         
                         if status == 1: # Success
+                            # SECURITY: Check if transaction is too old (e.g., older than 24 hours)
+                            # Binance 'insertTime' or 'updatedTime' is in ms
+                            tx_time_ms = record.get("insertTime") or record.get("updatedTime") or 0
+                            current_time_ms = int(time.time() * 1000)
+                            
+                            # 24 hours in milliseconds = 24 * 60 * 60 * 1000
+                            if tx_time_ms > 0 and (current_time_ms - tx_time_ms) > (24 * 60 * 60 * 1000):
+                                return False, "Transaction is too old. Only deposits from the last 24 hours are accepted.", 0
+
                             # Conversion Logic
                             if coin.upper() != "USDT":
                                 price = await get_binance_price(coin)
