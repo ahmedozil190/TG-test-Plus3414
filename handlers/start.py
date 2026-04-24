@@ -13,11 +13,8 @@ router = Router()
 async def cmd_start(message: Message, bot: Bot = None):
     # Force refresh commands and menu button if bot is provided
     if bot:
-        user_commands = [
-            BotCommand(command="start", description="Start/Restart")
-        ]
         try:
-            await bot.set_my_commands(user_commands, scope=BotCommandScopeChat(chat_id=message.from_user.id))
+            await bot.delete_my_commands(scope=BotCommandScopeChat(chat_id=message.from_user.id))
             # Set the "Open Panel" menu button (The blue button in the bottom left)
             await bot.set_chat_menu_button(
                 chat_id=message.from_user.id,
