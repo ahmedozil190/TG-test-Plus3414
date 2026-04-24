@@ -797,61 +797,61 @@
         </section>
 
         <section id="section-deposit" class="view-panel">
-            <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px;">
-                <!-- Binance Pay Card -->
+            <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px;">
+                <!-- Binance Pay -->
                 <div class="country-card" onclick="copyValue(depositMethods.binance_pay, 'Binance Pay ID')">
                     <div style="display: flex; align-items: center; gap: 15px;">
-                        <div style="font-size: 2rem; color: #f3ba2f; background: rgba(243, 186, 47, 0.1); width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                        <div style="font-size: 1.8rem; color: #f3ba2f; background: rgba(243, 186, 47, 0.1); width: 50px; height: 50px; border-radius: 14px; display: flex; align-items: center; justify-content: center;">
                             <i class="fas fa-bolt"></i>
                         </div>
                         <div>
                             <div class="c-name">Binance Pay</div>
-                            <div class="c-stock" id="addr-val-pay">Loading...</div>
+                            <div class="c-stock">Click to copy Pay ID</div>
                         </div>
                     </div>
-                    <div class="c-price" style="background: var(--accent); color: white; font-size: 0.75rem;">COPY</div>
+                    <div class="c-price" style="background: var(--accent-glow); color: var(--accent); font-size: 0.75rem; border: 1px solid var(--accent); padding: 6px 12px;">COPY</div>
                 </div>
 
-                <!-- TRX Card -->
+                <!-- TRX -->
                 <div class="country-card" onclick="copyValue(depositMethods.trx_trc20, 'TRX Address')">
                     <div style="display: flex; align-items: center; gap: 15px;">
-                        <div style="font-size: 2rem; color: #ff0013; background: rgba(255, 0, 19, 0.1); width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                        <div style="font-size: 1.8rem; color: #ff0013; background: rgba(255, 0, 19, 0.1); width: 50px; height: 50px; border-radius: 14px; display: flex; align-items: center; justify-content: center;">
                             <i class="fas fa-coins"></i>
                         </div>
                         <div>
                             <div class="c-name">TRX (TRC20)</div>
-                            <div class="c-stock" id="addr-val-trx">Loading...</div>
+                            <div class="c-stock">Click to copy Address</div>
                         </div>
                     </div>
-                    <div class="c-price" style="background: var(--accent); color: white; font-size: 0.75rem;">COPY</div>
+                    <div class="c-price" style="background: var(--accent-glow); color: var(--accent); font-size: 0.75rem; border: 1px solid var(--accent); padding: 6px 12px;">COPY</div>
                 </div>
 
-                <!-- USDT Card -->
+                <!-- USDT -->
                 <div class="country-card" onclick="copyValue(depositMethods.usdt_bep20, 'USDT Address')">
                     <div style="display: flex; align-items: center; gap: 15px;">
-                        <div style="font-size: 2rem; color: #32d74b; background: rgba(50, 215, 75, 0.1); width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                        <div style="font-size: 1.8rem; color: #32d74b; background: rgba(50, 215, 75, 0.1); width: 50px; height: 50px; border-radius: 14px; display: flex; align-items: center; justify-content: center;">
                             <i class="fas fa-shield-halved"></i>
                         </div>
                         <div>
                             <div class="c-name">USDT (BEP20)</div>
-                            <div class="c-stock" id="addr-val-usdt">Loading...</div>
+                            <div class="c-stock">Click to copy Address</div>
                         </div>
                     </div>
-                    <div class="c-price" style="background: var(--accent); color: white; font-size: 0.75rem;">COPY</div>
+                    <div class="c-price" style="background: var(--accent-glow); color: var(--accent); font-size: 0.75rem; border: 1px solid var(--accent); padding: 6px 12px;">COPY</div>
                 </div>
             </div>
 
-            <div class="info-card" style="box-shadow: none; margin-top: 20px; padding: 25px;">
+            <div class="info-card" style="box-shadow: none; padding: 25px; margin-top: 20px;">
                 <div style="width: 100%; text-align: left;">
                     <label style="display: block; margin-bottom: 12px; color: var(--text-p); font-size: 0.95rem; font-weight: 800;">Verify Transaction</label>
-                    <p style="color: var(--text-s); font-size: 0.85rem; margin-bottom: 15px; line-height: 1.4;">
-                        After payment, paste the Transaction ID below to add balance.
+                    <p style="color: var(--text-s); font-size: 0.85rem; margin-bottom: 18px; line-height: 1.5;">
+                        Paste your Transaction ID below after sending the funds to add them to your balance.
                     </p>
                     <input type="text" id="deposit-txid" class="search-input" placeholder="0" 
                         style="width: 100%; margin-bottom: 20px; text-align: center; border: 1px solid var(--border); background: var(--input-bg); font-size: 1rem; height: 54px; border-radius: 16px;">
                     
-                    <button class="primary-btn" style="height: 54px; border-radius: 16px;" onclick="verifyDeposit()" id="btn-verify-deposit">
-                        <i class="fas fa-shield-check"></i> Verify Deposit
+                    <button class="primary-btn" style="height: 54px; border-radius: 16px; width: 100%;" onclick="verifyDeposit()" id="btn-verify-deposit">
+                        <i class="fas fa-shield-check" style="margin-right: 6px;"></i> Verify Deposit
                     </button>
                 </div>
             </div>
@@ -1106,9 +1106,6 @@
 
                 if (data.deposit_methods) {
                     depositMethods = data.deposit_methods;
-                    document.getElementById('addr-val-pay').innerText = depositMethods.binance_pay || 'Not Set';
-                    document.getElementById('addr-val-trx').innerText = depositMethods.trx_trc20 || 'Not Set';
-                    document.getElementById('addr-val-usdt').innerText = depositMethods.usdt_bep20 || 'Not Set';
                 }
 
                 countries = data.countries || [];
