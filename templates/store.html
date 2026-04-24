@@ -237,7 +237,7 @@
         /* Toast Notification */
         .toast-container {
             position: fixed;
-            top: 85px;
+            top: 75px;
             right: 15px;
             z-index: 10000;
             display: flex;
@@ -249,9 +249,9 @@
         }
 
         .toast {
-            background: rgba(24, 24, 27, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: var(--bg-elevated);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
             border-radius: 16px;
             padding: 12px 16px;
             width: 75%;
@@ -259,7 +259,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            box-shadow: var(--shadow);
             transform: translateX(120%);
             transition: transform 0.4s var(--ease);
             pointer-events: auto;
@@ -285,17 +285,18 @@
         }
         
         .toast-content { flex: 1; }
-        .toast-title { font-weight: 800; font-size: 1rem; color: #ffffff; margin-bottom: 2px; }
-        .toast-desc { font-size: 0.85rem; color: #a1a1aa; font-weight: 500; }
+        .toast-title { font-weight: 800; font-size: 1rem; color: var(--text-p); margin-bottom: 2px; }
+        .toast-desc { font-size: 0.85rem; color: var(--text-s); font-weight: 500; }
         
         .toast-close {
-            color: #3f3f46;
+            color: var(--text-s);
             cursor: pointer;
             transition: 0.2s;
             font-size: 0.9rem;
             padding: 5px;
+            opacity: 0.5;
         }
-        .toast-close:hover { color: #ffffff; }
+        .toast-close:hover { opacity: 1; color: var(--text-p); }
     </style>
 </head>
 
@@ -530,7 +531,8 @@
                 success_title: "Payment Success!", success_desc: "Wait for the code in your bot chat.", btn_close: "Dismiss",
                 available: "Available", search_ph: "Search countries...",
                 total_numbers: "Total Numbers", countries: "Total Countries", lowest_price: "Lowest Price",
-                hist_title: "Orders History", hist_empty: "No orders history found"
+                hist_title: "Orders History", hist_empty: "No orders history found",
+                insufficient_bal: "Insufficient balance"
             },
             ar: {
                 loading: "جاري تجهيز المتجر...", nav_home: "الرئيسية", nav_store: "شراء رقم", nav_history: "سجل الطلبات", nav_support: "الدعم",
@@ -539,7 +541,8 @@
                 success_title: "تم بنجاح!", success_desc: "انتظر وصول الكود في البوت.", btn_close: "إغلاق",
                 available: "رقم متاح", search_ph: "ابحث عن دولة...",
                 total_numbers: "إجمالي الأرقام", countries: "إجمالي الدول", lowest_price: "أقل سعر",
-                hist_title: "سجل الطلبات", hist_empty: "لا يوجد سجل طلبات حالياً"
+                hist_title: "سجل الطلبات", hist_empty: "لا يوجد سجل طلبات حالياً",
+                insufficient_bal: "رصيدك غير كافٍ"
             }
         };
 
@@ -671,7 +674,7 @@
                 } else { 
                     const msg = data.detail || data.message || 'Error';
                     if (msg.includes('رصيدك') || msg.toLowerCase().includes('balance')) {
-                        showToast(currentLang === 'ar' ? 'فشل الشراء' : 'Purchase Failed', currentLang === 'ar' ? 'رصيدك غير كافٍ لإتمام العملية' : 'Insufficient buy balance', 'error');
+                        showToast(currentLang === 'ar' ? 'فشل الشراء' : 'Purchase Failed', translations[currentLang].insufficient_bal, 'error');
                     } else {
                         alert(msg);
                     }
