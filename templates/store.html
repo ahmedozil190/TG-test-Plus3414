@@ -367,6 +367,22 @@
                     <i class="fas fa-shopping-cart"></i>
                 </div>
             </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="info-card" style="margin-bottom: 0;">
+                    <div style="display: flex; flex-direction: column;">
+                        <span class="info-card-lbl" data-i18n="countries" style="font-size: 0.6rem;">COUNTRIES</span>
+                        <span class="info-card-val" id="dash-countries" style="font-size: 1.1rem;">0</span>
+                    </div>
+                </div>
+                <div class="info-card" style="margin-bottom: 0;">
+                    <div style="display: flex; flex-direction: column;">
+                        <span class="info-card-lbl" data-i18n="lowest_price" style="font-size: 0.6rem;">LOWEST PRICE</span>
+                        <span class="info-card-val" id="dash-lowest" style="font-size: 1.1rem;">$0.00</span>
+                    </div>
+                </div>
+            </div>
+
             <h3 style="margin: 25px 0 15px; font-size: 0.9rem; text-transform: uppercase; color: var(--text-s); letter-spacing: 1px;" data-i18n="quick_buy">Quick Access</h3>
             <button class="primary-btn" onclick="switchNav('store', document.getElementById('m-store'))">
                 <i class="fas fa-rocket"></i> <span data-i18n="btn_start_shopping">Start Shopping</span>
@@ -624,7 +640,9 @@
                 if (data.stats) {
                     document.getElementById('stat-total-numbers').innerText = data.stats.total_numbers || 0;
                     document.getElementById('stat-countries').innerText = data.stats.countries_count || 0;
+                    document.getElementById('dash-countries').innerText = data.stats.countries_count || 0;
                     document.getElementById('stat-lowest-price').innerText = parseFloat(data.stats.lowest_price || 0).toFixed(2);
+                    document.getElementById('dash-lowest').innerText = `$${parseFloat(data.stats.lowest_price || 0).toFixed(2)}`;
                 }
                 if (document.getElementById('section-store').classList.contains('active')) renderCountries(countries);
             } catch(e) { console.error("Init Error:", e); }

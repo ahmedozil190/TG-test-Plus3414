@@ -251,15 +251,6 @@
             -webkit-overflow-scrolling: touch;
         }
 
-        .card {
-            background: var(--bg-elevated);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 20px;
-            transition: all 0.3s var(--ease);
-            box-shadow: none;
-        }
-
         .view-panel {
             display: none;
             padding: 25px 20px;
@@ -268,6 +259,15 @@
 
         .view-panel.active {
             display: block;
+        }
+
+        .card {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 20px;
+            transition: all 0.3s var(--ease);
+            box-shadow: none;
         }
 
         /* Custom Scrollbar */
@@ -1426,6 +1426,28 @@
             </div>
         </div>
 
+        </div>
+
+        <!-- View: Support -->
+        <div class="view-panel" id="view-support">
+            <div class="card"
+                style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 20px; padding: 40px 20px;">
+                <div
+                    style="width: 80px; height: 80px; background: rgba(88, 101, 242, 0.1); color: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem;">
+                    <i class="fas fa-headset"></i>
+                </div>
+                <div>
+                    <h2 style="font-weight: 800; margin-bottom: 10px; color: var(--text-p);">Contact Support</h2>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">Our dedicated support
+                        team is available to help you with any questions or issues you may have.</p>
+                </div>
+                <button class="btn-action" style="width: auto; padding: 16px 40px; border-radius: 50px;"
+                    onclick="tg.openTelegramLink('https://t.me/ahmedozil190')">
+                    <i class="fab fa-telegram"></i> Message Support
+                </button>
+            </div>
+        </div>
+
     </div>
 
     <!-- Confirmation Modal Structure -->
@@ -1458,21 +1480,7 @@
             </div>
         </div>
     </div>
-        <!-- View: Support -->
-        <div class="view-panel" id="view-support">
-            <div class="card" style="box-shadow: none; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 20px; padding: 40px 20px;">
-                <div style="width: 80px; height: 80px; background: rgba(88, 101, 242, 0.1); color: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem;">
-                    <i class="fas fa-headset"></i>
-                </div>
-                <div>
-                    <h2 style="font-weight: 800; margin-bottom: 10px; color: var(--text-p);">Contact Support</h2>
-                    <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">Our dedicated support team is available to help you with any questions or issues you may have.</p>
-                </div>
-                <button class="btn-action" style="width: auto; padding: 16px 40px; border-radius: 50px;" onclick="tg.openTelegramLink('https://t.me/ahmedozil190')">
-                    <i class="fab fa-telegram"></i> Message Support
-                </button>
-            </div>
-        </div>
+    </div>
     <!-- Success Modal Structure -->
     <div class="modal-overlay" id="successModal">
         <div class="confirm-modal" style="max-width: 450px;">
