@@ -1570,9 +1570,13 @@
 
             if (viewId === 'dashboard') fetchSellerData();
             if (viewId === 'pricing') fetchSellerData();
-            if (viewId === 'withdraw') fetchWithdrawals();
+            if (viewId === 'withdraw') {
+                currentWithdrawPage = 1;
+                fetchWithdrawals();
+            }
             if (viewId === 'submit') {
                 resetSubmission();
+                currentSourcingPage = 1;
                 fetchSourcingHistory();
             }
         }
