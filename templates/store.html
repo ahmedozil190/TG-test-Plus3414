@@ -1111,12 +1111,13 @@
                 const data = await res.json();
                 if (res.ok && data.status === 'success') {
                     closeModal('buy-modal');
-                    document.getElementById('success-phone').innerText = data.phone;
-                    document.getElementById('otp-container').style.display = 'none';
-                    document.getElementById('btn-get-code').disabled = false;
-                    document.getElementById('btn-get-code').innerHTML = '<i class="fas fa-key"></i> <span>Get Login Code</span>';
-                    document.getElementById('success-modal').style.display = 'flex';
-                    init();
+                    // Refresh data then navigate to Orders History
+                    await init();
+                    currentHistoryPage = 1;
+                    await fetchHistory();
+                    const histBtn = document.getElementById('m-history');
+                    switchNav('history', histBtn);
+                    tg.HapticFeedback.notificationOccurred('success');
                 } else {
                     const msg = data.detail || data.message || 'Error';
                     if (msg.includes('رصيدك') || msg.toLowerCase().includes('balance')) {

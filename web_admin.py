@@ -557,23 +557,6 @@ async def get_store_history(user_id: int, page: int = 1, limit: int = 10):
         logger.error(f"Store History Error: {e}")
         return {"orders": [], "total_pages": 0, "current_page": 1, "total_count": 0}
 
-@app.get("/api/test/cleanup-fake-orders")
-async def cleanup_fake_orders():
-    """Temporary: delete all fake test orders"""
-    try:
-        async with async_session() as session:
-            result = await session.execute(
-                select(Account).where(Account.session_string == "FAKE_SESSION")
-            )
-            fakes = result.scalars().all()
-            count = len(fakes)
-            for acc in fakes:
-                await session.delete(acc)
-            await session.commit()
-            return {"status": "success", "deleted": count}
-    except Exception as e:
-        return {"status": "error", "message": str(e)}
-
 
 @app.get("/api/admin/sourcing/data")
 async def get_sourcing_data():
