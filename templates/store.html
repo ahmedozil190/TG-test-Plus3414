@@ -797,18 +797,13 @@
         </section>
 
         <section id="section-deposit" class="view-panel">
-            <div class="panel-header" style="margin-bottom: 20px;">
-                <h1 style="font-size: 1.8rem; font-weight: 800; letter-spacing: -0.5px;">Deposit Funds</h1>
-                <p style="color: var(--text-s); margin-top: 5px; font-size: 0.95rem;">Add balance via Binance</p>
-            </div>
-            
             <div class="info-card" style="box-shadow: none; margin-bottom: 25px; flex-direction: column; align-items: center; text-align: center; padding: 30px 20px;">
                 <div style="font-size: 3rem; color: #f3ba2f; margin-bottom: 15px;">
                     <i class="fas fa-coins"></i>
                 </div>
-                <h3 style="margin-bottom: 10px;">Binance Deposit</h3>
+                <h3 style="margin-bottom: 10px;">Binance Pay Deposit</h3>
                 <p style="color: var(--text-s); font-size: 0.95rem; margin-bottom: 20px; line-height: 1.5;">
-                    Please transfer USDT to the address below, then paste the Transaction ID (TxID) to verify and add to your balance automatically.
+                    Please transfer USDT via Binance Internal Transfer (Binance Pay) to the Pay ID below, then paste the Order ID or Transaction ID (TxID) to verify and add to your balance automatically.
                 </p>
                 <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; width: 100%; word-break: break-all; font-family: monospace; font-size: 1.1rem; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 25px;" id="deposit-address-display">
                     Loading Address...
@@ -976,7 +971,7 @@
 
         const translations = {
             en: {
-                loading: "Optimizing Store...", nav_home: "Dashboard", nav_store: "Buy Number", nav_history: "Orders History", nav_support: "Support",
+                loading: "Optimizing Store...", nav_home: "Dashboard", nav_store: "Buy Number", nav_deposit: "Deposit", nav_history: "Orders History", nav_support: "Support",
                 balance: "YOUR BALANCE", total_spent: "TOTAL SPENT", total_orders: "SUCCESS ORDERS", quick_buy: "Quick Access", btn_start_shopping: "Browse Numbers",
                 confirm_title: "Confirmation", lbl_country: "Country", lbl_price: "Price", btn_confirm_pay: "Buy Now",
                 success_title: "Payment Success!", success_desc: "Wait for the code in your bot chat.", btn_close: "Dismiss",
@@ -986,7 +981,7 @@
                 insufficient_bal: "Insufficient balance"
             },
             ar: {
-                loading: "جاري تجهيز المتجر...", nav_home: "الرئيسية", nav_store: "شراء رقم", nav_history: "سجل الطلبات", nav_support: "الدعم",
+                loading: "جاري تجهيز المتجر...", nav_home: "الرئيسية", nav_store: "شراء رقم", nav_deposit: "إيداع", nav_history: "سجل الطلبات", nav_support: "الدعم",
                 balance: "رصيدك الحالي", total_spent: "إجمالي المدفوعات", total_orders: "إجمالي المشتريات", quick_buy: "وصول سريع", btn_start_shopping: "تصفح الأرقام",
                 confirm_title: "تأكيد الشراء", lbl_country: "الدولة", lbl_price: "السعر", btn_confirm_pay: "إتمام الشراء",
                 success_title: "تم بنجاح!", success_desc: "انتظر وصول الكود في البوت.", btn_close: "إغلاق",
