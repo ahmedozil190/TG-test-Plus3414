@@ -517,10 +517,17 @@ async def store_get_code(user_id: int, phone: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/store/history")
-async def get_store_history(user_id: int):
+async def get_store_history(user_id: int, page: int = 1, limit: int = 10):
     try:
         async with async_session() as session:
-            stmt = select(Account).where(Account.buyer_id == user_id).order_by(Account.id.desc())
+            # Count total
+            total_count = (await session.execute(
+                select(func.count(Account.id)).where(Account.buyer_id == user_id)
+            )).scalar() or 0
+            
+            total_pages = (total_count + limit - 1) // limit
+            
+            stmt = select(Account).where(Account.buyer_id == user_id).order_by(Account.id.desc()).offset((page - 1) * limit).limit(limit)
             results = (await session.execute(stmt)).scalars().all()
             
             history = []
@@ -540,10 +547,15 @@ async def get_store_history(user_id: int):
                     "price": a.price,
                     "date": a.created_at.strftime("%Y-%m-%d %H:%M") if a.created_at else "N/A"
                 })
-            return history
+            return {
+                "orders": history,
+                "total_pages": total_pages,
+                "current_page": page,
+                "total_count": total_count
+            }
     except Exception as e:
         logger.error(f"Store History Error: {e}")
-        return []
+        return {"orders": [], "total_pages": 0, "current_page": 1, "total_count": 0}
 
 @app.get("/api/admin/sourcing/data")
 async def get_sourcing_data():

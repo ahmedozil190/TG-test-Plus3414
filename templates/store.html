@@ -771,6 +771,20 @@
                     <!-- History items here -->
                 </div>
 
+                <!-- Pagination Controls -->
+                <div id="historyPagination" class="pagination-ctrls"
+                    style="display: none; margin-top: 25px; background: transparent;">
+                    <button class="pg-btn" style="background: transparent;" id="pgPrevHist"
+                        onclick="moveHistoryPage(-1)">
+                        <i class="fas fa-chevron-left"></i> <span>Prev</span>
+                    </button>
+                    <span id="pgInfoHist" class="pg-info">Page 1 of 1</span>
+                    <button class="pg-btn" style="background: transparent;" id="pgNextHist"
+                        onclick="moveHistoryPage(1)">
+                        <span>Next</span> <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+
                 <div id="history-empty"
                     style="text-align: center; padding: 40px 20px; background: var(--card-glass); border-radius: 16px; border: 1px dashed var(--border); margin-top: 0; display: none;">
                     <i class="fas fa-history"
@@ -878,6 +892,9 @@
         let currentLang = 'en';
         let countries = [];
         let selectedCountry = null;
+        let currentHistoryPage = 1;
+        const HISTORY_LIMIT = 10;
+        let totalHistoryPages = 1;
         const userId = tg.initDataUnsafe?.user?.id || 0;
 
         const translations = {
@@ -1053,11 +1070,20 @@
             btn.disabled = false; btn.innerText = translations[currentLang].btn_confirm_pay;
         }
 
+        async function moveHistoryPage(delta) {
+            const target = currentHistoryPage + delta;
+            if (target >= 1 && target <= totalHistoryPages) {
+                currentHistoryPage = target;
+                await fetchHistory();
+                document.getElementById('section-history').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
         async function fetchHistory() {
             const list = document.getElementById('history-list');
             list.innerHTML = '<div class="spinner" style="margin: 40px auto;"></div>';
             try {
-                const res = await fetch(`/api/store/history?user_id=${userId}`);
+                const res = await fetch(`/api/store/history?user_id=${userId}&page=${currentHistoryPage}&limit=${HISTORY_LIMIT}`);
                 const data = await res.json();
                 renderHistory(data);
             } catch (e) { list.innerHTML = '<p style="text-align:center;">Error loading history</p>'; }
@@ -1066,9 +1092,17 @@
         function renderHistory(data) {
             const list = document.getElementById('history-list');
             const empty = document.getElementById('history-empty');
-            document.getElementById('hist-total-orders').innerText = data ? data.length : 0;
+            
+            const orders = data.orders || [];
+            totalHistoryPages = data.total_pages || 1;
+            document.getElementById('hist-total-orders').innerText = data.total_count || 0;
 
-            if (!data || !data.length) {
+            document.getElementById('historyPagination').style.display = totalHistoryPages > 1 ? 'flex' : 'none';
+            document.getElementById('pgInfoHist').textContent = `Page ${data.current_page || 1} of ${totalHistoryPages}`;
+            document.getElementById('pgPrevHist').disabled = ((data.current_page || 1) <= 1);
+            document.getElementById('pgNextHist').disabled = ((data.current_page || 1) >= totalHistoryPages);
+
+            if (!orders || !orders.length) {
                 list.style.display = 'none';
                 empty.style.display = 'block';
                 return;
@@ -1082,7 +1116,7 @@
             const rowS = "background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;";
             const lblS = "color: var(--text-s); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;";
 
-            list.innerHTML = data.map(h => {
+            list.innerHTML = orders.map(h => {
                 const phoneClean = h.phone.replace(/\D/g, '');
                 return `
                 <div class="card" style="display: flex; flex-direction: column; gap: 10px; padding: 20px; box-shadow: none; transition: transform 0.2s; cursor: pointer;"
