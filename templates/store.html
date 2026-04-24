@@ -1228,7 +1228,7 @@
                 if (data.status === 'success') {
                     const statusEl = document.getElementById('otp-status-' + safeId);
                     if (statusEl) {
-                        statusEl.innerHTML = `<i class="fas fa-key" style="font-size:0.8rem; letter-spacing:0;"></i> ${data.code}`;
+                        statusEl.innerHTML = data.code;
                         statusEl.style.color = 'var(--success)';
                         statusEl.style.fontSize = '1.1rem';
                         statusEl.style.letterSpacing = '2px';
