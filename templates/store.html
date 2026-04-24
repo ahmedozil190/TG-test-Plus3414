@@ -1084,9 +1084,6 @@
 
             list.innerHTML = data.map(h => {
                 const phoneClean = h.phone.replace(/\D/g, '');
-                return `
-            list.innerHTML = data.map(h => {
-                const phoneClean = h.phone.replace(/\D/g, '');
                 const savedCode = localStorage.getItem('otp_' + phoneClean);
                 const hasCode = !!savedCode;
 
