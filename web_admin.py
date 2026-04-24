@@ -618,8 +618,16 @@ async def check_binance_deposit(txid: str, api_key: str, api_secret: str):
     api_secret = api_secret.strip()
     
     base_url = "https://api.binance.com"
+    
+    # NEW: Sync time with Binance Server to avoid "Signature for this request is not valid" (clock drift)
+    try:
+        time_res = await asyncio.to_thread(requests.get, f"{base_url}/api/v3/time", timeout=5)
+        server_time = time_res.json().get("serverTime")
+        timestamp = server_time if server_time else int(time.time() * 1000)
+    except:
+        timestamp = int(time.time() * 1000)
+
     endpoint = "/sapi/v1/capital/deposit/hisrec"
-    timestamp = int(time.time() * 1000)
     
     # recvWindow handles clock desync. txId MUST be trimmed of spaces.
     query_string = f"txId={txid.strip()}&recvWindow=60000&timestamp={timestamp}"
@@ -631,6 +639,8 @@ async def check_binance_deposit(txid: str, api_key: str, api_secret: str):
     
     headers = {"X-MBX-APIKEY": api_key}
     url = f"{base_url}{endpoint}?{query_string}&signature={signature}"
+    
+    logger.info(f"Binance Sync - ServerTime: {timestamp}, TxID: {txid}")
     
     logger.info(f"Binance API Request - TxID: {txid}, Secret Length: {len(api_secret)}")
     
