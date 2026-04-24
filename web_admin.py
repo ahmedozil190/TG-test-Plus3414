@@ -699,12 +699,12 @@ async def store_deposit_verify(req: DepositSubmit):
             # Check if this txid was already processed
             existing = (await session.execute(select(Deposit).where(Deposit.txid == txid))).scalar_one_or_none()
             if existing:
-                return {"status": "error", "message": "This Transaction ID has already been used."}
+                return {"status": "error", "message": "Transaction verification failed. Please check the ID or contact support."}
                 
             # Verify with Binance
             is_valid, msg, amount = await check_binance_deposit(txid, final_key, final_sec)
             if not is_valid:
-                return {"status": "error", "message": msg}
+                return {"status": "error", "message": "Transaction verification failed. Please check the ID or contact support."}
                 
             # Update user balance
             user = (await session.execute(select(User).where(User.id == req.user_id))).scalar_one_or_none()

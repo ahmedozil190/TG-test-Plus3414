@@ -1431,7 +1431,7 @@
             navigator.clipboard.writeText(txt).then(() => { tg.HapticFeedback.notificationOccurred('success'); });
         }
 
-        function showToast(title, desc, type = 'error') {
+        function showToast(title, desc, type = 'error', duration = 4000) {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
             toast.className = `toast toast-${type}`;
@@ -1454,7 +1454,7 @@
             setTimeout(() => {
                 toast.classList.remove('show');
                 setTimeout(() => toast.remove(), 600);
-            }, 4000);
+            }, duration);
 
             if (type === 'error') tg.HapticFeedback.notificationOccurred('error');
         }
@@ -1513,7 +1513,7 @@
                 const data = await res.json();
 
                 if (data.status === 'success') {
-                    showToast("Success", data.message, "success");
+                    showToast("Success", data.message, "success", 8000);
                     txidInput.value = "";
                     if (data.new_balance !== undefined) {
                         updateBalanceUI(data.new_balance);
