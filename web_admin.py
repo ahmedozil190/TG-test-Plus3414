@@ -56,6 +56,7 @@ class WithdrawAction(BaseModel):
 class DepositSubmit(BaseModel):
     user_id: int
     txid: str
+    method: str = "Binance Pay"
 
 class StoreSettingsSubmit(BaseModel):
     binance_api_key: str
@@ -615,6 +616,7 @@ async def get_deposit_history(user_id: int, page: int = 1, limit: int = 10):
                 deposits.append({
                     "txid": d.txid,
                     "amount": d.amount,
+                    "method": d.method or "Binance Pay",
                     "date": d.created_at.strftime("%Y-%m-%d %H:%M") if d.created_at else "N/A"
                 })
             return {
@@ -753,7 +755,7 @@ async def store_deposit_verify(req: DepositSubmit):
             user.balance_store += amount
             
             # Save deposit
-            new_deposit = Deposit(user_id=user.id, amount=amount, txid=txid)
+            new_deposit = Deposit(user_id=user.id, amount=amount, txid=txid, method=req.method)
             session.add(new_deposit)
             
             # Also log as a Transaction (optional, but good for history)

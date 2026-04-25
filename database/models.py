@@ -97,6 +97,7 @@ class Deposit(Base):
     user_id = Column(BigInteger, ForeignKey('users.id'), nullable=False)
     amount = Column(Float, nullable=False)
     txid = Column(String, unique=True, nullable=False) # Binance TxID
+    method = Column(String, nullable=True) # Payment Method
     created_at = Column(DateTime, default=datetime.utcnow)
 
 class AppSetting(Base):

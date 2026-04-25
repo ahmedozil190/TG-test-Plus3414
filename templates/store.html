@@ -313,7 +313,7 @@
         }
 
         .user-card:hover {
-            transform: scale(1.01);
+            transform: scale(1.02);
             background: rgba(255,255,255,0.02);
         }
 
@@ -1560,9 +1560,16 @@
             const btn = document.getElementById('btn-verify-deposit');
 
             if (!txid) {
-                showToast("Error", "Please enter a valid Transaction ID.", "error");
+                showToast("Error", "Please enter Transaction ID", "error");
                 return;
             }
+
+            const methodMap = {
+                'binance_pay': 'Binance Pay',
+                'trx_trc20': 'TRX (TRC20)',
+                'usdt_bep20': 'USDT (BEP20)'
+            };
+            const methodDisplay = methodMap[currentDepositMethod] || 'Binance Pay';
 
             btn.disabled = true;
             const originalHtml = btn.innerHTML;
@@ -1572,13 +1579,12 @@
                 const res = await fetch('/api/store/deposit/verify', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ user_id: userId, txid: txid })
+                    body: JSON.stringify({ user_id: userId, txid: txid, method: methodDisplay })
                 });
-
                 const data = await res.json();
 
                 if (data.status === 'success') {
-                    showToast("Success", data.message, "success", 5000);
+                    showToast("Success", data.message || "Deposit verified!", "success");
                     txidInput.value = "";
                     if (data.new_balance !== undefined) {
                         updateBalanceUI(data.new_balance);
@@ -1662,7 +1668,7 @@
                         </div>
                         <div style="${rowS}">
                             <span style="${lblS}">METHOD</span>
-                            <span style="color: #3b82f6; font-weight: 800; font-size: 0.85rem; text-align: right; text-transform: uppercase;">USDT (BINANCE)</span>
+                            <span style="color: #3b82f6; font-weight: 800; font-size: 0.85rem; text-align: right; text-transform: uppercase;">${d.method || 'Binance Pay'}</span>
                         </div>
                         <div style="${rowS}">
                             <span style="${lblS}">TXID</span>
