@@ -356,6 +356,13 @@ class UserPriceCreate(BaseModel):
     buy_price: float
     approve_delay: int = 0
 
+class UserStorePriceCreate(BaseModel):
+    id: int | None = None
+    user_id: int
+    country_code: str
+    iso_code: str = "XX"
+    sell_price: float
+
 class StoreBuy(BaseModel):
     user_id: int
     country: str
@@ -1164,6 +1171,119 @@ async def save_store_settings(req: StoreSettingsSubmit):
     except Exception as e:
         logger.error(f"Save Store Settings Error: {e}")
         return {"status": "error", "message": str(e)}
+
+@app.get("/api/admin/store/deposits")
+async def get_store_deposits():
+    from database.models import Deposit, User
+    async with async_session() as session:
+        result = await session.execute(
+            select(Deposit, User)
+            .join(User, Deposit.user_id == User.id)
+            .order_by(Deposit.created_at.desc())
+        )
+        data = []
+        for dep, user in result.all():
+            data.append({
+                "id": dep.id,
+                "user_id": user.id,
+                "user_name": user.full_name or "N/A",
+                "user_handle": f"@{user.username}" if user.username else "N/A",
+                "amount": dep.amount,
+                "txid": dep.txid,
+                "method": dep.method or "Binance Pay",
+                "date": dep.created_at.isoformat() if dep.created_at else None
+            })
+        return {"deposits": data}
+
+@app.get("/api/admin/store/user-prices")
+async def get_store_user_prices():
+    from database.models import UserStorePrice, User
+    async with async_session() as session:
+        result = await session.execute(
+            select(UserStorePrice, User)
+            .join(User, UserStorePrice.user_id == User.id)
+            .order_by(UserStorePrice.created_at.desc())
+        )
+        data = []
+        for usp, user in result.all():
+            flag = "🌐"
+            name = f"Code {usp.country_code}"
+            iso = usp.iso_code if usp.iso_code and usp.iso_code != 'XX' else None
+            try:
+                import pycountry
+                if iso:
+                    from web_admin import get_flag_emoji
+                    flag = get_flag_emoji(iso)
+                    country = pycountry.countries.get(alpha_2=iso)
+                    if country:
+                        name = country.name
+                        import re
+                        name = re.sub(r'\s*\(\?[A-Z]{2,3}\)?\s*$', '', name).strip()
+                else:
+                    n, f, _ = resolve_country_info(usp.country_code)
+                    if n != "Unknown":
+                        name = n
+                        flag = f
+            except: pass
+            
+            data.append({
+                "id": usp.id,
+                "user_id": user.id,
+                "user_name": user.full_name or "N/A",
+                "user_handle": f"@{user.username}" if user.username else "N/A",
+                "country_code": usp.country_code,
+                "iso_code": usp.iso_code,
+                "country_name": f"{flag} {name}",
+                "sell_price": usp.sell_price,
+                "date": usp.created_at.isoformat() if usp.created_at else None
+            })
+        return {"prices": data}
+
+@app.post("/api/admin/store/user-prices")
+async def add_store_user_price(data: UserStorePriceCreate):
+    from database.models import UserStorePrice, User
+    async with async_session() as session:
+        user = await session.get(User, data.user_id)
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+            
+        if data.id:
+            usp = await session.get(UserStorePrice, data.id)
+            if not usp:
+                raise HTTPException(status_code=404, detail="Price record not found")
+            usp.sell_price = data.sell_price
+            usp.country_code = data.country_code
+            usp.iso_code = data.iso_code
+        else:
+            stmt = select(UserStorePrice).where(
+                UserStorePrice.user_id == data.user_id,
+                UserStorePrice.country_code == data.country_code,
+                UserStorePrice.iso_code == data.iso_code
+            )
+            existing = (await session.execute(stmt)).scalar()
+            if existing:
+                existing.sell_price = data.sell_price
+            else:
+                new_usp = UserStorePrice(
+                    user_id=data.user_id,
+                    country_code=data.country_code,
+                    iso_code=data.iso_code,
+                    sell_price=data.sell_price
+                )
+                session.add(new_usp)
+        await session.commit()
+        return {"status": "success"}
+
+@app.delete("/api/admin/store/user-prices/{id}")
+async def delete_store_user_price(id: int):
+    from database.models import UserStorePrice
+    async with async_session() as session:
+        usp = await session.get(UserStorePrice, id)
+        if usp:
+            await session.delete(usp)
+            await session.commit()
+            return {"status": "success"}
+        raise HTTPException(status_code=404, detail="Not found")
 @app.post("/api/admin/stock/start-login")
 async def start_login(data: StockLoginStart):
     phone = data.phone

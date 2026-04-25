@@ -1405,6 +1405,12 @@
             <div class="nav-item" id="menu-sales" onclick="switchNav('sales', this)">
                 <i class="fas fa-receipt"></i> <span data-i18n="nav_sales">Sales History</span>
             </div>
+            <div class="nav-item" id="menu-deposits" onclick="switchNav('deposits', this)">
+                <i class="fas fa-wallet"></i> <span data-i18n="nav_deposits">Deposits</span>
+            </div>
+            <div class="nav-item" id="menu-store-user-prices" onclick="switchNav('store-user-prices', this)">
+                <i class="fas fa-user-tag"></i> <span data-i18n="nav_store_user_prices">Custom Users</span>
+            </div>
             <div class="nav-item" id="menu-settings" onclick="switchNav('settings', this)">
                 <i class="fas fa-cog"></i> <span data-i18n="nav_settings">Settings</span>
             </div>
@@ -1626,6 +1632,71 @@
                 </div>
             </section>
 
+            <!-- ===== Deposits Section ===== -->
+            <section id="section-deposits" class="view-section">
+                <div class="section-header">
+                    <i class="fas fa-wallet"></i>
+                    <h2 data-i18n="nav_deposits">Deposits</h2>
+                </div>
+
+                <div class="card no-shadow" style="padding: 18px; margin-bottom: 25px;">
+                    <input class="search-input" type="text" id="deposits-search" placeholder="Search User ID or TxID...">
+                    <button class="btn-find" onclick="searchDeposits()">
+                        <i class="fas fa-search"></i> <span data-i18n="btn_find">Find</span>
+                    </button>
+                    <div id="reset-deposits-search-container" style="display: none; margin-top: 4px;">
+                        <button class="cancel-btn" onclick="resetDepositsSearch()" data-i18n="btn_reset">Reset</button>
+                    </div>
+                </div>
+
+                <div class="card" style="padding: 22px;">
+                    <div class="list-container" id="deposits-list"></div>
+                    <div id="deposits-pagination" class="pagination-ctrls" style="display: none;">
+                        <button class="pg-btn" id="pgPrevDeposits" onclick="prevDepositsPage()">
+                            <i class="fas fa-chevron-left"></i> <span data-i18n="pg_prev">Prev</span>
+                        </button>
+                        <span class="pg-info" id="pgInfoDeposits">Page 1 / 1</span>
+                        <button class="pg-btn" id="pgNextDeposits" onclick="nextDepositsPage()">
+                            <span data-i18n="pg_next">Next</span> <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== Store User Prices Section ===== -->
+            <section id="section-store-user-prices" class="view-section">
+                <div class="section-header">
+                    <i class="fas fa-user-tag"></i>
+                    <h2 data-i18n="nav_store_user_prices">Custom Users</h2>
+                </div>
+
+                <div class="card no-shadow" style="padding: 18px; margin-bottom: 25px;">
+                    <button class="btn-find" onclick="showStoreUserPriceModal()" style="margin-bottom: 15px; background: linear-gradient(135deg, var(--success), #059669);">
+                        <i class="fas fa-plus"></i> <span data-i18n="btn_add_custom">Add Custom Price</span>
+                    </button>
+                    <input class="search-input" type="text" id="store-user-prices-search" placeholder="Search User ID or Country...">
+                    <button class="btn-find" onclick="searchStoreUserPrices()">
+                        <i class="fas fa-search"></i> <span data-i18n="btn_find">Find</span>
+                    </button>
+                    <div id="reset-store-user-prices-search-container" style="display: none; margin-top: 4px;">
+                        <button class="cancel-btn" onclick="resetStoreUserPricesSearch()" data-i18n="btn_reset">Reset</button>
+                    </div>
+                </div>
+
+                <div class="card" style="padding: 22px;">
+                    <div class="list-container" id="store-user-prices-list"></div>
+                    <div id="store-user-prices-pagination" class="pagination-ctrls" style="display: none;">
+                        <button class="pg-btn" id="pgPrevStoreUserPrices" onclick="prevStoreUserPricesPage()">
+                            <i class="fas fa-chevron-left"></i> <span data-i18n="pg_prev">Prev</span>
+                        </button>
+                        <span class="pg-info" id="pgInfoStoreUserPrices">Page 1 / 1</span>
+                        <button class="pg-btn" id="pgNextStoreUserPrices" onclick="nextStoreUserPricesPage()">
+                            <span data-i18n="pg_next">Next</span> <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
             <!-- ===== Settings Section ===== -->
             <section id="section-settings" class="view-section">
                 <div class="section-header">
@@ -1690,6 +1761,35 @@
 
         </div>
     </main>
+
+    <!-- ===== Store User Price Modal ===== -->
+    <div id="store-user-price-modal" class="modal-overlay" onclick="closeStoreUserPriceModal(event)">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <h3 data-i18n="modal_store_user_title">Custom Buyer Discount</h3>
+            <div class="form-group">
+                <label data-i18n="lbl_user_id">User ID</label>
+                <input type="number" id="m-sup-user-id" class="input-field" placeholder="123456789">
+            </div>
+            <div class="form-group">
+                <label data-i18n="lbl_code">Country Code</label>
+                <input type="text" id="m-sup-code" class="input-field" placeholder="1" oninput="onSupCountryCodeInput()">
+            </div>
+            <div class="form-group">
+                <label data-i18n="lbl_iso">ISO Code</label>
+                <input type="text" id="m-sup-iso" class="input-field" placeholder="US">
+            </div>
+            <div class="form-group">
+                <label data-i18n="lbl_price">Selling Price ($)</label>
+                <input type="number" step="0.01" id="m-sup-sell-price" class="input-field" placeholder="2.50">
+            </div>
+            <input type="hidden" id="m-sup-id">
+            
+            <div style="display: flex; gap: 15px; margin-top: 25px;">
+                <button class="btn-cancel" onclick="closeStoreUserPriceModal()" data-i18n="btn_cancel" style="flex: 1; padding: 14px; background: transparent; border: 1px solid var(--border); color: var(--text-p); border-radius: 12px; cursor: pointer; font-weight: 700;">Cancel</button>
+                <button class="btn-save" onclick="saveStoreUserPrice()" data-i18n="btn_save" style="flex: 1; padding: 14px; background: linear-gradient(135deg, var(--success), #059669); border: none; color: white; border-radius: 12px; cursor: pointer; font-weight: 700; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);">Save</button>
+            </div>
+        </div>
+    </div>
 
     <!-- ===== Price Modal ===== -->
     <div id="price-modal" class="modal-overlay" onclick="closePriceModal(event)">
@@ -1918,6 +2018,8 @@
             if (id === 'sales') renderSalesList(allTransactions);
             if (id === 'home') renderSales(allTransactions);
             if (id === 'settings') fetchStoreSettings();
+            if (id === 'deposits') fetchDeposits();
+            if (id === 'store-user-prices') fetchStoreUserPrices();
 
             // 5. Reset scroll BEFORE showing the section
             const scroller = document.getElementById('app-content-scroller');
@@ -2710,6 +2812,288 @@
         applyTheme();
         updateUI();
         init();
+
+
+        // ==========================================
+        // DEPOSITS LOGIC
+        // ==========================================
+        let allDeposits = [];
+        let filteredDeposits = null;
+        let currentDepositsPage = 1;
+        const DEPOSITS_PER_PAGE = 20;
+
+        async function fetchDeposits() {
+            try {
+                const res = await fetch('/api/admin/store/deposits');
+                const data = await res.json();
+                allDeposits = data.deposits || [];
+                filteredDeposits = null;
+                currentDepositsPage = 1;
+                renderDepositsList(allDeposits);
+            } catch(e) { console.error("Error fetching deposits", e); }
+        }
+
+        function renderDepositsList(list) {
+            const container = document.getElementById('deposits-list');
+            const pagContainer = document.getElementById('deposits-pagination');
+
+            if (!list || !list.length) {
+                container.innerHTML = `
+                <div style="text-align: center; padding: 40px 20px; background: var(--card-glass); border-radius: 16px; border: 1px dashed var(--border); margin-top: 0; backdrop-filter: blur(10px);">
+                    <i class="fas fa-wallet" style="font-size: 2.5rem; color: var(--text-secondary); opacity: 0.3; margin-bottom: 12px;"></i>
+                    <p style="color: var(--text-secondary); font-weight: 600; font-size: 0.95rem;">${translations[currentLang].no_data || 'No deposits found'}</p>
+                </div>`;
+                pagContainer.style.display = 'none';
+                return;
+            }
+
+            const totalPages = Math.ceil(list.length / DEPOSITS_PER_PAGE);
+            const start = (currentDepositsPage - 1) * DEPOSITS_PER_PAGE;
+            const paged = list.slice(start, start + DEPOSITS_PER_PAGE);
+
+            const rowS = "background: transparent; border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;";
+            const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;";
+
+            container.innerHTML = paged.map(item => `
+                <div class="user-card" style="padding: 20px; margin-bottom: 15px; cursor: default;">
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <div style="${rowS}">
+                            <span style="${lblS}">${currentLang === 'ar' ? 'المستخدم' : 'User'}</span>
+                            <div style="text-align: right;">
+                                <div style="color: var(--text-primary); font-weight: 700; font-size: 0.95rem;">${item.user_name}</div>
+                                <div style="color: var(--text-secondary); font-size: 0.8rem;">${item.user_handle} (${item.user_id})</div>
+                            </div>
+                        </div>
+                        <div style="${rowS}">
+                            <span style="${lblS}">${currentLang === 'ar' ? 'المبلغ' : 'Amount'}</span>
+                            <span style="color: var(--success); font-weight: 800; font-size: 1.1rem;">$${Number(item.amount).toFixed(2)}</span>
+                        </div>
+                        <div style="${rowS}">
+                            <span style="${lblS}">${currentLang === 'ar' ? 'الطريقة' : 'Method'}</span>
+                            <span style="color: #3b82f6; font-weight: 700; font-size: 0.95rem;">${item.method}</span>
+                        </div>
+                        <div style="${rowS}">
+                            <span style="${lblS}">${currentLang === 'ar' ? 'رقم العملية' : 'TxID'}</span>
+                            <span style="color: var(--text-primary); font-weight: 700; font-size: 0.85rem; word-break: break-all;">${item.txid}</span>
+                        </div>
+                        <div style="${rowS}">
+                            <span style="${lblS}">${currentLang === 'ar' ? 'التاريخ' : 'Date'}</span>
+                            <span style="color: var(--text-secondary); font-weight: 600; font-size: 0.85rem; direction: ltr;">${formatDateTime(item.date)}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            pagContainer.style.display = totalPages > 1 ? 'flex' : 'none';
+            document.getElementById('pgInfoDeposits').innerText = `Page ${currentDepositsPage} / ${totalPages}`;
+            document.getElementById('pgPrevDeposits').disabled = currentDepositsPage === 1;
+            document.getElementById('pgNextDeposits').disabled = currentDepositsPage === totalPages;
+        }
+
+        function prevDepositsPage() { if(currentDepositsPage > 1) { currentDepositsPage--; renderDepositsList(filteredDeposits || allDeposits); } }
+        function nextDepositsPage() { const total = Math.ceil((filteredDeposits || allDeposits).length / DEPOSITS_PER_PAGE); if(currentDepositsPage < total) { currentDepositsPage++; renderDepositsList(filteredDeposits || allDeposits); } }
+
+        function searchDeposits() {
+            const q = document.getElementById('deposits-search').value.toLowerCase().trim();
+            if (!q) { filteredDeposits = null; currentDepositsPage = 1; renderDepositsList(allDeposits); return; }
+            filteredDeposits = allDeposits.filter(d => String(d.user_id).includes(q) || String(d.txid).toLowerCase().includes(q));
+            currentDepositsPage = 1;
+            renderDepositsList(filteredDeposits);
+            document.getElementById('reset-deposits-search-container').style.display = 'block';
+        }
+        function resetDepositsSearch() {
+            document.getElementById('deposits-search').value = '';
+            document.getElementById('reset-deposits-search-container').style.display = 'none';
+            filteredDeposits = null;
+            currentDepositsPage = 1;
+            renderDepositsList(allDeposits);
+        }
+
+        // ==========================================
+        // STORE USER PRICES LOGIC
+        // ==========================================
+        let allStoreUserPrices = [];
+        let filteredStoreUserPrices = null;
+        let currentStoreUserPricesPage = 1;
+        const SUP_PER_PAGE = 20;
+
+        async function fetchStoreUserPrices() {
+            try {
+                const res = await fetch('/api/admin/store/user-prices');
+                const data = await res.json();
+                allStoreUserPrices = data.prices || [];
+                filteredStoreUserPrices = null;
+                currentStoreUserPricesPage = 1;
+                renderStoreUserPricesList(allStoreUserPrices);
+            } catch(e) { console.error("Error fetching store user prices", e); }
+        }
+
+        function renderStoreUserPricesList(list) {
+            const container = document.getElementById('store-user-prices-list');
+            const pagContainer = document.getElementById('store-user-prices-pagination');
+
+            if (!list || !list.length) {
+                container.innerHTML = `
+                <div style="text-align: center; padding: 40px 20px; background: var(--card-glass); border-radius: 16px; border: 1px dashed var(--border); margin-top: 0; backdrop-filter: blur(10px);">
+                    <i class="fas fa-user-tag" style="font-size: 2.5rem; color: var(--text-secondary); opacity: 0.3; margin-bottom: 12px;"></i>
+                    <p style="color: var(--text-secondary); font-weight: 600; font-size: 0.95rem;">${translations[currentLang].no_data || 'No custom prices found'}</p>
+                </div>`;
+                pagContainer.style.display = 'none';
+                return;
+            }
+
+            const totalPages = Math.ceil(list.length / SUP_PER_PAGE);
+            const start = (currentStoreUserPricesPage - 1) * SUP_PER_PAGE;
+            const paged = list.slice(start, start + SUP_PER_PAGE);
+
+            const rowS = "background: transparent; border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;";
+            const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;";
+
+            container.innerHTML = paged.map(item => `
+                <div class="user-card" style="padding: 20px; margin-bottom: 15px;">
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <div style="${rowS}">
+                            <span style="${lblS}">${currentLang === 'ar' ? 'المستخدم' : 'User'}</span>
+                            <div style="text-align: right;">
+                                <div style="color: var(--text-primary); font-weight: 700; font-size: 0.95rem;">${item.user_name}</div>
+                                <div style="color: var(--text-secondary); font-size: 0.8rem;">${item.user_handle} (${item.user_id})</div>
+                            </div>
+                        </div>
+                        <div style="${rowS}">
+                            <span style="${lblS}">${currentLang === 'ar' ? 'الدولة' : 'Country'}</span>
+                            <span style="color: #3b82f6; font-weight: 700; font-size: 0.95rem;">${item.country_name} (${item.country_code})</span>
+                        </div>
+                        <div style="${rowS}">
+                            <span style="${lblS}">${currentLang === 'ar' ? 'سعر البيع' : 'Sell Price'}</span>
+                            <span style="color: var(--success); font-weight: 800; font-size: 1.1rem;">$${Number(item.sell_price).toFixed(2)}</span>
+                        </div>
+                        
+                        <div style="display: flex; gap: 10px; margin-top: 5px;">
+                            <button onclick='editStoreUserPrice(${JSON.stringify(item).replace(/'/g, "&#39;")})' style="flex:1; padding:10px; background: rgba(59, 130, 246, 0.1); color: #3b82f6; border: none; border-radius: 10px; font-weight: 700; cursor: pointer;">
+                                <i class="fas fa-pen"></i> Edit
+                            </button>
+                            <button onclick='deleteStoreUserPrice(${item.id})' style="flex:1; padding:10px; background: rgba(239, 68, 68, 0.1); color: var(--danger); border: none; border-radius: 10px; font-weight: 700; cursor: pointer;">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            pagContainer.style.display = totalPages > 1 ? 'flex' : 'none';
+            document.getElementById('pgInfoStoreUserPrices').innerText = `Page ${currentStoreUserPricesPage} / ${totalPages}`;
+            document.getElementById('pgPrevStoreUserPrices').disabled = currentStoreUserPricesPage === 1;
+            document.getElementById('pgNextStoreUserPrices').disabled = currentStoreUserPricesPage === totalPages;
+        }
+
+        function prevStoreUserPricesPage() { if(currentStoreUserPricesPage > 1) { currentStoreUserPricesPage--; renderStoreUserPricesList(filteredStoreUserPrices || allStoreUserPrices); } }
+        function nextStoreUserPricesPage() { const total = Math.ceil((filteredStoreUserPrices || allStoreUserPrices).length / SUP_PER_PAGE); if(currentStoreUserPricesPage < total) { currentStoreUserPricesPage++; renderStoreUserPricesList(filteredStoreUserPrices || allStoreUserPrices); } }
+
+        function searchStoreUserPrices() {
+            const q = document.getElementById('store-user-prices-search').value.toLowerCase().trim();
+            if (!q) { filteredStoreUserPrices = null; currentStoreUserPricesPage = 1; renderStoreUserPricesList(allStoreUserPrices); return; }
+            filteredStoreUserPrices = allStoreUserPrices.filter(u => String(u.user_id).includes(q) || String(u.country_name).toLowerCase().includes(q) || String(u.country_code).includes(q));
+            currentStoreUserPricesPage = 1;
+            renderStoreUserPricesList(filteredStoreUserPrices);
+            document.getElementById('reset-store-user-prices-search-container').style.display = 'block';
+        }
+        function resetStoreUserPricesSearch() {
+            document.getElementById('store-user-prices-search').value = '';
+            document.getElementById('reset-store-user-prices-search-container').style.display = 'none';
+            filteredStoreUserPrices = null;
+            currentStoreUserPricesPage = 1;
+            renderStoreUserPricesList(allStoreUserPrices);
+        }
+
+        // Store User Price Modal CRUD
+        function showStoreUserPriceModal() {
+            document.getElementById('m-sup-id').value = '';
+            document.getElementById('m-sup-user-id').value = '';
+            document.getElementById('m-sup-code').value = '';
+            document.getElementById('m-sup-iso').value = 'XX';
+            document.getElementById('m-sup-sell-price').value = '';
+            document.getElementById('store-user-price-modal').classList.add('active');
+        }
+        function closeStoreUserPriceModal(e) {
+            if (e && e.target !== e.currentTarget) return;
+            document.getElementById('store-user-price-modal').classList.remove('active');
+        }
+        async function onSupCountryCodeInput() {
+            let cc = document.getElementById('m-sup-code').value.trim();
+            if (cc.startsWith('+')) cc = cc.substring(1);
+            if (cc.length < 1) return;
+            try {
+                const res = await fetch(`/api/admin/countries-for-code/${cc}`);
+                const data = await res.json();
+                if (data && data.length > 0) {
+                    document.getElementById('m-sup-iso').value = data[0].iso || 'XX';
+                }
+            } catch(e) {}
+        }
+        function editStoreUserPrice(item) {
+            document.getElementById('m-sup-id').value = item.id;
+            document.getElementById('m-sup-user-id').value = item.user_id;
+            document.getElementById('m-sup-code').value = item.country_code;
+            document.getElementById('m-sup-iso').value = item.iso_code || 'XX';
+            document.getElementById('m-sup-sell-price').value = item.sell_price;
+            document.getElementById('store-user-price-modal').classList.add('active');
+        }
+        async function saveStoreUserPrice() {
+            const btn = document.querySelector('#store-user-price-modal .btn-save');
+            const uid = document.getElementById('m-sup-user-id').value.trim();
+            const cc = document.getElementById('m-sup-code').value.trim();
+            const iso = document.getElementById('m-sup-iso').value.trim();
+            const sp = document.getElementById('m-sup-sell-price').value.trim();
+            
+            if (!uid || !cc || !sp) {
+                tg.showAlert("Please fill User ID, Country Code, and Sell Price.");
+                return;
+            }
+
+            btn.disabled = true;
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+            try {
+                const res = await fetch('/api/admin/store/user-prices', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        id: document.getElementById('m-sup-id').value ? parseInt(document.getElementById('m-sup-id').value) : null,
+                        user_id: parseInt(uid),
+                        country_code: cc,
+                        iso_code: iso || 'XX',
+                        sell_price: parseFloat(sp)
+                    })
+                });
+                if (res.ok) {
+                    closeStoreUserPriceModal();
+                    await fetchStoreUserPrices();
+                } else {
+                    const data = await res.json();
+                    tg.showAlert(data.detail || data.message || "Failed to save");
+                }
+            } catch(e) { console.error(e); tg.showAlert("Error saving"); }
+            btn.disabled = false;
+            btn.innerHTML = originalHtml;
+        }
+
+        function deleteStoreUserPrice(id) {
+            showConfirm(
+                currentLang === 'ar' ? 'حذف السعر' : 'Delete Price',
+                currentLang === 'ar' ? 'هل أنت متأكد من حذف هذا السعر المخصص؟' : 'Are you sure you want to delete this custom price?',
+                async () => {
+                    try {
+                        const res = await fetch(`/api/admin/store/user-prices/${id}`, { method: 'DELETE' });
+                        if (res.ok) {
+                            fetchStoreUserPrices();
+                        } else {
+                            tg.showAlert("Failed to delete.");
+                        }
+                    } catch(e) { console.error(e); tg.showAlert("Error deleting."); }
+                }
+            );
+        }
 
         const savedView = sessionStorage.getItem('last_view_admin_store') || 'home';
         const menuBtn = document.getElementById('menu-' + (savedView === 'home' ? 'dashboard' : savedView));
