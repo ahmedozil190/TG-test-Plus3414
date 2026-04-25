@@ -1616,26 +1616,37 @@
             document.getElementById('pgPrevDep').disabled = (data.current_page <= 1);
             document.getElementById('pgNextDep').disabled = (data.current_page >= (data.total_pages || 1));
 
-            list.innerHTML = items.map(d => `
-                <div class="info-card" style="margin-bottom: 0; padding: 18px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
-                    <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0;">
-                        <div style="font-weight: 700; font-size: 0.95rem; color: var(--text-p); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: monospace;">
-                            ${d.txid.length > 16 ? d.txid.substring(0, 10) + '...' + d.txid.slice(-6) : d.txid}
+            list.innerHTML = '';
+            const rowS = "background: transparent; border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 8px;";
+            const lblS = "color: var(--text-s); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;";
+
+            items.forEach(d => {
+                const shortTxid = d.txid.length > 16 ? (d.txid.substring(0, 8) + '...' + d.txid.slice(-6)) : d.txid;
+                const card = document.createElement('div');
+                card.style.cssText = "background: transparent; border: 1px solid var(--border); border-radius: 18px; padding: 24px 20px 20px; width: 100%; margin-bottom: 15px;";
+
+                card.innerHTML = `
+                    <div style="display: flex; flex-direction: column;">
+                        <div style="${rowS}">
+                            <span style="${lblS}">STATUS</span>
+                            <span style="color: #10b981; font-weight: 800; font-size: 0.85rem; text-transform: uppercase;">COMPLETED</span>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <span style="font-size: 0.75rem; color: var(--text-s); font-weight: 600;">${d.date}</span>
-                            <span style="width: 4px; height: 4px; border-radius: 50%; background: var(--border);"></span>
-                            <span style="font-size: 0.7rem; font-weight: 800; color: #10b981; text-transform: uppercase;">COMPLETED</span>
+                        <div style="${rowS}">
+                            <span style="${lblS}">AMOUNT</span>
+                            <span style="color: #10b981; font-weight: 800; font-size: 0.95rem; text-align: right;">+$${parseFloat(d.amount).toFixed(2)} - USDT</span>
+                        </div>
+                        <div style="${rowS}">
+                            <span style="${lblS}">TXID</span>
+                            <span style="color: #8b5cf6; font-weight: 600; font-size: 0.85rem; text-align: right; direction: ltr; font-family: monospace;">${shortTxid}</span>
+                        </div>
+                        <div style="${rowS} margin-bottom: 0;">
+                            <span style="${lblS}">DATE</span>
+                            <span style="color: #fdd835; font-weight: 600; font-size: 0.85rem; text-align: right;">${d.date}</span>
                         </div>
                     </div>
-                    <div style="text-align: right; flex-shrink: 0;">
-                        <div style="font-weight: 800; color: #10b981; font-size: 1.1rem;">
-                            +$${parseFloat(d.amount).toFixed(2)}
-                        </div>
-                        <div style="font-size: 0.65rem; color: var(--text-s); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">USDT (BINANCE)</div>
-                    </div>
-                </div>
-            `).join('');
+                `;
+                list.appendChild(card);
+            });
         }
 
         async function moveDepositPage(delta) {
