@@ -443,6 +443,10 @@
             transform: translateY(-2px);
         }
 
+        .confirm-btn.danger { background: var(--danger); color: #fff; }
+        .confirm-btn.approve { background: var(--success); color: #fff; }
+        .confirm-btn.danger:hover, .confirm-btn.approve:hover { opacity: 0.9; transform: translateY(-2px); }
+
         .confirm-no:hover {
             background: rgba(255, 255, 255, 0.1);
         }
@@ -2721,7 +2725,23 @@
 
         // Confirm Modal Logic
         let confirmResolve = null;
-        function showConfirm() {
+        function showConfirm(title, msg, btnText, icon = 'fas fa-question-circle', iconBg = 'rgba(59, 130, 246, 0.1)', iconColor = '#3b82f6', btnClass = '') {
+            if (title) document.getElementById('confirm-title').innerText = title;
+            if (msg) document.getElementById('confirm-msg').innerText = msg;
+
+            const iconWrap = document.querySelector('.confirm-icon');
+            if (iconWrap) {
+                iconWrap.innerHTML = `<i class="${icon}"></i>`;
+                iconWrap.style.background = iconBg;
+                iconWrap.style.color = iconColor;
+            }
+
+            const yesBtn = document.querySelector('.confirm-yes');
+            if (yesBtn) {
+                yesBtn.innerText = btnText || (currentLang === 'ar' ? 'تأكيد' : 'Confirm');
+                yesBtn.className = 'confirm-btn confirm-yes ' + btnClass;
+            }
+
             document.getElementById('confirm-overlay').classList.add('active');
             return new Promise((resolve) => {
                 confirmResolve = resolve;
@@ -3098,16 +3118,8 @@
             document.getElementById('m-sup-code').value = item.country_code;
             document.getElementById('m-sup-sell-price').value = item.sell_price;
             
-            // Set dynamic country field logic
-            const iso = item.iso_code || 'XX';
-            const flag = iso && iso !== 'XX' ? String.fromCodePoint(...[...iso.toUpperCase()].map(c => 127397 + c.charCodeAt(0))) : '🌐';
-            document.getElementById('m-sup-country-group').style.display = 'block';
-            document.getElementById('m-sup-country-container').innerHTML = `
-                <div class="country-option selected" style="padding: 12px; border: 1px solid var(--accent); border-radius: 12px; background: rgba(59, 130, 246, 0.1);">
-                    <span style="font-weight: 700; color: var(--text-primary);">${flag} ${item.country_name}</span>
-                </div>
-                <input type="hidden" id="m-sup-iso-box" value="${iso}" data-iso="${iso}" data-name="${item.country_name}">
-            `;
+            // Trigger dynamic country field logic
+            await onSupCountryCodeInput(item.iso_code);
 
             document.getElementById('store-user-price-modal-title').innerText = currentLang === 'ar' ? 'تعديل سعر المستخدم' : 'Edit Custom User';
             document.getElementById('store-user-price-modal').classList.add('active');
@@ -3159,7 +3171,14 @@
         }
 
         async function deleteStoreUserPrice(id) {
-            if (!confirm(currentLang === 'ar' ? 'هل أنت متأكد من حذف هذا السعر المخصص؟' : 'Are you sure you want to delete this custom price?')) return;
+            const confirmed = await showConfirm(
+                currentLang === 'ar' ? 'هل أنت متأكد؟' : 'Are you sure?',
+                currentLang === 'ar' ? 'هل تود حقاً حذف هذا السعر المخصص؟' : 'Do you really want to delete this custom price?',
+                currentLang === 'ar' ? 'حذف' : 'Delete',
+                'fas fa-trash', 'rgba(239, 68, 68, 0.1)', '#ef4444', 'danger'
+            );
+            if (!confirmed) return;
+
             try {
                 const res = await fetch(`/api/admin/store/user-prices/${id}`, { method: 'DELETE' });
                 if (res.ok) {
