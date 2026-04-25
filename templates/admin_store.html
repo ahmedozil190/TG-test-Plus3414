@@ -2973,11 +2973,11 @@
             }
 
             const totalPages = Math.ceil(list.length / SUP_PER_PAGE);
+            if (currentStoreUserPricesPage > totalPages) currentStoreUserPricesPage = totalPages;
+            if (currentStoreUserPricesPage < 1) currentStoreUserPricesPage = 1;
+
             const start = (currentStoreUserPricesPage - 1) * SUP_PER_PAGE;
             const paged = list.slice(start, start + SUP_PER_PAGE);
-
-            const rowS = "background: transparent; border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;";
-            const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;";
 
             container.innerHTML = paged.map(up => `
                 <div class="user-card" style="position: relative; cursor: default; margin-bottom: 15px;">
@@ -3020,14 +3020,45 @@
                 </div>
             `).join('');
 
-            pagContainer.style.display = totalPages > 1 ? 'flex' : 'none';
-            document.getElementById('pgInfoStoreUserPrices').innerText = `Page ${currentStoreUserPricesPage} / ${totalPages}`;
-            document.getElementById('pgPrevStoreUserPrices').disabled = currentStoreUserPricesPage === 1;
-            document.getElementById('pgNextStoreUserPrices').disabled = currentStoreUserPricesPage === totalPages;
+            // Advanced Pagination Logic
+            if (totalPages > 1) {
+                pagContainer.style.display = 'flex';
+                let pagHtml = `
+                    <button class="pg-btn" onclick="gotoStoreUserPricesPage(${currentStoreUserPricesPage - 1})" ${currentStoreUserPricesPage === 1 ? 'disabled style="opacity:0.3"' : ''}>
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                `;
+                
+                for (let i = 1; i <= totalPages; i++) {
+                    if (i === currentStoreUserPricesPage) {
+                        pagHtml += `<button class="pg-btn active" style="background: var(--accent-purple); color: white;">${i}</button>`;
+                    } else {
+                        pagHtml += `<button class="pg-btn" onclick="gotoStoreUserPricesPage(${i})">${i}</button>`;
+                    }
+                }
+
+                pagHtml += `
+                    <button class="pg-btn" onclick="gotoStoreUserPricesPage(${currentStoreUserPricesPage + 1})" ${currentStoreUserPricesPage === totalPages ? 'disabled style="opacity:0.3"' : ''}>
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                `;
+                pagContainer.innerHTML = pagHtml;
+            } else {
+                pagContainer.style.display = 'none';
+            }
         }
 
-        function prevStoreUserPricesPage() { if (currentStoreUserPricesPage > 1) { currentStoreUserPricesPage--; renderStoreUserPricesList(filteredStoreUserPrices || allStoreUserPrices); } }
-        function nextStoreUserPricesPage() { const total = Math.ceil((filteredStoreUserPrices || allStoreUserPrices).length / SUP_PER_PAGE); if (currentStoreUserPricesPage < total) { currentStoreUserPricesPage++; renderStoreUserPricesList(filteredStoreUserPrices || allStoreUserPrices); } }
+        function gotoStoreUserPricesPage(p) {
+            const list = filteredStoreUserPrices || allStoreUserPrices;
+            const total = Math.ceil(list.length / SUP_PER_PAGE);
+            if (p < 1 || p > total) return;
+            currentStoreUserPricesPage = p;
+            renderStoreUserPricesList(list);
+            document.getElementById('section-store-user-prices').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function prevStoreUserPricesPage() { gotoStoreUserPricesPage(currentStoreUserPricesPage - 1); }
+        function nextStoreUserPricesPage() { gotoStoreUserPricesPage(currentStoreUserPricesPage + 1); }
 
         function searchStoreUserPrices() {
             const q = document.getElementById('store-user-prices-search').value.toLowerCase().trim();
@@ -3089,9 +3120,9 @@
                     } else {
                         // Multiple countries
                         container.innerHTML = `
-                            <div style="max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 5px; border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; padding: 5px;">
+                            <div style="max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 5px;">
                                 ${data.map(c => `
-                                    <div class="sup-country-option-btn" data-iso="${c.iso}" data-name="${c.name}" onclick="selectSupCountryOption(this)" style="padding: 12px 14px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.2s; background: var(--bg);">
+                                    <div class="sup-country-option-btn" data-iso="${c.iso}" data-name="${c.name}" onclick="selectSupCountryOption(this)" style="padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.2s; background: var(--bg);">
                                         <span style="font-size: 1.4rem;">${c.flag}</span>
                                         <span style="font-weight: 600; font-size: 0.95rem; color: var(--text-p);">${c.name}</span>
                                     </div>
