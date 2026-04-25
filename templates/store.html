@@ -914,12 +914,12 @@
             </div>
 
             <!-- Deposit History Section -->
-            <div class="info-card" id="deposit-history-container" style="padding: 22px; margin-top: 30px; margin-bottom: 0;">
+            <div class="card" id="deposit-history-container" style="padding: 22px; margin-top: 30px; margin-bottom: 0;">
                 <div class="section-header" style="margin-top: 0; margin-bottom: 35px;">
                     <h2 style="font-weight: 600; margin: 0; font-size: 1rem; letter-spacing: 0.5px;" data-t="dep_title">Deposit History</h2>
                 </div>
 
-                <div id="deposits-list" style="display: none; flex-direction: column; gap: 0;">
+                <div class="history-list" id="deposits-list" style="display: none; flex-direction: column; gap: 0;">
                     <!-- Deposits will be injected here -->
                 </div>
 
@@ -931,12 +931,14 @@
                 </div>
 
                 <!-- Pagination for Deposits -->
-                <div id="depositPagination" class="pagination" style="display: none; margin-top: 25px;">
-                    <button class="pg-btn" id="pgPrevDep" onclick="moveDepositPage(-1)"><i
-                            class="fas fa-chevron-left"></i></button>
+                <div id="depositPagination" class="pagination-ctrls" style="display: none; margin-top: 25px; background: transparent;">
+                    <button class="pg-btn" style="background: transparent;" id="pgPrevDep" onclick="moveDepositPage(-1)">
+                        <i class="fas fa-chevron-left"></i> <span>Prev</span>
+                    </button>
                     <span id="pgInfoDep" class="pg-info">Page 1 of 1</span>
-                    <button class="pg-btn" id="pgNextDep" onclick="moveDepositPage(1)"><i
-                            class="fas fa-chevron-right"></i></button>
+                    <button class="pg-btn" style="background: transparent;" id="pgNextDep" onclick="moveDepositPage(1)">
+                        <span>Next</span> <i class="fas fa-chevron-right"></i>
+                    </button>
                 </div>
             </div>
         </section>
@@ -1623,10 +1625,10 @@
 
             items.forEach(d => {
                 const shortTxid = d.txid.length > 16 ? (d.txid.substring(0, 8) + '...' + d.txid.slice(-6)) : d.txid;
-                const card = document.createElement('div');
-                card.style.cssText = "background: transparent; border: 1px solid var(--border); border-radius: 18px; padding: 24px 20px 20px; width: 100%; margin-bottom: 15px;";
+                const item = document.createElement('div');
+                item.style.cssText = "background: transparent; border: 1px solid var(--border); border-radius: 18px; padding: 24px 20px 20px; width: 100%; margin-bottom: 15px;";
 
-                card.innerHTML = `
+                item.innerHTML = `
                     <div style="display: flex; flex-direction: column;">
                         <div style="${rowS}">
                             <span style="${lblS}">STATUS</span>
@@ -1646,7 +1648,7 @@
                         </div>
                     </div>
                 `;
-                list.appendChild(card);
+                list.appendChild(item);
             });
         }
 
