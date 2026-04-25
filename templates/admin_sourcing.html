@@ -1335,6 +1335,94 @@
             background: rgba(255, 255, 255, 0.1);
         }
 
+        /* ========== Unique Search Box for Custom Users ========== */
+        .unique-search-container {
+            position: relative;
+            margin-bottom: 25px;
+            background: rgba(139, 92, 246, 0.05);
+            border-radius: 18px;
+            border: 1.5px solid rgba(139, 92, 246, 0.2);
+            padding: 4px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+        }
+
+        .unique-search-container:focus-within {
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.15);
+            background: rgba(139, 92, 246, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .unique-search-icon {
+            position: absolute;
+            left: 20px;
+            color: var(--accent-purple);
+            font-size: 1.1rem;
+            transition: 0.3s;
+        }
+
+        .unique-search-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            padding: 16px 16px 16px 50px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-weight: 600;
+            outline: none;
+        }
+
+        .unique-search-input::placeholder {
+            color: rgba(156, 163, 175, 0.6);
+            font-weight: 500;
+        }
+
+        /* ========== Unique Search Box for Custom Users ========== */
+        .unique-search-container {
+            position: relative;
+            margin-bottom: 25px;
+            background: rgba(139, 92, 246, 0.05);
+            border-radius: 18px;
+            border: 1.5px solid rgba(139, 92, 246, 0.2);
+            padding: 4px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+        }
+
+        .unique-search-container:focus-within {
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.15);
+            background: rgba(139, 92, 246, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .unique-search-icon {
+            position: absolute;
+            left: 20px;
+            color: var(--accent-purple);
+            font-size: 1.1rem;
+            transition: 0.3s;
+        }
+
+        .unique-search-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            padding: 16px 16px 16px 50px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-weight: 600;
+            outline: none;
+        }
+
+        .unique-search-input::placeholder {
+            color: rgba(156, 163, 175, 0.6);
+            font-weight: 500;
+        }
+
         /* ========== Desktop ========== */
         @media (min-width: 1024px) {
             .container {
@@ -1652,14 +1740,26 @@
             <!-- ===== User Prices Section ===== -->
             <section id="section-user-prices" class="view-section">
                 <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px;">
+                    <!-- Stat 1: Total Users -->
                     <div class="info-card">
                         <div class="info-card-l">
-                            <span class="info-card-lbl" data-i18n="nav_user_prices">CUSTOM USERS</span>
+                            <span class="info-card-lbl">TOTAL USERS</span>
                             <div class="info-card-val"><span id="stat-total-custom-prices">0</span> <span
                                     data-i18n="unit_users">USERS</span></div>
                         </div>
                         <div class="info-card-icon" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">
                             <i class="fas fa-user-tag"></i>
+                        </div>
+                    </div>
+                    <!-- Stat 2: Total Countries -->
+                    <div class="info-card">
+                        <div class="info-card-l">
+                            <span class="info-card-lbl">TOTAL COUNTRIES</span>
+                            <div class="info-card-val"><span id="stat-total-custom-countries">0</span> <span
+                                    data-i18n="unit_countries">COUNTRIES</span></div>
+                        </div>
+                        <div class="info-card-icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">
+                            <i class="fas fa-globe"></i>
                         </div>
                     </div>
                 </div>
@@ -1673,6 +1773,14 @@
                         <button class="btn-add" onclick="openUserPriceModal()">
                             <i class="fas fa-plus"></i> <span data-i18n="btn_add">Add</span>
                         </button>
+                    </div>
+
+                    <!-- Unique Search Box -->
+                    <div class="unique-search-container">
+                        <i class="fas fa-search unique-search-icon"></i>
+                        <input type="text" id="up-search" class="unique-search-input" 
+                               placeholder="${currentLang === 'ar' ? 'البحث عن مستخدم أو دولة...' : 'Search for user or country...'}" 
+                               oninput="onUpSearchInput()">
                     </div>
 
                     <div class="list-container" id="user-prices-list">
@@ -2199,31 +2307,27 @@
         const USERS_PER_PAGE = 5;
         let currentPage = 1;
         let allPrices = [];
-        let allUserPrices = [];
+        let filteredUserPrices = null;
 
-        async function fetchUserPrices() {
-            try {
-                const res = await fetch('/api/admin/sourcing/user-prices');
-                const data = await res.json();
-                allUserPrices = data.prices || [];
-                renderUserPrices();
-            } catch (e) { console.error(e); }
-        }
-
-        const USER_PRICES_PER_PAGE = 10;
-        let currentUserPricePage = 1;
-
-        function renderUserPrices() {
+        function renderUserPrices(list = null) {
+            const dataList = list || allUserPrices;
             const container = document.getElementById('user-prices-list');
             const pagContainer = document.getElementById('user-prices-pagination');
-            const totalEl = document.getElementById('stat-total-custom-prices');
-            if (totalEl) {
+            
+            // Update Stats
+            const totalUsersEl = document.getElementById('stat-total-custom-prices');
+            const totalCountriesEl = document.getElementById('stat-total-custom-countries');
+            if (totalUsersEl) {
                 const uniqueIds = new Set(allUserPrices.map(p => p.user_id));
-                totalEl.innerText = uniqueIds.size;
+                totalUsersEl.innerText = uniqueIds.size;
+            }
+            if (totalCountriesEl) {
+                const uniqueCountries = new Set(allUserPrices.map(p => p.iso_code));
+                totalCountriesEl.innerText = uniqueCountries.size;
             }
 
             if (!container) return;
-            if (!allUserPrices.length) {
+            if (!dataList.length) {
                 container.innerHTML = `
                 <div style="text-align: center; padding: 40px 20px; background: var(--card-glass); border-radius: 16px; border: 1px dashed var(--border); margin-top: 0; backdrop-filter: blur(10px);">
                     <i class="fas fa-user-tag" style="font-size: 2.5rem; color: var(--text-secondary); opacity: 0.15; margin-bottom: 12px;"></i>
@@ -2233,9 +2337,9 @@
                 return;
             }
 
-            const totalPages = Math.ceil(allUserPrices.length / USER_PRICES_PER_PAGE);
+            const totalPages = Math.ceil(dataList.length / USER_PRICES_PER_PAGE);
             const start = (currentUserPricePage - 1) * USER_PRICES_PER_PAGE;
-            const paged = allUserPrices.slice(start, start + USER_PRICES_PER_PAGE);
+            const paged = dataList.slice(start, start + USER_PRICES_PER_PAGE);
 
             let html = '';
             paged.forEach(up => {
