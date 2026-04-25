@@ -298,6 +298,28 @@
             background: var(--bg-elevated);
             border: 1px solid var(--border);
             border-radius: var(--radius);
+        }
+
+        .user-card {
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 24px 20px 20px;
+            width: 100%;
+            transition: all 0.3s ease;
+            position: relative;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+
+        .user-card:hover {
+            transform: scale(1.01);
+            background: rgba(255,255,255,0.02);
+        }
+
+        .user-card:active {
+            transform: scale(0.98);
+        }
             padding: 20px;
             transition: all 0.3s var(--ease);
             box-shadow: var(--shadow);
@@ -1626,7 +1648,7 @@
             items.forEach(d => {
                 const shortTxid = d.txid.length > 16 ? (d.txid.substring(0, 8) + '...' + d.txid.slice(-6)) : d.txid;
                 const item = document.createElement('div');
-                item.style.cssText = "background: transparent; border: 1px solid var(--border); border-radius: 18px; padding: 24px 20px 20px; width: 100%; margin-bottom: 15px;";
+                item.className = 'user-card';
 
                 item.innerHTML = `
                     <div style="display: flex; flex-direction: column;">
@@ -1636,7 +1658,11 @@
                         </div>
                         <div style="${rowS}">
                             <span style="${lblS}">AMOUNT</span>
-                            <span style="color: #10b981; font-weight: 800; font-size: 0.95rem; text-align: right;">+$${parseFloat(d.amount).toFixed(2)} - USDT</span>
+                            <span style="color: #10b981; font-weight: 800; font-size: 0.95rem; text-align: right;">+$${parseFloat(d.amount).toFixed(2)}</span>
+                        </div>
+                        <div style="${rowS}">
+                            <span style="${lblS}">METHOD</span>
+                            <span style="color: #3b82f6; font-weight: 800; font-size: 0.85rem; text-align: right; text-transform: uppercase;">USDT (BINANCE)</span>
                         </div>
                         <div style="${rowS}">
                             <span style="${lblS}">TXID</span>
