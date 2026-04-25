@@ -11,7 +11,7 @@ from fastapi.responses import HTMLResponse
 from sqlalchemy.future import select
 from sqlalchemy import select, delete, update, func, text, or_, cast, String
 from database.engine import async_session
-from database.models import User, Account, Transaction, AccountStatus, TransactionType, CountryPrice, WithdrawalRequest, WithdrawalStatus, UserCountryPrice, Deposit, AppSetting
+from database.models import User, Account, Transaction, AccountStatus, TransactionType, CountryPrice, WithdrawalRequest, WithdrawalStatus, UserCountryPrice, Deposit, AppSetting, UserStorePrice
 import hmac
 import hashlib
 import time
@@ -1048,41 +1048,23 @@ async def get_admin_store_data():
 
             users_result = await session.execute(select(User).order_by(User.id.desc()).limit(200))
             all_users_raw = users_result.scalars().all()
+            u_ids = [u.id for u in all_users_raw]
 
-            # Get per-user account stats in one query
-            seller_stats = {}
-            for u in all_users_raw:
-                sold = (await session.execute(
-                    select(func.count(Account.id)).where(Account.seller_id == u.id)
-                )).scalar() or 0
-                accepted = (await session.execute(
-                    select(func.count(Account.id)).where(
-                        Account.seller_id == u.id,
-                        Account.status == AccountStatus.SOLD
-                    )
-                )).scalar() or 0
-                rejected = (await session.execute(
-                    select(func.count(Account.id)).where(
-                        Account.seller_id == u.id,
-                        Account.status == AccountStatus.REJECTED
-                    )
-                )).scalar() or 0
-                bought = (await session.execute(
-                    select(func.count(Account.id)).where(Account.buyer_id == u.id)
-                )).scalar() or 0
-                # Total spent (sum of TransactionType.BUY amounts)
-                spent = (await session.execute(
-                    select(func.sum(Transaction.amount)).where(
-                        Transaction.user_id == u.id,
-                        Transaction.type == TransactionType.BUY
-                    )
-                )).scalar() or 0.0
-                
-                seller_stats[u.id] = {
-                    "sold": sold, "accepted": accepted,
-                    "rejected": rejected, "bought": bought,
-                    "spent": abs(spent)
-                }
+            # Optimized bulk stats for users
+            bought_stats = {uid: 0 for uid in u_ids}
+            spent_stats = {uid: 0.0 for uid in u_ids}
+
+            if u_ids:
+                # Count bought numbers per user
+                b_stmt = select(Account.buyer_id, func.count(Account.id)).where(Account.buyer_id.in_(u_ids)).group_by(Account.buyer_id)
+                for rid, cnt in (await session.execute(b_stmt)).all(): bought_stats[rid] = cnt
+
+                # Sum spent amount per user
+                s_stmt = select(Transaction.user_id, func.sum(Transaction.amount)).where(
+                    Transaction.user_id.in_(u_ids),
+                    Transaction.type == TransactionType.BUY
+                ).group_by(Transaction.user_id)
+                for rid, val in (await session.execute(s_stmt)).all(): spent_stats[rid] = abs(float(val or 0))
 
             users = [
                 {
@@ -1093,11 +1075,8 @@ async def get_admin_store_data():
                     "balance_sourcing": round(u.balance_sourcing or 0.0, 2),
                     "join_date": u.join_date.strftime("%Y-%m-%d") if u.join_date else "N/A",
                     "banned": u.is_banned_store,
-                    "sold_count": seller_stats[u.id]["sold"],
-                    "accepted_count": seller_stats[u.id]["accepted"],
-                    "rejected_count": seller_stats[u.id]["rejected"],
-                    "bought_count": seller_stats[u.id]["bought"],
-                    "spent_total": round(seller_stats[u.id]["spent"], 2),
+                    "purchased_count": bought_stats[u.id],
+                    "total_spent": round(spent_stats[u.id], 2),
                 }
                 for u in all_users_raw
             ]
