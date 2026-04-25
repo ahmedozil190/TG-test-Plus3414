@@ -9,7 +9,7 @@ from fastapi import FastAPI, Request, HTTPException, Depends
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 from sqlalchemy.future import select
-from sqlalchemy import select, delete, update, func, text
+from sqlalchemy import select, delete, update, func, text, or_, cast, String
 from database.engine import async_session
 from database.models import User, Account, Transaction, AccountStatus, TransactionType, CountryPrice, WithdrawalRequest, WithdrawalStatus, UserCountryPrice, Deposit, AppSetting
 import hmac
@@ -1088,8 +1088,51 @@ async def get_admin_store_data():
             "transactions": transactions,
             "prices": prices
         }
+@app.get("/api/admin/store/sales")
+async def get_admin_store_sales(page: int = 1, limit: int = 10, q: str = None):
+    try:
+        async with async_session() as session:
+            stmt = select(Account).where(Account.status == AccountStatus.SOLD)
+            if q:
+                q_clean = q.lower().strip()
+                stmt = stmt.where(
+                    or_(
+                        Account.phone_number.contains(q_clean),
+                        cast(Account.buyer_id, String).contains(q_clean),
+                        Account.country.ilike(f"%{q_clean}%")
+                    )
+                )
+            
+            total_stmt = select(func.count()).select_from(stmt.subquery())
+            total_count = (await session.execute(total_stmt)).scalar() or 0
+            
+            stmt = stmt.order_by(Account.purchased_at.desc()).offset((page - 1) * limit).limit(limit)
+            result = await session.execute(stmt)
+            accounts = result.scalars().all()
+            
+            sales = []
+            for acc in accounts:
+                flag = "🌐"
+                try:
+                    p = phonenumbers.parse(acc.phone_number)
+                    flag = get_flag_emoji(phonenumbers.region_code_for_number(p))
+                except: pass
+                sales.append({
+                    "buyer_id": acc.buyer_id,
+                    "price": acc.price,
+                    "phone": acc.phone_number,
+                    "country": f"{flag} {acc.country}",
+                    "date": acc.purchased_at.isoformat() if acc.purchased_at else None
+                })
+            
+            return {
+                "sales": sales,
+                "total_count": total_count,
+                "current_page": page,
+                "total_pages": math.ceil(total_count / limit)
+            }
     except Exception as e:
-        logger.error(f"Store Admin Data Error: {e}")
+        logger.error(f"Store Admin Sales Error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/admin/store/settings")

@@ -1900,7 +1900,7 @@
             // 4. Render page 1 data WHILE section is still hidden
             if (id === 'users') renderUsers(allUsers);
             if (id === 'prices') renderPrices(allPrices);
-            if (id === 'sales') renderSalesList(allTransactions);
+            if (id === 'sales') fetchSalesHistory(1);
             if (id === 'home') renderSales(allTransactions);
             if (id === 'settings') fetchStoreSettings();
 
@@ -1993,127 +1993,98 @@
         }
 
         let currentSalesPage = 1;
-        let filteredSales = null;
-        const SALES_PER_PAGE = 10;
+        let totalSalesPages = 1;
+        let currentSalesQuery = "";
 
-        function formatDateTime(isoStr) {
-            if (!isoStr) return "N/A";
-            try {
-                const d = new Date(isoStr + (isoStr.endsWith('Z') ? '' : 'Z'));
-                if (isNaN(d.getTime())) return isoStr;
-                const Y = d.getFullYear();
-                const M = String(d.getMonth() + 1).padStart(2, '0');
-                const Day = String(d.getDate()).padStart(2, '0');
-                let H = d.getHours();
-                const Min = String(d.getMinutes()).padStart(2, '0');
-                const ampm = H >= 12 ? 'PM' : 'AM';
-                H = H % 12;
-                H = H ? H : 12;
-                const HH = String(H).padStart(2, '0');
-                return `${Y}-${M}-${Day} ${HH}:${Min} ${ampm}`;
-            } catch(e) { return isoStr; }
-        }
-
-        function renderSalesList(list) {
+        async function fetchSalesHistory(page = 1, q = "") {
             const container = document.getElementById('sales-list');
             const pagContainer = document.getElementById('sales-pagination');
-            
-            // Calculate Stats
-            const totalCount = allTransactions.length;
-            const totalAmount = allTransactions.reduce((acc, curr) => acc + Number(curr.price), 0);
-            
-            document.getElementById('stat-sales-total-count').innerText = totalCount;
-            document.getElementById('stat-sales-total-amount').innerText = totalAmount.toFixed(2);
+            currentSalesPage = page;
+            currentSalesQuery = q;
 
-            if (!list || !list.length) {
-                container.innerHTML = `
-                <div style="text-align: center; padding: 40px 20px; background: var(--card-glass); border-radius: 16px; border: 1px dashed var(--border); margin-top: 10px; backdrop-filter: blur(10px);">
-                    <i class="fas fa-receipt" style="font-size: 2.5rem; color: var(--text-secondary); opacity: 0.3; margin-bottom: 12px;"></i>
-                    <p style="color: var(--text-secondary); font-weight: 600; font-size: 0.95rem;">${translations[currentLang].no_sales}</p>
-                </div>`;
-                pagContainer.style.display = 'none';
-                return;
-            }
+            try {
+                const res = await fetch(`/api/admin/store/sales?page=${page}&q=${encodeURIComponent(q)}`);
+                const data = await res.json();
 
-            const totalPages = Math.ceil(list.length / SALES_PER_PAGE);
-            const start = (currentSalesPage - 1) * SALES_PER_PAGE;
-            const paged = list.slice(start, start + SALES_PER_PAGE);
+                const list = data.sales || [];
+                totalSalesPages = data.total_pages || 1;
 
-            const rowS = "background: transparent; border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;";
-            const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;";
+                if (!list.length) {
+                    container.innerHTML = `
+                    <div style="text-align: center; padding: 40px 20px; background: var(--card-glass); border-radius: 16px; border: 1px dashed var(--border); margin-top: 10px; backdrop-filter: blur(10px);">
+                        <i class="fas fa-receipt" style="font-size: 2.5rem; color: var(--text-secondary); opacity: 0.3; margin-bottom: 12px;"></i>
+                        <p style="color: var(--text-secondary); font-weight: 600; font-size: 0.95rem;">${translations[currentLang].no_sales}</p>
+                    </div>`;
+                    pagContainer.style.display = 'none';
+                    return;
+                }
 
-            container.innerHTML = paged.map(item => `
-                <div class="user-card" style="padding: 20px; margin-bottom: 15px; cursor: default;">
-                    <div style="display: flex; flex-direction: column; gap: 10px;">
-                        <div style="${rowS}">
-                            <span style="${lblS}">${currentLang === 'ar' ? 'رقم الهاتف' : 'Phone'}</span>
-                            <span style="color: var(--success); font-weight: 800; font-size: 1.1rem; text-align: right; direction: ltr;">${item.phone}</span>
-                        </div>
-                        <div style="${rowS}">
-                            <span style="${lblS}">${currentLang === 'ar' ? 'الدولة' : 'Country'}</span>
-                            <span style="color: #3b82f6; font-weight: 700; font-size: 0.95rem; text-align: right;">${item.country}</span>
-                        </div>
-                        <div style="${rowS}">
-                            <span style="${lblS}">${currentLang === 'ar' ? 'المشتري' : 'Buyer'}</span>
-                            <span style="color: #8b5cf6; font-weight: 800; font-size: 1rem; text-align: right;">${item.buyer_id}</span>
-                        </div>
-                        <div style="${rowS}">
-                            <span style="${lblS}">${currentLang === 'ar' ? 'السعر' : 'Price'}</span>
-                            <span style="color: var(--accent); font-weight: 900; font-size: 1.2rem; text-align: right;">$${Number(item.price).toFixed(2)}</span>
-                        </div>
-                        <div style="${rowS}">
-                            <span style="${lblS}">${currentLang === 'ar' ? 'التاريخ' : 'Date'}</span>
-                            <span style="color: #fdd835; font-weight: 600; font-size: 0.85rem; text-align: right;">${formatDateTime(item.date)}</span>
+                const rowS = "background: transparent; border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;";
+                const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;";
+
+                container.innerHTML = list.map(item => `
+                    <div class="user-card" style="padding: 20px; margin-bottom: 15px; cursor: default;">
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <div style="${rowS}">
+                                <span style="${lblS}">${currentLang === 'ar' ? 'رقم الهاتف' : 'Phone'}</span>
+                                <span style="color: var(--success); font-weight: 800; font-size: 1.1rem; text-align: right; direction: ltr;">${item.phone}</span>
+                            </div>
+                            <div style="${rowS}">
+                                <span style="${lblS}">${currentLang === 'ar' ? 'الدولة' : 'Country'}</span>
+                                <span style="color: #3b82f6; font-weight: 700; font-size: 0.95rem; text-align: right;">${item.country}</span>
+                            </div>
+                            <div style="${rowS}">
+                                <span style="${lblS}">${currentLang === 'ar' ? 'المشتري' : 'Buyer'}</span>
+                                <span style="color: #8b5cf6; font-weight: 800; font-size: 1rem; text-align: right;">${item.buyer_id}</span>
+                            </div>
+                            <div style="${rowS}">
+                                <span style="${lblS}">${currentLang === 'ar' ? 'السعر' : 'Price'}</span>
+                                <span style="color: var(--accent); font-weight: 900; font-size: 1.2rem; text-align: right;">$${Number(item.price).toFixed(2)}</span>
+                            </div>
+                            <div style="${rowS}">
+                                <span style="${lblS}">${currentLang === 'ar' ? 'التاريخ' : 'Date'}</span>
+                                <span style="color: #fdd835; font-weight: 600; font-size: 0.85rem; text-align: right;">${formatDateTime(item.date)}</span>
+                            </div>
                         </div>
                     </div>
-                </div>
-            `).join('');
+                `).join('');
 
-            if (totalPages > 1) {
-                pagContainer.style.display = 'flex';
-                document.getElementById('pgInfoSales').innerText = `Page ${currentSalesPage} of ${totalPages}`;
-                document.getElementById('pgPrevSales').disabled = (currentSalesPage === 1);
-                document.getElementById('pgNextSales').disabled = (currentSalesPage === totalPages);
-            } else {
-                pagContainer.style.display = 'none';
+                if (totalSalesPages > 1) {
+                    pagContainer.style.display = 'flex';
+                    document.getElementById('pgInfoSales').innerText = `Page ${currentSalesPage} of ${totalSalesPages}`;
+                    document.getElementById('pgPrevSales').disabled = (currentSalesPage === 1);
+                    document.getElementById('pgNextSales').disabled = (currentSalesPage === totalSalesPages);
+                } else {
+                    pagContainer.style.display = 'none';
+                }
+            } catch (e) {
+                console.error("Sales History Error:", e);
             }
         }
 
         function searchSales() {
-            const q = document.getElementById('sales-search').value.trim().toLowerCase();
-            if (!q) { filteredSales = null; currentSalesPage = 1; renderSalesList(allTransactions); return; }
-            filteredSales = allTransactions.filter(item => 
-                String(item.phone).includes(q) || 
-                String(item.buyer_id).includes(q) ||
-                (item.country && item.country.toLowerCase().includes(q))
-            );
-            currentSalesPage = 1;
-            document.getElementById('reset-sales-search-container').style.display = 'block';
-            renderSalesList(filteredSales);
+            const q = document.getElementById('sales-search').value.trim();
+            if (q) document.getElementById('reset-sales-search-container').style.display = 'block';
+            else document.getElementById('reset-sales-search-container').style.display = 'none';
+            fetchSalesHistory(1, q);
         }
 
         function resetSalesSearch() {
             document.getElementById('sales-search').value = '';
-            filteredSales = null;
-            currentSalesPage = 1;
             document.getElementById('reset-sales-search-container').style.display = 'none';
-            renderSalesList(allTransactions);
+            fetchSalesHistory(1, "");
         }
 
         function prevSalesPage() {
             if (currentSalesPage > 1) {
-                currentSalesPage--;
-                renderSalesList(filteredSales || allTransactions);
+                fetchSalesHistory(currentSalesPage - 1, currentSalesQuery);
                 document.getElementById('sales-mgmt-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
 
         function nextSalesPage() {
-            const list = filteredSales || allTransactions;
-            const totalPages = Math.ceil(list.length / SALES_PER_PAGE);
-            if (currentSalesPage < totalPages) {
-                currentSalesPage++;
-                renderSalesList(list);
+            if (currentSalesPage < totalSalesPages) {
+                fetchSalesHistory(currentSalesPage + 1, currentSalesQuery);
                 document.getElementById('sales-mgmt-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
@@ -2121,11 +2092,11 @@
         function setSalesFilter(filter, btn) {
             document.querySelectorAll('#section-sales .tab-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            currentSalesPage = 1;
             if (filter === 'recent') {
-                renderSalesList(allTransactions.slice(0, 5));
+                // If it's the full history view, maybe we just show page 1
+                fetchSalesHistory(1, "");
             } else {
-                renderSalesList(allTransactions);
+                fetchSalesHistory(1, "");
             }
         }
 
