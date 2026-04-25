@@ -443,9 +443,21 @@
             transform: translateY(-2px);
         }
 
-        .confirm-btn.danger { background: var(--danger); color: #fff; }
-        .confirm-btn.approve { background: var(--success); color: #fff; }
-        .confirm-btn.danger:hover, .confirm-btn.approve:hover { opacity: 0.9; transform: translateY(-2px); }
+        .confirm-btn.danger {
+            background: var(--danger);
+            color: #fff;
+        }
+
+        .confirm-btn.approve {
+            background: var(--success);
+            color: #fff;
+        }
+
+        .confirm-btn.danger:hover,
+        .confirm-btn.approve:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
 
         .confirm-no:hover {
             background: rgba(255, 255, 255, 0.1);
@@ -1644,7 +1656,8 @@
                 </div>
 
                 <div class="card no-shadow" style="padding: 18px; margin-bottom: 25px;">
-                    <input class="search-input" type="text" id="deposits-search" placeholder="Search User ID or TxID...">
+                    <input class="search-input" type="text" id="deposits-search"
+                        placeholder="Search User ID or TxID...">
                     <button class="btn-find" onclick="searchDeposits()">
                         <i class="fas fa-search"></i> <span data-i18n="btn_find">Find</span>
                     </button>
@@ -1673,7 +1686,8 @@
                     <div class="info-card">
                         <div class="info-card-l">
                             <span class="info-card-lbl" data-i18n="nav_store_user_prices">CUSTOM USERS</span>
-                            <div class="info-card-val"><span id="stat-total-store-custom-prices">0</span> <span data-i18n="unit_users">USERS</span></div>
+                            <div class="info-card-val"><span id="stat-total-store-custom-prices">0</span> <span
+                                    data-i18n="unit_users">USERS</span></div>
                         </div>
                         <div class="info-card-icon" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">
                             <i class="fas fa-user-tag"></i>
@@ -1682,7 +1696,8 @@
                 </div>
 
                 <div id="store-user-prices-mgmt-section" class="card" style="padding: 22px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
                         <div class="section-header" style="margin: 0;">
                             <h2>Custom Users</h2>
                         </div>
@@ -1692,7 +1707,8 @@
                     </div>
 
                     <div class="list-container" id="store-user-prices-list"></div>
-                    <div id="store-user-prices-pagination" class="pagination-ctrls" style="display: none; margin-top: 20px;">
+                    <div id="store-user-prices-pagination" class="pagination-ctrls"
+                        style="display: none; margin-top: 20px;">
                         <button class="pg-btn" id="pgPrevStoreUserPrices" onclick="prevStoreUserPricesPage()">
                             <i class="fas fa-chevron-left"></i> <span data-i18n="pg_prev">Prev</span>
                         </button>
@@ -1779,9 +1795,10 @@
             </div>
             <div class="form-group">
                 <label data-i18n="lbl_code">Country Code</label>
-                <input type="text" id="m-sup-code" class="input-field" placeholder="1" oninput="onSupCountryCodeInput()">
+                <input type="text" id="m-sup-code" class="input-field" placeholder="1"
+                    oninput="onSupCountryCodeInput()">
             </div>
-            
+
             <!-- Dynamic Country Field -->
             <div id="m-sup-country-group" class="form-group" style="display: none;">
                 <label id="m-sup-country-label">Detected Country</label>
@@ -1793,8 +1810,9 @@
                 <input type="number" step="0.01" id="m-sup-sell-price" class="input-field" placeholder="1.0">
             </div>
             <input type="hidden" id="m-sup-id">
-            
-            <button class="primary-btn" onclick="saveStoreUserPrice()" data-i18n="btn_save_custom">Save Custom User</button>
+
+            <button class="primary-btn" onclick="saveStoreUserPrice()" data-i18n="btn_save_custom">Save Custom
+                User</button>
             <button class="cancel-btn" onclick="closeStoreUserPriceModal()" data-i18n="nav_close">Close</button>
         </div>
     </div>
@@ -1966,9 +1984,6 @@
         const PRICES_PER_PAGE = 10;
         let currentPricePage = 1;
         let currentPriceTab = 'active';
-        let supCountryData = [];
-        let currentSupCountryPage = 1;
-        const SUP_COUNTRIES_PER_PAGE = 6;
 
         function updateUI() {
             document.documentElement.lang = currentLang;
@@ -2140,17 +2155,17 @@
                 H = H ? H : 12;
                 const HH = String(H).padStart(2, '0');
                 return `${Y}-${M}-${Day} ${HH}:${Min} ${ampm}`;
-            } catch(e) { return isoStr; }
+            } catch (e) { return isoStr; }
         }
 
         function renderSalesList(list) {
             const container = document.getElementById('sales-list');
             const pagContainer = document.getElementById('sales-pagination');
-            
+
             // Calculate Stats
             const totalCount = allTransactions.length;
             const totalAmount = allTransactions.reduce((acc, curr) => acc + Number(curr.price), 0);
-            
+
             document.getElementById('stat-sales-total-count').innerText = totalCount;
             document.getElementById('stat-sales-total-amount').innerText = totalAmount.toFixed(2);
 
@@ -2193,8 +2208,8 @@
         function searchSales() {
             const q = document.getElementById('sales-search').value.trim().toLowerCase();
             if (!q) { filteredSales = null; currentSalesPage = 1; renderSalesList(allTransactions); return; }
-            filteredSales = allTransactions.filter(item => 
-                String(item.phone).includes(q) || 
+            filteredSales = allTransactions.filter(item =>
+                String(item.phone).includes(q) ||
                 String(item.buyer_id).includes(q) ||
                 (item.country && item.country.toLowerCase().includes(q))
             );
@@ -2840,7 +2855,7 @@
                 filteredDeposits = null;
                 currentDepositsPage = 1;
                 renderDepositsList(allDeposits);
-            } catch(e) { console.error("Error fetching deposits", e); }
+            } catch (e) { console.error("Error fetching deposits", e); }
         }
 
         function renderDepositsList(list) {
@@ -2900,8 +2915,8 @@
             document.getElementById('pgNextDeposits').disabled = currentDepositsPage === totalPages;
         }
 
-        function prevDepositsPage() { if(currentDepositsPage > 1) { currentDepositsPage--; renderDepositsList(filteredDeposits || allDeposits); } }
-        function nextDepositsPage() { const total = Math.ceil((filteredDeposits || allDeposits).length / DEPOSITS_PER_PAGE); if(currentDepositsPage < total) { currentDepositsPage++; renderDepositsList(filteredDeposits || allDeposits); } }
+        function prevDepositsPage() { if (currentDepositsPage > 1) { currentDepositsPage--; renderDepositsList(filteredDeposits || allDeposits); } }
+        function nextDepositsPage() { const total = Math.ceil((filteredDeposits || allDeposits).length / DEPOSITS_PER_PAGE); if (currentDepositsPage < total) { currentDepositsPage++; renderDepositsList(filteredDeposits || allDeposits); } }
 
         function searchDeposits() {
             const q = document.getElementById('deposits-search').value.toLowerCase().trim();
@@ -2925,7 +2940,7 @@
         let allStoreUserPrices = [];
         let filteredStoreUserPrices = null;
         let currentStoreUserPricesPage = 1;
-        const SUP_PER_PAGE = 20;
+        const SUP_PER_PAGE = 10;
 
         async function fetchStoreUserPrices() {
             try {
@@ -2935,7 +2950,7 @@
                 filteredStoreUserPrices = null;
                 currentStoreUserPricesPage = 1;
                 renderStoreUserPricesList(allStoreUserPrices);
-            } catch(e) { console.error("Error fetching store user prices", e); }
+            } catch (e) { console.error("Error fetching store user prices", e); }
         }
 
         function renderStoreUserPricesList(list) {
@@ -3011,8 +3026,8 @@
             document.getElementById('pgNextStoreUserPrices').disabled = currentStoreUserPricesPage === totalPages;
         }
 
-        function prevStoreUserPricesPage() { if(currentStoreUserPricesPage > 1) { currentStoreUserPricesPage--; renderStoreUserPricesList(filteredStoreUserPrices || allStoreUserPrices); } }
-        function nextStoreUserPricesPage() { const total = Math.ceil((filteredStoreUserPrices || allStoreUserPrices).length / SUP_PER_PAGE); if(currentStoreUserPricesPage < total) { currentStoreUserPricesPage++; renderStoreUserPricesList(filteredStoreUserPrices || allStoreUserPrices); } }
+        function prevStoreUserPricesPage() { if (currentStoreUserPricesPage > 1) { currentStoreUserPricesPage--; renderStoreUserPricesList(filteredStoreUserPrices || allStoreUserPrices); } }
+        function nextStoreUserPricesPage() { const total = Math.ceil((filteredStoreUserPrices || allStoreUserPrices).length / SUP_PER_PAGE); if (currentStoreUserPricesPage < total) { currentStoreUserPricesPage++; renderStoreUserPricesList(filteredStoreUserPrices || allStoreUserPrices); } }
 
         function searchStoreUserPrices() {
             const q = document.getElementById('store-user-prices-search').value.toLowerCase().trim();
@@ -3035,10 +3050,10 @@
             document.getElementById('m-sup-id').value = '';
             document.getElementById('m-sup-user-id').value = '';
             document.getElementById('m-sup-code').value = '';
-            
+
             document.getElementById('m-sup-country-group').style.display = 'none';
             document.getElementById('m-sup-country-container').innerHTML = '';
-            
+
             document.getElementById('m-sup-sell-price').value = '';
             const modal = document.getElementById('store-user-price-modal');
             modal.classList.add('active');
@@ -3060,83 +3075,44 @@
 
             try {
                 const res = await fetch(`/api/admin/countries-for-code/${code}`);
-                supCountryData = await res.json();
+                const data = await res.json();
 
-                if (supCountryData && supCountryData.length > 0) {
+                if (data && data.length > 0) {
                     group.style.display = 'block';
-                    currentSupCountryPage = 1;
-                    renderSupCountryPage(selectedIso);
+                    if (data.length === 1) {
+                        // Single country
+                        container.innerHTML = `
+                            <input type="text" id="m-sup-iso-box" class="input-field" value="${data[0].flag} ${data[0].name}" readonly 
+                                   data-iso="${data[0].iso}" data-name="${data[0].name}"
+                                   style="background: var(--bg); opacity: 0.8; cursor: not-allowed;">
+                        `;
+                    } else {
+                        // Multiple countries
+                        container.innerHTML = `
+                            <div style="max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 5px;">
+                                ${data.map(c => `
+                                    <div class="sup-country-option-btn" data-iso="${c.iso}" data-name="${c.name}" onclick="selectSupCountryOption(this)" style="padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.2s; background: var(--bg);">
+                                        <span style="font-size: 1.4rem;">${c.flag}</span>
+                                        <span style="font-weight: 600; font-size: 0.95rem; color: var(--text-p);">${c.name}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <input type="hidden" id="m-sup-iso-box" data-iso="" data-name="">
+                        `;
+
+                        // Auto-select if selectedIso provided
+                        if (selectedIso) {
+                            setTimeout(() => {
+                                const btn = container.querySelector(`.sup-country-option-btn[data-iso="${selectedIso}"]`);
+                                if (btn) selectSupCountryOption(btn);
+                            }, 50);
+                        }
+                    }
                 } else {
                     group.style.display = 'none';
                 }
-            } catch(e) {
+            } catch (e) {
                 group.style.display = 'none';
-            }
-        }
-
-        function renderSupCountryPage(selectedIso = null) {
-            const container = document.getElementById('m-sup-country-container');
-            if (supCountryData.length === 1) {
-                container.innerHTML = `
-                    <input type="text" id="m-sup-iso-box" class="input-field" value="${supCountryData[0].flag} ${supCountryData[0].name}" readonly 
-                           data-iso="${supCountryData[0].iso}" data-name="${supCountryData[0].name}"
-                           style="background: var(--bg); opacity: 0.8; cursor: not-allowed;">
-                `;
-                return;
-            }
-
-            const totalPages = Math.ceil(supCountryData.length / SUP_COUNTRIES_PER_PAGE);
-            const start = (currentSupCountryPage - 1) * SUP_COUNTRIES_PER_PAGE;
-            const paged = supCountryData.slice(start, start + SUP_COUNTRIES_PER_PAGE);
-
-            container.innerHTML = `
-                <div style="display: flex; flex-direction: column; gap: 8px;">
-                    ${paged.map(c => `
-                        <div class="sup-country-option-btn" data-iso="${c.iso}" data-name="${c.name}" onclick="selectSupCountryOption(this)" style="padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.2s; background: var(--bg);">
-                            <span style="font-size: 1.4rem;">${c.flag}</span>
-                            <span style="font-weight: 600; font-size: 0.95rem; color: var(--text-p);">${c.name}</span>
-                        </div>
-                    `).join('')}
-                </div>
-                ${totalPages > 1 ? `
-                    <div class="pagination-ctrls" style="margin-top: 15px; gap: 10px; justify-content: center;">
-                        <button class="pg-btn" onclick="prevSupCountryPage('${selectedIso}')" ${currentSupCountryPage === 1 ? 'disabled style="opacity:0.3; cursor:not-allowed;"' : ''}>
-                            <i class="fas fa-chevron-left"></i>
-                        </button>
-                        <span class="pg-info" style="font-size: 0.8rem;">${currentSupCountryPage} / ${totalPages}</span>
-                        <button class="pg-btn" onclick="nextSupCountryPage('${selectedIso}')" ${currentSupCountryPage === totalPages ? 'disabled style="opacity:0.3; cursor:not-allowed;"' : ''}>
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
-                    </div>
-                ` : ''}
-                <input type="hidden" id="m-sup-iso-box" data-iso="" data-name="">
-            `;
-
-            if (selectedIso) {
-                const btn = container.querySelector(`.sup-country-option-btn[data-iso="${selectedIso}"]`);
-                if (btn) selectSupCountryOption(btn);
-                else {
-                    // If not on current page, check if it exists in data and move to its page
-                    const idx = supCountryData.findIndex(c => c.iso === selectedIso);
-                    if (idx !== -1) {
-                        currentSupCountryPage = Math.ceil((idx + 1) / SUP_COUNTRIES_PER_PAGE);
-                        renderSupCountryPage(selectedIso);
-                    }
-                }
-            }
-        }
-
-        function prevSupCountryPage(selectedIso) {
-            if (currentSupCountryPage > 1) {
-                currentSupCountryPage--;
-                renderSupCountryPage(selectedIso);
-            }
-        }
-        function nextSupCountryPage(selectedIso) {
-            const totalPages = Math.ceil(supCountryData.length / SUP_COUNTRIES_PER_PAGE);
-            if (currentSupCountryPage < totalPages) {
-                currentSupCountryPage++;
-                renderSupCountryPage(selectedIso);
             }
         }
 
@@ -3177,7 +3153,7 @@
             const btn = document.querySelector('#store-user-price-modal .primary-btn');
             const uid = document.getElementById('m-sup-user-id').value.trim();
             const cc = document.getElementById('m-sup-code').value.trim().replace('+', '');
-            
+
             let iso = 'XX';
             const isoBox = document.getElementById('m-sup-iso-box');
             if (isoBox && isoBox.hasAttribute('data-iso')) {
@@ -3185,7 +3161,7 @@
             }
 
             const sp = document.getElementById('m-sup-sell-price').value.trim();
-            
+
             if (!uid || !cc || !sp) {
                 tg.showAlert("Please fill User ID, Country Code, and Sell Price.");
                 return;
@@ -3198,7 +3174,7 @@
             try {
                 const res = await fetch('/api/admin/store/user-prices', {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         id: document.getElementById('m-sup-id').value ? parseInt(document.getElementById('m-sup-id').value) : null,
                         user_id: parseInt(uid),
@@ -3214,7 +3190,7 @@
                     const data = await res.json();
                     tg.showAlert(data.detail || data.message || "Failed to save");
                 }
-            } catch(e) { console.error(e); tg.showAlert("Error saving"); }
+            } catch (e) { console.error(e); tg.showAlert("Error saving"); }
             btn.disabled = false;
             btn.innerHTML = originalHtml;
         }
@@ -3235,7 +3211,7 @@
                 } else {
                     tg.showAlert("Failed to delete.");
                 }
-            } catch(e) { console.error(e); tg.showAlert("Error deleting."); }
+            } catch (e) { console.error(e); tg.showAlert("Error deleting."); }
         }
 
         const savedView = sessionStorage.getItem('last_view_admin_store') || 'home';
