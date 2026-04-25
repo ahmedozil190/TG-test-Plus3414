@@ -1161,28 +1161,26 @@
             try {
                 updateTranslations();
 
-                // Restore tab on refresh
-                const savedTab = sessionStorage.getItem('activeTab');
-                if (savedTab && savedTab !== 'home') {
-                    switchNav(savedTab, null);
-                }
-
-                // Identity Sync
+                // Identity Sync First
                 const userData = tg.initDataUnsafe?.user;
                 if (userData) {
+                    userId = userData.id;
                     const fullName = userData.first_name + (userData.last_name ? ' ' + userData.last_name : '');
                     document.getElementById('userInitial').innerText = userData.first_name.charAt(0).toUpperCase();
                     
-                    // RE-FETCH with correct ID
-                    userId = userData.id;
-                    console.log("DEBUG: Identity synced. New userId:", userId);
-                    await fetchDeposits();
-
                     fetch(`/api/admin/user/sync`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ user_id: userId, full_name: fullName, username: userData.username, bot_type: 'store' })
                     }).catch(e => console.error("Sync error:", e));
+                }
+
+                // Restore tab AFTER userId is set
+                const savedTab = sessionStorage.getItem('activeTab');
+                if (savedTab && savedTab !== 'home') {
+                    switchNav(savedTab, null);
+                } else {
+                    await fetchDeposits(); // Always fetch for dashboard too if needed
                 }
 
                 const res = await fetch(`/api/store/data?user_id=${userId}`);
