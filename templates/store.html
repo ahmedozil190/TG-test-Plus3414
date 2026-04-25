@@ -1620,7 +1620,7 @@
             if (list) list.style.opacity = '0.5';
 
             try {
-                const res = await fetch(`/api/store/deposits?user_id=${userId}&page=${currentDepPage}&limit=5`);
+                const res = await fetch(`/api/store/deposits?user_id=${userId}&page=${currentDepPage}&limit=10`);
                 const data = await res.json();
                 totalDepPages = data.total_pages || 1;
                 renderDeposits(data);
