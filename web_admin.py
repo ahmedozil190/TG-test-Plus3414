@@ -598,6 +598,16 @@ async def get_store_history(user_id: int, page: int = 1, limit: int = 10):
         logger.error(f"Store History Error: {e}")
         return {"orders": [], "total_pages": 0, "current_page": 1, "total_count": 0}
 
+@app.get("/api/test/cleanup-deposits")
+async def cleanup_test_deposits():
+    try:
+        async with async_session() as session:
+            await session.execute(text("DELETE FROM deposits WHERE txid LIKE 'TEST%'"))
+            await session.commit()
+            return {"status": "success", "message": "Test deposits deleted from server."}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
 @app.get("/api/store/deposits")
 async def get_deposit_history(user_id: int, page: int = 1, limit: int = 10):
     try:
