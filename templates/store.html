@@ -924,7 +924,7 @@
                         style="display: block; margin-bottom: 8px; color: var(--text-p); font-size: 0.85rem; font-weight: 700; opacity: 0.9;">Transaction
                         ID</label>
                     <div style="position: relative; margin-bottom: 20px;">
-                        <input type="text" id="deposit-txid" class="search-input" placeholder="Enter Transaction ID..."
+                        <input type="text" id="deposit-txid" class="search-input" placeholder="Enter Transaction ID Here"
                             style="width: 100%; margin-bottom: 0; text-align: center; border: 1px solid var(--border); background: rgba(255,255,255,0.03); font-size: 0.95rem; height: 50px; border-radius: 12px;">
                     </div>
 
@@ -939,7 +939,6 @@
             <!-- Deposit History Section -->
             <div class="card" id="deposit-history-container" style="padding: 22px; margin-top: 30px; margin-bottom: 0;">
                 <div class="section-header" style="margin-top: 0; margin-bottom: 35px;">
-                    <i class="fas fa-history"></i>
                     <span style="font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;"
                         data-t="dep_title">Deposit History</span>
                 </div>
@@ -949,11 +948,10 @@
                 </div>
 
                 <div id="deposits-empty"
-                    style="text-align: center; padding: 40px 20px; background: var(--bg-elevated); border-radius: 16px; border: 1px dashed var(--border); margin-top: 0; display: none;">
+                    style="text-align: center; padding: 40px 20px; background: var(--card-glass); border-radius: 16px; border: 1px dashed var(--border); margin-top: 0; backdrop-filter: blur(10px); display: none;">
                     <i class="fas fa-history"
                         style="font-size: 2.5rem; color: var(--text-s); opacity: 0.15; margin-bottom: 12px;"></i>
-                    <p style="color: var(--text-s); font-weight: 600; font-size: 0.95rem;" data-t="dep_empty">No
-                        deposits found</p>
+                    <p style="color: var(--text-s); font-weight: 600; font-size: 0.95rem;" data-t="dep_empty">.No deposits found</p>
                 </div>
 
                 <!-- Pagination for Deposits -->
@@ -1127,9 +1125,8 @@
                 available: "Available", search_ph: "Search countries...",
                 total_numbers: "Total Numbers", countries: "Total Countries", lowest_price: "Lowest Price",
                 completed_orders: "Completed Orders", active_orders: "Active Orders", unique_countries: "Unique Countries",
-                stats_header: "STATISTICS",
+                dep_title: "Deposit History", dep_empty: ".No deposits found",
                 hist_title: "Orders History", hist_empty: "No orders history found",
-                dep_title: "Deposit History", dep_empty: "No deposits found",
                 insufficient_bal: "Insufficient balance"
             },
             ar: {
