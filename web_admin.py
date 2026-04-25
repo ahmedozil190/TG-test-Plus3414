@@ -1110,6 +1110,8 @@ async def get_admin_store_sales(page: int = 1, limit: int = 10, q: str = None):
             total_stmt = select(func.count()).select_from(stmt.subquery())
             total_count = (await session.execute(total_stmt)).scalar() or 0
             
+            logger.info(f"Fetching sales history: page={page}, total_found={total_count}, query={q}")
+            
             stmt = stmt.order_by(func.coalesce(Account.purchased_at, Account.created_at).desc()).offset((page - 1) * limit).limit(limit)
             result = await session.execute(stmt)
             accounts = result.scalars().all()
@@ -1151,7 +1153,7 @@ async def seed_fake_sales(key: str = None):
             # Get a user id to use as buyer
             user_res = await session.execute(select(User).limit(1))
             user = user_res.scalar()
-            buyer_id = user.id if user else 123456789
+            buyer_id = user.id if user else None
             
             countries = [
                 ("USA", "+1"), ("UK", "+44"), ("Egypt", "+20"), ("UAE", "+971"), 
@@ -1159,17 +1161,18 @@ async def seed_fake_sales(key: str = None):
                 ("Saudi Arabia", "+966"), ("Kuwait", "+965")
             ]
             
+            added = 0
             for i in range(15):
                 country_name, prefix = random.choice(countries)
-                phone = f"{prefix}{random.randint(10000000, 99999999)}"
+                phone = f"{prefix}{random.randint(100000000, 999999999)}"
                 price = round(random.uniform(0.5, 12.0), 2)
                 
-                purchased_at = datetime.utcnow() - timedelta(minutes=random.randint(1, 500))
+                purchased_at = datetime.utcnow() - timedelta(minutes=random.randint(1, 5000))
                 
                 acc = Account(
                     phone_number=phone,
                     country=country_name,
-                    session_string="SEED_DUMMY_SESSION",
+                    session_string=f"SEED_{random.randint(1000, 9999)}",
                     status=AccountStatus.SOLD,
                     buyer_id=buyer_id,
                     price=price,
@@ -1178,9 +1181,10 @@ async def seed_fake_sales(key: str = None):
                     created_at=purchased_at - timedelta(hours=1)
                 )
                 session.add(acc)
+                added += 1
                 
             await session.commit()
-            return {"status": "success", "message": "Added 15 fake sales records", "buyer_id": buyer_id}
+            return {"status": "success", "message": f"Added {added} fake sales records", "buyer_id": buyer_id}
     except Exception as e:
         logger.error(f"Seed Error: {e}")
         return {"status": "error", "message": str(e)}
