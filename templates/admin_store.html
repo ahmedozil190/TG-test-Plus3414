@@ -1753,9 +1753,9 @@
 
                 <!-- Search Box Card (Matched with Buying Prices) -->
                 <div class="card no-shadow" style="padding: 18px; margin-bottom: 25px;">
-                    <input class="search-input" type="text" id="sup-search" 
-                           placeholder="${currentLang === 'ar' ? 'ابحث عن المعرف أو الاسم أو الدولة...' : 'Search for ID, Name, or Country...'}" 
-                           onkeyup="if(event.key==='Enter') searchStoreUserPrices()">
+                    <input class="search-input" type="text" id="sup-search"
+                        data-i18n-placeholder="search_custom_users_ph"
+                        onkeyup="if(event.key==='Enter') searchStoreUserPrices()">
                     <button class="btn-find" onclick="searchStoreUserPrices()">
                         <i class="fas fa-search"></i> <span data-i18n="btn_find">Find</span>
                     </button>
@@ -1982,7 +1982,9 @@
                 lbl_spent: "Total Spent",
                 lbl_purchased: "Purchased",
                 lbl_pending_balance: "Pending Balance",
-                ph_amount: "Amount..."
+                ph_amount: "Amount...",
+                nav_store_user_prices: "Custom Users",
+                search_custom_users_ph: "Search for ID, Name, or Country..."
             },
             ar: {
                 nav_dashboard: "الرئيسية",
@@ -2039,7 +2041,9 @@
                 lbl_spent: "إجمالي المنفق",
                 lbl_purchased: "أرقام اشتراها",
                 lbl_pending_balance: "الرصيد المعلق",
-                ph_amount: "المبلغ..."
+                ph_amount: "المبلغ...",
+                nav_store_user_prices: "مستخدمين مخصصين",
+                search_custom_users_ph: "ابحث عن المعرف أو الاسم أو الدولة..."
             }
         };
 
@@ -3165,12 +3169,12 @@
 
         function searchStoreUserPrices() {
             const q = document.getElementById('sup-search').value.toLowerCase().trim();
-            if (!q) { 
+            if (!q) {
                 resetSupSearch();
-                return; 
+                return;
             }
-            filteredStoreUserPrices = allStoreUserPrices.filter(p => 
-                String(p.user_id).includes(q) || 
+            filteredStoreUserPrices = allStoreUserPrices.filter(p =>
+                String(p.user_id).includes(q) ||
                 (p.country_name || '').toLowerCase().includes(q) ||
                 (p.iso_code || '').toLowerCase().includes(q) ||
                 (p.user_name || '').toLowerCase().includes(q)

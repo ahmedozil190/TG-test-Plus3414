@@ -1766,9 +1766,9 @@
 
                 <!-- Search Box Card (Matched with Buying Prices) -->
                 <div class="card no-shadow" style="padding: 18px; margin-bottom: 25px;">
-                    <input class="search-input" type="text" id="up-search" 
-                           placeholder="${currentLang === 'ar' ? 'ابحث عن المعرف أو الاسم أو الدولة...' : 'Search for ID, Name, or Country...'}" 
-                           onkeyup="if(event.key==='Enter') searchUserPrices()">
+                    <input class="search-input" type="text" id="up-search"
+                        data-i18n-placeholder="search_custom_users_ph"
+                        onkeyup="if(event.key==='Enter') searchUserPrices()">
                     <button class="btn-find" onclick="searchUserPrices()">
                         <i class="fas fa-search"></i> <span data-i18n="btn_find">Find</span>
                     </button>
@@ -2199,8 +2199,8 @@
                 lbl_full_name: "Full Name",
                 btn_ban_user: "Ban User",
                 btn_unban_user: "Unban User",
-                lbl_pending_balance: "Pending Balance",
-                ph_amount: "Amount..."
+                ph_amount: "Amount...",
+                search_custom_users_ph: "Search for ID, Name, or Country..."
             },
             ar: {
                 nav_dashboard: "الرئيسية",
@@ -2288,6 +2288,7 @@
                 stat_active_countries: "الدول النشطة",
                 stat_inactive_countries: "الدول غير النشطة",
                 lbl_bot_name: "اسم البوت",
+                search_custom_users_ph: "ابحث عن المعرف أو الاسم أو الدولة...",
                 btn_save_settings: "حفظ الإعدادات",
                 stat_total_countries: "إجمالي الدول",
                 search_countries_ph: "بحث عن دولة...",
@@ -2331,7 +2332,7 @@
             const dataList = list || allUserPrices;
             const container = document.getElementById('user-prices-list');
             const pagContainer = document.getElementById('user-prices-pagination');
-            
+
             // Update Stats
             const totalUsersEl = document.getElementById('stat-total-custom-prices');
             const totalCountriesEl = document.getElementById('stat-total-custom-countries');
@@ -2452,12 +2453,12 @@
 
         function searchUserPrices() {
             const q = document.getElementById('up-search').value.toLowerCase().trim();
-            if (!q) { 
+            if (!q) {
                 resetUpSearch();
-                return; 
+                return;
             }
-            filteredUserPrices = allUserPrices.filter(p => 
-                String(p.user_id).includes(q) || 
+            filteredUserPrices = allUserPrices.filter(p =>
+                String(p.user_id).includes(q) ||
                 (p.country_name || '').toLowerCase().includes(q) ||
                 (p.iso_code || '').toLowerCase().includes(q) ||
                 (p.user_name || '').toLowerCase().includes(q)
