@@ -254,7 +254,6 @@
         .view-panel {
             display: none;
             padding: 25px 20px;
-            animation: viewIn 0.5s var(--ease);
         }
 
         .view-panel.active {
@@ -286,17 +285,7 @@
             background-clip: padding-box;
         }
 
-        @keyframes viewIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
 
         /* ─── Unified High-End Cards ─── */
         .info-card-stack {
