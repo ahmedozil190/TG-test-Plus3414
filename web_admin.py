@@ -598,34 +598,6 @@ async def get_store_history(user_id: int, page: int = 1, limit: int = 10):
         logger.error(f"Store History Error: {e}")
         return {"orders": [], "total_pages": 0, "current_page": 1, "total_count": 0}
 
-@app.get("/api/test/seed-deposits")
-async def seed_test_deposits(user_id: int):
-    try:
-        async with async_session() as session:
-            # Deposit 1
-            dep1 = Deposit(
-                user_id=user_id,
-                amount=10.0,
-                txid=f"TEST_TX_{datetime.utcnow().timestamp()}_1",
-                method="Binance Pay",
-                created_at=datetime.utcnow()
-            )
-            # Deposit 2
-            dep2 = Deposit(
-                user_id=user_id,
-                amount=25.5,
-                txid=f"TEST_TX_{datetime.utcnow().timestamp()}_2",
-                method="TRX (TRC20)",
-                created_at=datetime.utcnow()
-            )
-            
-            session.add(dep1)
-            session.add(dep2)
-            await session.commit()
-            return {"status": "success", "message": f"Created 2 test deposits for user {user_id}"}
-    except Exception as e:
-        return {"status": "error", "message": str(e)}
-
 @app.get("/api/store/deposits")
 async def get_deposit_history(user_id: int, page: int = 1, limit: int = 10):
     try:
