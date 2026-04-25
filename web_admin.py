@@ -864,7 +864,7 @@ async def get_sourcing_data():
                     if cp_row:
                         actual_buy_price = cp_row.buy_price
                 except: pass
-                
+                recent.append({
                     "phone": a.phone_number,
                     "country": f"{flag} {a.country}",
                     "buy_price": actual_buy_price,
