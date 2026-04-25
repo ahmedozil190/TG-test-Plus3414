@@ -1483,8 +1483,52 @@
 
             <!-- ===== Dashboard Section ===== -->
             <section id="section-home" class="view-section active">
-                <!-- SALES Section -->
+                <!-- Inventory Section -->
                 <div class="section-header" style="margin-top: 0;">
+                    <i class="fas fa-boxes-stacked"></i>
+                    <h2 data-i18n="nav_inventory">Inventory</h2>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px;">
+                    <div class="info-card">
+                        <div class="info-card-l">
+                            <span class="info-card-lbl" data-i18n="stat_stock">TOTAL NUMBERS</span>
+                            <div class="info-card-val"><span id="home-total-numbers">0</span> <span data-i18n="unit_accs">NUMBERS</span></div>
+                        </div>
+                        <div class="info-card-icon" style="background: rgba(88, 101, 242, 0.1); color: var(--accent);">
+                            <i class="fas fa-sim-card"></i>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-l">
+                            <span class="info-card-lbl" data-i18n="stat_active_countries">TOTAL COUNTRIES</span>
+                            <div class="info-card-val"><span id="home-inventory-countries">0</span> <span data-i18n="unit_countries">COUNTRIES</span></div>
+                        </div>
+                        <div class="info-card-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">
+                            <i class="fas fa-earth-africa"></i>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-l">
+                            <span class="info-card-lbl">LOWEST PRICE</span>
+                            <div class="info-card-val"><span id="home-min-price">0.00</span> <span style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">USD</span></div>
+                        </div>
+                        <div class="info-card-icon" style="background: rgba(34, 197, 94, 0.1); color: var(--success);">
+                            <i class="fas fa-tag"></i>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-l">
+                            <span class="info-card-lbl">HIGHEST PRICE</span>
+                            <div class="info-card-val"><span id="home-max-price">0.00</span> <span style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">USD</span></div>
+                        </div>
+                        <div class="info-card-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--warning);">
+                            <i class="fas fa-tags"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SALES Section -->
+                <div class="section-header">
                     <i class="fas fa-shopping-cart"></i>
                     <h2 data-i18n="nav_sales">Sales</h2>
                 </div>
@@ -1613,14 +1657,6 @@
                     </div>
                 </div>
 
-                <!-- Recent Sales -->
-                <div class="section-header">
-                    <i class="fas fa-receipt"></i>
-                    <h2 style="color: var(--text-primary);" data-i18n="recent_sales">Recent Sales</h2>
-                </div>
-                <div class="card" style="padding: 22px;">
-                    <div class="list-container" id="recent-sales"></div>
-                </div>
             </section>
 
             <!-- ===== Users Section ===== -->
@@ -2273,6 +2309,16 @@
             try {
                 const res = await fetch('/api/admin/store/data');
                 const data = await res.json();
+
+                // Inventory (Home)
+                const htn = document.getElementById('home-total-numbers');
+                const hic = document.getElementById('home-inventory-countries');
+                const hmin = document.getElementById('home-min-price');
+                const hmax = document.getElementById('home-max-price');
+                if (htn) htn.innerText = data.stats.stock_count || 0;
+                if (hic) hic.innerText = data.stats.active_countries_count || 0;
+                if (hmin) hmin.innerText = parseFloat(data.stats.min_price || 0).toFixed(2);
+                if (hmax) hmax.innerText = parseFloat(data.stats.max_price || 0).toFixed(2);
 
                 // SALES (Home)
                 const hts = document.getElementById('home-total-sales');

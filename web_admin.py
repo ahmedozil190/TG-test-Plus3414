@@ -1040,6 +1040,8 @@ async def get_admin_store_data():
 
             # Price stats
             active_countries_count = (await session.execute(select(func.count(CountryPrice.id)).where(CountryPrice.price > 0))).scalar() or 0
+            min_price = (await session.execute(select(func.min(CountryPrice.price)).where(CountryPrice.price > 0))).scalar() or 0.0
+            max_price = (await session.execute(select(func.max(CountryPrice.price)).where(CountryPrice.price > 0))).scalar() or 0.0
 
             # Custom User stats
             from sqlalchemy import distinct
@@ -1131,7 +1133,9 @@ async def get_admin_store_data():
                 "total_deposits_amount": total_deposits_amount,
                 "active_countries_count": active_countries_count,
                 "total_custom_users": total_custom_users,
-                "total_custom_countries": total_custom_countries
+                "total_custom_countries": total_custom_countries,
+                "min_price": min_price,
+                "max_price": max_price
             },
             "users": users,
             "transactions": transactions,
