@@ -1996,6 +1996,24 @@
         let filteredSales = null;
         const SALES_PER_PAGE = 10;
 
+        function formatDateTime(isoStr) {
+            if (!isoStr) return "N/A";
+            try {
+                const d = new Date(isoStr + (isoStr.endsWith('Z') ? '' : 'Z'));
+                if (isNaN(d.getTime())) return isoStr;
+                const Y = d.getFullYear();
+                const M = String(d.getMonth() + 1).padStart(2, '0');
+                const Day = String(d.getDate()).padStart(2, '0');
+                let H = d.getHours();
+                const Min = String(d.getMinutes()).padStart(2, '0');
+                const ampm = H >= 12 ? 'PM' : 'AM';
+                H = H % 12;
+                H = H ? H : 12;
+                const HH = String(H).padStart(2, '0');
+                return `${Y}-${M}-${Day} ${HH}:${Min} ${ampm}`;
+            } catch(e) { return isoStr; }
+        }
+
         function renderSalesList(list) {
             const container = document.getElementById('sales-list');
             const pagContainer = document.getElementById('sales-pagination');
@@ -2024,19 +2042,7 @@
             const rowS = "background: transparent; border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;";
             const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;";
 
-            container.innerHTML = paged.map(item => {
-                let displayDate = "N/A";
-                if (item.date) {
-                    try {
-                        const d = new Date(item.date + (item.date.endsWith('Z') ? '' : 'Z'));
-                        displayDate = d.toLocaleString([], {
-                            year: 'numeric', month: '2-digit', day: '2-digit',
-                            hour: '2-digit', minute: '2-digit', hour12: true
-                        }).replace(',', '');
-                    } catch(e) { displayDate = item.date; }
-                }
-
-                return `
+            container.innerHTML = paged.map(item => `
                 <div class="user-card" style="padding: 20px; margin-bottom: 15px; cursor: default;">
                     <div style="display: flex; flex-direction: column; gap: 10px;">
                         <div style="${rowS}">
@@ -2057,11 +2063,11 @@
                         </div>
                         <div style="${rowS}">
                             <span style="${lblS}">${currentLang === 'ar' ? 'التاريخ' : 'Date'}</span>
-                            <span style="color: #fdd835; font-weight: 600; font-size: 0.85rem; text-align: right;">${displayDate}</span>
+                            <span style="color: #fdd835; font-weight: 600; font-size: 0.85rem; text-align: right;">${formatDateTime(item.date)}</span>
                         </div>
                     </div>
                 </div>
-            `; }).join('');
+            `).join('');
 
             if (totalPages > 1) {
                 pagContainer.style.display = 'flex';

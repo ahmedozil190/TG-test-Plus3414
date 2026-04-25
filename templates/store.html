@@ -1387,6 +1387,24 @@
             } catch (e) { list.innerHTML = '<p style="text-align:center;">Error loading history</p>'; }
         }
 
+        function formatDateTime(isoStr) {
+            if (!isoStr) return "N/A";
+            try {
+                const d = new Date(isoStr + (isoStr.endsWith('Z') ? '' : 'Z'));
+                if (isNaN(d.getTime())) return isoStr;
+                const Y = d.getFullYear();
+                const M = String(d.getMonth() + 1).padStart(2, '0');
+                const Day = String(d.getDate()).padStart(2, '0');
+                let H = d.getHours();
+                const Min = String(d.getMinutes()).padStart(2, '0');
+                const ampm = H >= 12 ? 'PM' : 'AM';
+                H = H % 12;
+                H = H ? H : 12;
+                const HH = String(H).padStart(2, '0');
+                return `${Y}-${M}-${Day} ${HH}:${Min} ${ampm}`;
+            } catch(e) { return isoStr; }
+        }
+
         function renderHistory(data) {
             const list = document.getElementById('history-list');
             const empty = document.getElementById('history-empty');
@@ -1443,7 +1461,7 @@
                     </div>
                     <div style="${rowS}">
                         <span style="${lblS}">DATE</span>
-                        <span style="color: #fdd835; font-weight: 600; font-size: 0.85rem; text-align: right;">${h.date ? new Date(h.date + (h.date.endsWith('Z') ? '' : 'Z')).toLocaleString([], { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true }).replace(',', '') : 'N/A'}</span>
+                        <span style="color: #fdd835; font-weight: 600; font-size: 0.85rem; text-align: right;">${formatDateTime(h.date)}</span>
                     </div>
 
                     <button id="btn-otp-${phoneClean}" class="btn-action" onclick="fetchHistoryOTP('${h.phone}', this)" 
@@ -1673,7 +1691,7 @@
                         </div>
                         <div style="${rowS} margin-bottom: 0;">
                             <span style="${lblS}">DATE</span>
-                            <span style="color: #fdd835; font-weight: 600; font-size: 0.85rem; text-align: right;">${d.date ? new Date(d.date + (d.date.endsWith('Z') ? '' : 'Z')).toLocaleString([], { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true }).replace(',', '') : 'N/A'}</span>
+                            <span style="color: #fdd835; font-weight: 600; font-size: 0.85rem; text-align: right;">${formatDateTime(d.date)}</span>
                         </div>
                     </div>
                 `;
