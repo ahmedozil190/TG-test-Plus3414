@@ -1512,6 +1512,25 @@
             tg.backgroundColor = scheme === 'light' ? '#ffffff' : '#111113';
         }
         tg.onEvent('themeChanged', applyTheme);
+
+        function formatDateTime(isoStr) {
+            if (!isoStr) return "N/A";
+            try {
+                const date = new Date(isoStr.endsWith('Z') ? isoStr : isoStr + 'Z');
+                const y = date.getFullYear();
+                const m = String(date.getMonth() + 1).padStart(2, '0');
+                const d = String(date.getDate()).padStart(2, '0');
+                let hh = date.getHours();
+                const mm = String(date.getMinutes()).padStart(2, '0');
+                const ampm = hh >= 12 ? 'PM' : 'AM';
+                hh = hh % 12;
+                hh = hh ? hh : 12;
+                const hhStr = String(hh).padStart(2, '0');
+                return `${y}-${m}-${d} ${hhStr}:${mm} ${ampm}`;
+            } catch (e) {
+                return isoStr;
+            }
+        }
         applyTheme();
 
         const userId = tg.initDataUnsafe?.user?.id || 0;
@@ -1821,7 +1840,7 @@
                             </div>
                             <div style="${rowS}; margin-bottom: 0;">
                                 <span style="${lblS}">DATE</span>
-                                <span style="color: #fdd835; font-weight: 600; font-size: 0.85rem; text-align: right;">${h.date}</span>
+                                <span style="color: #fdd835; font-weight: 600; font-size: 0.85rem; text-align: right;">${formatDateTime(h.date)}</span>
                             </div>
                         </div>
                     `;
@@ -2069,7 +2088,7 @@
                                 <span class="${isPending ? 'countdown-timer' : ''}" 
                                       data-ready="${acc.ready_at}" 
                                       style="color: #fdd835; font-weight: 600; font-size: 0.85rem; text-align: right;">
-                                    ${isPending ? '...' : acc.date}
+                                    ${isPending ? '...' : formatDateTime(acc.date)}
                                 </span>
                             </div>
                         </div>

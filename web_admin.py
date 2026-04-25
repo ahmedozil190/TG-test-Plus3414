@@ -865,13 +865,12 @@ async def get_sourcing_data():
                         actual_buy_price = cp_row.buy_price
                 except: pass
                 
-                recent.append({
                     "phone": a.phone_number,
                     "country": f"{flag} {a.country}",
                     "buy_price": actual_buy_price,
                     "status": a.status.name,
                     "seller_id": a.seller_id,
-                    "date": a.created_at.strftime("%Y-%m-%d %H:%M")
+                    "date": a.created_at.isoformat() if a.created_at else None
                 })
 
             prices_result = await session.execute(
@@ -1305,7 +1304,7 @@ async def get_user_prices():
                 "country_name": f"{flag} {name}",
                 "buy_price": ucp.buy_price,
                 "approve_delay": ucp.approve_delay,
-                "date": ucp.created_at.strftime("%Y-%m-%d %H:%M")
+                "date": ucp.created_at.isoformat() if ucp.created_at else None
             })
         return {"prices": data}
 
@@ -1818,7 +1817,7 @@ async def get_withdrawals(user_id: int, page: int = 1, status: str = "all"):
                 "method": r.method,
                 "address": r.address,
                 "status": r.status.value,
-                "date": r.created_at.strftime("%Y-%m-%d %H:%M")
+                "date": r.created_at.isoformat() if r.created_at else None
             })
         return {
             "history": history,
@@ -1867,7 +1866,7 @@ async def admin_get_all_withdrawals(page: int = 1, status: str = "all"):
                 "method": r.method,
                 "address": r.address,
                 "status": r.status.value,
-                "date": r.created_at.strftime("%Y-%m-%d %H:%M")
+                "date": r.created_at.isoformat() if r.created_at else None
             })
             
         return {
@@ -2070,7 +2069,7 @@ async def get_seller_accounts(user_id: int, page: int = 1, limit: int = 10):
                 "country": f"{flag} {a.country}",
                 "buy_price": actual_buy_price,
                 "ready_at": int(ready_at.timestamp() * 1000) if ready_at else None,
-                "date": a.created_at.strftime("%Y-%m-%d %H:%M") if a.created_at else "N/A"
+                "date": a.created_at.isoformat() if a.created_at else None
             })
 
         return {
@@ -2118,7 +2117,7 @@ async def get_admin_sourcing_history(page: int = 1, limit: int = 10):
                 "status": a.status.name,
                 "seller_id": a.seller_id,
                 "ready_at": int(ready_at.timestamp() * 1000) if ready_at else None,
-                "date": a.created_at.strftime("%Y-%m-%d %H:%M") if a.created_at else "N/A"
+                "date": a.created_at.isoformat() if a.created_at else None
             })
             
         return {
