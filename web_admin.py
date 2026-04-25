@@ -1099,13 +1099,19 @@ async def cleanup_fake_api(key: str = None):
     try:
         async with async_session() as session:
             # 1. حذف الحسابات الوهمية
-            await session.execute(text("DELETE FROM accounts WHERE session_string LIKE 'SEED_%' OR session_string = 'DUMMY_SESSION_STRING' OR session_string = 'SEED_DUMMY_SESSION'"))
+            del_res = await session.execute(text("DELETE FROM accounts WHERE session_string LIKE 'SEED_%' OR session_string = 'DUMMY_SESSION_STRING' OR session_string = 'SEED_DUMMY_SESSION'"))
+            deleted_count = del_res.rowcount
             
-            # 2. إصلاح تواريخ المبيعات الأصلية (هذا السطر هو الذي سيجعل المبيعات تظهر)
-            await session.execute(text("UPDATE accounts SET purchased_at = created_at WHERE status = 'sold' AND purchased_at IS NULL"))
+            # 2. إصلاح تواريخ المبيعات الأصلية
+            upd_res = await session.execute(text("UPDATE accounts SET purchased_at = created_at WHERE status = 'sold' AND purchased_at IS NULL"))
+            updated_count = upd_res.rowcount
             
             await session.commit()
-            return {"status": "success", "message": "Cleanup complete and Dates fixed. Sales history should now show up."}
+            return {
+                "status": "success", 
+                "message": f"Deleted {deleted_count} fake records and updated {updated_count} old records.",
+                "details": "If updated_count is 0, it means no records matched the criteria."
+            }
     except Exception as e:
         logger.error(f"Cleanup API Error: {e}")
         return {"status": "error", "message": str(e)}
