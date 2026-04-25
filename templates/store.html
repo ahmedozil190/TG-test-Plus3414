@@ -1281,11 +1281,14 @@
         function updateTranslations() {
             document.documentElement.lang = currentLang;
             document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                el.innerText = translations[currentLang][key] || key;
+            document.querySelectorAll('[data-i18n], [data-t]').forEach(el => {
+                const key = el.getAttribute('data-i18n') || el.getAttribute('data-t');
+                if (translations[currentLang] && translations[currentLang][key]) {
+                    el.innerText = translations[currentLang][key];
+                }
             });
-            document.getElementById('store-search').placeholder = translations[currentLang].search_ph;
+            const searchInput = document.getElementById('store-search');
+            if (searchInput) searchInput.placeholder = translations[currentLang].search_ph;
         }
 
         async function fetchCountries() { renderCountries(countries); }
