@@ -2032,8 +2032,12 @@
                             <span style="color: var(--success); font-weight: 800; font-size: 1.1rem; text-align: right; direction: ltr;">${item.phone}</span>
                         </div>
                         <div style="${rowS}">
+                            <span style="${lblS}">${currentLang === 'ar' ? 'الدولة' : 'Country'}</span>
+                            <span style="color: var(--text-p); font-weight: 700; font-size: 0.95rem; text-align: right;">${item.country}</span>
+                        </div>
+                        <div style="${rowS}">
                             <span style="${lblS}">${currentLang === 'ar' ? 'المشتري' : 'Buyer'}</span>
-                            <span style="color: #8b5cf6; font-weight: 800; font-size: 1rem; text-align: right;">@${item.buyer_id}</span>
+                            <span style="color: #8b5cf6; font-weight: 800; font-size: 1rem; text-align: right;">${item.buyer_id}</span>
                         </div>
                         <div style="${rowS}">
                             <span style="${lblS}">${currentLang === 'ar' ? 'السعر' : 'Price'}</span>
@@ -2062,7 +2066,8 @@
             if (!q) { filteredSales = null; currentSalesPage = 1; renderSalesList(allTransactions); return; }
             filteredSales = allTransactions.filter(item => 
                 String(item.phone).includes(q) || 
-                String(item.buyer_id).includes(q)
+                String(item.buyer_id).includes(q) ||
+                (item.country && item.country.toLowerCase().includes(q))
             );
             currentSalesPage = 1;
             document.getElementById('reset-sales-search-container').style.display = 'block';
