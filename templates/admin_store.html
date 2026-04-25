@@ -1754,7 +1754,7 @@
                 <!-- Search Box Card (Matched with Buying Prices) -->
                 <div class="card no-shadow" style="padding: 18px; margin-bottom: 25px;">
                     <input class="search-input" type="text" id="sup-search" 
-                           placeholder="${currentLang === 'ar' ? 'بحث عن مستخدم أو دولة...' : 'Search for user or country...'}" 
+                           placeholder="${currentLang === 'ar' ? 'ابحث عن المعرف أو الاسم أو الدولة...' : 'Search for ID, Name, or Country...'}" 
                            onkeyup="if(event.key==='Enter') searchStoreUserPrices()">
                     <button class="btn-find" onclick="searchStoreUserPrices()">
                         <i class="fas fa-search"></i> <span data-i18n="btn_find">Find</span>
@@ -2136,7 +2136,14 @@
             if (location.hash !== '#' + id) location.hash = id;
 
             // 9. Update Page Title
-            const titleMap = { home: 'nav_dashboard', users: 'nav_users', prices: 'nav_prices', sales: 'nav_sales', settings: 'nav_settings' };
+            const titleMap = { 
+                home: 'nav_dashboard', 
+                users: 'nav_users', 
+                prices: 'nav_prices', 
+                sales: 'nav_sales', 
+                settings: 'nav_settings', 
+                'store-user-prices': 'nav_store_user_prices' 
+            };
             const titleEl = document.getElementById('page-title');
             if (titleEl) {
                 const translationKey = titleMap[id] || 'nav_dashboard';
