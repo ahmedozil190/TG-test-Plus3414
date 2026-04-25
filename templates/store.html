@@ -761,7 +761,7 @@
                     <span class="info-card-val" id="dash-total-deposits">0</span>
                 </div>
                 <div class="info-card-icon" style="background: rgba(88, 101, 242, 0.1); color: var(--accent);">
-                    <i class="fas fa-arrow-down-to-bracket"></i>
+                    <i class="fas fa-receipt"></i>
                 </div>
             </div>
 
@@ -1225,7 +1225,7 @@
 
                 if (data.user) {
                     updateBalanceUI(data.user.balance || 0);
-                    document.getElementById('dash-total-deposits').innerText = data.user.total_deposits || 0;
+                    document.getElementById('dash-total-deposits').innerHTML = `${data.user.total_deposits || 0} <span>DEPOSITS</span>`;
                     document.getElementById('dash-spent').innerHTML = `${parseFloat(data.user.total_spent || 0).toFixed(2)} <span>USD</span>`;
                     const nameForUI = (data.user.full_name && data.user.full_name !== 'Unknown') ? data.user.full_name : (userData?.first_name || "User");
                     document.getElementById('userInitial').innerText = nameForUI.charAt(0).toUpperCase();
