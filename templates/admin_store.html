@@ -1800,9 +1800,11 @@
             </div>
 
             <!-- Dynamic Country Field -->
-            <div id="m-sup-country-group" class="form-group" style="display: none;">
+            <div id="m-sup-country-group" class="form-group">
                 <label id="m-sup-country-label">Detected Country</label>
-                <div id="m-sup-country-container"></div>
+                <div id="m-sup-country-container">
+                    <input type="text" class="input-field" value="Waiting..." readonly style="cursor: not-allowed;">
+                </div>
             </div>
 
             <div class="form-group">
@@ -1827,10 +1829,10 @@
             </div>
 
             <!-- Dynamic Country Field -->
-            <div id="m-country-group" class="form-group" style="display: none;">
+            <div id="m-country-group" class="form-group">
                 <label id="m-country-label">Detected Country</label>
                 <div id="m-country-container">
-                    <!-- Text field or select will be injected here -->
+                    <input type="text" class="input-field" value="Waiting..." readonly style="cursor: not-allowed;">
                 </div>
             </div>
             <div class="form-group">
@@ -2629,11 +2631,11 @@
 
         async function onCountryCodeInput() {
             const code = document.getElementById('m-code').value.trim().replace('+', '');
-            const group = document.getElementById('m-country-group');
             const container = document.getElementById('m-country-container');
+            const waitHtml = `<input type="text" class="input-field" value="${currentLang === 'ar' ? 'بانتظار الكود...' : 'Waiting...'}" readonly style="cursor: not-allowed;">`;
 
             if (code.length < 1) {
-                group.style.display = 'none';
+                container.innerHTML = waitHtml;
                 return;
             }
 
@@ -2642,13 +2644,12 @@
                 const data = await res.json();
 
                 if (data && data.length > 0) {
-                    group.style.display = 'block';
                     if (data.length === 1) {
                         // Single country
                         container.innerHTML = `
                             <input type="text" id="m-iso-box" class="input-field" value="${data[0].flag} ${data[0].name}" readonly 
                                    data-iso="${data[0].iso}" data-name="${data[0].name}"
-                                   style="background: var(--bg); opacity: 0.8; cursor: not-allowed;">
+                                   style="cursor: not-allowed;">
                         `;
                     } else {
                         // Multiple countries
@@ -2665,10 +2666,10 @@
                         `;
                     }
                 } else {
-                    group.style.display = 'none';
+                    container.innerHTML = waitHtml;
                 }
             } catch (err) {
-                group.style.display = 'none';
+                container.innerHTML = waitHtml;
             }
         }
 
@@ -3116,11 +3117,11 @@
         }
         async function onSupCountryCodeInput(selectedIso = null) {
             const code = document.getElementById('m-sup-code').value.trim().replace('+', '');
-            const group = document.getElementById('m-sup-country-group');
             const container = document.getElementById('m-sup-country-container');
+            const waitHtml = `<input type="text" class="input-field" value="${currentLang === 'ar' ? 'بانتظار الكود...' : 'Waiting...'}" readonly style="cursor: not-allowed;">`;
 
             if (code.length < 1) {
-                group.style.display = 'none';
+                container.innerHTML = waitHtml;
                 return;
             }
 
@@ -3129,13 +3130,12 @@
                 const data = await res.json();
 
                 if (data && data.length > 0) {
-                    group.style.display = 'block';
                     if (data.length === 1) {
                         // Single country
                         container.innerHTML = `
                             <input type="text" id="m-sup-iso-box" class="input-field" value="${data[0].flag} ${data[0].name}" readonly 
                                    data-iso="${data[0].iso}" data-name="${data[0].name}"
-                                   style="background: var(--bg); opacity: 0.8; cursor: not-allowed;">
+                                   style="cursor: not-allowed;">
                         `;
                     } else {
                         // Multiple countries
@@ -3160,10 +3160,10 @@
                         }
                     }
                 } else {
-                    group.style.display = 'none';
+                    container.innerHTML = waitHtml;
                 }
             } catch (e) {
-                group.style.display = 'none';
+                container.innerHTML = waitHtml;
             }
         }
 
