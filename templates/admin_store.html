@@ -1901,14 +1901,18 @@
             // 1. Reset Pagination Variables
             currentPage = 1;
             currentPricePage = 1;
+            currentSalesPage = 1;
 
             // 2. Reset Search & Filters to ensure clean state
             filteredUsers = null;
             filteredPrices = null;
+            filteredSales = null;
             const userSearch = document.getElementById('user-search');
             if (userSearch) userSearch.value = '';
             const priceSearch = document.getElementById('price-search');
             if (priceSearch) priceSearch.value = '';
+            const salesSearch = document.getElementById('sales-search');
+            if (salesSearch) salesSearch.value = '';
             const resetSearchContainer = document.getElementById('reset-search-container');
             if (resetSearchContainer) resetSearchContainer.style.display = 'none';
             const resetPriceSearchContainer = document.getElementById('reset-price-search-container');
@@ -2067,7 +2071,7 @@
                     <div style="display: flex; flex-direction: column; gap: 10px;">
                         <div style="${rowS}">
                             <span style="${lblS}">${currentLang === 'ar' ? 'رقم الهاتف' : 'Phone'}</span>
-                            <span style="color: var(--success); font-weight: 800; font-size: 1.1rem; text-align: right; direction: ltr;">${item.phone}</span>
+                            <span style="color: var(--success); font-weight: 800; font-size: 1.1rem; text-align: right; direction: ltr; word-break: break-all;">${item.phone}</span>
                         </div>
                         <div style="${rowS}">
                             <span style="${lblS}">${currentLang === 'ar' ? 'الدولة' : 'Country'}</span>
