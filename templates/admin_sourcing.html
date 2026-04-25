@@ -2037,7 +2037,7 @@
                 modal_title: "Add New Country",
                 lbl_code: "Code",
                 lbl_buy: "Price",
-                lbl_delay: "Approval Delay",
+                lbl_delay: "Approve Delay (sec)",
                 no_ops: "No accounts found",
                 no_users: "No users found",
                 no_countries: "No countries found",
@@ -2117,7 +2117,7 @@
                 modal_title: "إضافة دولة جديدة",
                 lbl_code: "كود",
                 lbl_buy: "السعر",
-                lbl_delay: "تأخير الموافقة",
+                lbl_delay: "تأخير الموافقة (ثانية)",
                 no_ops: "لا توجد عمليات",
                 st_pending: "قيد المراجعة",
                 st_accepted: "تم القبول",
@@ -2270,7 +2270,7 @@
                         <!-- Delay -->
                         <div style="background: transparent; border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
                             <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'تأخير الموافقة' : 'Delay'}</span>
-                            <span style="color: var(--text-p); font-weight: 700; font-size: 0.95rem;">${up.approve_delay} min</span>
+                            <span style="color: #f59e0b; font-weight: 700; font-size: 0.95rem;">${up.approve_delay} ${currentLang === 'ar' ? 'ثانية' : 'sec'}</span>
                         </div>
                     </div>
                     <!-- Action Buttons -->
@@ -3346,6 +3346,11 @@
                         <div style="background: transparent; border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
                             <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'السعر' : 'Price'}</span>
                             <span style="color: var(--accent); font-weight: 900; font-size: 1.1rem;">$${Number(p.buy_price).toFixed(2)}</span>
+                        </div>
+                        <!-- Delay -->
+                        <div style="background: transparent; border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'التأخير' : 'Delay'}</span>
+                            <span style="color: #f59e0b; font-weight: 800; font-size: 1rem;">${p.approve_delay} ${currentLang === 'ar' ? 'ثانية' : 'sec'}</span>
                         </div>
                     </div>
                     <!-- Action Buttons -->
