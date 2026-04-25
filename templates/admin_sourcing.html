@@ -2307,7 +2307,20 @@
         const USERS_PER_PAGE = 5;
         let currentPage = 1;
         let allPrices = [];
+        let allUserPrices = [];
         let filteredUserPrices = null;
+
+        async function fetchUserPrices() {
+            try {
+                const res = await fetch('/api/admin/sourcing/user-prices');
+                const data = await res.json();
+                allUserPrices = data.prices || [];
+                renderUserPrices();
+            } catch (e) { console.error(e); }
+        }
+
+        const USER_PRICES_PER_PAGE = 10;
+        let currentUserPricePage = 1;
 
         function renderUserPrices(list = null) {
             const dataList = list || allUserPrices;

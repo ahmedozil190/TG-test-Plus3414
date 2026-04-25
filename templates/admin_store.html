@@ -3040,6 +3040,10 @@
             } catch (e) { console.error("Error fetching store user prices", e); }
         }
 
+        function renderStoreUserPricesList(list) {
+            const container = document.getElementById('store-user-prices-list');
+            const pagContainer = document.getElementById('store-user-prices-pagination');
+
             // Update Stats
             const totalUsersEl = document.getElementById('stat-total-store-custom-prices');
             const totalCountriesEl = document.getElementById('stat-total-store-custom-countries');
