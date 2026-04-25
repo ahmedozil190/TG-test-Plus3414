@@ -1597,16 +1597,17 @@
         }
 
         function renderDeposits(data) {
+            console.log("DEBUG: Rendering deposits:", data);
             const list = document.getElementById('deposits-list');
             const empty = document.getElementById('deposits-empty');
             const pagination = document.getElementById('depositPagination');
 
+            list.style.opacity = '1';
             const items = data.deposits || [];
             totalDepPages = data.total_pages || 1;
 
-            if (!items.length) {
+            if (items.length === 0) {
                 list.style.display = 'none';
-                list.style.opacity = '1';
                 pagination.style.display = 'none';
                 empty.style.display = 'block';
                 return;
@@ -1614,17 +1615,19 @@
 
             empty.style.display = 'none';
             list.style.display = 'flex';
-            list.style.opacity = '1';
             pagination.style.display = totalDepPages > 1 ? 'flex' : 'none';
-
+            
             document.getElementById('pgInfoDep').textContent = `Page ${data.current_page || 1} of ${totalDepPages}`;
             document.getElementById('pgPrevDep').disabled = (data.current_page <= 1);
             document.getElementById('pgNextDep').disabled = (data.current_page >= totalDepPages);
 
-            list.innerHTML = items.map(d => {
+            let html = '';
+            for (const d of items) {
                 const amount = parseFloat(d.amount) || 0;
-                const txidShort = (d.txid && d.txid.length > 16) ? (d.txid.substring(0, 10) + '...' + d.txid.slice(-6)) : (d.txid || 'N/A');
-                return `
+                const txid = d.txid || 'N/A';
+                const txidShort = txid.length > 16 ? (txid.substring(0, 10) + '...' + txid.slice(-6)) : txid;
+                
+                html += `
                 <div class="info-card" style="margin-bottom: 0; padding: 18px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
                     <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0;">
                         <div style="font-weight: 700; font-size: 0.95rem; color: var(--text-p); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: monospace;">
@@ -1642,8 +1645,9 @@
                         </div>
                         <div style="font-size: 0.65rem; color: var(--text-s); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">USDT (BINANCE)</div>
                     </div>
-                </div>
-            `;}).join('');
+                </div>`;
+            }
+            list.innerHTML = html;
         }
 
         async function moveDepositPage(delta) {
