@@ -1092,6 +1092,20 @@ async def get_admin_store_data():
         logger.error(f"Store Admin Data Error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/api/admin/system/cleanup-fake")
+async def cleanup_fake_api(key: str = None):
+    if key != "cleanup_99":
+        return {"status": "error", "message": "Invalid key"}
+    try:
+        async with async_session() as session:
+            # Delete accounts with our dummy session strings
+            await session.execute(text("DELETE FROM accounts WHERE session_string LIKE 'SEED_%' OR session_string = 'DUMMY_SESSION_STRING' OR session_string = 'SEED_DUMMY_SESSION'"))
+            await session.commit()
+            return {"status": "success", "message": "Cleanup complete. Fake data removed."}
+    except Exception as e:
+        logger.error(f"Cleanup API Error: {e}")
+        return {"status": "error", "message": str(e)}
+
 @app.get("/api/admin/store/settings")
 async def get_store_settings():
     try:
