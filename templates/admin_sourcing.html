@@ -1764,13 +1764,16 @@
                     </div>
                 </div>
 
-                <!-- Unique Search Box Card -->
-                <div class="card no-shadow" style="padding: 12px; margin-bottom: 25px; background: var(--card-glass); border: 1px solid var(--border);">
-                    <div class="unique-search-container" style="margin-bottom: 0;">
-                        <i class="fas fa-search unique-search-icon"></i>
-                        <input type="text" id="up-search" class="unique-search-input" 
-                               placeholder="${currentLang === 'ar' ? 'البحث عن مستخدم أو دولة...' : 'Search for user or country...'}" 
-                               oninput="onUpSearchInput()">
+                <!-- Search Box Card (Matched with Buying Prices) -->
+                <div class="card no-shadow" style="padding: 18px; margin-bottom: 25px;">
+                    <input class="search-input" type="text" id="up-search" 
+                           placeholder="${currentLang === 'ar' ? 'بحث عن مستخدم أو دولة...' : 'Search for user or country...'}" 
+                           onkeyup="if(event.key==='Enter') searchUserPrices()">
+                    <button class="btn-find" onclick="searchUserPrices()">
+                        <i class="fas fa-search"></i> <span data-i18n="btn_find">Find</span>
+                    </button>
+                    <div id="reset-up-search-container" style="display: none; margin-top: 4px;">
+                        <button class="cancel-btn" onclick="resetUpSearch()" data-i18n="btn_reset">Reset</button>
                     </div>
                 </div>
 
@@ -2430,20 +2433,46 @@
         function prevUserPricePage() {
             if (currentUserPricePage > 1) {
                 currentUserPricePage--;
-                renderUserPrices();
+                renderUserPrices(filteredUserPrices || allUserPrices);
                 const scroller = document.getElementById('user-prices-mgmt-section');
                 if (scroller) scroller.scrollIntoView({ behavior: 'smooth' });
             }
         }
 
         function nextUserPricePage() {
-            const totalPages = Math.ceil(allUserPrices.length / USER_PRICES_PER_PAGE);
+            const list = filteredUserPrices || allUserPrices;
+            const totalPages = Math.ceil(list.length / USER_PRICES_PER_PAGE);
             if (currentUserPricePage < totalPages) {
                 currentUserPricePage++;
-                renderUserPrices();
+                renderUserPrices(list);
                 const scroller = document.getElementById('user-prices-mgmt-section');
                 if (scroller) scroller.scrollIntoView({ behavior: 'smooth' });
             }
+        }
+
+        function searchUserPrices() {
+            const q = document.getElementById('up-search').value.toLowerCase().trim();
+            if (!q) { 
+                resetUpSearch();
+                return; 
+            }
+            filteredUserPrices = allUserPrices.filter(p => 
+                String(p.user_id).includes(q) || 
+                (p.country_name || '').toLowerCase().includes(q) ||
+                (p.iso_code || '').toLowerCase().includes(q) ||
+                (p.user_name || '').toLowerCase().includes(q)
+            );
+            currentUserPricePage = 1;
+            document.getElementById('reset-up-search-container').style.display = 'block';
+            renderUserPrices(filteredUserPrices);
+        }
+
+        function resetUpSearch() {
+            document.getElementById('up-search').value = '';
+            document.getElementById('reset-up-search-container').style.display = 'none';
+            filteredUserPrices = null;
+            currentUserPricePage = 1;
+            renderUserPrices(allUserPrices);
         }
 
         function openUserPriceModal(up = null) {

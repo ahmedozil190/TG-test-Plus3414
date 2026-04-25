@@ -1751,13 +1751,16 @@
                     </div>
                 </div>
 
-                <!-- Unique Search Box Card -->
-                <div class="card no-shadow" style="padding: 12px; margin-bottom: 25px; background: var(--card-glass); border: 1px solid var(--border);">
-                    <div class="unique-search-container" style="margin-bottom: 0;">
-                        <i class="fas fa-search unique-search-icon"></i>
-                        <input type="text" id="sup-search" class="unique-search-input" 
-                               placeholder="${currentLang === 'ar' ? 'البحث عن مستخدم أو دولة...' : 'Search for user or country...'}" 
-                               oninput="onSupSearchInput()">
+                <!-- Search Box Card (Matched with Buying Prices) -->
+                <div class="card no-shadow" style="padding: 18px; margin-bottom: 25px;">
+                    <input class="search-input" type="text" id="sup-search" 
+                           placeholder="${currentLang === 'ar' ? 'بحث عن مستخدم أو دولة...' : 'Search for user or country...'}" 
+                           onkeyup="if(event.key==='Enter') searchStoreUserPrices()">
+                    <button class="btn-find" onclick="searchStoreUserPrices()">
+                        <i class="fas fa-search"></i> <span data-i18n="btn_find">Find</span>
+                    </button>
+                    <div id="reset-sup-search-container" style="display: none; margin-top: 4px;">
+                        <button class="cancel-btn" onclick="resetSupSearch()" data-i18n="btn_reset">Reset</button>
                     </div>
                 </div>
 
@@ -3153,38 +3156,32 @@
         function prevStoreUserPricesPage() { gotoStoreUserPricesPage(currentStoreUserPricesPage - 1); }
         function nextStoreUserPricesPage() { gotoStoreUserPricesPage(currentStoreUserPricesPage + 1); }
 
-        // Search logic for Custom Users
-        function onSupSearchInput() {
-            const query = document.getElementById('sup-search').value.toLowerCase().trim();
-            if (!query) {
-                filteredStoreUserPrices = null;
-            } else {
-                filteredStoreUserPrices = allStoreUserPrices.filter(p => 
-                    String(p.user_id).includes(query) || 
-                    (p.country_name || '').toLowerCase().includes(query) ||
-                    (p.iso_code || '').toLowerCase().includes(query) ||
-                    (p.user_name || '').toLowerCase().includes(query)
-                );
+        function searchStoreUserPrices() {
+            const q = document.getElementById('sup-search').value.toLowerCase().trim();
+            if (!q) { 
+                resetSupSearch();
+                return; 
             }
+            filteredStoreUserPrices = allStoreUserPrices.filter(p => 
+                String(p.user_id).includes(q) || 
+                (p.country_name || '').toLowerCase().includes(q) ||
+                (p.iso_code || '').toLowerCase().includes(q) ||
+                (p.user_name || '').toLowerCase().includes(q)
+            );
             currentStoreUserPricesPage = 1;
-            renderStoreUserPricesList(filteredStoreUserPrices || allStoreUserPrices);
+            document.getElementById('reset-sup-search-container').style.display = 'block';
+            renderStoreUserPricesList(filteredStoreUserPrices);
         }
 
-        function searchStoreUserPrices() {
-            const q = document.getElementById('store-user-prices-search').value.toLowerCase().trim();
-            if (!q) { filteredStoreUserPrices = null; currentStoreUserPricesPage = 1; renderStoreUserPricesList(allStoreUserPrices); return; }
-            filteredStoreUserPrices = allStoreUserPrices.filter(u => String(u.user_id).includes(q) || String(u.country_name).toLowerCase().includes(q) || String(u.country_code).includes(q));
-            currentStoreUserPricesPage = 1;
-            renderStoreUserPricesList(filteredStoreUserPrices);
-            document.getElementById('reset-store-user-prices-search-container').style.display = 'block';
-        }
-        function resetStoreUserPricesSearch() {
-            document.getElementById('store-user-prices-search').value = '';
-            document.getElementById('reset-store-user-prices-search-container').style.display = 'none';
+        function resetSupSearch() {
+            document.getElementById('sup-search').value = '';
+            document.getElementById('reset-sup-search-container').style.display = 'none';
             filteredStoreUserPrices = null;
             currentStoreUserPricesPage = 1;
             renderStoreUserPricesList(allStoreUserPrices);
         }
+
+
 
         // Store User Price Modal CRUD
         function showStoreUserPriceModal() {
