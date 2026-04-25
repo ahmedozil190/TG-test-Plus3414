@@ -1110,7 +1110,7 @@ async def get_admin_store_sales(page: int = 1, limit: int = 10, q: str = None):
             total_stmt = select(func.count()).select_from(stmt.subquery())
             total_count = (await session.execute(total_stmt)).scalar() or 0
             
-            stmt = stmt.order_by(Account.purchased_at.desc()).offset((page - 1) * limit).limit(limit)
+            stmt = stmt.order_by(func.coalesce(Account.purchased_at, Account.created_at).desc()).offset((page - 1) * limit).limit(limit)
             result = await session.execute(stmt)
             accounts = result.scalars().all()
             
@@ -1126,7 +1126,7 @@ async def get_admin_store_sales(page: int = 1, limit: int = 10, q: str = None):
                     "price": acc.price,
                     "phone": acc.phone_number,
                     "country": f"{flag} {acc.country}",
-                    "date": acc.purchased_at.isoformat() if acc.purchased_at else None
+                    "date": (acc.purchased_at or acc.created_at).isoformat() if (acc.purchased_at or acc.created_at) else None
                 })
             
             return {
