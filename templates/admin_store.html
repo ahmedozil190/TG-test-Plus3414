@@ -2743,6 +2743,28 @@
 
         // Confirm Modal Logic
         let confirmResolve = null;
+        function showAlert(title, msg, icon = 'fas fa-info-circle', iconBg = 'rgba(59, 130, 246, 0.1)', iconColor = '#3b82f6') {
+            if (title) document.getElementById('confirm-title').innerText = title;
+            if (msg) document.getElementById('confirm-msg').innerText = msg;
+
+            const iconWrap = document.querySelector('.confirm-icon');
+            iconWrap.innerHTML = `<i class="${icon}"></i>`;
+            iconWrap.style.background = iconBg;
+            iconWrap.style.color = iconColor;
+
+            const yesBtn = document.querySelector('.confirm-yes');
+            const noBtn = document.querySelector('.confirm-no');
+
+            noBtn.style.display = 'none'; // Hide Cancel for Alert
+            yesBtn.innerText = currentLang === 'ar' ? 'حسناً' : 'OK';
+            yesBtn.className = 'confirm-btn confirm-yes';
+
+            document.getElementById('confirm-overlay').classList.add('active');
+            return new Promise((resolve) => {
+                confirmResolve = resolve;
+            });
+        }
+
         function showConfirm(title, msg, btnText, icon = 'fas fa-question-circle', iconBg = 'rgba(59, 130, 246, 0.1)', iconColor = '#3b82f6', btnClass = '') {
             if (title) document.getElementById('confirm-title').innerText = title;
             if (msg) document.getElementById('confirm-msg').innerText = msg;
@@ -3217,9 +3239,24 @@
                     await fetchStoreUserPrices();
                 } else {
                     const data = await res.json();
-                    tg.showAlert(data.detail || data.message || "Failed to save");
+                    showAlert(
+                        currentLang === 'ar' ? 'تنبيه' : 'Alert',
+                        data.detail || data.message || (currentLang === 'ar' ? 'فشل الحفظ' : "Failed to save"),
+                        'fas fa-exclamation-triangle',
+                        'rgba(239, 68, 68, 0.1)',
+                        '#ef4444'
+                    );
                 }
-            } catch (e) { console.error(e); tg.showAlert("Error saving"); }
+            } catch (e) {
+                console.error(e);
+                showAlert(
+                    currentLang === 'ar' ? 'خطأ' : 'Error',
+                    currentLang === 'ar' ? 'فشل الاتصال بالخادم' : "Server connection failed",
+                    'fas fa-wifi',
+                    'rgba(239, 68, 68, 0.1)',
+                    '#ef4444'
+                );
+            }
             btn.disabled = false;
             btn.innerHTML = originalHtml;
         }
