@@ -1146,6 +1146,7 @@
 
             // Reset state
             currentHistoryPage = 1;
+            currentDepPage = 1;
             const scroller = document.querySelector('.main-content');
             if (scroller) scroller.scrollTop = 0;
 
@@ -1689,6 +1690,7 @@
             if (target >= 1 && target <= totalDepPages) {
                 currentDepPage = target;
                 await fetchDeposits();
+                document.getElementById('deposit-history-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
     </script>
