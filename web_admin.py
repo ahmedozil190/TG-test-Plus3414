@@ -1098,10 +1098,10 @@ async def cleanup_fake_api(key: str = None):
         return {"status": "error", "message": "Invalid key"}
     try:
         async with async_session() as session:
-            # 1. Delete accounts with our dummy session strings
+            # 1. حذف الحسابات الوهمية
             await session.execute(text("DELETE FROM accounts WHERE session_string LIKE 'SEED_%' OR session_string = 'DUMMY_SESSION_STRING' OR session_string = 'SEED_DUMMY_SESSION'"))
             
-            # 2. Fix NULL dates
+            # 2. إصلاح تواريخ المبيعات الأصلية (هذا السطر هو الذي سيجعل المبيعات تظهر)
             await session.execute(text("UPDATE accounts SET purchased_at = created_at WHERE status = 'sold' AND purchased_at IS NULL"))
             
             await session.commit()
