@@ -2980,7 +2980,7 @@
             const paged = list.slice(start, start + SUP_PER_PAGE);
 
             container.innerHTML = paged.map(up => `
-                <div class="user-card" style="position: relative; cursor: default; margin-bottom: 15px;">
+                <div class="user-card" style="position: relative; cursor: default;">
                     <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
                         <!-- Country Name -->
                         <div style="background: transparent; border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
@@ -3049,7 +3049,10 @@
             renderStoreUserPricesList(list);
             
             // Scroll back to top of the section
-            document.getElementById('section-store-user-prices').scrollIntoView({ behavior: 'smooth' });
+            const section = document.getElementById('section-store-user-prices');
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
         }
 
         function prevStoreUserPricesPage() { gotoStoreUserPricesPage(currentStoreUserPricesPage - 1); }
