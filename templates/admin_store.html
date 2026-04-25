@@ -2024,7 +2024,19 @@
             const rowS = "background: transparent; border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;";
             const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;";
 
-            container.innerHTML = paged.map(item => `
+            container.innerHTML = paged.map(item => {
+                let displayDate = "N/A";
+                if (item.date) {
+                    try {
+                        const d = new Date(item.date);
+                        displayDate = d.toLocaleString([], {
+                            year: 'numeric', month: '2-digit', day: '2-digit',
+                            hour: '2-digit', minute: '2-digit'
+                        });
+                    } catch(e) { displayDate = item.date; }
+                }
+
+                return `
                 <div class="user-card" style="padding: 20px; margin-bottom: 15px; cursor: default;">
                     <div style="display: flex; flex-direction: column; gap: 10px;">
                         <div style="${rowS}">
@@ -2045,11 +2057,11 @@
                         </div>
                         <div style="${rowS}">
                             <span style="${lblS}">${currentLang === 'ar' ? 'التاريخ' : 'Date'}</span>
-                            <span style="color: #fdd835; font-weight: 600; font-size: 0.85rem; text-align: right;">${item.date}</span>
+                            <span style="color: #fdd835; font-weight: 600; font-size: 0.85rem; text-align: right;">${displayDate}</span>
                         </div>
                     </div>
                 </div>
-            `).join('');
+            `; }).join('');
 
             if (totalPages > 1) {
                 pagContainer.style.display = 'flex';
