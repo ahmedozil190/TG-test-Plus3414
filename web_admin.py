@@ -1135,6 +1135,52 @@ async def get_admin_store_sales(page: int = 1, limit: int = 10, q: str = None):
         logger.error(f"Store Admin Sales Error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/api/admin/system/seed-sales")
+async def seed_fake_sales(key: str = None):
+    if key != "seed_key_99":
+        return {"status": "error", "message": "Invalid key"}
+    
+    try:
+        import random
+        from datetime import datetime, timedelta
+        async with async_session() as session:
+            # Get a user id to use as buyer
+            user_res = await session.execute(select(User).limit(1))
+            user = user_res.scalar()
+            buyer_id = user.id if user else 123456789
+            
+            countries = [
+                ("USA", "+1"), ("UK", "+44"), ("Egypt", "+20"), ("UAE", "+971"), 
+                ("Germany", "+49"), ("France", "+33"), ("Russia", "+7"), ("Turkey", "+90"),
+                ("Saudi Arabia", "+966"), ("Kuwait", "+965")
+            ]
+            
+            for i in range(15):
+                country_name, prefix = random.choice(countries)
+                phone = f"{prefix}{random.randint(10000000, 99999999)}"
+                price = round(random.uniform(0.5, 12.0), 2)
+                
+                purchased_at = datetime.utcnow() - timedelta(minutes=random.randint(1, 500))
+                
+                acc = Account(
+                    phone_number=phone,
+                    country=country_name,
+                    session_string="SEED_DUMMY_SESSION",
+                    status=AccountStatus.SOLD,
+                    buyer_id=buyer_id,
+                    price=price,
+                    seller_id=0,
+                    purchased_at=purchased_at,
+                    created_at=purchased_at - timedelta(hours=1)
+                )
+                session.add(acc)
+                
+            await session.commit()
+            return {"status": "success", "message": "Added 15 fake sales records", "buyer_id": buyer_id}
+    except Exception as e:
+        logger.error(f"Seed Error: {e}")
+        return {"status": "error", "message": str(e)}
+
 @app.get("/api/admin/store/settings")
 async def get_store_settings():
     try:
