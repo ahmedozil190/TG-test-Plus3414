@@ -421,6 +421,10 @@ async def get_store_data(user_id: int = None):
             balance = 0.0
             total_orders = 0
             total_spent = 0.0
+            total_deposits = 0
+            completed_orders = 0
+            active_orders = 0
+            unique_countries = 0
             if user_id:
                 user = await session.get(User, user_id)
                 if user:
@@ -434,6 +438,18 @@ async def get_store_data(user_id: int = None):
                         )
                     )).scalar() or 0.0
                     total_spent = abs(float(spent_val))
+
+                    # Personalized stats
+                    total_deposits = (await session.execute(select(func.count(Deposit.id)).where(Deposit.user_id == user_id))).scalar() or 0
+                    completed_orders = (await session.execute(
+                        select(func.count(Account.id)).where(Account.buyer_id == user_id, Account.otp_code != None)
+                    )).scalar() or 0
+                    active_orders = (await session.execute(
+                        select(func.count(Account.id)).where(Account.buyer_id == user_id, Account.otp_code == None)
+                    )).scalar() or 0
+                    unique_countries = (await session.execute(
+                        select(func.count(func.distinct(Account.country))).where(Account.buyer_id == user_id)
+                    )).scalar() or 0
 
             # Calculate Stats
             total_numbers = sum(c['count'] for c in countries)
@@ -475,7 +491,11 @@ async def get_store_data(user_id: int = None):
             "user": {
                 "balance": balance,
                 "total_orders": total_orders,
-                "total_spent": total_spent
+                "total_spent": total_spent,
+                "total_deposits": total_deposits,
+                "completed_orders": completed_orders,
+                "active_orders": active_orders,
+                "unique_countries": unique_countries
             },
             "stats": {
                 "total_numbers": total_numbers,

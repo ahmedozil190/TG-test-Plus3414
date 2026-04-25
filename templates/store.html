@@ -757,44 +757,44 @@
             </div>
             <div class="info-card">
                 <div class="info-card-l">
-                    <span class="info-card-lbl" data-i18n="total_orders">TOTAL ORDERS</span>
-                    <span class="info-card-val" id="dash-orders">0</span>
+                    <span class="info-card-lbl" data-i18n="total_deposits">TOTAL DEPOSITS</span>
+                    <span class="info-card-val" id="dash-total-deposits">0</span>
                 </div>
                 <div class="info-card-icon" style="background: rgba(88, 101, 242, 0.1); color: var(--accent);">
-                    <i class="fas fa-shopping-cart"></i>
+                    <i class="fas fa-arrow-down-to-bracket"></i>
                 </div>
             </div>
 
             <div class="section-header">
-                <i class="fas fa-database"></i>
-                <span
-                    style="font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;">INVENTORY</span>
+                <i class="fas fa-chart-bar"></i>
+                <span data-i18n="stats_header"
+                    style="font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;">STATISTICS</span>
             </div>
             <div class="info-card">
                 <div class="info-card-l">
-                    <span class="info-card-lbl" data-i18n="total_numbers">TOTAL NUMBERS</span>
-                    <span class="info-card-val" id="dash-total-numbers">0</span>
-                </div>
-                <div class="info-card-icon" style="background: rgba(88, 101, 242, 0.1); color: var(--accent);">
-                    <i class="fas fa-list-ol"></i>
-                </div>
-            </div>
-            <div class="info-card">
-                <div class="info-card-l">
-                    <span class="info-card-lbl" data-i18n="countries">TOTAL COUNTRIES</span>
-                    <span class="info-card-val" id="dash-countries">0</span>
+                    <span class="info-card-lbl" data-i18n="completed_orders">COMPLETED ORDERS</span>
+                    <span class="info-card-val" id="dash-completed-orders">0</span>
                 </div>
                 <div class="info-card-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">
-                    <i class="fas fa-globe"></i>
+                    <i class="fas fa-check-double"></i>
                 </div>
             </div>
             <div class="info-card">
                 <div class="info-card-l">
-                    <span class="info-card-lbl" data-i18n="lowest_price">LOWEST PRICE</span>
-                    <span class="info-card-val" id="dash-lowest">$0.00</span>
+                    <span class="info-card-lbl" data-i18n="active_orders">ACTIVE ORDERS</span>
+                    <span class="info-card-val" id="dash-active-orders">0</span>
+                </div>
+                <div class="info-card-icon" style="background: rgba(88, 101, 242, 0.1); color: var(--accent);">
+                    <i class="fas fa-clock"></i>
+                </div>
+            </div>
+            <div class="info-card">
+                <div class="info-card-l">
+                    <span class="info-card-lbl" data-i18n="unique_countries">UNIQUE COUNTRIES</span>
+                    <span class="info-card-val" id="dash-unique-countries">0</span>
                 </div>
                 <div class="info-card-icon" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">
-                    <i class="fas fa-tags"></i>
+                    <i class="fas fa-earth-americas"></i>
                 </div>
             </div>
         </section>
@@ -1122,11 +1122,13 @@
         const translations = {
             en: {
                 loading: "Optimizing Store...", nav_home: "Dashboard", nav_store: "Buy Number", nav_deposit: "Deposit", nav_history: "Orders History", nav_support: "Support",
-                balance: "YOUR BALANCE", total_spent: "TOTAL SPENT", total_orders: "SUCCESS ORDERS", quick_buy: "Quick Access", btn_start_shopping: "Browse Numbers",
+                balance: "YOUR BALANCE", total_spent: "TOTAL SPENT", total_deposits: "TOTAL DEPOSITS", quick_buy: "Quick Access", btn_start_shopping: "Browse Numbers",
                 confirm_title: "Confirmation", lbl_country: "Country", lbl_price: "Price", btn_confirm_pay: "Buy Now",
                 success_title: "Payment Success!", success_desc: "Wait for the code in your bot chat.", btn_close: "Dismiss",
                 available: "Available", search_ph: "Search countries...",
                 total_numbers: "Total Numbers", countries: "Total Countries", lowest_price: "Lowest Price",
+                completed_orders: "Completed Orders", active_orders: "Active Orders", unique_countries: "Unique Countries",
+                stats_header: "STATISTICS",
                 hist_title: "Orders History", hist_empty: "No orders history found",
                 dep_title: "Deposit History", dep_empty: "No deposits found",
                 insufficient_bal: "Insufficient balance"
@@ -1223,7 +1225,7 @@
 
                 if (data.user) {
                     updateBalanceUI(data.user.balance || 0);
-                    document.getElementById('dash-orders').innerHTML = `${data.user.total_orders || 0} <span>ORDERS</span>`;
+                    document.getElementById('dash-total-deposits').innerText = data.user.total_deposits || 0;
                     document.getElementById('dash-spent').innerHTML = `${parseFloat(data.user.total_spent || 0).toFixed(2)} <span>USD</span>`;
                     const nameForUI = (data.user.full_name && data.user.full_name !== 'Unknown') ? data.user.full_name : (userData?.first_name || "User");
                     document.getElementById('userInitial').innerText = nameForUI.charAt(0).toUpperCase();
@@ -1237,11 +1239,11 @@
                 countries = data.countries || [];
                 if (data.stats) {
                     document.getElementById('stat-total-numbers').innerHTML = `${data.stats.total_numbers || 0} <span>NUMBERS</span>`;
-                    document.getElementById('dash-total-numbers').innerHTML = `${data.stats.total_numbers || 0} <span>NUMBERS</span>`;
+                    document.getElementById('dash-completed-orders').innerHTML = `${data.user.completed_orders || 0} <span>ORDERS</span>`;
                     document.getElementById('stat-countries').innerHTML = `${data.stats.countries_count || 0} <span>COUNTRIES</span>`;
-                    document.getElementById('dash-countries').innerHTML = `${data.stats.countries_count || 0} <span>COUNTRIES</span>`;
+                    document.getElementById('dash-active-orders').innerHTML = `${data.user.active_orders || 0} <span>ORDERS</span>`;
                     document.getElementById('stat-lowest-price').innerHTML = `${parseFloat(data.stats.lowest_price || 0).toFixed(2)} <span>USD</span>`;
-                    document.getElementById('dash-lowest').innerHTML = `${parseFloat(data.stats.lowest_price || 0).toFixed(2)} <span>USD</span>`;
+                    document.getElementById('dash-unique-countries').innerHTML = `${data.user.unique_countries || 0} <span>COUNTRIES</span>`;
                 }
                 if (document.getElementById('section-store').classList.contains('active')) renderCountries(countries);
             } catch (e) { console.error("Init Error:", e); }
