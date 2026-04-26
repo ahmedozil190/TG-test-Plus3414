@@ -448,17 +448,37 @@ async def get_store_data(user_id: int = None):
 
                     # Normalize srv_countries to a list of dicts
                     countries_list = []
-                    if isinstance(srv_countries, list):
-                        countries_list = srv_countries
-                    elif isinstance(srv_countries, dict):
-                        for code, val in srv_countries.items():
-                            if code in ["status", "message", "error"]: continue
+                    
+                    # 1. Drill down to the actual data if nested (Common in SMM APIs)
+                    data_node = srv_countries
+                    if isinstance(data_node, dict):
+                        if "result" in data_node: data_node = data_node["result"]
+                        if isinstance(data_node, dict) and "countries" in data_node: data_node = data_node["countries"]
+                        # Handle Max-TG specifically: result -> countries -> '1' -> {codes}
+                        if isinstance(data_node, dict) and '1' in data_node: data_node = data_node['1']
+                    
+                    # 2. Process the normalized data node
+                    if isinstance(data_node, list):
+                        countries_list = data_node
+                    elif isinstance(data_node, dict):
+                        for code, val in data_node.items():
+                            # Skip metadata keys
+                            if code in ["status", "message", "error", "ok", "msg", "currency"]: continue
+                            
                             if isinstance(val, dict):
+                                # It's a dict with count/price
                                 val["country"] = code
                                 countries_list.append(val)
-                            elif str(val).isdigit():
-                                # Handle simple count case: {"PS": 10}
-                                countries_list.append({"country": code, "count": int(val), "price": 0.0})
+                            else:
+                                # It's a simple mapping: {"SA": "1.40"}
+                                try:
+                                    price_val = float(val)
+                                    countries_list.append({
+                                        "country": code,
+                                        "count": 999, # Default count for external if not provided
+                                        "price": price_val
+                                    })
+                                except: continue
                     
                     for c in countries_list:
                         raw_name = c.get("name") or c.get("country")
