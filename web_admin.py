@@ -432,45 +432,61 @@ async def get_store_data(user_id: int = None):
             active_servers = (await session.execute(select(ApiServer).where(ApiServer.is_active == True))).scalars().all()
             logger.info(f"Active external servers: {len(active_servers)}")
             for srv in active_servers:
-                logger.info(f"Processing server: {srv.name} ({srv.url})")
-                provider = ExternalProvider(srv.name, srv.url, srv.api_key, srv.profit_margin)
-                srv_countries = await provider.get_countries()
-                
-                # Normalize srv_countries to a list of dicts
-                countries_list = []
-                if isinstance(srv_countries, list):
-                    countries_list = srv_countries
-                elif isinstance(srv_countries, dict):
-                    for code, val in srv_countries.items():
-                        if isinstance(val, dict):
-                            val["country"] = code
-                            countries_list.append(val)
-                        else:
-                            # Handle simple count case: {"PS": 10}
-                            countries_list.append({"country": code, "count": val, "price": 0.0})
-                
-                for c in countries_list:
-                    raw_name = c.get("name") or c.get("country")
-                    if not raw_name: continue
+                try:
+                    logger.info(f"Processing server: {srv.name} ({srv.url})")
+                    provider = ExternalProvider(srv.name, srv.url, srv.api_key, srv.profit_margin)
+                    srv_countries = await provider.get_countries()
                     
-                    # Try to resolve human name if it looks like a code
-                    resolved_name, _, _ = resolve_country_info(str(raw_name))
-                    name = resolved_name if resolved_name and resolved_name != "Unknown" else raw_name
+                    if not srv_countries:
+                        logger.warning(f"Server {srv.name} returned no data.")
+                        continue
+
+                    # Handle common error formats in responses
+                    if isinstance(srv_countries, dict) and srv_countries.get("status") in ["error", "fail"]:
+                        logger.error(f"Server {srv.name} API Error: {srv_countries.get('message')}")
+                        continue
+
+                    # Normalize srv_countries to a list of dicts
+                    countries_list = []
+                    if isinstance(srv_countries, list):
+                        countries_list = srv_countries
+                    elif isinstance(srv_countries, dict):
+                        for code, val in srv_countries.items():
+                            if code in ["status", "message", "error"]: continue
+                            if isinstance(val, dict):
+                                val["country"] = code
+                                countries_list.append(val)
+                            elif str(val).isdigit():
+                                # Handle simple count case: {"PS": 10}
+                                countries_list.append({"country": code, "count": int(val), "price": 0.0})
                     
-                    count = int(c.get("count", 0))
-                    p_price = float(c.get("price", 0))
-                    if count <= 0: continue
-                    
-                    if name not in countries_map:
-                        countries_map[name] = {
-                            "name": name,
-                            "count": count,
-                            "server_id": srv.id,
-                            "p_price": p_price,
-                            "calc_price": provider.calculate_price(p_price)
-                        }
-                    else:
-                        countries_map[name]["count"] += count
+                    for c in countries_list:
+                        raw_name = c.get("name") or c.get("country")
+                        if not raw_name: continue
+                        
+                        # Try to resolve human name if it looks like a code
+                        resolved_name, _, _ = resolve_country_info(str(raw_name))
+                        name = resolved_name if resolved_name and resolved_name != "Unknown" else raw_name
+                        
+                        try:
+                            count = int(c.get("count", 0))
+                            p_price = float(c.get("price", 0))
+                            if count <= 0: continue
+                            
+                            if name not in countries_map:
+                                countries_map[name] = {
+                                    "name": name,
+                                    "count": count,
+                                    "server_id": srv.id,
+                                    "p_price": p_price,
+                                    "calc_price": provider.calculate_price(p_price)
+                                }
+                            else:
+                                countries_map[name]["count"] += count
+                        except: continue
+                except Exception as srv_err:
+                    logger.error(f"Error processing server {srv.name}: {srv_err}")
+                    continue
 
             # 3. Final Assembly with Metadata & Pricing
             countries = []
