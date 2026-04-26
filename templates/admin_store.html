@@ -601,6 +601,118 @@
             background: var(--bg-elevated);
             border: 1px solid var(--border);
             border-radius: 20px;
+            padding: 22px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s var(--ease);
+            cursor: pointer;
+        }
+
+        /* ========== Settings Menu (New) ========== */
+        .settings-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 5px;
+        }
+
+        .settings-item {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            cursor: pointer;
+            transition: all 0.2s var(--ease);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .settings-item:hover {
+            background: var(--card-glass);
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .settings-item:active {
+            transform: scale(0.98);
+        }
+
+        .settings-icon-box {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+            transition: 0.3s;
+        }
+
+        .settings-item:hover .settings-icon-box {
+            transform: scale(1.1) rotate(-5deg);
+        }
+
+        .settings-text {
+            flex: 1;
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--text-primary);
+            letter-spacing: 0.3px;
+        }
+
+        .settings-arrow {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            opacity: 0.4;
+            transition: 0.3s;
+        }
+
+        .settings-item:hover .settings-arrow {
+            opacity: 1;
+            transform: translateX(3px);
+            color: var(--accent);
+        }
+
+        /* Sub-settings view */
+        .settings-sub-view {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .settings-sub-view.active {
+            display: block;
+        }
+
+        .settings-back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: 0.2s;
+            padding: 8px 12px;
+            border-radius: 10px;
+            background: var(--card-glass);
+        }
+
+        .settings-back-btn:hover {
+            color: var(--text-primary);
+            background: var(--tab-bg);
+        }
+        .settings-sub-content {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 20px;
             padding: 22px 20px;
             display: flex;
             align-items: center;
@@ -1980,63 +2092,199 @@
 
             <!-- ===== Settings Section ===== -->
             <section id="section-settings" class="view-section">
+                <style>
+                    .settings-menu { display: none; flex-direction: column; gap: 10px; }
+                    .settings-menu.active { display: flex; }
+                    .settings-item { background: var(--card-bg); padding: 15px; border-radius: 12px; display: flex; align-items: center; cursor: pointer; border: 1px solid var(--border); transition: 0.2s; }
+                    .settings-item:hover { border-color: var(--accent); }
+                    .settings-icon-box { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 8px; margin-right: 15px; font-size: 1.2rem; }
+                    .settings-text { flex-grow: 1; font-weight: 600; }
+                    .settings-arrow { color: var(--text-secondary); }
+                    .settings-sub-view { display: none; }
+                    .settings-sub-view.active { display: block; }
+                    .settings-back-btn { margin-bottom: 20px; font-weight: 600; color: var(--accent); cursor: pointer; display: flex; align-items: center; gap: 8px; }
+                </style>
                 <div class="section-header">
                     <i class="fas fa-cog"></i>
                     <h2 data-i18n="nav_settings">Settings</h2>
                 </div>
-                <div class="card" style="padding: 22px;">
-                    <div style="margin-bottom: 25px;">
-                        <h3 style="font-size: 1rem; margin-bottom: 15px; color: var(--accent);"><i class="fas fa-wallet"
-                                style="margin-right: 8px;"></i> Binance Integration</h3>
 
-                        <div class="form-group" style="margin-bottom: 15px;">
-                            <label
-                                style="font-size: 0.85rem; color: var(--text-s); margin-bottom: 8px; display: block;">Binance
-                                API Key</label>
-                            <input type="text" id="setting-binance-key" class="search-input" style="margin-bottom: 0;"
-                                placeholder="Enter API Key">
+                <!-- Main Settings Menu -->
+                <div id="settings-main-menu" class="settings-menu active">
+                    <!-- Bot Name & Links -->
+                    <div class="settings-item" onclick="openSettingSub('bot-links')">
+                        <div class="settings-icon-box" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">
+                            <i class="fas fa-robot"></i>
                         </div>
+                        <span class="settings-text">Bot Name & Links</span>
+                        <i class="fas fa-chevron-right settings-arrow"></i>
+                    </div>
 
-                        <div class="form-group" style="margin-bottom: 15px;">
-                            <label
-                                style="font-size: 0.85rem; color: var(--text-s); margin-bottom: 8px; display: block;">Binance
-                                API Secret</label>
-                            <input type="text" id="setting-binance-secret" class="search-input"
-                                style="margin-bottom: 0;" placeholder="Enter Secret Key (Hidden)">
+                    <!-- Payments & Integration -->
+                    <div class="settings-item" onclick="openSettingSub('payments')">
+                        <div class="settings-icon-box" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">
+                            <i class="fas fa-wallet"></i>
                         </div>
+                        <span class="settings-text">Payments & Integration</span>
+                        <i class="fas fa-chevron-right settings-arrow"></i>
+                    </div>
 
-                        <hr style="border: none; border-top: 1px solid var(--border); margin: 20px 0;">
-                        <h3 style="font-size: 1rem; margin-bottom: 15px; color: var(--accent);"><i class="fas fa-coins"
-                                style="margin-right: 8px;"></i> Deposit Addresses</h3>
-
-                        <div class="form-group" style="margin-bottom: 15px;">
-                            <label
-                                style="font-size: 0.85rem; color: var(--text-s); margin-bottom: 8px; display: block;">Binance
-                                Pay ID</label>
-                            <input type="text" id="setting-binance-pay-id" class="search-input"
-                                style="margin-bottom: 0;" placeholder="Enter Binance Pay ID">
+                    <!-- Subscriptions Channels -->
+                    <div class="settings-item" onclick="openSettingSub('subscriptions')">
+                        <div class="settings-icon-box" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">
+                            <i class="fas fa-broadcast-tower"></i>
                         </div>
+                        <span class="settings-text">Subscriptions Channels</span>
+                        <i class="fas fa-chevron-right settings-arrow"></i>
+                    </div>
 
-                        <div class="form-group" style="margin-bottom: 15px;">
-                            <label
-                                style="font-size: 0.85rem; color: var(--text-s); margin-bottom: 8px; display: block;">TRX
-                                Address (TRC20)</label>
-                            <input type="text" id="setting-trx-address" class="search-input" style="margin-bottom: 0;"
-                                placeholder="Enter TRX TRC20 Address">
+                    <!-- Points & Rewards -->
+                    <div class="settings-item" onclick="openSettingSub('rewards')">
+                        <div class="settings-icon-box" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">
+                            <i class="fas fa-coins"></i>
                         </div>
+                        <span class="settings-text">Points & Rewards</span>
+                        <i class="fas fa-chevron-right settings-arrow"></i>
+                    </div>
 
-                        <div class="form-group" style="margin-bottom: 15px;">
-                            <label
-                                style="font-size: 0.85rem; color: var(--text-s); margin-bottom: 8px; display: block;">USDT
-                                Address (BEP20)</label>
-                            <input type="text" id="setting-usdt-bep20-address" class="search-input"
-                                style="margin-bottom: 0;" placeholder="Enter USDT BEP20 Address">
+                    <!-- Penalty System -->
+                    <div class="settings-item" onclick="openSettingSub('penalty')">
+                        <div class="settings-icon-box" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">
+                            <i class="fas fa-gavel"></i>
+                        </div>
+                        <span class="settings-text">Penalty System</span>
+                        <i class="fas fa-chevron-right settings-arrow"></i>
+                    </div>
+
+                    <!-- Backup & Cloud -->
+                    <div class="settings-item" onclick="openSettingSub('cloud')">
+                        <div class="settings-icon-box" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <span class="settings-text">Cloud Migration & Backup</span>
+                        <i class="fas fa-chevron-right settings-arrow"></i>
+                    </div>
+                </div>
+
+                <!-- Sub-Settings Views -->
+                <div id="settings-sub-container">
+                    
+                    <!-- 1. Bot Name & Links -->
+                    <div id="sub-bot-links" class="settings-sub-view">
+                        <div class="settings-back-btn" onclick="closeSettingSub()">
+                            <i class="fas fa-arrow-left"></i> Back to Settings
+                        </div>
+                        <div class="card" style="padding: 22px;">
+                            <h3 style="font-size: 1.1rem; margin-bottom: 20px; color: #ef4444;"><i class="fas fa-robot" style="margin-right: 8px;"></i> Bot Name & Links</h3>
+                            <p style="color: var(--text-s); font-size: 0.9rem; margin-bottom: 20px;">This feature is currently in development. You will be able to customize your bot's name and official links here.</p>
                         </div>
                     </div>
 
-                    <button class="btn-find" onclick="saveStoreSettings()">
-                        <i class="fas fa-save"></i> Save Settings
-                    </button>
+                    <!-- 2. Payments & Integration -->
+                    <div id="sub-payments" class="settings-sub-view">
+                        <div class="settings-back-btn" onclick="closeSettingSub()">
+                            <i class="fas fa-arrow-left"></i> Back to Settings
+                        </div>
+                        <div class="card" style="padding: 22px;">
+                            <div style="margin-bottom: 25px;">
+                                <h3 style="font-size: 1rem; margin-bottom: 15px; color: var(--accent);"><i class="fas fa-wallet"
+                                        style="margin-right: 8px;"></i> Binance Integration</h3>
+        
+                                <div class="form-group" style="margin-bottom: 15px;">
+                                    <label
+                                        style="font-size: 0.85rem; color: var(--text-s); margin-bottom: 8px; display: block;">Binance
+                                        API Key</label>
+                                    <input type="text" id="setting-binance-key" class="search-input" style="margin-bottom: 0;"
+                                        placeholder="Enter API Key">
+                                </div>
+        
+                                <div class="form-group" style="margin-bottom: 15px;">
+                                    <label
+                                        style="font-size: 0.85rem; color: var(--text-s); margin-bottom: 8px; display: block;">Binance
+                                        API Secret</label>
+                                    <input type="text" id="setting-binance-secret" class="search-input"
+                                        style="margin-bottom: 0;" placeholder="Enter Secret Key (Hidden)">
+                                </div>
+        
+                                <hr style="border: none; border-top: 1px solid var(--border); margin: 20px 0;">
+                                <h3 style="font-size: 1rem; margin-bottom: 15px; color: var(--accent);"><i class="fas fa-coins"
+                                        style="margin-right: 8px;"></i> Deposit Addresses</h3>
+        
+                                <div class="form-group" style="margin-bottom: 15px;">
+                                    <label
+                                        style="font-size: 0.85rem; color: var(--text-s); margin-bottom: 8px; display: block;">Binance
+                                        Pay ID</label>
+                                    <input type="text" id="setting-binance-pay-id" class="search-input"
+                                        style="margin-bottom: 0;" placeholder="Enter Binance Pay ID">
+                                </div>
+        
+                                <div class="form-group" style="margin-bottom: 15px;">
+                                    <label
+                                        style="font-size: 0.85rem; color: var(--text-s); margin-bottom: 8px; display: block;">TRX
+                                        Address (TRC20)</label>
+                                    <input type="text" id="setting-trx-address" class="search-input" style="margin-bottom: 0;"
+                                        placeholder="Enter TRX TRC20 Address">
+                                </div>
+        
+                                <div class="form-group" style="margin-bottom: 15px;">
+                                    <label
+                                        style="font-size: 0.85rem; color: var(--text-s); margin-bottom: 8px; display: block;">USDT
+                                        Address (BEP20)</label>
+                                    <input type="text" id="setting-usdt-bep20-address" class="search-input"
+                                        style="margin-bottom: 0;" placeholder="Enter USDT BEP20 Address">
+                                </div>
+                            </div>
+        
+                            <button class="btn-find" onclick="saveStoreSettings()">
+                                <i class="fas fa-save"></i> Save Settings
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 3. Subscriptions -->
+                    <div id="sub-subscriptions" class="settings-sub-view">
+                        <div class="settings-back-btn" onclick="closeSettingSub()">
+                            <i class="fas fa-arrow-left"></i> Back to Settings
+                        </div>
+                        <div class="card" style="padding: 22px;">
+                            <h3 style="font-size: 1.1rem; margin-bottom: 20px; color: #8b5cf6;"><i class="fas fa-broadcast-tower" style="margin-right: 8px;"></i> Subscriptions</h3>
+                            <p style="color: var(--text-s); font-size: 0.9rem;">Manage your official channels and subscription requirements here.</p>
+                        </div>
+                    </div>
+
+                    <!-- 4. Rewards -->
+                    <div id="sub-rewards" class="settings-sub-view">
+                        <div class="settings-back-btn" onclick="closeSettingSub()">
+                            <i class="fas fa-arrow-left"></i> Back to Settings
+                        </div>
+                        <div class="card" style="padding: 22px;">
+                            <h3 style="font-size: 1.1rem; margin-bottom: 20px; color: #f59e0b;"><i class="fas fa-coins" style="margin-right: 8px;"></i> Points & Rewards</h3>
+                            <p style="color: var(--text-s); font-size: 0.9rem;">Configure point systems and customer rewards to boost engagement.</p>
+                        </div>
+                    </div>
+
+                    <!-- 5. Penalty -->
+                    <div id="sub-penalty" class="settings-sub-view">
+                        <div class="settings-back-btn" onclick="closeSettingSub()">
+                            <i class="fas fa-arrow-left"></i> Back to Settings
+                        </div>
+                        <div class="card" style="padding: 22px;">
+                            <h3 style="font-size: 1.1rem; margin-bottom: 20px; color: #ef4444;"><i class="fas fa-gavel" style="margin-right: 8px;"></i> Penalty System</h3>
+                            <p style="color: var(--text-s); font-size: 0.9rem;">Setup rules and automatic penalties for user misconduct.</p>
+                        </div>
+                    </div>
+
+                    <!-- 6. Cloud -->
+                    <div id="sub-cloud" class="settings-sub-view">
+                        <div class="settings-back-btn" onclick="closeSettingSub()">
+                            <i class="fas fa-arrow-left"></i> Back to Settings
+                        </div>
+                        <div class="card" style="padding: 22px;">
+                            <h3 style="font-size: 1.1rem; margin-bottom: 20px; color: #10b981;"><i class="fas fa-cloud-upload-alt" style="margin-right: 8px;"></i> Cloud & Backup</h3>
+                            <p style="color: var(--text-s); font-size: 0.9rem;">Manage cloud migrations and scheduled system backups.</p>
+                        </div>
+                    </div>
+
                 </div>
             </section>
 
@@ -3647,6 +3895,19 @@
                     tg.showAlert("Failed to delete.");
                 }
             } catch (e) { console.error(e); tg.showAlert("Error deleting."); }
+        }
+
+        function openSettingSub(subId) {
+            document.getElementById('settings-main-menu').classList.remove('active');
+            // Hide all sub views first
+            document.querySelectorAll('.settings-sub-view').forEach(v => v.classList.remove('active'));
+            // Show target
+            document.getElementById('sub-' + subId).classList.add('active');
+        }
+
+        function closeSettingSub() {
+            document.querySelectorAll('.settings-sub-view').forEach(v => v.classList.remove('active'));
+            document.getElementById('settings-main-menu').classList.add('active');
         }
 
         const savedView = sessionStorage.getItem('last_view_admin_store') || 'home';
