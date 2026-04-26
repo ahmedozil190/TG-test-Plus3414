@@ -2092,10 +2092,7 @@
 
             <!-- ===== Settings Section ===== -->
             <section id="section-settings" class="view-section">
-                <div class="section-header">
-                    <i class="fas fa-cog"></i>
-                    <h2 data-i18n="nav_settings">Settings</h2>
-                </div>
+                <div style="height: 15px;"></div> <!-- Spacing for removed header -->
 
                 <!-- Main Settings Menu -->
                 <div id="settings-main-menu" class="settings-menu active">
@@ -3812,6 +3809,10 @@
             document.querySelectorAll('.settings-sub-view').forEach(v => v.classList.remove('active'));
             // Show target
             document.getElementById('sub-' + subId).classList.add('active');
+            // Scroll back to top to simulate page entry
+            window.scrollTo({ top: 0, behavior: 'auto' });
+            const scroller = document.getElementById('app-content-scroller');
+            if (scroller) scroller.scrollTo({ top: 0, behavior: 'auto' });
         }
 
         function closeSettingSub() {
