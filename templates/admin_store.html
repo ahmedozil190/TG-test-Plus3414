@@ -708,6 +708,7 @@
             color: var(--text-primary);
             background: var(--tab-bg);
         }
+
         .settings-sub-content {
             background: var(--bg-elevated);
             border: 1px solid var(--border);
@@ -2126,49 +2127,76 @@
                         <span class="settings-text">Subscriptions</span>
                         <i class="fas fa-chevron-right settings-arrow"></i>
                     </div>
+
+                    <!-- API Servers -->
+                    <div class="settings-item" onclick="switchNav('settings-servers', null)">
+                        <div class="settings-icon-box" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                            <i class="fas fa-server"></i>
+                        </div>
+                        <span class="settings-text">API Servers</span>
+                        <i class="fas fa-chevron-right settings-arrow"></i>
+                    </div>
                 </div>
             </section>
 
             <!-- ===== 1. Payments & Integration Page ===== -->
             <section id="section-settings-payments" class="view-section">
-                <button class="settings-back-btn" onclick="switchNav('settings', null)" style="margin-top: 10px; margin-bottom: 20px;">
+                <button class="settings-back-btn" onclick="switchNav('settings', null)"
+                    style="margin-top: 10px; margin-bottom: 20px;">
                     <i class="fas fa-arrow-left"></i> Back to Settings
                 </button>
 
                 <div class="card" style="padding: 28px; margin-bottom: 20px;">
                     <div style="margin-bottom: 30px;">
                         <div class="form-group" style="margin-bottom: 25px;">
-                            <label style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">Binance API Key</label>
-                            <input type="text" id="setting-binance-key" class="search-input" 
-                                style="margin-bottom: 0; padding: 16px; font-size: 1rem; height: auto;" placeholder="Enter API Key">
+                            <label
+                                style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">Binance
+                                API Key</label>
+                            <input type="text" id="setting-binance-key" class="search-input"
+                                style="margin-bottom: 0; padding: 16px; font-size: 1rem; height: auto;"
+                                placeholder="Enter API Key">
                         </div>
 
                         <div class="form-group" style="margin-bottom: 25px;">
-                            <label style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">Binance API Secret</label>
-                            <input type="text" id="setting-binance-secret" class="search-input" 
-                                style="margin-bottom: 0; padding: 16px; font-size: 1rem; height: auto;" placeholder="Enter Secret Key (Hidden)">
+                            <label
+                                style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">Binance
+                                API Secret</label>
+                            <input type="text" id="setting-binance-secret" class="search-input"
+                                style="margin-bottom: 0; padding: 16px; font-size: 1rem; height: auto;"
+                                placeholder="Enter Secret Key (Hidden)">
                         </div>
 
                         <div class="form-group" style="margin-bottom: 25px;">
-                            <label style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">Binance Pay ID</label>
-                            <input type="text" id="setting-binance-pay-id" class="search-input" 
-                                style="margin-bottom: 0; padding: 16px; font-size: 1rem; height: auto;" placeholder="Enter Binance Pay ID">
+                            <label
+                                style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">Binance
+                                Pay ID</label>
+                            <input type="text" id="setting-binance-pay-id" class="search-input"
+                                style="margin-bottom: 0; padding: 16px; font-size: 1rem; height: auto;"
+                                placeholder="Enter Binance Pay ID">
                         </div>
 
                         <div class="form-group" style="margin-bottom: 25px;">
-                            <label style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">TRX Address (TRC20)</label>
-                            <input type="text" id="setting-trx-address" class="search-input" 
-                                style="margin-bottom: 0; padding: 16px; font-size: 1rem; height: auto;" placeholder="Enter TRX TRC20 Address">
+                            <label
+                                style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">TRX
+                                Address (TRC20)</label>
+                            <input type="text" id="setting-trx-address" class="search-input"
+                                style="margin-bottom: 0; padding: 16px; font-size: 1rem; height: auto;"
+                                placeholder="Enter TRX TRC20 Address">
                         </div>
 
                         <div class="form-group" style="margin-bottom: 25px;">
-                            <label style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">USDT Address (BEP20)</label>
-                            <input type="text" id="setting-usdt-bep20-address" class="search-input" 
-                                style="margin-bottom: 0; padding: 16px; font-size: 1rem; height: auto;" placeholder="Enter USDT BEP20 Address">
+                            <label
+                                style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">USDT
+                                Address (BEP20)</label>
+                            <input type="text" id="setting-usdt-bep20-address" class="search-input"
+                                style="margin-bottom: 0; padding: 16px; font-size: 1rem; height: auto;"
+                                placeholder="Enter USDT BEP20 Address">
                         </div>
                     </div>
 
-                    <button class="primary-btn" style="width: 100%; padding: 16px; font-size: 1.05rem; font-weight: 700; color: #fff !important;" onclick="saveStoreSettings()">
+                    <button class="primary-btn"
+                        style="width: 100%; padding: 16px; font-size: 1.05rem; font-weight: 700; color: #fff !important;"
+                        onclick="saveStoreSettings()">
                         <i class="fas fa-save" style="margin-right: 8px;"></i> Save Settings
                     </button>
                 </div>
@@ -2177,13 +2205,46 @@
 
             <!-- ===== 2. Subscriptions Channels Page ===== -->
             <section id="section-settings-subscriptions" class="view-section">
-                <button class="settings-back-btn" onclick="switchNav('settings', null)" style="margin-top: 10px; margin-bottom: 20px;">
+                <button class="settings-back-btn" onclick="switchNav('settings', null)"
+                    style="margin-top: 10px; margin-bottom: 20px;">
                     <i class="fas fa-arrow-left"></i> Back to Settings
                 </button>
 
                 <div class="card" style="padding: 22px; margin-bottom: 20px;">
-                    <h3 style="font-size: 1.1rem; margin-bottom: 20px; color: #8b5cf6;"><i class="fas fa-broadcast-tower" style="margin-right: 8px;"></i> Subscriptions</h3>
-                    <p style="color: var(--text-s); font-size: 0.9rem;">Manage your official channels and subscription requirements here.</p>
+                    <h3 style="font-size: 1.1rem; margin-bottom: 20px; color: #8b5cf6;"><i
+                            class="fas fa-broadcast-tower" style="margin-right: 8px;"></i> Subscriptions</h3>
+                    <p style="color: var(--text-s); font-size: 0.9rem;">Manage your official channels and subscription
+                        requirements here.</p>
+                </div>
+            </section>
+
+            <!-- ===== 3. API Servers Page ===== -->
+            <section id="section-settings-servers" class="view-section">
+                <button class="settings-back-btn" onclick="switchNav('settings', null)"
+                    style="margin-top: 10px; margin-bottom: 20px;">
+                    <i class="fas fa-arrow-left"></i> Back to Settings
+                </button>
+
+                <div class="card" style="padding: 28px; margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                        <div>
+                            <h3 style="font-size: 1.15rem; color: #10b981; margin-bottom: 4px;">
+                                <i class="fas fa-server" style="margin-right: 8px;"></i> API Servers
+                            </h3>
+                            <p style="color: var(--text-s); font-size: 0.85rem;">Manage external number providers and your profit margins.</p>
+                        </div>
+                        <button class="primary-btn" style="padding: 10px 18px; font-size: 0.9rem;" onclick="openAddServerModal()">
+                            <i class="fas fa-plus" style="margin-right: 6px;"></i> Add Server
+                        </button>
+                    </div>
+
+                    <div id="servers-list" class="settings-menu">
+                        <!-- Placeholder for server cards -->
+                        <div style="text-align: center; padding: 40px; color: var(--text-s);">
+                            <i class="fas fa-info-circle" style="font-size: 2rem; margin-bottom: 15px; opacity: 0.5;"></i>
+                            <p>No API servers connected yet. Add your first provider to start selling numbers.</p>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -2246,6 +2307,38 @@
             </div>
             <button class="primary-btn" onclick="saveStorePrice()" data-i18n="btn_save">Save</button>
             <button class="cancel-btn" onclick="closePriceModal()" data-i18n="nav_close">Cancel</button>
+        </div>
+    </div>
+
+    <!-- ===== API Server Modal ===== -->
+    <div id="server-modal" class="modal-overlay" onclick="closeServerModal(event)">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <h3 id="server-modal-title">Add API Server</h3>
+            <div class="form-group">
+                <label>Provider Name</label>
+                <input type="text" id="srv-name" class="input-field" placeholder="e.g. 5Sim, SMS-Activate">
+            </div>
+            <div class="form-group">
+                <label>API Endpoint (Base URL)</label>
+                <input type="text" id="srv-url" class="input-field" placeholder="https://api.example.com/v1">
+            </div>
+            <div class="form-group">
+                <label>API Key</label>
+                <input type="password" id="srv-key" class="input-field" placeholder="Enter API Key">
+            </div>
+            <div class="form-group">
+                <label>Profit Margin (%)</label>
+                <input type="number" id="srv-profit" class="input-field" placeholder="20" step="1">
+                <small style="color: var(--text-s); font-size: 0.75rem;">This percentage will be added to the provider's price.</small>
+            </div>
+            <div class="form-group" style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+                <input type="checkbox" id="srv-active" checked style="width: 18px; height: 18px;">
+                <label for="srv-active" style="margin-bottom: 0;">Server Active</label>
+            </div>
+            <input type="hidden" id="srv-id">
+            
+            <button class="primary-btn" onclick="saveServer()">Save Server</button>
+            <button class="cancel-btn" onclick="closeServerModal()">Cancel</button>
         </div>
     </div>
 
@@ -2486,6 +2579,7 @@
                 settings: 'nav_settings',
                 'settings-payments': 'Payments',
                 'settings-subscriptions': 'Subscriptions',
+                'settings-servers': 'API Servers',
                 deposits: 'nav_deposits',
                 'store-user-prices': 'nav_store_user_prices'
             };
@@ -3327,6 +3421,110 @@
         }
 
         function saveSettings() { }
+
+        // API Servers Logic
+        let allServers = [];
+        function openAddServerModal() {
+            document.getElementById('srv-id').value = '';
+            document.getElementById('srv-name').value = '';
+            document.getElementById('srv-url').value = '';
+            document.getElementById('srv-key').value = '';
+            document.getElementById('srv-profit').value = '20';
+            document.getElementById('srv-active').checked = true;
+            document.getElementById('server-modal-title').innerText = "Add API Server";
+            document.getElementById('server-modal').classList.add('active');
+        }
+        function closeServerModal(e) {
+            if (e && e.target !== e.currentTarget && e.target.classList.contains('modal-overlay')) return;
+            document.getElementById('server-modal').classList.remove('active');
+        }
+        async function fetchServers() {
+            try {
+                const res = await fetch('/api/admin/store/servers');
+                const data = await res.json();
+                allServers = data.servers || [];
+                renderServers();
+            } catch (e) { console.error("Error fetching servers", e); }
+        }
+        function renderServers() {
+            const container = document.getElementById('servers-list');
+            if (allServers.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: var(--text-s);">
+                        <i class="fas fa-info-circle" style="font-size: 2rem; margin-bottom: 15px; opacity: 0.5;"></i>
+                        <p>No API servers connected yet. Add your first provider to start selling numbers.</p>
+                    </div>
+                `;
+                return;
+            }
+            container.innerHTML = allServers.map(s => `
+                <div class="settings-item no-shadow" style="padding: 16px; border: 1px solid var(--border); border-radius: 16px; margin-bottom: 10px; cursor: default;">
+                    <div class="settings-icon-box" style="background: rgba(16, 185, 129, 0.1); color: #10b981; width: 40px; height: 40px;">
+                        <i class="fas fa-server"></i>
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="font-weight: 700; color: var(--text-p); font-size: 0.95rem;">${s.name}</span>
+                            <span class="status-badge ${s.is_active ? 'active' : 'banned'}" style="font-size: 0.7rem; padding: 2px 8px;">
+                                ${s.is_active ? 'Active' : 'Inactive'}
+                            </span>
+                        </div>
+                        <div style="font-size: 0.75rem; color: var(--text-s); margin-top: 2px;">Profit: +${s.profit_margin}%</div>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="action-btn-circle" onclick="editServer(${s.id})" title="Edit"><i class="fas fa-edit"></i></button>
+                        <button class="action-btn-circle" style="color: #ef4444;" onclick="deleteServer(${s.id})" title="Delete"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        async function saveServer() {
+            const name = document.getElementById('srv-name').value.trim();
+            const url = document.getElementById('srv-url').value.trim();
+            const key = document.getElementById('srv-key').value.trim();
+            const profit = document.getElementById('srv-profit').value.trim();
+            const active = document.getElementById('srv-active').checked;
+            const id = document.getElementById('srv-id').value;
+
+            if (!name || !url || !key) { tg.showAlert("Please fill all required fields."); return; }
+
+            try {
+                const res = await fetch('/api/admin/store/servers', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        id: id ? parseInt(id) : null,
+                        name, url, api_key: key,
+                        profit_margin: parseFloat(profit),
+                        is_active: active
+                    })
+                });
+                if (res.ok) {
+                    closeServerModal();
+                    fetchServers();
+                } else { tg.showAlert("Failed to save server."); }
+            } catch (e) { console.error(e); tg.showAlert("Error saving server."); }
+        }
+        async function editServer(id) {
+            const s = allServers.find(x => x.id === id);
+            if (!s) return;
+            document.getElementById('srv-id').value = s.id;
+            document.getElementById('srv-name').value = s.name;
+            document.getElementById('srv-url').value = s.url;
+            document.getElementById('srv-key').value = s.api_key;
+            document.getElementById('srv-profit').value = s.profit_margin;
+            document.getElementById('srv-active').checked = s.is_active;
+            document.getElementById('server-modal-title').innerText = "Edit API Server";
+            document.getElementById('server-modal').classList.add('active');
+        }
+        async function deleteServer(id) {
+            if (!confirm("Are you sure you want to delete this server?")) return;
+            try {
+                const res = await fetch(`/api/admin/store/servers/${id}`, { method: 'DELETE' });
+                if (res.ok) fetchServers();
+                else tg.showAlert("Failed to delete.");
+            } catch (e) { console.error(e); }
+        }
 
         applyTheme();
         updateUI();
