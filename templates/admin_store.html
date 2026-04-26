@@ -1855,11 +1855,6 @@
 
             <!-- ===== Deposits Section ===== -->
             <section id="section-deposits" class="view-section">
-                <div class="section-header">
-                    <i class="fas fa-wallet"></i>
-                    <h2 data-i18n="nav_deposits">Deposits</h2>
-                </div>
-
                 <!-- Top Stats Cards -->
                 <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px;">
                     <!-- Stat 1: Total Requests -->
@@ -1886,7 +1881,7 @@
                 </div>
 
                 <!-- Search Card -->
-                <div class="card no-shadow" style="padding: 18px; margin-bottom: 25px;">
+                <div class="card" style="padding: 18px; margin-bottom: 25px;">
                     <input class="search-input" type="text" id="deposits-search"
                         placeholder="Search User ID or TxID...">
                     <button class="btn-find" onclick="searchDeposits()">
@@ -1898,7 +1893,7 @@
                 </div>
 
                 <!-- History Card -->
-                <div class="card no-shadow" style="padding: 22px;">
+                <div class="card" style="padding: 22px;">
                     <div class="section-header" style="margin: 0 0 20px 0;">
                         <i class="fas fa-clock-rotate-left"></i>
                         <h2>Deposits History</h2>
@@ -2338,6 +2333,7 @@
                 prices: 'nav_prices',
                 sales: 'nav_sales',
                 settings: 'nav_settings',
+                deposits: 'nav_deposits',
                 'store-user-prices': 'nav_store_user_prices'
             };
             const titleEl = document.getElementById('page-title');
@@ -3225,7 +3221,7 @@
             const start = (currentDepositsPage - 1) * DEPOSITS_PER_PAGE;
             const paged = list.slice(start, start + DEPOSITS_PER_PAGE);
 
-            const rowS = "background: transparent; border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;";
+            const rowS = "background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;";
             const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;";
 
             container.innerHTML = paged.map(item => {
@@ -3244,22 +3240,22 @@
                         <!-- Details -->
                         <div style="${rowS}">
                             <span style="${lblS}">${currentLang === 'ar' ? 'التفاصيل' : 'DETAILS'}</span>
-                            <span style="color: var(--accent); font-weight: 800; font-size: 1rem;">${details}</span>
+                            <span style="color: #8b5cf6; font-weight: 800; font-size: 1.1rem;">${details}</span>
                         </div>
+                        <!-- User ID -->
                         <div style="${rowS}">
-                            <span style="${lblS}">${currentLang === 'ar' ? 'المستخدم' : 'User'}</span>
-                            <div style="text-align: right;">
-                                <div style="color: var(--text-primary); font-weight: 700; font-size: 0.95rem;">${item.user_name}</div>
-                                <div style="color: var(--text-secondary); font-size: 0.8rem;">${item.user_handle} (${item.user_id})</div>
-                            </div>
+                            <span style="${lblS}">${currentLang === 'ar' ? 'رقم المعرف' : 'USER ID'}</span>
+                            <span style="color: #ff9f0a; font-weight: 800; font-size: 1rem;">${item.user_id}</span>
                         </div>
+                        <!-- TxID -->
                         <div style="${rowS}">
                             <span style="${lblS}">${currentLang === 'ar' ? 'رقم العملية' : 'TxID'}</span>
-                            <span style="color: var(--text-primary); font-weight: 700; font-size: 0.85rem; word-break: break-all;">${item.txid}</span>
+                            <span style="color: #bf5af2; font-weight: 700; font-size: 0.85rem; word-break: break-all;">${item.txid}</span>
                         </div>
+                        <!-- Date -->
                         <div style="${rowS}">
                             <span style="${lblS}">${currentLang === 'ar' ? 'التاريخ' : 'Date'}</span>
-                            <span style="color: var(--text-secondary); font-weight: 600; font-size: 0.85rem; direction: ltr;">${formatDateTime(item.date)}</span>
+                            <span style="color: #fdd835; font-weight: 600; font-size: 0.85rem; direction: ltr;">${formatDateTime(item.date)}</span>
                         </div>
                     </div>
                 </div>
