@@ -2116,7 +2116,9 @@
 
             <!-- ===== 1. Payments & Integration Page ===== -->
             <section id="section-settings-payments" class="view-section">
-                <div style="height: 25px;"></div>
+                <div class="settings-back-btn" onclick="switchNav('settings', null)" style="margin-top: 10px; margin-bottom: 20px;">
+                    <i class="fas fa-arrow-left"></i> Back to Settings
+                </div>
 
                 <div class="card" style="padding: 28px; margin-bottom: 20px;">
                     <div style="margin-bottom: 30px;">
@@ -2156,24 +2158,17 @@
                     </button>
                 </div>
 
-                <div class="settings-back-btn" onclick="switchNav('settings', null)" style="width: 100%; justify-content: center; margin-bottom: 40px;">
-                    <i class="fas fa-arrow-left"></i> Back to Settings
-                </div>
             </section>
 
             <!-- ===== 2. Subscriptions Channels Page ===== -->
             <section id="section-settings-subscriptions" class="view-section">
-                <div class="section-header" style="margin-bottom: 25px;">
-                    <h2 style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary);">Subscriptions Channels</h2>
+                <div class="settings-back-btn" onclick="switchNav('settings', null)" style="margin-top: 10px; margin-bottom: 20px;">
+                    <i class="fas fa-arrow-left"></i> Back to Settings
                 </div>
 
                 <div class="card" style="padding: 22px; margin-bottom: 20px;">
                     <h3 style="font-size: 1.1rem; margin-bottom: 20px; color: #8b5cf6;"><i class="fas fa-broadcast-tower" style="margin-right: 8px;"></i> Subscriptions</h3>
                     <p style="color: var(--text-s); font-size: 0.9rem;">Manage your official channels and subscription requirements here.</p>
-                </div>
-
-                <div class="settings-back-btn" onclick="switchNav('settings', null)" style="width: 100%; justify-content: center; margin-bottom: 40px;">
-                    <i class="fas fa-arrow-left"></i> Back to Settings
                 </div>
             </section>
 
@@ -2447,7 +2442,7 @@
             if (id === 'prices') renderPrices(allPrices);
             if (id === 'sales') renderSalesList(allTransactions);
             if (id === 'home') renderSales(allTransactions);
-            if (id === 'settings') fetchStoreSettings();
+            if (id.startsWith('settings')) fetchStoreSettings();
             if (id === 'deposits') fetchDeposits();
             if (id === 'store-user-prices') fetchStoreUserPrices();
 
@@ -2474,7 +2469,7 @@
                 prices: 'nav_prices',
                 sales: 'nav_sales',
                 settings: 'nav_settings',
-                'settings-payments': '',
+                'settings-payments': 'Payments & Integration',
                 'settings-subscriptions': 'Subscriptions Channels',
                 deposits: 'nav_deposits',
                 'store-user-prices': 'nav_store_user_prices'
