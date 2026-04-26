@@ -527,19 +527,13 @@ async def get_store_data(user_id: int = None):
                                 })
                             except: continue
                     else:
-                        # Non-Spider path (TG-Lion, etc.) — log raw data for debugging
-                        logger.info(f"[{srv.name}] Non-Spider path. Raw type={type(srv_countries).__name__}, preview={str(srv_countries)[:500]}")
-                        
                         # Fallback to Super Parser for TG-Lion and others
                         data_node = find_country_node(srv_countries)
-                        logger.info(f"[{srv.name}] Super Parser result: type={type(data_node).__name__ if data_node else 'None'}, is_list={isinstance(data_node, list)}, is_dict={isinstance(data_node, dict)}")
-                        
                         if not data_node:
                             data_node = srv_countries
                             for key in ["result", "data", "countries_info", "countries"]:
                                 if isinstance(data_node, dict) and key in data_node:
                                     data_node = data_node[key]
-                                    logger.info(f"[{srv.name}] Drilled into key '{key}', new type={type(data_node).__name__}")
                                     break
                         
                         if isinstance(data_node, dict):
@@ -565,24 +559,35 @@ async def get_store_data(user_id: int = None):
                                 normalized = item.copy()
                                 if "country" not in normalized:
                                     # Try to find country code in common keys
-                                    for k in ["id", "iso", "code", "name", "country_code", "country_name"]:
+                                    for k in ["id", "iso", "code", "name"]:
                                         if k in normalized:
                                             normalized["country"] = normalized[k]
                                             break
                                 countries_list.append(normalized)
-                        
-                        logger.info(f"[{srv.name}] Parsed {len(countries_list)} countries from non-Spider path")
                     
                     for c in countries_list:
                         raw_name = c.get("name") or c.get("country") or c.get("country_name") or c.get("country_code")
                         if not raw_name: continue
                         
-                        # Resolve human name & flag if it looks like a code
-                        resolved_name, resolved_flag, resolved_iso = resolve_country_info(str(raw_name))
-                        name = resolved_name if resolved_name and "Code " not in resolved_name else str(raw_name)
+                        # Use 'code' field (ISO Alpha-2) if available for accurate resolution
+                        iso_from_data = c.get("code") or c.get("iso") or c.get("country_code")
+                        if iso_from_data and len(str(iso_from_data).strip()) == 2:
+                            resolved_name, resolved_flag, resolved_iso = resolve_country_info(str(iso_from_data).strip())
+                        else:
+                            resolved_name, resolved_flag, resolved_iso = resolve_country_info(str(raw_name))
+                        
+                        # Use resolved name if good, otherwise use raw name but clean emoji flags
+                        if resolved_name and "Code " not in resolved_name:
+                            name = resolved_name
+                        else:
+                            # Clean emoji flags from raw name to avoid duplication
+                            import re as _re
+                            name = _re.sub(r'[\U0001F1E0-\U0001F1FF]{2}', '', str(raw_name)).strip()
+                            if not name: name = str(raw_name)
                         
                         try:
-                            count = int(c.get("count", c.get("stock", c.get("quantity", 0))))
+                            # Support all common quantity field names: count, qty, stock, quantity
+                            count = int(c.get("count", c.get("qty", c.get("stock", c.get("quantity", 0)))))
                             p_price = float(c.get("price", c.get("rate", c.get("cost", 0))))
                             if count <= 0: continue
                             
@@ -599,13 +604,12 @@ async def get_store_data(user_id: int = None):
                             else:
                                 countries_map[name]["count"] += count
                         except Exception as parse_err:
-                            logger.warning(f"[{srv.name}] Failed to parse country entry: {c} — {parse_err}")
+                            logger.warning(f"[{srv.name}] Failed to parse entry: {c} — {parse_err}")
                             continue
-                except Exception as srv_err:
-                    import traceback
-                    logger.error(f"Error processing server {srv.name}: {srv_err}\n{traceback.format_exc()}")
-                    continue
 
+                except Exception as srv_err:
+                    logger.error(f"Error processing server {srv.name}: {srv_err}")
+                    continue
 
             # 3. Final Assembly with Metadata & Pricing
             countries = []
