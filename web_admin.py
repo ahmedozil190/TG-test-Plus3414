@@ -510,38 +510,46 @@ async def get_store_data(user_id: int = None):
 
             # 3. Final Assembly with Metadata & Pricing
             countries = []
+            
+            # Pre-fetch all pricing data to avoid N+1 queries
+            all_cp = (await session.execute(select(CountryPrice))).scalars().all()
+            cp_map = {cp.country_name: cp for cp in all_cp}
+            
+            all_usp = []
+            if user_id:
+                all_usp = (await session.execute(select(UserStorePrice).where(UserStorePrice.user_id == user_id))).scalars().all()
+            usp_map = {usp.country_code: usp for usp in all_usp}
+
             for name, c_data in countries_map.items():
                 flag = "🌐"
                 price = 1.0
                 
-                cp = (await session.execute(select(CountryPrice).where(CountryPrice.country_name == name))).scalar()
+                cp = cp_map.get(name)
                 if cp:
                     flag = get_flag_emoji(cp.iso_code)
                     price = cp.price
-                elif "calc_price" in c_data:
-                    price = c_data["calc_price"]
                 
-                # Custom User Price
-                if user_id and cp:
-                    from database.models import UserStorePrice
-                    from sqlalchemy import or_
-                    cc_clean = cp.country_code.strip().replace('+', '')
+                # If external and no local price set, use calculated price
+                if not cp and "calc_price" in c_data:
+                    price = c_data["calc_price"]
+
+                # Override with user-specific price if exists
+                if user_id:
+                    # Check both code and +code
+                    cc_clean = str(c_data.get("country", "")).lstrip('+')
                     cc_plus = f"+{cc_clean}"
-                    usp = (await session.execute(
-                        select(UserStorePrice).where(
-                            UserStorePrice.user_id == user_id,
-                            or_(UserStorePrice.country_code == cc_clean, UserStorePrice.country_code == cc_plus)
-                        )
-                    )).scalar()
+                    usp = usp_map.get(cc_clean) or usp_map.get(cc_plus)
                     if usp:
                         price = usp.sell_price
-                
+
                 countries.append({
                     "name": name,
                     "flag": flag,
                     "buy_price": price,
                     "count": c_data["count"]
                 })
+            
+            countries.sort(key=lambda x: x["name"])
             
             # User balance & Stats
             balance = 0.0
