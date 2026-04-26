@@ -1486,7 +1486,8 @@
             }
             const totalNumbers = filtered.reduce((s, c) => s + c.count, 0);
             const countriesCount = new Set(filtered.map(c => c.name)).size;
-            const lowestPrice = filtered.length ? Math.min(...filtered.map(c => parseFloat(c.buy_price) || 0)) : 0;
+            const validPrices = filtered.map(c => parseFloat(c.buy_price)).filter(p => !isNaN(p) && p > 0);
+            const lowestPrice = validPrices.length ? Math.min(...validPrices) : 0;
 
             document.getElementById('stat-total-numbers').innerHTML = `${totalNumbers} <span>NUMBERS</span>`;
             document.getElementById('stat-countries').innerHTML = `${countriesCount} <span>COUNTRIES</span>`;
