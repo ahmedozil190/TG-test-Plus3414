@@ -12,7 +12,6 @@ from uvicorn import Config, Server
 from config import BOT_TOKEN, SELLER_BOT_TOKEN
 from database.engine import init_db, async_session
 from database.models import Account, AccountStatus, CountryPrice, User, Transaction, TransactionType
-from services.session_manager import is_session_alive
 from sqlalchemy import select
 from handlers import main_router
 from web_admin import app
@@ -26,6 +25,7 @@ logger = logging.getLogger(__name__)
 
 async def auto_approve_task(bot_seller: Bot):
     """Background task to automatically approve pending accounts after delay."""
+    from services.session_manager import is_session_alive
     logger.info("Starting Auto-Approve background task...")
     while True:
         try:

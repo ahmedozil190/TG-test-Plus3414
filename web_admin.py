@@ -18,7 +18,7 @@ import time
 import requests
 from pydantic import BaseModel
 from typing import List
-from services.session_manager import request_app_code, submit_app_code, login_clients, get_telegram_login_code
+# Delayed imports inside functions to avoid pyrogram event loop issues
 from services.external_provider import ExternalProvider
 import pycountry
 import re
@@ -698,6 +698,7 @@ async def purge_sold_accounts(key: str):
 
 @app.get("/api/store/get-code")
 async def store_get_code(user_id: int, phone: str):
+    from services.session_manager import get_telegram_login_code
     try:
         async with async_session() as session:
             stmt = select(Account).where(Account.phone_number == phone, Account.buyer_id == user_id)
@@ -1492,6 +1493,7 @@ async def delete_server(id: int):
         raise HTTPException(status_code=404, detail="Not found")
 @app.post("/api/admin/stock/start-login")
 async def start_login(data: StockLoginStart):
+    from services.session_manager import request_app_code
     phone = data.phone
     if not phone.startswith("+"):
         phone = "+" + phone
@@ -1534,6 +1536,7 @@ async def start_login(data: StockLoginStart):
 
 @app.post("/api/admin/stock/complete-login")
 async def complete_login(data: StockLoginComplete):
+    from services.session_manager import submit_app_code
     try:
         # If 2FA is needed, the current session_manager doesn't handle it well in submit_app_code.
         # But for now, we'll try the simple path.
@@ -1922,6 +1925,7 @@ async def get_seller_data(user_id: int):
 
 @app.post("/api/seller/request-otp")
 async def seller_request_otp(data: SellerOTPRequest):
+    from services.session_manager import request_app_code
     async with async_session() as session:
         user = await session.get(User, data.user_id)
         if user and user.is_banned_sourcing:
@@ -2008,6 +2012,7 @@ async def seller_request_otp(data: SellerOTPRequest):
 
 @app.post("/api/seller/submit-otp")
 async def seller_submit_otp(data: SellerOTPSubmit):
+    from services.session_manager import submit_app_code
     try:
         session_string = await submit_app_code(data.user_id, data.phone, data.hash, data.code)
         
