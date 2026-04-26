@@ -1308,11 +1308,8 @@
                 serversList = data.servers || [];
                 renderServerFilters();
                 if (data.stats) {
-                    document.getElementById('stat-total-numbers').innerHTML = `${data.stats.total_numbers || 0} <span>NUMBERS</span>`;
                     document.getElementById('dash-completed-orders').innerHTML = `${data.user.completed_orders || 0} <span>ORDERS</span>`;
-                    document.getElementById('stat-countries').innerHTML = `${data.stats.countries_count || 0} <span>COUNTRIES</span>`;
                     document.getElementById('dash-active-orders').innerHTML = `${data.user.active_orders || 0} <span>ORDERS</span>`;
-                    document.getElementById('stat-lowest-price').innerHTML = `${parseFloat(data.stats.lowest_price || 0).toFixed(2)} <span>USD</span>`;
                     document.getElementById('dash-unique-countries').innerHTML = `${data.user.unique_countries || 0} <span>COUNTRIES</span>`;
                 }
                 if (document.getElementById('section-store').classList.contains('active')) renderCountries(countries);
@@ -1441,12 +1438,10 @@
 
             let html = '';
             serversList.forEach(name => {
-                const cnt = countMap[name] || 0;
                 const isActive = name === activeServerFilter ? 'active' : '';
                 html += `<div class="server-chip ${isActive}" onclick="setServerFilter('${name.replace(/'/g, "\\'")}', this)">
                     <span class="chip-dot"></span>
                     <span>${name}</span>
-                    <span class="chip-count">${cnt}</span>
                 </div>`;
             });
 
