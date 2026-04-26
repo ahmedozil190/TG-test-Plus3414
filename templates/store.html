@@ -1404,7 +1404,10 @@
             if (searchInput) searchInput.placeholder = translations[currentLang].search_ph;
         }
 
-        async function fetchCountries() { renderCountries(countries); }
+        async function fetchCountries() { 
+            filterStore(); 
+            updateStatsForFilter(); 
+        }
         function renderCountries(list) {
             const grid = document.getElementById('countries-grid');
             if (!list || !list.length) { grid.innerHTML = '<p style="text-align:center; padding: 40px; opacity: 0.5;">No numbers available</p>'; return; }
