@@ -15,12 +15,12 @@ class ExternalProvider:
         """Fetch available countries and prices from the provider."""
         try:
             async with httpx.AsyncClient() as client:
-                resp = await client.get(f"{self.url}?apiKay={self.api_key}&action=getCountrys", timeout=10.0)
+                url = f"{self.url}?apiKay={self.api_key}&action=getCountrys"
+                logger.info(f"Fetching countries from {self.name}: {url}")
+                resp = await client.get(url, timeout=10.0)
                 if resp.status_code == 200:
                     data = resp.json()
-                    # Standard response for Sub-API is usually a list of dicts:
-                    # [{"country": "PS", "name": "Palestine", "count": 100, "price": 0.5}, ...]
-                    # Or sometimes a dictionary where keys are country codes.
+                    logger.info(f"Response from {self.name}: {data}")
                     return data
                 else:
                     logger.warning(f"Failed to fetch countries from {self.name}: {resp.status_code}")

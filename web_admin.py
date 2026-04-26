@@ -432,12 +432,31 @@ async def get_store_data(user_id: int = None):
             for srv in active_servers:
                 provider = ExternalProvider(srv.name, srv.url, srv.api_key, srv.profit_margin)
                 srv_countries = await provider.get_countries()
+                
+                # Normalize srv_countries to a list of dicts
+                countries_list = []
                 if isinstance(srv_countries, list):
-                    for c in srv_countries:
-                        name = c.get("name") or c.get("country") # Fallback to code if name missing
-                        count = int(c.get("count", 0))
-                        p_price = float(c.get("price", 0))
-                        if not name or count <= 0: continue
+                    countries_list = srv_countries
+                elif isinstance(srv_countries, dict):
+                    for code, val in srv_countries.items():
+                        if isinstance(val, dict):
+                            val["country"] = code
+                            countries_list.append(val)
+                        else:
+                            # Handle simple count case: {"PS": 10}
+                            countries_list.append({"country": code, "count": val, "price": 0.0})
+                
+                for c in countries_list:
+                    raw_name = c.get("name") or c.get("country")
+                    if not raw_name: continue
+                    
+                    # Try to resolve human name if it looks like a code
+                    resolved_name, _ = resolve_country_info(str(raw_name))
+                    name = resolved_name if resolved_name and resolved_name != "Unknown" else raw_name
+                    
+                    count = int(c.get("count", 0))
+                    p_price = float(c.get("price", 0))
+                    if count <= 0: continue
                         
                         if name not in countries_map:
                             countries_map[name] = {
