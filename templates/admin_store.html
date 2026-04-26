@@ -1299,8 +1299,27 @@
             transition: 0.2s;
         }
 
-        .btn-delete:active {
-            transform: scale(0.96);
+        }
+
+        .settings-back-btn {
+            background: none !important;
+            border: none !important;
+            box-shadow: none !important;
+            padding: 5px 0 !important;
+            color: var(--text-secondary);
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .settings-back-btn:hover {
+            color: var(--accent);
+            transform: translateX(-3px);
         }
 
         /* ========== Modal ========== */
@@ -1393,7 +1412,7 @@
             width: 100%;
             padding: 14px;
             background: linear-gradient(135deg, var(--accent), var(--accent-purple));
-            color: var(--text-primary);
+            color: #ffffff !important;
             border: none;
             border-radius: 14px;
             font-weight: 700;
@@ -2116,9 +2135,9 @@
 
             <!-- ===== 1. Payments & Integration Page ===== -->
             <section id="section-settings-payments" class="view-section">
-                <div class="settings-back-btn" onclick="switchNav('settings', null)" style="margin-top: 10px; margin-bottom: 20px;">
+                <button class="settings-back-btn" onclick="switchNav('settings', null)" style="margin-top: 10px; margin-bottom: 20px;">
                     <i class="fas fa-arrow-left"></i> Back to Settings
-                </div>
+                </button>
 
                 <div class="card" style="padding: 28px; margin-bottom: 20px;">
                     <div style="margin-bottom: 30px;">
@@ -2153,7 +2172,7 @@
                         </div>
                     </div>
 
-                    <button class="primary-btn" style="width: 100%; padding: 16px; font-size: 1.05rem; font-weight: 700;" onclick="saveStoreSettings()">
+                    <button class="primary-btn" style="width: 100%; padding: 16px; font-size: 1.05rem; font-weight: 700; color: #fff !important;" onclick="saveStoreSettings()">
                         <i class="fas fa-save" style="margin-right: 8px;"></i> Save Settings
                     </button>
                 </div>
@@ -2162,9 +2181,9 @@
 
             <!-- ===== 2. Subscriptions Channels Page ===== -->
             <section id="section-settings-subscriptions" class="view-section">
-                <div class="settings-back-btn" onclick="switchNav('settings', null)" style="margin-top: 10px; margin-bottom: 20px;">
+                <button class="settings-back-btn" onclick="switchNav('settings', null)" style="margin-top: 10px; margin-bottom: 20px;">
                     <i class="fas fa-arrow-left"></i> Back to Settings
-                </div>
+                </button>
 
                 <div class="card" style="padding: 22px; margin-bottom: 20px;">
                     <h3 style="font-size: 1.1rem; margin-bottom: 20px; color: #8b5cf6;"><i class="fas fa-broadcast-tower" style="margin-right: 8px;"></i> Subscriptions</h3>
