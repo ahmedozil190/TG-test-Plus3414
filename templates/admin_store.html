@@ -2116,39 +2116,42 @@
 
             <!-- ===== 1. Payments & Integration Page ===== -->
             <section id="section-settings-payments" class="view-section">
-                <div class="section-header" style="margin-bottom: 25px;">
-                    <h2 style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary);">Payments & Integration</h2>
-                </div>
+                <div style="height: 25px;"></div>
 
-                <div class="card" style="padding: 22px; margin-bottom: 20px;">
-                    <div style="margin-bottom: 25px;">
-                        <div class="form-group" style="margin-bottom: 15px;">
-                            <label style="font-size: 0.85rem; color: var(--text-s); margin-bottom: 8px; display: block;">Binance API Key</label>
-                            <input type="text" id="setting-binance-key" class="search-input" style="margin-bottom: 0;" placeholder="Enter API Key">
+                <div class="card" style="padding: 28px; margin-bottom: 20px;">
+                    <div style="margin-bottom: 30px;">
+                        <div class="form-group" style="margin-bottom: 25px;">
+                            <label style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">Binance API Key</label>
+                            <input type="text" id="setting-binance-key" class="search-input" 
+                                style="margin-bottom: 0; padding: 16px; font-size: 1rem; height: auto;" placeholder="Enter API Key">
                         </div>
 
-                        <div class="form-group" style="margin-bottom: 15px;">
-                            <label style="font-size: 0.85rem; color: var(--text-s); margin-bottom: 8px; display: block;">Binance API Secret</label>
-                            <input type="text" id="setting-binance-secret" class="search-input" style="margin-bottom: 0;" placeholder="Enter Secret Key (Hidden)">
+                        <div class="form-group" style="margin-bottom: 25px;">
+                            <label style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">Binance API Secret</label>
+                            <input type="text" id="setting-binance-secret" class="search-input" 
+                                style="margin-bottom: 0; padding: 16px; font-size: 1rem; height: auto;" placeholder="Enter Secret Key (Hidden)">
                         </div>
 
-                        <div class="form-group" style="margin-bottom: 15px;">
-                            <label style="font-size: 0.85rem; color: var(--text-s); margin-bottom: 8px; display: block;">Binance Pay ID</label>
-                            <input type="text" id="setting-binance-pay-id" class="search-input" style="margin-bottom: 0;" placeholder="Enter Binance Pay ID">
+                        <div class="form-group" style="margin-bottom: 25px;">
+                            <label style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">Binance Pay ID</label>
+                            <input type="text" id="setting-binance-pay-id" class="search-input" 
+                                style="margin-bottom: 0; padding: 16px; font-size: 1rem; height: auto;" placeholder="Enter Binance Pay ID">
                         </div>
 
-                        <div class="form-group" style="margin-bottom: 15px;">
-                            <label style="font-size: 0.85rem; color: var(--text-s); margin-bottom: 8px; display: block;">TRX Address (TRC20)</label>
-                            <input type="text" id="setting-trx-address" class="search-input" style="margin-bottom: 0;" placeholder="Enter TRX TRC20 Address">
+                        <div class="form-group" style="margin-bottom: 25px;">
+                            <label style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">TRX Address (TRC20)</label>
+                            <input type="text" id="setting-trx-address" class="search-input" 
+                                style="margin-bottom: 0; padding: 16px; font-size: 1rem; height: auto;" placeholder="Enter TRX TRC20 Address">
                         </div>
 
-                        <div class="form-group" style="margin-bottom: 15px;">
-                            <label style="font-size: 0.85rem; color: var(--text-s); margin-bottom: 8px; display: block;">USDT Address (BEP20)</label>
-                            <input type="text" id="setting-usdt-bep20-address" class="search-input" style="margin-bottom: 0;" placeholder="Enter USDT BEP20 Address">
+                        <div class="form-group" style="margin-bottom: 25px;">
+                            <label style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">USDT Address (BEP20)</label>
+                            <input type="text" id="setting-usdt-bep20-address" class="search-input" 
+                                style="margin-bottom: 0; padding: 16px; font-size: 1rem; height: auto;" placeholder="Enter USDT BEP20 Address">
                         </div>
                     </div>
 
-                    <button class="primary-btn" style="width: 100%;" onclick="saveStoreSettings()">
+                    <button class="primary-btn" style="width: 100%; padding: 16px; font-size: 1.05rem; font-weight: 700;" onclick="saveStoreSettings()">
                         <i class="fas fa-save" style="margin-right: 8px;"></i> Save Settings
                     </button>
                 </div>
@@ -2471,7 +2474,7 @@
                 prices: 'nav_prices',
                 sales: 'nav_sales',
                 settings: 'nav_settings',
-                'settings-payments': 'Payments & Integration',
+                'settings-payments': '',
                 'settings-subscriptions': 'Subscriptions Channels',
                 deposits: 'nav_deposits',
                 'store-user-prices': 'nav_store_user_prices'
