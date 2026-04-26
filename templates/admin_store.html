@@ -3245,7 +3245,7 @@
                         <!-- Details -->
                         <div style="${rowS}">
                             <span style="${lblS}">${currentLang === 'ar' ? 'التفاصيل' : 'DETAILS'}</span>
-                            <span style="color: #10b981; font-weight: 800; font-size: 0.95rem;">${details}</span>
+                            <span style="color: #10b981; font-weight: 800; font-size: 0.95rem; text-align: right; word-break: break-all; flex: 1; margin-left: 10px;">${details}</span>
                         </div>
                         <!-- TxID -->
                         <div style="${rowS}">
@@ -3273,8 +3273,22 @@
             document.getElementById('pgNextDeposits').disabled = currentDepositsPage === totalPages;
         }
 
-        function prevDepositsPage() { if (currentDepositsPage > 1) { currentDepositsPage--; renderDepositsList(filteredDeposits || allDeposits); } }
-        function nextDepositsPage() { const total = Math.ceil((filteredDeposits || allDeposits).length / DEPOSITS_PER_PAGE); if (currentDepositsPage < total) { currentDepositsPage++; renderDepositsList(filteredDeposits || allDeposits); } }
+        function prevDepositsPage() {
+            if (currentDepositsPage > 1) {
+                currentDepositsPage--;
+                renderDepositsList(filteredDeposits || allDeposits);
+                document.getElementById('deposits-history-header').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+        function nextDepositsPage() {
+            const list = filteredDeposits || allDeposits;
+            const totalPages = Math.ceil(list.length / DEPOSITS_PER_PAGE);
+            if (currentDepositsPage < totalPages) {
+                currentDepositsPage++;
+                renderDepositsList(list);
+                document.getElementById('deposits-history-header').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
 
         function searchDeposits() {
             const q = document.getElementById('deposits-search').value.toLowerCase().trim();
