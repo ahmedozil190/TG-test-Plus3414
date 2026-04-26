@@ -626,7 +626,8 @@ async def get_store_data(user_id: int = None):
                 all_usp = (await session.execute(select(UserStorePrice).where(UserStorePrice.user_id == user_id))).scalars().all()
             usp_map = {usp.country_code: usp for usp in all_usp}
 
-            for name, c_data in countries_map.items():
+            for map_key, c_data in countries_map.items():
+                name = c_data["name"]
                 flag = "🌐"
                 price = 1.0
                 
