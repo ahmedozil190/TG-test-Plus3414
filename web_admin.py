@@ -11,7 +11,7 @@ from fastapi.responses import HTMLResponse
 from sqlalchemy.future import select
 from sqlalchemy import select, delete, update, func, text, or_, cast, String
 from database.engine import async_session
-from database.models import User, Account, Transaction, AccountStatus, TransactionType, CountryPrice, WithdrawalRequest, WithdrawalStatus, UserCountryPrice, Deposit, AppSetting, UserStorePrice
+from database.models import User, Account, Transaction, AccountStatus, TransactionType, CountryPrice, WithdrawalRequest, WithdrawalStatus, UserCountryPrice, Deposit, AppSetting, UserStorePrice, ApiServer
 import hmac
 import hashlib
 import time
@@ -19,6 +19,7 @@ import requests
 from pydantic import BaseModel
 from typing import List
 from services.session_manager import request_app_code, submit_app_code, login_clients, get_telegram_login_code
+from services.external_provider import ExternalProvider
 import pycountry
 import re
 import urllib.request
@@ -64,6 +65,14 @@ class StoreSettingsSubmit(BaseModel):
     binance_pay_id: str
     trx_address: str
     usdt_bep20_address: str
+
+class ApiServerSubmit(BaseModel):
+    id: int | None = None
+    name: str
+    url: str
+    api_key: str
+    profit_margin: float
+    is_active: bool
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -228,6 +237,12 @@ async def run_migrations():
             except: pass
             try:
                 await conn.execute(sqlalchemy.text("ALTER TABLE accounts ADD COLUMN purchased_at DATETIME"))
+            except: pass
+            try:
+                await conn.execute(sqlalchemy.text("ALTER TABLE accounts ADD COLUMN server_id INTEGER"))
+            except: pass
+            try:
+                await conn.execute(sqlalchemy.text("ALTER TABLE accounts ADD COLUMN hash_code TEXT"))
             except: pass
 
             # Add missing columns to country_prices table
@@ -399,46 +414,75 @@ async def store_page(request: Request):
 async def get_store_data(user_id: int = None):
     try:
         async with async_session() as session:
-            # Group available accounts by country only (ignore Account.price, we'll fetch current price)
+            # 1. Local Stock
             stmt = select(Account.country, func.count(Account.id).label('cnt')).where(
-                Account.status == AccountStatus.AVAILABLE
+                Account.status == AccountStatus.AVAILABLE,
+                Account.server_id == None
             ).group_by(Account.country)
             
-            results = (await session.execute(stmt)).all()
+            local_results = (await session.execute(stmt)).all()
             
-            countries = []
-            for row in results:
+            countries_map = {}
+            for row in local_results:
                 name, count = row
-                # Get current selling price and flag from CountryPrice
-                flag = "🌐"
-                price = 1.0 # Default
-                try:
-                    cp = (await session.execute(select(CountryPrice).where(CountryPrice.country_name == name))).scalar()
-                    if cp:
-                        iso = getattr(cp, 'iso_code', None) or 'XX'
-                        flag = get_flag_emoji(iso)
-                        price = cp.price
+                countries_map[name] = {"name": name, "count": count, "server_id": None}
+
+            # 2. External Stock
+            active_servers = (await session.execute(select(ApiServer).where(ApiServer.is_active == True))).scalars().all()
+            for srv in active_servers:
+                provider = ExternalProvider(srv.name, srv.url, srv.api_key, srv.profit_margin)
+                srv_countries = await provider.get_countries()
+                if isinstance(srv_countries, list):
+                    for c in srv_countries:
+                        name = c.get("name") or c.get("country") # Fallback to code if name missing
+                        count = int(c.get("count", 0))
+                        p_price = float(c.get("price", 0))
+                        if not name or count <= 0: continue
                         
-                        if user_id:
-                            from database.models import UserStorePrice
-                            from sqlalchemy import or_
-                            cc_clean = cp.country_code.strip().replace('+', '')
-                            cc_plus = f"+{cc_clean}"
-                            usp = (await session.execute(
-                                select(UserStorePrice).where(
-                                    UserStorePrice.user_id == user_id,
-                                    or_(UserStorePrice.country_code == cc_clean, UserStorePrice.country_code == cc_plus)
-                                )
-                            )).scalar()
-                            if usp:
-                                price = usp.sell_price
-                except: pass
+                        if name not in countries_map:
+                            countries_map[name] = {
+                                "name": name,
+                                "count": count,
+                                "server_id": srv.id,
+                                "p_price": p_price,
+                                "calc_price": provider.calculate_price(p_price)
+                            }
+                        else:
+                            countries_map[name]["count"] += count
+
+            # 3. Final Assembly with Metadata & Pricing
+            final_countries = []
+            for name, c_data in countries_map.items():
+                flag = "🌐"
+                price = 1.0
                 
-                countries.append({
+                cp = (await session.execute(select(CountryPrice).where(CountryPrice.country_name == name))).scalar()
+                if cp:
+                    flag = get_flag_emoji(cp.iso_code)
+                    price = cp.price
+                elif "calc_price" in c_data:
+                    price = c_data["calc_price"]
+                
+                # Custom User Price
+                if user_id and cp:
+                    from database.models import UserStorePrice
+                    from sqlalchemy import or_
+                    cc_clean = cp.country_code.strip().replace('+', '')
+                    cc_plus = f"+{cc_clean}"
+                    usp = (await session.execute(
+                        select(UserStorePrice).where(
+                            UserStorePrice.user_id == user_id,
+                            or_(UserStorePrice.country_code == cc_clean, UserStorePrice.country_code == cc_plus)
+                        )
+                    )).scalar()
+                    if usp:
+                        price = usp.sell_price
+                
+                final_countries.append({
                     "name": name,
                     "flag": flag,
-                    "buy_price": price, # This is the SELLING price for the store
-                    "count": count
+                    "buy_price": price,
+                    "count": c_data["count"]
                 })
             
             # User balance & Stats
@@ -542,15 +586,40 @@ async def store_buy(data: StoreBuy):
         async with async_session() as session:
             user = await session.get(User, data.user_id)
             if not user: raise HTTPException(status_code=404, detail="User not found")
-            stmt = select(Account).where(Account.country == data.country, Account.status == AccountStatus.AVAILABLE).limit(1)
+            
+            # 1. Local Stock Check
+            stmt = select(Account).where(
+                Account.country == data.country, 
+                Account.status == AccountStatus.AVAILABLE,
+                Account.server_id == None
+            ).limit(1)
             account = (await session.execute(stmt)).scalar_one_or_none()
-            if not account: raise HTTPException(status_code=400, detail="عذراً، نفدت الأرقام!")
             
-            # Fetch current price from CountryPrice to ensure it matches admin settings
-            cp = (await session.execute(select(CountryPrice).where(CountryPrice.country_name == account.country))).scalar()
-            final_price = cp.price if cp else account.price
+            cp = (await session.execute(select(CountryPrice).where(CountryPrice.country_name == data.country))).scalar()
+            final_price = cp.price if cp else 1.0
+
+            target_srv = None
+            external_country_code = None
             
-            # Check for Custom User Price
+            if not account:
+                # 2. Try External Servers
+                active_servers = (await session.execute(select(ApiServer).where(ApiServer.is_active == True))).scalars().all()
+                for srv in active_servers:
+                    provider = ExternalProvider(srv.name, srv.url, srv.api_key, srv.profit_margin)
+                    srv_countries = await provider.get_countries()
+                    if isinstance(srv_countries, list):
+                        match = next((c for c in srv_countries if (c.get("name") == data.country or c.get("country") == data.country) and int(c.get("count", 0)) > 0), None)
+                        if match:
+                            target_srv = srv
+                            external_country_code = match.get("country")
+                            if not cp: # Use calculated price if no admin price set
+                                final_price = provider.calculate_price(match.get("price", 0))
+                            break
+                
+                if not target_srv:
+                    raise HTTPException(status_code=400, detail="عذراً، نفدت الأرقام!")
+
+            # 3. Handle Personalized Pricing
             if cp:
                 from database.models import UserStorePrice
                 from sqlalchemy import or_
@@ -565,17 +634,45 @@ async def store_buy(data: StoreBuy):
                 if usp:
                     final_price = usp.sell_price
             
-            if user.balance_store < final_price: raise HTTPException(status_code=400, detail="رصيدك غير كافٍ")
-            user.balance_store -= final_price
-            account.status = AccountStatus.SOLD
-            account.buyer_id = user.id
-            account.otp_code = None  # Clear any stale OTP code
-            account.purchased_at = datetime.utcnow()
-            account.price = final_price # Log the actual price paid in the account record
-            txn = Transaction(user_id=user.id, type=TransactionType.BUY, amount=-final_price)
-            session.add(txn)
-            await session.commit()
-            return {"status": "success", "phone": account.phone_number, "id": account.id}
+            if user.balance_store < final_price:
+                raise HTTPException(status_code=400, detail="رصيدك غير كافٍ")
+
+            if account:
+                # Local Purchase Execution
+                user.balance_store -= final_price
+                account.status = AccountStatus.SOLD
+                account.buyer_id = user.id
+                account.otp_code = None
+                account.purchased_at = datetime.utcnow()
+                account.price = final_price
+                txn = Transaction(user_id=user.id, type=TransactionType.BUY, amount=-final_price)
+                session.add(txn)
+                await session.commit()
+                return {"status": "success", "phone": account.phone_number, "id": account.id}
+            else:
+                # External Purchase Execution
+                provider = ExternalProvider(target_srv.name, target_srv.url, target_srv.api_key, target_srv.profit_margin)
+                buy_res = await provider.buy_number(external_country_code)
+                if buy_res.get("status") == "success":
+                    user.balance_store -= final_price
+                    new_acc = Account(
+                        phone_number=buy_res.get("number"),
+                        country=data.country,
+                        status=AccountStatus.SOLD,
+                        price=final_price,
+                        buyer_id=user.id,
+                        purchased_at=datetime.utcnow(),
+                        server_id=target_srv.id,
+                        hash_code=buy_res.get("hash_code")
+                    )
+                    session.add(new_acc)
+                    txn = Transaction(user_id=user.id, type=TransactionType.BUY, amount=-final_price)
+                    session.add(txn)
+                    await session.commit()
+                    return {"status": "success", "phone": new_acc.phone_number, "id": new_acc.id}
+                else:
+                    msg = buy_res.get("message") or "خطأ في مزود الأرقام"
+                    raise HTTPException(status_code=400, detail=msg)
     except HTTPException as e: raise e
     except Exception as e:
         logger.error(f"Store Buy Error: {e}")
@@ -607,15 +704,29 @@ async def store_get_code(user_id: int, phone: str):
             account = (await session.execute(stmt)).scalar_one_or_none()
             if not account: raise HTTPException(status_code=404, detail="Account not found")
             
-            code = await get_telegram_login_code(
-                account.session_string, 
-                after_ts=account.purchased_at.timestamp() if account.purchased_at else None
-            )
-            if code:
-                account.otp_code = code
-                await session.commit()
-                return {"status": "success", "code": code}
-            return {"status": "pending", "message": "Code not found yet"}
+            if account.server_id:
+                # 1. Fetch from external server
+                srv = await session.get(ApiServer, account.server_id)
+                if not srv: raise HTTPException(status_code=500, detail="Server config missing")
+                provider = ExternalProvider(srv.name, srv.url, srv.api_key, srv.profit_margin)
+                code_res = await provider.get_code(account.hash_code)
+                if code_res.get("status") == "success":
+                    code = code_res.get("code")
+                    account.otp_code = code
+                    await session.commit()
+                    return {"status": "success", "code": code}
+                return {"status": "pending", "message": code_res.get("message", "بانتظار وصول الكود...")}
+            else:
+                # 2. Local session logic
+                code = await get_telegram_login_code(
+                    account.session_string, 
+                    after_ts=account.purchased_at.timestamp() if account.purchased_at else None
+                )
+                if code:
+                    account.otp_code = code
+                    await session.commit()
+                    return {"status": "success", "code": code}
+                return {"status": "pending", "message": "Code not found yet"}
     except Exception as e:
         logger.error(f"Get Code Error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -1327,6 +1438,55 @@ async def delete_store_user_price(id: int):
         usp = await session.get(UserStorePrice, id)
         if usp:
             await session.delete(usp)
+            await session.commit()
+            return {"status": "success"}
+        raise HTTPException(status_code=404, detail="Not found")
+
+@app.get("/api/admin/store/servers")
+async def get_servers():
+    async with async_session() as session:
+        stmt = select(ApiServer).order_by(ApiServer.id.asc())
+        servers = (await session.execute(stmt)).scalars().all()
+        return {"servers": [
+            {
+                "id": s.id,
+                "name": s.name,
+                "url": s.url,
+                "api_key": s.api_key,
+                "profit_margin": s.profit_margin,
+                "is_active": s.is_active
+            } for s in servers
+        ]}
+
+@app.post("/api/admin/store/servers")
+async def save_server(data: ApiServerSubmit):
+    async with async_session() as session:
+        if data.id:
+            srv = await session.get(ApiServer, data.id)
+            if not srv: raise HTTPException(status_code=404, detail="Server not found")
+            srv.name = data.name
+            srv.url = data.url
+            srv.api_key = data.api_key
+            srv.profit_margin = data.profit_margin
+            srv.is_active = data.is_active
+        else:
+            srv = ApiServer(
+                name=data.name,
+                url=data.url,
+                api_key=data.api_key,
+                profit_margin=data.profit_margin,
+                is_active=data.is_active
+            )
+            session.add(srv)
+        await session.commit()
+        return {"status": "success"}
+
+@app.delete("/api/admin/store/servers/{id}")
+async def delete_server(id: int):
+    async with async_session() as session:
+        srv = await session.get(ApiServer, id)
+        if srv:
+            await session.delete(srv)
             await session.commit()
             return {"status": "success"}
         raise HTTPException(status_code=404, detail="Not found")

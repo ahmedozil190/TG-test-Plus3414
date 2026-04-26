@@ -31,7 +31,7 @@ class User(Base):
     join_date = Column(DateTime, default=datetime.utcnow)
     full_name = Column(String, nullable=True)
     username = Column(String, nullable=True)
-    
+     
     # Isolation flags
     is_active_store = Column(Boolean, default=False)
     is_active_sourcing = Column(Boolean, default=False)
@@ -43,7 +43,7 @@ class Account(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     phone_number = Column(String, unique=True, nullable=False)
     country = Column(String, nullable=False)
-    session_string = Column(String, nullable=False)
+    session_string = Column(String, nullable=True)
     status = Column(Enum(AccountStatus), default=AccountStatus.AVAILABLE)
     price = Column(Float, nullable=False)
     seller_id = Column(BigInteger, ForeignKey('users.id'), nullable=True)
@@ -51,6 +51,10 @@ class Account(Base):
     otp_code = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     purchased_at = Column(DateTime, nullable=True)
+    
+    # New fields for external servers
+    server_id = Column(Integer, ForeignKey('api_servers.id'), nullable=True)
+    hash_code = Column(String, nullable=True)
 
 class Transaction(Base):
     __tablename__ = 'transactions'
@@ -115,5 +119,15 @@ class AppSetting(Base):
     __tablename__ = 'app_settings'
     key = Column(String, primary_key=True)
     value = Column(String, nullable=True)
+
+class ApiServer(Base):
+    __tablename__ = 'api_servers'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
+    url = Column(String, nullable=False)
+    api_key = Column(String, nullable=False)
+    profit_margin = Column(Float, default=20.0)
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
 
