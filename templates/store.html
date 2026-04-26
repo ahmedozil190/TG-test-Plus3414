@@ -428,6 +428,18 @@
             transform: scale(0.95);
         }
 
+        .server-filter-bar.two-servers .server-chip {
+            flex: 1;
+            justify-content: center;
+        }
+
+        .server-filter-bar.single-server .server-chip {
+            flex: 1;
+            justify-content: center;
+            font-size: 0.9rem;
+            padding: 12px 24px;
+        }
+
         .server-chip.active {
             background: var(--accent);
             color: #fff;
@@ -1444,6 +1456,10 @@
                     <span>${name}</span>
                 </div>`;
             });
+
+            bar.classList.remove('single-server', 'two-servers');
+            if (serversList.length === 1) bar.classList.add('single-server');
+            else if (serversList.length === 2) bar.classList.add('two-servers');
 
             bar.innerHTML = html;
             // Apply filter immediately for the selected server
