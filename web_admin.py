@@ -448,7 +448,7 @@ async def get_store_data(user_id: int = None):
             for row in local_results:
                 name, count = row
                 map_key = f"{name}|__local__"
-                countries_map[map_key] = {"name": name, "count": count, "server_id": None, "server_name": "Local"}
+                countries_map[map_key] = {"name": name, "count": count, "server_id": None, "server_name": "Server 1"}
 
             # 2. External Stock
             active_servers = (await session.execute(select(ApiServer).where(ApiServer.is_active == True))).scalars().all()
@@ -657,7 +657,7 @@ async def get_store_data(user_id: int = None):
                     "flag": flag,
                     "buy_price": price,
                     "count": c_data["count"],
-                    "server_name": c_data.get("server_name", "Local")
+                    "server_name": c_data.get("server_name", "Server 1")
                 })
             
             countries.sort(key=lambda x: x["name"])
