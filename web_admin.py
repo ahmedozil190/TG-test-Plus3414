@@ -545,14 +545,20 @@ async def get_store_data(user_id: int = None):
                         
                         if isinstance(data_node, dict):
                             for code, val in data_node.items():
-                                if code.lower() in ["status", "message", "error", "ok", "msg", "currency", "success"]: continue
+                                if code.lower() in ["status", "message", "error", "ok", "msg", "currency", "success", "rate", "price", "count", "stock", "quantity", "qty", "server_time"]: continue
                                 if isinstance(val, dict):
                                     entry = val.copy()
                                     entry["country"] = code
                                     countries_list.append(entry)
                                 elif isinstance(val, (int, float, str)):
                                     try:
-                                        price_val = float(val)
+                                        # Use a helper to clean price string if it's not a direct float
+                                        def clean_p(v):
+                                            if isinstance(v, (int, float)): return float(v)
+                                            try: return float(str(v).replace('$', '').replace('USD', '').strip().split()[0])
+                                            except: return 0.0
+
+                                        price_val = clean_p(val)
                                         countries_list.append({
                                             "country": code,
                                             "count": 999,
@@ -595,7 +601,15 @@ async def get_store_data(user_id: int = None):
                         try:
                             # Support all common quantity field names: count, qty, stock, quantity
                             count = int(c.get("count", c.get("qty", c.get("stock", c.get("quantity", 0)))))
-                            p_price = float(c.get("price", c.get("rate", c.get("cost", 0))))
+                            
+                            # Support multiple price keys: price, rate, cost, amount, value
+                            raw_p = c.get("price", c.get("rate", c.get("cost", c.get("amount", c.get("value", 0)))))
+                            def clean_p(v):
+                                if isinstance(v, (int, float)): return float(v)
+                                try: return float(str(v).replace('$', '').replace('USD', '').strip().split()[0])
+                                except: return 0.0
+                            
+                            p_price = clean_p(raw_p)
                             if count <= 0: continue
                             
                             map_key = f"{name}|{srv.name}"
@@ -624,8 +638,11 @@ async def get_store_data(user_id: int = None):
             countries = []
             
             # Pre-fetch all pricing data to avoid N+1 queries
+            # Pre-fetch all pricing data
             all_cp = (await session.execute(select(CountryPrice))).scalars().all()
-            cp_map = {cp.country_name: cp for cp in all_cp}
+            # Map by name and also by ISO for better matching
+            cp_name_map = {cp.country_name: cp for cp in all_cp}
+            cp_iso_map = {cp.iso_code: cp for cp in all_cp if cp.iso_code and cp.iso_code != 'XX'}
             
             all_usp = []
             if user_id:
@@ -637,17 +654,21 @@ async def get_store_data(user_id: int = None):
                 flag = "🌐"
                 price = 1.0
                 
-                cp = cp_map.get(name)
-                if cp:
-                    flag = get_flag_emoji(cp.iso_code)
-                    price = cp.price
-                elif "flag" in c_data:
-                    # Use resolved flag from external if no local override
-                    flag = c_data["flag"]
+                # 1. Base Price (API Price + Profit Margin)
+                price = c_data.get("calc_price", 1.0)
                 
-                # If external and no local price set, use calculated price
-                if not cp and "calc_price" in c_data:
-                    price = c_data["calc_price"]
+                # 2. Local Overrides (CountryPrice Table)
+                # Try match by ISO first (most accurate), then by name
+                cp = cp_iso_map.get(c_data.get("iso")) or cp_name_map.get(name)
+                
+                if cp:
+                    # Always use flag from DB if available
+                    flag = get_flag_emoji(cp.iso_code)
+                    # ONLY override price if DB price is explicitly set (> 0)
+                    if cp.price > 0:
+                        price = cp.price
+                elif "flag" in c_data:
+                    flag = c_data["flag"]
 
                 # Override with user-specific price if exists
                 if user_id:
