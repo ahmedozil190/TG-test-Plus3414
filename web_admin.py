@@ -689,7 +689,7 @@ async def get_store_data(user_id: int = None):
                 if is_local and cp:
                     is_sp = True
 
-                if user_id:
+                if user_id and is_local:
                     # Match logic for UserStorePrice:
                     # 1. By ISO code (most accurate)
                     # 2. By Name
@@ -887,34 +887,34 @@ async def store_buy(data: StoreBuy):
                 if not target_srv:
                     raise HTTPException(status_code=400, detail="Out of stock")
 
-            # 3. Handle Personalized Pricing (Applies to both local and external)
-            # We check for UserStorePrice even if cp is missing, for external countries.
-            from database.models import UserStorePrice
-            
-            # Resolve info to get ISO for matching if possible
-            _, _, res_iso = resolve_country_info(data.country)
-            
-            async with async_session() as session:
-                # Use a separate query to be sure
-                stmt = select(UserStorePrice).where(UserStorePrice.user_id == data.user_id)
-                user_prices = (await session.execute(stmt)).scalars().all()
+            # 3. Handle Personalized Pricing (ONLY applies to local stock)
+            if is_local:
+                from database.models import UserStorePrice
                 
-                usp = None
-                # Match by ISO
-                if res_iso and res_iso != 'XX':
-                    usp = next((u for u in user_prices if u.iso_code == res_iso), None)
+                # Resolve info to get ISO for matching if possible
+                _, _, res_iso = resolve_country_info(data.country)
                 
-                # Match by Name
-                if not usp:
-                    usp = next((u for u in user_prices if u.country_code == data.country), None)
-                
-                # Match by Phone Code (if cp exists)
-                if not usp and cp:
-                    cc_clean = cp.country_code.strip().replace('+', '')
-                    usp = next((u for u in user_prices if u.country_code == cc_clean or u.country_code == f"+{cc_clean}"), None)
-                
-                if usp:
-                    final_price = usp.sell_price
+                async with async_session() as session:
+                    # Use a separate query to be sure
+                    stmt = select(UserStorePrice).where(UserStorePrice.user_id == data.user_id)
+                    user_prices = (await session.execute(stmt)).scalars().all()
+                    
+                    usp = None
+                    # Match by ISO
+                    if res_iso and res_iso != 'XX':
+                        usp = next((u for u in user_prices if u.iso_code == res_iso), None)
+                    
+                    # Match by Name
+                    if not usp:
+                        usp = next((u for u in user_prices if u.country_code == data.country), None)
+                    
+                    # Match by Phone Code (if cp exists)
+                    if not usp and cp:
+                        cc_clean = cp.country_code.strip().replace('+', '')
+                        usp = next((u for u in user_prices if u.country_code == cc_clean or u.country_code == f"+{cc_clean}"), None)
+                    
+                    if usp:
+                        final_price = usp.sell_price
             
             if user.balance_store < final_price:
                 raise HTTPException(status_code=400, detail="Insufficient balance")
