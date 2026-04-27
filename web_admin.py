@@ -802,7 +802,7 @@ async def store_buy(data: StoreBuy):
                             break
                 
                 if not target_srv:
-                    raise HTTPException(status_code=400, detail="عذراً، نفدت الأرقام!")
+                    raise HTTPException(status_code=400, detail="Out of stock or API balance issue")
 
             # 3. Handle Personalized Pricing
             if cp:
@@ -820,7 +820,7 @@ async def store_buy(data: StoreBuy):
                     final_price = usp.sell_price
             
             if user.balance_store < final_price:
-                raise HTTPException(status_code=400, detail="رصيدك غير كافٍ")
+                raise HTTPException(status_code=400, detail="Insufficient balance")
 
             if account:
                 # Local Purchase Execution
@@ -860,7 +860,7 @@ async def store_buy(data: StoreBuy):
                     await session.commit()
                     return {"status": "success", "phone": new_acc.phone_number, "id": new_acc.id}
                 else:
-                    msg = buy_res.get("message") or "خطأ في مزود الأرقام"
+                    msg = buy_res.get("message") or "API provider error"
                     raise HTTPException(status_code=400, detail=msg)
     except HTTPException as e: raise e
     except Exception as e:
