@@ -1445,6 +1445,70 @@
             border: 2px solid transparent;
             background-clip: padding-box;
         }
+        /* ========== Settings Menu ========== */
+        .settings-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .settings-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 18px;
+            background: var(--card-glass);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .settings-item:active { transform: scale(0.98); }
+        .settings-icon-box {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        .settings-text {
+            flex: 1;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-p);
+        }
+        .settings-arrow { color: var(--text-s); font-size: 0.85rem; }
+        .settings-back-btn {
+            background: var(--card-glass);
+            border: 1px solid var(--border);
+            color: var(--text-p);
+            padding: 12px 18px;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s;
+        }
+        /* Custom Switch */
+        .custom-switch { position: relative; display: inline-block; width: 48px; height: 26px; }
+        .custom-switch input { opacity: 0; width: 0; height: 0; }
+        .switch-slider {
+            position: absolute; cursor: pointer; inset: 0;
+            background: rgba(255,255,255,0.08); border-radius: 26px;
+            transition: 0.3s;
+        }
+        .switch-slider::before {
+            content: ''; position: absolute;
+            width: 20px; height: 20px; left: 3px; bottom: 3px;
+            background: white; border-radius: 50%; transition: 0.3s;
+        }
+        .custom-switch input:checked + .switch-slider { background: #0070f3; }
+        .custom-switch input:checked + .switch-slider::before { transform: translateX(22px); }
     </style>
 </head>
 
@@ -2012,17 +2076,45 @@
 
             <!-- ===== Settings Section ===== -->
             <section id="section-settings" class="view-section">
-                <div class="section-header">
-                    <i class="fas fa-cog"></i>
-                    <h2 data-i18n="nav_settings">Settings</h2>
-                </div>
-                <div class="card" style="padding: 22px;">
-                    <div class="form-group">
-                        <label data-i18n="lbl_bot_name">Bot Name</label>
-                        <input type="text" id="setting-bot-name" class="input-field" placeholder="Sourcing Bot">
+                <div id="settings-main-menu" class="settings-menu active">
+                    <!-- Subscriptions -->
+                    <div class="settings-item" onclick="switchNav('settings-subscriptions', null)">
+                        <div class="settings-icon-box" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">
+                            <i class="fas fa-broadcast-tower"></i>
+                        </div>
+                        <span class="settings-text">Subscriptions</span>
+                        <i class="fas fa-chevron-right settings-arrow"></i>
                     </div>
-                    <button class="primary-btn" onclick="saveSettings()" data-i18n="btn_save_settings">Save
-                        Settings</button>
+
+                    <!-- Maintenance Mode Toggle -->
+                    <div class="settings-item" style="cursor: default; border-top: 1px solid var(--border); margin-top: 10px; padding-top: 20px;">
+                        <div class="settings-icon-box" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                        <div style="flex: 1; display: flex; flex-direction: column;">
+                            <span class="settings-text" style="margin-bottom: 2px;">Maintenance Mode</span>
+                            <span style="font-size: 0.75rem; color: var(--text-s);">Stops bot for users</span>
+                        </div>
+                        <label class="custom-switch">
+                            <input type="checkbox" id="src-maintenance-toggle" onchange="toggleMaintenanceMode(this.checked)">
+                            <span class="switch-slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== Subscriptions Sub-Section ===== -->
+            <section id="section-settings-subscriptions" class="view-section">
+                <button class="settings-back-btn" onclick="switchNav('settings', null)"
+                    style="margin-top: 10px; margin-bottom: 20px;">
+                    <i class="fas fa-arrow-left"></i> Back to Settings
+                </button>
+
+                <div class="card" style="padding: 22px; margin-bottom: 20px;">
+                    <h3 style="font-size: 1.1rem; margin-bottom: 20px; color: #8b5cf6;"><i
+                            class="fas fa-broadcast-tower" style="margin-right: 8px;"></i> Subscriptions</h3>
+                    <p style="color: var(--text-s); font-size: 0.9rem;">Manage your official channels and subscription
+                        requirements here.</p>
                 </div>
             </section>
 
@@ -2939,7 +3031,8 @@
                 history: 'nav_history',
                 settings: 'nav_settings',
                 withdrawals: 'nav_withdrawals',
-                'user-prices': 'nav_user_prices'
+                'user-prices': 'nav_user_prices',
+                'settings-subscriptions': 'nav_settings'
             };
             const titleEl = document.getElementById('page-title');
             if (titleEl) {
@@ -3043,6 +3136,7 @@
                 const loader = document.getElementById('loader');
                 if (loader) loader.style.display = 'none';
             }
+            loadMaintenanceMode();
         }
 
         async function refreshDashboardStats() {
@@ -3800,6 +3894,36 @@
 
         function saveSettings() {
             alert(currentLang === 'ar' ? 'تم حفظ الإعدادات بنجاح!' : 'Settings saved successfully!');
+        }
+
+        async function loadMaintenanceMode() {
+            try {
+                const res = await fetch('/api/admin/system/maintenance');
+                const data = await res.json();
+                const toggle = document.getElementById('src-maintenance-toggle');
+                if (toggle) toggle.checked = data.enabled;
+            } catch (e) {
+                console.error('Error loading maintenance mode', e);
+            }
+        }
+
+        async function toggleMaintenanceMode(enabled) {
+            try {
+                const res = await fetch(`/api/admin/system/maintenance?enabled=${enabled}`, { method: 'POST' });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    showToast(
+                        currentLang === 'ar' ? 'تم التحديث' : 'Updated',
+                        enabled
+                            ? (currentLang === 'ar' ? 'البوت الآن في وضع الصيانة' : 'Bot is now in maintenance mode')
+                            : (currentLang === 'ar' ? 'البوت متاح الآن للجميع' : 'Bot is now live for everyone'),
+                        'success'
+                    );
+                }
+            } catch (e) {
+                console.error('Error toggling maintenance mode', e);
+                showToast(currentLang === 'ar' ? 'خطأ' : 'Error', 'Failed to update', 'error');
+            }
         }
 
         function updateAllCountdowns() {

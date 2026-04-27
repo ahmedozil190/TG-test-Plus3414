@@ -2232,6 +2232,21 @@
                         <span class="settings-text">API Servers</span>
                         <i class="fas fa-chevron-right settings-arrow"></i>
                     </div>
+
+                    <!-- Maintenance Mode Toggle -->
+                    <div class="settings-item" style="cursor: default; border-top: 1px solid var(--border); margin-top: 10px; padding-top: 20px;">
+                        <div class="settings-icon-box" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                        <div style="flex: 1; display: flex; flex-direction: column;">
+                            <span class="settings-text" style="margin-bottom: 2px;">Maintenance Mode</span>
+                            <span style="font-size: 0.75rem; color: var(--text-s);">Stops bot for users</span>
+                        </div>
+                        <label class="custom-switch">
+                            <input type="checkbox" id="maintenance-toggle" onchange="toggleMaintenanceMode(this.checked)">
+                            <span class="switch-slider"></span>
+                        </label>
+                    </div>
                 </div>
             </section>
 
@@ -2879,6 +2894,40 @@
                 renderPrices(allPrices);
             } catch (e) { console.error(e); }
             finally { document.getElementById('loader').style.display = 'none'; }
+            loadServers();
+            loadMaintenanceMode();
+        }
+
+        async function loadMaintenanceMode() {
+            try {
+                const res = await fetch('/api/admin/system/maintenance');
+                const data = await res.json();
+                const toggle = document.getElementById('maintenance-toggle');
+                if (toggle) toggle.checked = data.enabled;
+            } catch (e) { console.error('Error loading maintenance mode', e); }
+        }
+
+        async function toggleMaintenanceMode(enabled) {
+            try {
+                const res = await fetch(`/api/admin/system/maintenance?enabled=${enabled}`, { method: 'POST' });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    showToast(
+                        currentLang === 'ar' ? 'تم التحديث' : 'Updated',
+                        enabled
+                            ? (currentLang === 'ar' ? 'البوت الآن في وضع الصيانة' : 'Bot is now in maintenance mode')
+                            : (currentLang === 'ar' ? 'البوت متاح الآن للجميع' : 'Bot is now live for everyone'),
+                        'success'
+                    );
+                }
+            } catch (e) {
+                console.error('Error toggling maintenance mode', e);
+                showToast(currentLang === 'ar' ? 'خطأ' : 'Error', 'Failed to update', 'error');
+            }
+        }
+
+        async function loadServers() {
+            await fetchServers();
         }
 
         // ===== Sales =====

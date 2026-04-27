@@ -1625,6 +1625,24 @@ async def save_store_settings(req: StoreSettingsSubmit):
         logger.error(f"Save Store Settings Error: {e}")
         return {"status": "error", "message": str(e)}
 
+@app.get("/api/admin/system/maintenance")
+async def get_maintenance():
+    async with async_session() as session:
+        setting = (await session.execute(select(AppSetting).where(AppSetting.key == "maintenance_mode"))).scalar_one_or_none()
+        return {"enabled": (setting.value.lower() == "true") if setting else False}
+
+@app.post("/api/admin/system/maintenance")
+async def set_maintenance(enabled: bool):
+    async with async_session() as session:
+        setting = (await session.execute(select(AppSetting).where(AppSetting.key == "maintenance_mode"))).scalar_one_or_none()
+        if not setting:
+            setting = AppSetting(key="maintenance_mode", value="true" if enabled else "false")
+            session.add(setting)
+        else:
+            setting.value = "true" if enabled else "false"
+        await session.commit()
+        return {"status": "success"}
+
 @app.get("/api/admin/store/deposits")
 async def get_store_deposits():
     from database.models import Deposit, User
