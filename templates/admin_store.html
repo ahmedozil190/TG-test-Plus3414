@@ -3691,20 +3691,9 @@
             const container = document.getElementById('servers-list');
             if (allServers.length === 0) {
                 container.innerHTML = `
-                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; background: rgba(255,255,255,0.02); border: 2px dashed var(--border); border-radius: 24px; text-align: center; margin-bottom: 20px;">
-                        <div style="width: 80px; height: 80px; background: rgba(0, 112, 243, 0.1); border-radius: 24px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; transform: rotate(-5deg); box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
-                             <i class="fas fa-server" style="font-size: 2.2rem; color: #0070f3;"></i>
-                        </div>
-                        <h3 style="font-size: 1.3rem; color: var(--text-p); margin-bottom: 8px; font-weight: 700;">
-                            ${currentLang === 'ar' ? 'بانتظار مزودك الأول' : 'Waiting for your first provider'}
-                        </h3>
-                        <p style="color: var(--text-s); font-size: 0.95rem; max-width: 320px; margin-bottom: 25px; line-height: 1.6; font-weight: 500;">
-                            ${currentLang === 'ar' ? 'لم تقم بربط أي سيرفر API حتى الآن. ابدأ بإضافة مزودك المفضل لتبدأ ببيع الأرقام.' : 'No API servers connected yet. Add your favorite provider to start selling numbers.'}
-                        </p>
-                        <button onclick="openAddServerModal()" class="action-btn" style="background: #0070f3; color: white; padding: 12px 28px; border-radius: 14px; border:none; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0, 112, 243, 0.3);">
-                            <i class="fas fa-plus-circle"></i>
-                            ${currentLang === 'ar' ? 'إضافة أول مزود الآن' : 'Add First Provider Now'}
-                        </button>
+                    <div style="text-align: center; padding: 40px; color: var(--text-s);">
+                        <i class="fas fa-info-circle" style="font-size: 2rem; margin-bottom: 15px; opacity: 0.5;"></i>
+                        <p>No API servers connected yet.</p>
                     </div>
                 `;
                 return;
@@ -3822,7 +3811,7 @@
             const textEl = document.getElementById('srv-type-text');
             const templateNames = { 'max': 'Max', 'fast': 'Fast', 'lion': 'Lion', 'spider': 'Spider', 'other': 'Other' };
             if (textEl) textEl.innerText = templateNames[templateKey] || 'Other';
-            
+
             updateCustomSelectChecks(templateKey);
 
             document.getElementById('srv-extra-id').value = s.extra_id || '';
@@ -3912,10 +3901,10 @@
             };
 
             const selected = templates[val] || templates['other'];
-            
+
             // Set the hidden type field (standard or lion) for the backend
             document.getElementById('srv-type').value = selected.type;
-            
+
             // Auto-fill the URL if it's a known template and currently empty or matches another template
             const urlInput = document.getElementById('srv-url');
             if (selected.url) {
