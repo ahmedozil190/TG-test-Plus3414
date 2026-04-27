@@ -724,7 +724,8 @@ async def get_store_data(user_id: int = None):
                     "is_selling_price": is_sp
                 })
             
-            countries.sort(key=lambda x: x["name"])
+            # Sort by count (descending) and then name (ascending)
+            countries.sort(key=lambda x: (-x["count"], x["name"]))
             
             # User balance & Stats
             balance = 0.0
