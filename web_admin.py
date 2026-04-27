@@ -435,6 +435,14 @@ async def store_page(request: Request):
 async def get_store_data(user_id: int = None):
     try:
         async with async_session() as session:
+            # CHECK MAINTENANCE MODE FIRST (Admins bypass)
+            mnt_obj = (await session.execute(select(AppSetting).where(AppSetting.key == "maintenance_mode"))).scalar_one_or_none()
+            maintenance_mode = (mnt_obj.value.lower() == "true") if mnt_obj else False
+            
+            from config import ADMIN_IDS
+            if maintenance_mode and user_id not in ADMIN_IDS:
+                return {"maintenance_mode": True}
+
             # 0. Global Settings
             local_enabled_obj = (await session.execute(select(AppSetting).where(AppSetting.key == "local_server_enabled"))).scalar_one_or_none()
             local_enabled = (local_enabled_obj.value.lower() == "true") if local_enabled_obj else True
@@ -795,13 +803,9 @@ async def get_store_data(user_id: int = None):
             final_trx = addr_settings.get("TRX_ADDRESS") or ""
             final_usdt_bep20 = addr_settings.get("USDT_BEP20_ADDRESS") or ""
 
-        # Fetch Maintenance Mode
-        async with async_session() as session:
-            mnt_obj = (await session.execute(select(AppSetting).where(AppSetting.key == "maintenance_mode"))).scalar_one_or_none()
-            maintenance_mode = (mnt_obj.value.lower() == "true") if mnt_obj else False
 
         return {
-            "maintenance_mode": maintenance_mode,
+            "maintenance_mode": False,
             "bot_name": bot_name,
             "countries": countries,
             "servers": server_names,
@@ -2181,6 +2185,14 @@ async def toggle_ban(data: BanToggle):
 async def get_seller_data(user_id: int):
     try:
         async with async_session() as session:
+            # CHECK MAINTENANCE MODE FIRST (Admins bypass)
+            mnt_obj = (await session.execute(select(AppSetting).where(AppSetting.key == "maintenance_mode"))).scalar_one_or_none()
+            maintenance_mode = (mnt_obj.value.lower() == "true") if mnt_obj else False
+            
+            from config import ADMIN_IDS
+            if maintenance_mode and user_id not in ADMIN_IDS:
+                return {"maintenance_mode": True}
+
             user = await session.get(User, user_id)
             if not user:
                 # Add new user without active flags
@@ -2277,12 +2289,9 @@ async def get_seller_data(user_id: int):
                         })
                     except: pass
                 
-            # Fetch Maintenance Mode
-            mnt_obj = (await session.execute(select(AppSetting).where(AppSetting.key == "maintenance_mode"))).scalar_one_or_none()
-            maintenance_mode = (mnt_obj.value.lower() == "true") if mnt_obj else False
             
             return {
-                "maintenance_mode": maintenance_mode,
+                "maintenance_mode": False,
                 "user": {
                     "id": user.id,
                     "balance": user.balance_sourcing,
