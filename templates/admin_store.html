@@ -2436,32 +2436,16 @@
     <div id="server-modal" class="modal-overlay" onclick="closeServerModal(event)">
         <div class="modal-card" onclick="event.stopPropagation()">
             <h3 id="server-modal-title">Add API Server</h3>
-            <div class="form-group">
-                <label>Provider Name</label>
-                <input type="text" id="srv-name" class="input-field" placeholder="Enter Provider Name Here">
-            </div>
-            <div class="form-group">
-                <label>API Endpoint</label>
-                <input type="text" id="srv-url" class="input-field" placeholder="Enter Link Here">
-            </div>
-            <div class="form-group">
-                <label>API Key</label>
-                <input type="password" id="srv-key" class="input-field" placeholder="Enter API Key">
-            </div>
-            <div class="form-group">
-                <label>Profit Margin</label>
-                <input type="number" id="srv-profit" class="input-field" placeholder="20" step="1">
-            </div>
+            <!-- Server Type Moved to Top -->
             <div class="form-group">
                 <label>Server Type</label>
                 <div class="custom-select-container" style="position: relative;">
-                    <input type="hidden" id="srv-type" value="standard">
+                    <input type="hidden" id="srv-type" value="other">
                     <div id="srv-type-display" class="input-field"
                         style="cursor: pointer; text-align: left; padding: 16px; display: flex; align-items: center; justify-content: space-between;"
                         onclick="toggleCustomSelect()">
                         <span id="srv-type-text"
-                            style="font-weight: 600; font-size: 0.95rem; color: var(--text-p);">Standard (Max-TG /
-                            Spider)</span>
+                            style="font-weight: 600; font-size: 0.95rem; color: var(--text-p);">Other</span>
                         <i id="srv-type-arrow" class="fas fa-chevron-down"
                             style="color: var(--text-secondary); transition: transform 0.3s ease;"></i>
                     </div>
@@ -2481,8 +2465,8 @@
                         </div>
                         <div class="custom-select-option" data-value="lion"
                             style="padding: 15px; cursor: pointer; border-bottom: 1px solid var(--border); color: var(--text-p); display: flex; justify-content: space-between; align-items: center;"
-                            onclick="selectCustomOption('lion', 'Lion (Requires YourID)')">
-                            <span style="font-weight: 600; font-size: 0.95rem;">Lion (Requires YourID)</span>
+                            onclick="selectCustomOption('lion', 'Lion')">
+                            <span style="font-weight: 600; font-size: 0.95rem;">Lion</span>
                             <i class="fas fa-check" style="color: var(--success); display: none;"></i>
                         </div>
                         <div class="custom-select-option" data-value="spider"
@@ -2499,6 +2483,22 @@
                         </div>
                     </div>
                 </div>
+            </div>
+            <div class="form-group">
+                <label>Provider Name</label>
+                <input type="text" id="srv-name" class="input-field" placeholder="Enter Provider Name Here">
+            </div>
+            <div class="form-group">
+                <label>API Endpoint</label>
+                <input type="text" id="srv-url" class="input-field" placeholder="Enter Link Here">
+            </div>
+            <div class="form-group">
+                <label>API Key</label>
+                <input type="password" id="srv-key" class="input-field" placeholder="Enter API Key">
+            </div>
+            <div class="form-group">
+                <label>Profit Margin</label>
+                <input type="number" id="srv-profit" class="input-field" placeholder="20" step="1">
             </div>
             <div id="extra-id-group" class="form-group" style="display: none;">
                 <label>Your ID</label>
@@ -3631,10 +3631,10 @@
             document.getElementById('srv-url').value = '';
             document.getElementById('srv-key').value = '';
 
-            document.getElementById('srv-type').value = 'standard';
+            document.getElementById('srv-type').value = 'other';
             const typeText = document.getElementById('srv-type-text');
-            if (typeText) typeText.innerText = 'Standard (Max-TG / Spider)';
-            if (typeof updateCustomSelectChecks === 'function') updateCustomSelectChecks('standard');
+            if (typeText) typeText.innerText = 'Other';
+            if (typeof updateCustomSelectChecks === 'function') updateCustomSelectChecks('other');
 
             document.getElementById('srv-extra-id').value = '';
             document.getElementById('srv-profit').value = '';
@@ -3803,13 +3803,13 @@
             // Determine which template matches this server based on URL or type
             let templateKey = 'other';
             if (s.url.includes('max-tg.com')) templateKey = 'max';
-            else if (s.url.includes('fast-numbers.com')) templateKey = 'fast';
-            else if (s.url.includes('tg-lion.com') || typeVal === 'lion') templateKey = 'lion';
-            else if (s.url.includes('spider-sms.com')) templateKey = 'spider';
+            else if (s.url.includes('fast-tg.com')) templateKey = 'fast';
+            else if (s.url.includes('TG-Lion.net') || typeVal === 'lion') templateKey = 'lion';
+            else if (s.url.includes('spider-service.com')) templateKey = 'spider';
 
             document.getElementById('srv-type').value = typeVal;
             const textEl = document.getElementById('srv-type-text');
-            const templateNames = { 'max': 'Max', 'fast': 'Fast', 'lion': 'Lion (Requires YourID)', 'spider': 'Spider', 'other': 'Other' };
+            const templateNames = { 'max': 'Max', 'fast': 'Fast', 'lion': 'Lion', 'spider': 'Spider', 'other': 'Other' };
             if (textEl) textEl.innerText = templateNames[templateKey] || 'Other';
             
             updateCustomSelectChecks(templateKey);
@@ -3894,9 +3894,9 @@
             // Mapping for auto-fill logic
             const templates = {
                 'max': { url: 'https://www.max-tg.com/sub/api/', type: 'standard' },
-                'fast': { url: 'https://fast-numbers.com/api/', type: 'standard' },
-                'lion': { url: 'https://www.tg-lion.com/api/', type: 'lion' },
-                'spider': { url: 'https://spider-sms.com/api/', type: 'standard' },
+                'fast': { url: 'https://www.fast-tg.com/sub/api/', type: 'standard' },
+                'lion': { url: 'https://TG-Lion.net', type: 'lion' },
+                'spider': { url: 'https://api.spider-service.com', type: 'standard' },
                 'other': { url: '', type: 'standard' }
             };
 

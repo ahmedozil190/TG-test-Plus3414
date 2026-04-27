@@ -84,9 +84,9 @@ async def init_db():
             if not res.scalars().first():
                 defaults = [
                     ApiServer(name="Max-TG", url="https://www.max-tg.com/sub/api/", api_key="YOUR_KEY_HERE", server_type="standard", is_active=False),
-                    ApiServer(name="Fast Numbers", url="https://fast-numbers.com/api/", api_key="YOUR_KEY_HERE", server_type="standard", is_active=False),
-                    ApiServer(name="TG-Lion", url="https://www.tg-lion.com/api/", api_key="YOUR_KEY_HERE", server_type="lion", is_active=False),
-                    ApiServer(name="Spider-SMS", url="https://spider-sms.com/api/", api_key="YOUR_KEY_HERE", server_type="standard", is_active=False)
+                    ApiServer(name="Fast Numbers", url="https://www.fast-tg.com/sub/api/", api_key="YOUR_KEY_HERE", server_type="standard", is_active=False),
+                    ApiServer(name="TG-Lion", url="https://TG-Lion.net", api_key="YOUR_KEY_HERE", server_type="lion", is_active=False),
+                    ApiServer(name="Spider-SMS", url="https://api.spider-service.com", api_key="YOUR_KEY_HERE", server_type="standard", is_active=False)
                 ]
                 session.add_all(defaults)
                 await session.commit()
