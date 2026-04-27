@@ -19,7 +19,8 @@ async_session = sessionmaker(
     engine, expire_on_commit=False, class_=AsyncSession
 )
 
-from sqlalchemy import text
+from sqlalchemy import text, select
+from database.models import ApiServer
 
 async def init_db():
     async with engine.begin() as conn:
@@ -75,3 +76,20 @@ async def init_db():
                 
         except Exception as e:
             print(f"Migration check failed: {e}")
+
+    # Seed Default Servers if empty
+    async with async_session() as session:
+        try:
+            res = await session.execute(select(ApiServer))
+            if not res.scalars().first():
+                defaults = [
+                    ApiServer(name="Max-TG", url="https://www.max-tg.com/sub/api/", api_key="YOUR_KEY_HERE", server_type="standard", is_active=False),
+                    ApiServer(name="Fast Numbers", url="https://fast-numbers.com/api/", api_key="YOUR_KEY_HERE", server_type="standard", is_active=False),
+                    ApiServer(name="TG-Lion", url="https://www.tg-lion.com/api/", api_key="YOUR_KEY_HERE", server_type="lion", is_active=False),
+                    ApiServer(name="Spider-SMS", url="https://spider-sms.com/api/", api_key="YOUR_KEY_HERE", server_type="standard", is_active=False)
+                ]
+                session.add_all(defaults)
+                await session.commit()
+                print("Seeded default API servers (inactive)")
+        except Exception as e:
+            print(f"Seeding failed: {e}")

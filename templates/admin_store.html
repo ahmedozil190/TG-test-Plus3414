@@ -1421,20 +1421,25 @@
             transition: 0.2s;
             color: rgba(0, 0, 0, 0.9);
         }
+
         .dark-mode .server-action-btn {
             color: rgba(255, 255, 255, 0.9);
         }
+
         .server-action-btn.edit {
             background: rgba(59, 130, 246, 0.1);
             border: 1px solid #3b82f6;
         }
+
         .server-action-btn.edit:hover {
             background: rgba(59, 130, 246, 0.2);
         }
+
         .server-action-btn.delete {
             background: rgba(239, 68, 68, 0.1);
             border: 1px solid #ef4444;
         }
+
         .server-action-btn.delete:hover {
             background: rgba(239, 68, 68, 0.2);
         }
@@ -1446,19 +1451,25 @@
             width: 48px;
             height: 26px;
         }
+
         .custom-switch input {
             opacity: 0;
             width: 0;
             height: 0;
         }
+
         .switch-slider {
             position: absolute;
             cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             background-color: var(--border);
             transition: .4s;
             border-radius: 34px;
         }
+
         .switch-slider:before {
             position: absolute;
             content: "";
@@ -1469,12 +1480,14 @@
             background-color: white;
             transition: .4s;
             border-radius: 50%;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
-        .custom-switch input:checked + .switch-slider {
+
+        .custom-switch input:checked+.switch-slider {
             background-color: var(--success);
         }
-        .custom-switch input:checked + .switch-slider:before {
+
+        .custom-switch input:checked+.switch-slider:before {
             transform: translateX(22px);
         }
 
@@ -1983,10 +1996,13 @@
                     </div>
 
                     <!-- Note: Only local stock -->
-                    <div style="margin-bottom: 20px; padding: 12px 15px; background: rgba(88, 101, 242, 0.05); border-radius: 12px; border: 1px solid rgba(88, 101, 242, 0.1); display: flex; align-items: flex-start; gap: 10px;">
+                    <div
+                        style="margin-bottom: 20px; padding: 12px 15px; background: rgba(88, 101, 242, 0.05); border-radius: 12px; border: 1px solid rgba(88, 101, 242, 0.1); display: flex; align-items: flex-start; gap: 10px;">
                         <i class="fas fa-info-circle" style="color: var(--accent); margin-top: 3px;"></i>
                         <p style="font-size: 0.85rem; color: var(--text-s); line-height: 1.4; margin: 0;">
-                            <strong style="color: var(--accent);">Note:</strong> These prices apply to <strong>Local Inventory</strong> only. For external servers, prices are calculated as (API Cost + Profit Margin).
+                            <strong style="color: var(--accent);">Note:</strong> These prices apply to <strong>Local
+                                Inventory</strong> only. For external servers, prices are calculated as (API Cost +
+                            Profit Margin).
                         </p>
                     </div>
 
@@ -2306,7 +2322,8 @@
                 </button>
 
                 <div class="card" style="padding: 28px; margin-bottom: 20px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
                         <div>
                             <h3 style="font-size: 1.15rem; color: #10b981; margin-bottom: 4px;">
                                 <i class="fas fa-server" style="margin-right: 8px;"></i> API Servers
@@ -2318,19 +2335,25 @@
                     </div>
 
                     <!-- Local Server Toggle -->
-                    <div class="user-card" style="padding: 20px; margin-bottom: 25px; border: 1px solid rgba(16, 185, 129, 0.2); background: rgba(16, 185, 129, 0.03);">
+                    <div class="user-card"
+                        style="padding: 20px; margin-bottom: 25px; border: 1px solid rgba(16, 185, 129, 0.2); background: rgba(16, 185, 129, 0.03);">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <div style="display: flex; align-items: center; gap: 15px;">
-                                <div style="width: 44px; height: 44px; border-radius: 12px; background: var(--success); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);">
+                                <div
+                                    style="width: 44px; height: 44px; border-radius: 12px; background: var(--success); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);">
                                     <i class="fas fa-home"></i>
                                 </div>
                                 <div>
-                                    <h4 style="font-size: 1rem; font-weight: 800; color: var(--text-p);">Local Server</h4>
-                                    <span style="font-size: 0.75rem; color: var(--success); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Internal Stock</span>
+                                    <h4 style="font-size: 1rem; font-weight: 800; color: var(--text-p);">Local Server
+                                    </h4>
+                                    <span
+                                        style="font-size: 0.75rem; color: var(--success); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Internal
+                                        Stock</span>
                                 </div>
                             </div>
                             <label class="custom-switch">
-                                <input type="checkbox" id="local-server-toggle" onchange="toggleLocalServer(this.checked)">
+                                <input type="checkbox" id="local-server-toggle"
+                                    onchange="toggleLocalServer(this.checked)">
                                 <span class="switch-slider"></span>
                             </label>
                         </div>
@@ -2339,7 +2362,8 @@
                     <div id="servers-list" class="settings-menu">
                         <!-- Placeholder for server cards -->
                         <div style="text-align: center; padding: 40px; color: var(--text-s);">
-                            <i class="fas fa-info-circle" style="font-size: 2rem; margin-bottom: 15px; opacity: 0.5;"></i>
+                            <i class="fas fa-info-circle"
+                                style="font-size: 2rem; margin-bottom: 15px; opacity: 0.5;"></i>
                             <p>No API servers connected yet. Add your first provider to start selling numbers.</p>
                         </div>
                     </div>
@@ -2432,17 +2456,45 @@
                 <label>Server Type</label>
                 <div class="custom-select-container" style="position: relative;">
                     <input type="hidden" id="srv-type" value="standard">
-                    <div id="srv-type-display" class="input-field" style="cursor: pointer; text-align: left; padding: 16px; display: flex; align-items: center; justify-content: space-between;" onclick="toggleCustomSelect()">
-                        <span id="srv-type-text" style="font-weight: 600; font-size: 0.95rem; color: var(--text-p);">Standard (Max-TG / Spider)</span>
-                        <i id="srv-type-arrow" class="fas fa-chevron-down" style="color: var(--text-secondary); transition: transform 0.3s ease;"></i>
+                    <div id="srv-type-display" class="input-field"
+                        style="cursor: pointer; text-align: left; padding: 16px; display: flex; align-items: center; justify-content: space-between;"
+                        onclick="toggleCustomSelect()">
+                        <span id="srv-type-text"
+                            style="font-weight: 600; font-size: 0.95rem; color: var(--text-p);">Standard (Max-TG /
+                            Spider)</span>
+                        <i id="srv-type-arrow" class="fas fa-chevron-down"
+                            style="color: var(--text-secondary); transition: transform 0.3s ease;"></i>
                     </div>
-                    <div id="srv-type-options" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 16px; margin-top: 5px; z-index: 10; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-                        <div class="custom-select-option" data-value="standard" style="padding: 15px; cursor: pointer; border-bottom: 1px solid var(--border); color: var(--text-p); display: flex; justify-content: space-between; align-items: center;" onclick="selectCustomOption('standard', 'Standard (Max-TG / Spider)')">
-                            <span style="font-weight: 600; font-size: 0.95rem;">Standard (Max-TG / Spider)</span>
+                    <div id="srv-type-options"
+                        style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 16px; margin-top: 5px; z-index: 10; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                        <div class="custom-select-option" data-value="max"
+                            style="padding: 15px; cursor: pointer; border-bottom: 1px solid var(--border); color: var(--text-p); display: flex; justify-content: space-between; align-items: center;"
+                            onclick="selectCustomOption('max', 'Max')">
+                            <span style="font-weight: 600; font-size: 0.95rem;">Max</span>
                             <i class="fas fa-check" style="color: var(--success); display: none;"></i>
                         </div>
-                        <div class="custom-select-option" data-value="lion" style="padding: 15px; cursor: pointer; color: var(--text-p); display: flex; justify-content: space-between; align-items: center;" onclick="selectCustomOption('lion', 'TG-Lion (Requires YourID)')">
-                            <span style="font-weight: 600; font-size: 0.95rem;">TG-Lion (Requires YourID)</span>
+                        <div class="custom-select-option" data-value="fast"
+                            style="padding: 15px; cursor: pointer; border-bottom: 1px solid var(--border); color: var(--text-p); display: flex; justify-content: space-between; align-items: center;"
+                            onclick="selectCustomOption('fast', 'Fast')">
+                            <span style="font-weight: 600; font-size: 0.95rem;">Fast</span>
+                            <i class="fas fa-check" style="color: var(--success); display: none;"></i>
+                        </div>
+                        <div class="custom-select-option" data-value="lion"
+                            style="padding: 15px; cursor: pointer; border-bottom: 1px solid var(--border); color: var(--text-p); display: flex; justify-content: space-between; align-items: center;"
+                            onclick="selectCustomOption('lion', 'Lion (Requires YourID)')">
+                            <span style="font-weight: 600; font-size: 0.95rem;">Lion (Requires YourID)</span>
+                            <i class="fas fa-check" style="color: var(--success); display: none;"></i>
+                        </div>
+                        <div class="custom-select-option" data-value="spider"
+                            style="padding: 15px; cursor: pointer; border-bottom: 1px solid var(--border); color: var(--text-p); display: flex; justify-content: space-between; align-items: center;"
+                            onclick="selectCustomOption('spider', 'Spider')">
+                            <span style="font-weight: 600; font-size: 0.95rem;">Spider</span>
+                            <i class="fas fa-check" style="color: var(--success); display: none;"></i>
+                        </div>
+                        <div class="custom-select-option" data-value="other"
+                            style="padding: 15px; cursor: pointer; color: var(--text-p); display: flex; justify-content: space-between; align-items: center;"
+                            onclick="selectCustomOption('other', 'Other')">
+                            <span style="font-weight: 600; font-size: 0.95rem;">Other</span>
                             <i class="fas fa-check" style="color: var(--success); display: none;"></i>
                         </div>
                     </div>
@@ -2452,15 +2504,18 @@
                 <label>Your ID</label>
                 <input type="text" id="srv-extra-id" class="input-field" placeholder="Enter Your ID Here">
             </div>
-            <div class="form-group" style="display: flex; align-items: center; justify-content: space-between; margin-top: 20px; background: var(--bg-elevated); padding: 15px; border-radius: 16px; border: 1px solid var(--border);">
-                <label for="srv-active" style="margin-bottom: 0; font-size: 1rem; color: var(--text-p); font-weight: 600;">Server Active</label>
+            <div class="form-group"
+                style="display: flex; align-items: center; justify-content: space-between; margin-top: 20px; background: var(--bg-elevated); padding: 15px; border-radius: 16px; border: 1px solid var(--border);">
+                <label for="srv-active"
+                    style="margin-bottom: 0; font-size: 1rem; color: var(--text-p); font-weight: 600;">Server
+                    Active</label>
                 <label class="custom-switch">
                     <input type="checkbox" id="srv-active" checked>
                     <span class="switch-slider"></span>
                 </label>
             </div>
             <input type="hidden" id="srv-id">
-            
+
             <button class="primary-btn" onclick="saveServer()">Save Server</button>
             <button class="cancel-btn" onclick="closeServerModal()">Cancel</button>
         </div>
@@ -2469,15 +2524,20 @@
     <!-- ===== Delete Confirmation Modal ===== -->
     <div id="delete-confirm-modal" class="modal-overlay" onclick="closeDeleteConfirmModal(event)">
         <div class="modal-card" onclick="event.stopPropagation()" style="text-align: center;">
-            <div style="width: 60px; height: 60px; border-radius: 50%; background: rgba(239, 68, 68, 0.1); color: #ef4444; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin: 0 auto 15px;">
+            <div
+                style="width: 60px; height: 60px; border-radius: 50%; background: rgba(239, 68, 68, 0.1); color: #ef4444; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin: 0 auto 15px;">
                 <i class="fas fa-exclamation-triangle"></i>
             </div>
             <h3 style="margin-bottom: 10px; color: var(--text-p);">Confirm Deletion</h3>
-            <p style="color: var(--text-s); font-size: 0.95rem; margin-bottom: 25px; line-height: 1.5;">Are you sure you want to permanently delete this provider?</p>
-            
+            <p style="color: var(--text-s); font-size: 0.95rem; margin-bottom: 25px; line-height: 1.5;">Are you sure you
+                want to permanently delete this provider?</p>
+
             <div style="display: flex; flex-direction: row; gap: 10px; width: 100%;">
-                <button class="cancel-btn" style="flex: 1; margin: 0; padding: 14px 0;" onclick="closeDeleteConfirmModal()">Cancel</button>
-                <button class="primary-btn" style="flex: 1; margin: 0; padding: 14px 0; background: #ef4444; border: none; color: white;" onclick="executeDeleteServer()">Delete</button>
+                <button class="cancel-btn" style="flex: 1; margin: 0; padding: 14px 0;"
+                    onclick="closeDeleteConfirmModal()">Cancel</button>
+                <button class="primary-btn"
+                    style="flex: 1; margin: 0; padding: 14px 0; background: #ef4444; border: none; color: white;"
+                    onclick="executeDeleteServer()">Delete</button>
             </div>
         </div>
     </div>
@@ -3570,12 +3630,12 @@
             document.getElementById('srv-name').value = '';
             document.getElementById('srv-url').value = '';
             document.getElementById('srv-key').value = '';
-            
+
             document.getElementById('srv-type').value = 'standard';
             const typeText = document.getElementById('srv-type-text');
-            if(typeText) typeText.innerText = 'Standard (Max-TG / Spider)';
-            if(typeof updateCustomSelectChecks === 'function') updateCustomSelectChecks('standard');
-            
+            if (typeText) typeText.innerText = 'Standard (Max-TG / Spider)';
+            if (typeof updateCustomSelectChecks === 'function') updateCustomSelectChecks('standard');
+
             document.getElementById('srv-extra-id').value = '';
             document.getElementById('srv-profit').value = '';
             document.getElementById('srv-active').checked = true;
@@ -3598,17 +3658,17 @@
                 const res = await fetch('/api/admin/store/servers');
                 const data = await res.json();
                 allServers = data.servers || [];
-                
+
                 // Update Local Server Toggle
                 const localToggle = document.getElementById('local-server-toggle');
                 if (localToggle) {
                     localToggle.checked = data.local_server_enabled;
                 }
-                
+
                 renderServers();
             } catch (e) { console.error("Error fetching servers", e); }
         }
-        
+
         async function toggleLocalServer(enabled) {
             try {
                 const res = await fetch('/api/admin/store/toggle-local', {
@@ -3618,9 +3678,9 @@
                 });
                 const data = await res.json();
                 if (data.status === 'success') {
-                    showToast(currentLang === 'ar' ? 'تم التحديث' : 'Updated', 
-                              currentLang === 'ar' ? 'تم تغيير حالة السيرفر المحلي' : 'Local server status changed', 
-                              'success');
+                    showToast(currentLang === 'ar' ? 'تم التحديث' : 'Updated',
+                        currentLang === 'ar' ? 'تم تغيير حالة السيرفر المحلي' : 'Local server status changed',
+                        'success');
                 }
             } catch (e) {
                 console.error("Error toggling local server", e);
@@ -3738,13 +3798,22 @@
             document.getElementById('srv-name').value = s.name;
             document.getElementById('srv-url').value = s.url;
             document.getElementById('srv-key').value = s.api_key;
-            
+
             const typeVal = s.server_type || 'standard';
+            // Determine which template matches this server based on URL or type
+            let templateKey = 'other';
+            if (s.url.includes('max-tg.com')) templateKey = 'max';
+            else if (s.url.includes('fast-numbers.com')) templateKey = 'fast';
+            else if (s.url.includes('tg-lion.com') || typeVal === 'lion') templateKey = 'lion';
+            else if (s.url.includes('spider-sms.com')) templateKey = 'spider';
+
             document.getElementById('srv-type').value = typeVal;
-            const typeText = document.getElementById('srv-type-text');
-            if(typeText) typeText.innerText = typeVal === 'lion' ? 'TG-Lion (Requires YourID)' : 'Standard (Max-TG / Spider)';
-            if(typeof updateCustomSelectChecks === 'function') updateCustomSelectChecks(typeVal);
+            const textEl = document.getElementById('srv-type-text');
+            const templateNames = { 'max': 'Max', 'fast': 'Fast', 'lion': 'Lion (Requires YourID)', 'spider': 'Spider', 'other': 'Other' };
+            if (textEl) textEl.innerText = templateNames[templateKey] || 'Other';
             
+            updateCustomSelectChecks(templateKey);
+
             document.getElementById('srv-extra-id').value = s.extra_id || '';
             document.getElementById('srv-profit').value = s.profit_margin;
             document.getElementById('srv-active').checked = s.is_active;
@@ -3758,7 +3827,7 @@
 
         function deleteServer(id) {
             serverToDeleteId = id;
-            
+
             const titleEl = document.querySelector('#delete-confirm-modal h3');
             const pEl = document.querySelector('#delete-confirm-modal p');
             const cancelBtn = document.querySelector('#delete-confirm-modal .cancel-btn');
@@ -3792,8 +3861,8 @@
                 if (res.ok) {
                     closeDeleteConfirmModal();
                     fetchServers();
-                } else { 
-                    tg.showAlert(currentLang === 'ar' ? 'فشل الحذف' : 'Failed to delete.'); 
+                } else {
+                    tg.showAlert(currentLang === 'ar' ? 'فشل الحذف' : 'Failed to delete.');
                 }
             } catch (e) { console.error(e); }
         }
@@ -3804,7 +3873,7 @@
             const arrow = document.getElementById('srv-type-arrow');
             if (optionsDiv.style.display === 'none' || optionsDiv.style.display === '') {
                 optionsDiv.style.display = 'block';
-                if(arrow) {
+                if (arrow) {
                     arrow.style.transform = 'rotate(180deg)';
                 }
             } else {
@@ -3815,16 +3884,37 @@
         function closeCustomSelect() {
             const optionsDiv = document.getElementById('srv-type-options');
             const arrow = document.getElementById('srv-type-arrow');
-            if(optionsDiv) optionsDiv.style.display = 'none';
-            if(arrow) {
+            if (optionsDiv) optionsDiv.style.display = 'none';
+            if (arrow) {
                 arrow.style.transform = 'rotate(0deg)';
             }
         }
 
         function selectCustomOption(val, text) {
-            document.getElementById('srv-type').value = val;
+            // Mapping for auto-fill logic
+            const templates = {
+                'max': { url: 'https://www.max-tg.com/sub/api/', type: 'standard' },
+                'fast': { url: 'https://fast-numbers.com/api/', type: 'standard' },
+                'lion': { url: 'https://www.tg-lion.com/api/', type: 'lion' },
+                'spider': { url: 'https://spider-sms.com/api/', type: 'standard' },
+                'other': { url: '', type: 'standard' }
+            };
+
+            const selected = templates[val] || templates['other'];
+            
+            // Set the hidden type field (standard or lion) for the backend
+            document.getElementById('srv-type').value = selected.type;
+            
+            // Auto-fill the URL if it's a known template and currently empty or matches another template
+            const urlInput = document.getElementById('srv-url');
+            if (selected.url) {
+                urlInput.value = selected.url;
+            } else if (val === 'other') {
+                // Don't clear if user is switching to other to type custom URL
+            }
+
             const textEl = document.getElementById('srv-type-text');
-            if(textEl) textEl.innerText = text;
+            if (textEl) textEl.innerText = text;
             updateCustomSelectChecks(val);
             toggleExtraId();
             closeCustomSelect();
@@ -3834,16 +3924,16 @@
             document.querySelectorAll('.custom-select-option').forEach(opt => {
                 const icon = opt.querySelector('.fa-check');
                 if (opt.getAttribute('data-value') === val) {
-                    if(icon) icon.style.display = 'inline-block';
+                    if (icon) icon.style.display = 'inline-block';
                     opt.style.background = 'var(--tab-bg)';
                 } else {
-                    if(icon) icon.style.display = 'none';
+                    if (icon) icon.style.display = 'none';
                     opt.style.background = 'transparent';
                 }
             });
         }
-        
-        document.addEventListener('click', function(e) {
+
+        document.addEventListener('click', function (e) {
             const container = document.querySelector('.custom-select-container');
             if (container && !container.contains(e.target)) {
                 closeCustomSelect();
