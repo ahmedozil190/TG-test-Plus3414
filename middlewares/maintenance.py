@@ -49,7 +49,7 @@ class MaintenanceMiddleware(BaseMiddleware):
                     elif event.callback_query: target = event.callback_query
 
                 if target:
-                    msg = "⚠️ البوت في وضع الصيانة حالياً. يرجى المحاولة لاحقاً.\n\n⚠️ The bot is currently in maintenance mode. Please try again later."
+                    msg = "⚠️ The bot is currently under maintenance. Please check back later."
                     if isinstance(target, Message):
                         await target.answer(msg)
                     elif isinstance(target, CallbackQuery):
