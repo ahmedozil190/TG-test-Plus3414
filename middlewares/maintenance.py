@@ -28,11 +28,26 @@ class MaintenanceMiddleware(BaseMiddleware):
                 setting = result.scalar_one_or_none()
                 
                 if setting and setting.value.lower() == "true":
+                    # Determine if we should block this update
+                    from aiogram.types import Update
+                    
+                    target = None
                     if isinstance(event, Message):
-                        await event.answer("⚠️ البوت في وضع الصيانة حالياً. يرجى المحاولة لاحقاً.\n\n⚠️ The bot is currently in maintenance mode. Please try again later.")
+                        target = event
                     elif isinstance(event, CallbackQuery):
-                        await event.answer("البوت في وضع الصيانة - Maintenance Mode", show_alert=True)
-                    return
+                        target = event
+                    elif isinstance(event, Update):
+                        if event.message:
+                            target = event.message
+                        elif event.callback_query:
+                            target = event.callback_query
+
+                    if target:
+                        if isinstance(target, Message):
+                            await target.answer("⚠️ البوت في وضع الصيانة حالياً. يرجى المحاولة لاحقاً.\n\n⚠️ The bot is currently in maintenance mode. Please try again later.")
+                        elif isinstance(target, CallbackQuery):
+                            await target.answer("البوت في وضع الصيانة - Maintenance Mode", show_alert=True)
+                        return
         except Exception as e:
             logger.error(f"MaintenanceMiddleware Error: {e}")
 

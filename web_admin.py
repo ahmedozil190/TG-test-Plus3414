@@ -2864,4 +2864,29 @@ async def sync_user_identity(data: UserSync):
         logger.error(f"Identity Sync Error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# --- Maintenance Mode ---
+@app.get("/api/admin/system/maintenance")
+async def get_maintenance():
+    async with async_session() as session:
+        stmt = select(AppSetting).where(AppSetting.key == "maintenance_mode")
+        res = await session.execute(stmt)
+        s = res.scalar_one_or_none()
+        return {"enabled": s.value.lower() == "true" if s else False}
+
+@app.post("/api/admin/system/maintenance")
+async def set_maintenance(enabled: bool):
+    async with async_session() as session:
+        stmt = select(AppSetting).where(AppSetting.key == "maintenance_mode")
+        res = await session.execute(stmt)
+        s = res.scalar_one_or_none()
+        
+        val = "true" if enabled else "false"
+        if s:
+            s.value = val
+        else:
+            session.add(AppSetting(key="maintenance_mode", value=val))
+        
+        await session.commit()
+        return {"status": "success", "enabled": enabled}
+
 # --- End of Web Admin SOURCINGPRO ---
