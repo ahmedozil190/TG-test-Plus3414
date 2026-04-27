@@ -435,20 +435,26 @@ async def store_page(request: Request):
 async def get_store_data(user_id: int = None):
     try:
         async with async_session() as session:
+            # 0. Global Settings
+            local_enabled_obj = (await session.execute(select(AppSetting).where(AppSetting.key == "local_server_enabled"))).scalar_one_or_none()
+            local_enabled = (local_enabled_obj.value.lower() == "true") if local_enabled_obj else True
+
             # 1. Local Stock
-            stmt = select(Account.country, func.count(Account.id).label('cnt')).where(
-                Account.status == AccountStatus.AVAILABLE,
-                Account.server_id == None
-            ).group_by(Account.country)
-            
-            local_results = (await session.execute(stmt)).all()
-            logger.info(f"Local results: {len(local_results)} countries")
-            
             countries_map = {}
-            for row in local_results:
-                name, count = row
-                map_key = f"{name}|__local__"
-                countries_map[map_key] = {"name": name, "count": count, "server_id": None, "server_name": "Server 1"}
+            local_results = []
+            if local_enabled:
+                stmt = select(Account.country, func.count(Account.id).label('cnt')).where(
+                    Account.status == AccountStatus.AVAILABLE,
+                    Account.server_id == None
+                ).group_by(Account.country)
+                
+                local_results = (await session.execute(stmt)).all()
+                logger.info(f"Local results: {len(local_results)} countries")
+                
+                for row in local_results:
+                    name, count = row
+                    map_key = f"{name}|__local__"
+                    countries_map[map_key] = {"name": name, "count": count, "server_id": None, "server_name": "Server 1"}
 
             # 2. External Stock
             active_servers = (await session.execute(select(ApiServer).where(ApiServer.is_active == True))).scalars().all()
@@ -768,13 +774,19 @@ async def store_buy(data: StoreBuy):
             user = await session.get(User, data.user_id)
             if not user: raise HTTPException(status_code=404, detail="User not found")
             
+            # 0. Local Server Toggle
+            local_enabled_obj = (await session.execute(select(AppSetting).where(AppSetting.key == "local_server_enabled"))).scalar_one_or_none()
+            local_enabled = (local_enabled_obj.value.lower() == "true") if local_enabled_obj else True
+
             # 1. Local Stock Check
-            stmt = select(Account).where(
-                Account.country == data.country, 
-                Account.status == AccountStatus.AVAILABLE,
-                Account.server_id == None
-            ).limit(1)
-            account = (await session.execute(stmt)).scalar_one_or_none()
+            account = None
+            if local_enabled:
+                stmt = select(Account).where(
+                    Account.country == data.country, 
+                    Account.status == AccountStatus.AVAILABLE,
+                    Account.server_id == None
+                ).limit(1)
+                account = (await session.execute(stmt)).scalar_one_or_none()
             
             cp = (await session.execute(select(CountryPrice).where(CountryPrice.country_name == data.country))).scalar()
             final_price = cp.price if cp else 1.0
@@ -1645,8 +1657,17 @@ async def get_servers():
     async with async_session() as session:
         stmt = select(ApiServer).order_by(ApiServer.id.asc())
         servers = (await session.execute(stmt)).scalars().all()
-        return {"servers": [
-            {
+        server_data = []
+        for s in servers:
+            # Fetch balance for each server
+            provider = ExternalProvider(
+                s.name, s.url, s.api_key, s.profit_margin,
+                server_type=getattr(s, 'server_type', 'standard'),
+                extra_id=getattr(s, 'extra_id', None)
+            )
+            balance = await provider.get_balance()
+            
+            server_data.append({
                 "id": s.id,
                 "name": s.name,
                 "url": s.url,
@@ -1654,9 +1675,18 @@ async def get_servers():
                 "server_type": getattr(s, 'server_type', 'standard'),
                 "extra_id": getattr(s, 'extra_id', ''),
                 "profit_margin": s.profit_margin,
-                "is_active": s.is_active
-            } for s in servers
-        ]}
+                "is_active": s.is_active,
+                "balance": balance
+            })
+            
+        # Get Local Server Status
+        local_status_raw = (await session.execute(select(AppSetting).where(AppSetting.key == "local_server_enabled"))).scalar_one_or_none()
+        local_enabled = True if not local_status_raw or local_status_raw.value == "true" else False
+
+        return {
+            "servers": server_data,
+            "local_server_enabled": local_enabled
+        }
 
 @app.post("/api/admin/store/servers")
 async def save_server(data: ApiServerSubmit):
@@ -1695,6 +1725,19 @@ async def delete_server(id: int):
             await session.commit()
             return {"status": "success"}
         raise HTTPException(status_code=404, detail="Not found")
+
+@app.post("/api/admin/store/toggle-local")
+async def toggle_local(data: dict):
+    enabled = data.get("enabled", True)
+    async with async_session() as session:
+        setting = (await session.execute(select(AppSetting).where(AppSetting.key == "local_server_enabled"))).scalar_one_or_none()
+        if not setting:
+            setting = AppSetting(key="local_server_enabled", value="true" if enabled else "false")
+            session.add(setting)
+        else:
+            setting.value = "true" if enabled else "false"
+        await session.commit()
+        return {"status": "success"}
 @app.post("/api/admin/stock/start-login")
 async def start_login(data: StockLoginStart):
     from services.session_manager import request_app_code

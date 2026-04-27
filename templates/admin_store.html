@@ -2309,6 +2309,25 @@
                         </button>
                     </div>
 
+                    <!-- Local Server Toggle -->
+                    <div class="user-card" style="padding: 20px; margin-bottom: 25px; border: 1px solid var(--accent-glow); background: rgba(88, 101, 242, 0.05);">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                <div style="width: 44px; height: 44px; border-radius: 12px; background: var(--accent); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem;">
+                                    <i class="fas fa-home"></i>
+                                </div>
+                                <div>
+                                    <h4 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 2px;">Local Server</h4>
+                                    <p style="font-size: 0.75rem; color: var(--text-s); font-weight: 600;">Enable or disable local stock numbers</p>
+                                </div>
+                            </div>
+                            <div class="custom-toggle">
+                                <input type="checkbox" id="local-server-toggle" onchange="toggleLocalServer(this.checked)">
+                                <label for="local-server-toggle"></label>
+                            </div>
+                        </div>
+                    </div>
+
                     <div id="servers-list" class="settings-menu">
                         <!-- Placeholder for server cards -->
                         <div style="text-align: center; padding: 40px; color: var(--text-s);">
@@ -3571,8 +3590,34 @@
                 const res = await fetch('/api/admin/store/servers');
                 const data = await res.json();
                 allServers = data.servers || [];
+                
+                // Update Local Server Toggle
+                const localToggle = document.getElementById('local-server-toggle');
+                if (localToggle) {
+                    localToggle.checked = data.local_server_enabled;
+                }
+                
                 renderServers();
             } catch (e) { console.error("Error fetching servers", e); }
+        }
+        
+        async function toggleLocalServer(enabled) {
+            try {
+                const res = await fetch('/api/admin/store/toggle-local', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ enabled: enabled })
+                });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    showToast(currentLang === 'ar' ? 'تم التحديث' : 'Updated', 
+                              currentLang === 'ar' ? 'تم تغيير حالة السيرفر المحلي' : 'Local server status changed', 
+                              'success');
+                }
+            } catch (e) {
+                console.error("Error toggling local server", e);
+                showToast(currentLang === 'ar' ? 'خطأ' : 'Error', 'Failed to update', 'error');
+            }
         }
         function renderServers() {
             const container = document.getElementById('servers-list');
@@ -3623,6 +3668,14 @@
                             <span style="${lblS}">${currentLang === 'ar' ? 'الربح' : 'PROFIT'}</span>
                             <span style="color: #ff9f0a; font-weight: 800; font-size: 0.95rem;">
                                 ${s.profit_margin}%
+                            </span>
+                        </div>
+                        
+                        <!-- Balance -->
+                        <div style="${rowS}; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.1);">
+                            <span style="${lblS}; color: #10b981;">${currentLang === 'ar' ? 'الرصيد' : 'BALANCE'}</span>
+                            <span style="color: #10b981; font-weight: 900; font-size: 1.1rem; letter-spacing: 0.5px;">
+                                ${s.balance || '0.00'}
                             </span>
                         </div>
                         

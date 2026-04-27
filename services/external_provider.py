@@ -49,6 +49,30 @@ class ExternalProvider:
             logger.error(f"Error fetching countries from {self.name}: {e}")
             return []
 
+    async def get_balance(self):
+        """Fetch the current balance from the provider."""
+        try:
+            async with httpx.AsyncClient() as client:
+                action = "getBalance"
+                params = self.get_base_params(action)
+                
+                logger.info(f"Fetching balance from {self.name}: {self.url}")
+                resp = await client.get(self.url, params=params, timeout=15.0)
+                if resp.status_code == 200:
+                    data = resp.json()
+                    # Standard API usually returns balance in data['balance'] or similar. 
+                    # If lion returns something else, we handle it if needed.
+                    if "balance" in data:
+                        return str(data["balance"])
+                    elif "Balance" in data:
+                        return str(data["Balance"])
+                    return "N/A"
+                else:
+                    return "Error"
+        except Exception as e:
+            logger.error(f"Error fetching balance from {self.name}: {e}")
+            return "Error"
+
     async def buy_number(self, country_code):
         """Order a new number from the provider."""
         try:
