@@ -2196,6 +2196,7 @@
                         <label style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">Sourcing Log Channel ID</label>
                         <input type="text" id="setting-sourcing-log-channel" class="search-input" style="margin-bottom: 0; padding: 16px; font-size: 1rem; height: auto;" placeholder="e.g. -100123456789">
                         <span style="font-size: 0.75rem; color: var(--text-s); margin-top: 5px; display: block;">The bot must be an admin in this channel to post price updates.</span>
+                        <span id="bot-hint" style="font-size: 0.75rem; color: #8b5cf6; margin-top: 5px; display: block; font-weight: 600;"></span>
                     </div>
                     <div style="display: flex; gap: 10px;">
                         <button class="primary-btn" onclick="saveSettings()" style="flex: 1;">Save Price Channel</button>
@@ -3238,6 +3239,10 @@
                 if (data.sourcing_log_channel_id) {
                     const slcInput = document.getElementById('setting-sourcing-log-channel');
                     if (slcInput) slcInput.value = data.sourcing_log_channel_id;
+                }
+                const hintEl = document.getElementById('bot-hint');
+                if (hintEl && data.bot_name) {
+                    hintEl.textContent = currentLang === 'ar' ? `تأكد من إضافة البوت (${data.bot_name}) كمشرف في هذه القناة.` : `Make sure to add the bot (${data.bot_name}) as an admin in this channel.`;
                 }
                 renderUsers(filteredUsers || allUsers);
             } catch (e) { console.error('Init Error:', e); }
