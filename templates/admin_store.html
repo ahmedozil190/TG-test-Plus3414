@@ -2242,7 +2242,8 @@
                     </div>
 
                     <!-- Maintenance Mode Toggle -->
-                    <div class="settings-item" style="cursor: default; border-top: 1px solid var(--border); margin-top: 10px; padding-top: 20px;">
+                    <div class="settings-item"
+                        style="cursor: default; border-top: 1px solid var(--border); margin-top: 10px; padding-top: 20px;">
                         <div class="settings-icon-box" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">
                             <i class="fas fa-tools"></i>
                         </div>
@@ -2251,7 +2252,8 @@
                             <span style="font-size: 0.75rem; color: var(--text-s);">Stops bot for users</span>
                         </div>
                         <label class="custom-switch">
-                            <input type="checkbox" id="maintenance-toggle" onchange="toggleMaintenanceMode(this.checked)">
+                            <input type="checkbox" id="maintenance-toggle"
+                                onchange="toggleMaintenanceMode(this.checked)">
                             <span class="switch-slider"></span>
                         </label>
                     </div>
@@ -2260,26 +2262,35 @@
 
             <!-- ===== General Settings Page ===== -->
             <section id="section-settings-general" class="view-section">
-                <button class="settings-back-btn" onclick="switchNav('settings', null)" style="margin-top: 10px; margin-bottom: 20px;">
+                <button class="settings-back-btn" onclick="switchNav('settings', null)"
+                    style="margin-top: 10px; margin-bottom: 20px;">
                     <i class="fas fa-arrow-left"></i> Back to Settings
                 </button>
 
                 <div class="card" style="padding: 28px; margin-bottom: 20px;">
                     <div class="form-group" style="margin-bottom: 25px;">
-                        <label style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">Bot Name</label>
-                        <input type="text" id="setting-bot-name" class="search-input" style="margin-bottom: 0; padding: 16px; font-size: 1rem; height: auto;" placeholder="Numbers Store Bot">
+                        <label
+                            style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">Bot
+                            Name</label>
+                        <input type="text" id="setting-bot-name" class="search-input"
+                            style="margin-bottom: 0; padding: 16px; font-size: 1rem; height: auto;"
+                            placeholder="Numbers Store Bot">
                     </div>
 
                     <div class="form-group" style="margin-bottom: 25px;">
-                        <label style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">Purchase Log Channel ID</label>
-                        <input type="text" id="setting-log-channel" class="search-input" style="margin-bottom: 0; padding: 16px; font-size: 1rem; height: auto;" placeholder="e.g. -100123456789">
-                        <span style="font-size: 0.75rem; color: var(--text-s); margin-top: 5px; display: block;">The bot must be an admin in this channel to post logs.</span>
+                        <label
+                            style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">Purchase
+                            Log Channel ID</label>
+                        <input type="text" id="setting-log-channel" class="search-input"
+                            style="margin-bottom: 0; padding: 16px; font-size: 1rem; height: auto;"
+                            placeholder="e.g. -100123456789">
+                        <span style="font-size: 0.75rem; color: var(--text-s); margin-top: 5px; display: block;">The bot
+                            must be an admin in this channel to post logs.</span>
                     </div>
 
-                    <button class="primary-btn" onclick="saveGeneralSettings()" style="width: 100%; padding: 16px; border-radius: 12px; font-weight: 700;">Save General Settings</button>
-                    <button class="primary-btn" onclick="sendTestPurchaseLog()" style="width: 100%; padding: 16px; border-radius: 12px; font-weight: 700; background: var(--success); margin-top: 15px;">
-                        <i class="fas fa-vial"></i> <span data-i18n="btn_send_test_log">Send Test Purchase Log</span>
-                    </button>
+                    <button class="primary-btn" onclick="saveGeneralSettings()"
+                        style="width: 100%; padding: 16px; border-radius: 12px; font-weight: 700;">Save General
+                        Settings</button>
                 </div>
             </section>
 
@@ -2646,7 +2657,6 @@
                 stat_inactive_countries: "Inactive Countries",
                 tab_inactive: "Inactive",
                 btn_save_settings: "Save Settings",
-                btn_send_test_log: "Send Test Log",
                 stat_total_countries: "TOTAL COUNTRIES",
                 search_countries_ph: "Search countries...",
                 confirm_title: "Are you sure?",
@@ -2707,7 +2717,6 @@
                 stat_active_countries: "إجمالي الدول",
                 stat_inactive_countries: "الدول غير النشطة",
                 btn_save_settings: "حفظ الإعدادات",
-                btn_send_test_log: "إرسال سجل تجريبي",
                 stat_total_countries: "إجمالي الدول",
                 search_countries_ph: "بحث عن دولة...",
                 confirm_title: "هل أنت متأكد؟",
@@ -2968,7 +2977,7 @@
         async function saveGeneralSettings() {
             const botName = document.getElementById('setting-bot-name').value;
             const logChannel = document.getElementById('setting-log-channel').value;
-            
+
             try {
                 const res = await fetch('/api/admin/store/general-settings', {
                     method: 'POST',
@@ -2983,23 +2992,6 @@
                     showToast(currentLang === 'ar' ? 'تم الحفظ' : 'Saved', currentLang === 'ar' ? 'تم حفظ الإعدادات العامة' : 'General settings saved', 'success');
                 } else {
                     showToast(currentLang === 'ar' ? 'خطأ' : 'Error', data.message || 'Failed to save', 'error');
-                }
-            } catch (e) {
-                console.error(e);
-                showToast(currentLang === 'ar' ? 'خطأ' : 'Error', 'Connection error', 'error');
-            }
-        }
-
-        async function sendTestPurchaseLog() {
-            try {
-                const res = await fetch('/api/admin/test-purchase-log', {
-                    method: 'POST'
-                });
-                const data = await res.json();
-                if (data.status === 'success') {
-                    showToast(currentLang === 'ar' ? 'نجاح' : 'Success', currentLang === 'ar' ? 'تم إرسال سجل التجربة' : 'Test log sent', 'success');
-                } else {
-                    showToast(currentLang === 'ar' ? 'خطأ' : 'Error', data.message || 'Failed to send', 'error');
                 }
             } catch (e) {
                 console.error(e);
@@ -3952,7 +3944,7 @@
             const textEl = document.getElementById('srv-type-text');
             const templateNames = { 'max': 'Max', 'fast': 'Fast', 'lion': 'Lion', 'spider': 'Spider', 'other': 'Other' };
             if (textEl) textEl.innerText = templateNames[templateKey] || 'Other';
-            
+
             updateCustomSelectChecks(templateKey);
 
             document.getElementById('srv-extra-id').value = s.extra_id || '';
@@ -4042,10 +4034,10 @@
             };
 
             const selected = templates[val] || templates['other'];
-            
+
             // Set the hidden type field (standard or lion) for the backend
             document.getElementById('srv-type').value = selected.type;
-            
+
             // Auto-fill the URL if it's a known template and currently empty or matches another template
             const urlInput = document.getElementById('srv-url');
             if (selected.url) {
