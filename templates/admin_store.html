@@ -2206,6 +2206,21 @@
             <!-- ===== Settings Main Menu Section ===== -->
             <section id="section-settings" class="view-section">
                 <div id="settings-main-menu" class="settings-menu active">
+                    <!-- Maintenance Mode Toggle -->
+                    <div class="settings-item" style="cursor: default; border-bottom: 1px solid var(--border); margin-bottom: 15px; padding-bottom: 15px;">
+                        <div class="settings-icon-box" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                        <div style="flex: 1; display: flex; flex-direction: column;">
+                            <span class="settings-text" style="margin-bottom: 2px;">Maintenance Mode</span>
+                            <span style="font-size: 0.75rem; color: var(--text-s);">Stops bot for users</span>
+                        </div>
+                        <label class="custom-switch">
+                            <input type="checkbox" id="maintenance-toggle"
+                                onchange="toggleMaintenanceMode(this.checked)">
+                            <span class="switch-slider"></span>
+                        </label>
+                    </div>
                     <!-- General Settings -->
                     <div class="settings-item" onclick="switchNav('settings-general', null)">
                         <div class="settings-icon-box" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">
@@ -2239,23 +2254,6 @@
                         </div>
                         <span class="settings-text">API Servers</span>
                         <i class="fas fa-chevron-right settings-arrow"></i>
-                    </div>
-
-                    <!-- Maintenance Mode Toggle -->
-                    <div class="settings-item"
-                        style="cursor: default; border-top: 1px solid var(--border); margin-top: 10px; padding-top: 20px;">
-                        <div class="settings-icon-box" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">
-                            <i class="fas fa-tools"></i>
-                        </div>
-                        <div style="flex: 1; display: flex; flex-direction: column;">
-                            <span class="settings-text" style="margin-bottom: 2px;">Maintenance Mode</span>
-                            <span style="font-size: 0.75rem; color: var(--text-s);">Stops bot for users</span>
-                        </div>
-                        <label class="custom-switch">
-                            <input type="checkbox" id="maintenance-toggle"
-                                onchange="toggleMaintenanceMode(this.checked)">
-                            <span class="switch-slider"></span>
-                        </label>
                     </div>
                 </div>
             </section>
