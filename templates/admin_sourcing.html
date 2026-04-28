@@ -3741,7 +3741,7 @@
                     </div>
                     <!-- Action Buttons -->
                     <div style="display: flex; gap: 10px;">
-                        <button class="primary-btn" style="flex: 1; background: rgba(96, 165, 250, 0.1); color: var(--accent); border: 1px solid rgba(96, 165, 250, 0.2); box-shadow: none; padding: 14px; font-size: 0.95rem;" onclick="editPrice('${p.code}', '${p.iso}', ${p.buy_price}, ${p.approve_delay})">
+                        <button class="primary-btn" style="flex: 1; background: rgba(96, 165, 250, 0.1); color: var(--accent); border: 1px solid rgba(96, 165, 250, 0.2); box-shadow: none; padding: 14px; font-size: 0.95rem;" onclick="editPrice('${p.code}', '${p.iso}', ${p.buy_price}, ${p.approve_delay}, ${p.log_quantity || 1000})">
                             <i class="fas fa-pen" style="margin-right: 5px;"></i> ${currentLang === 'ar' ? 'تعديل' : 'Edit'}
                         </button>
                         <button class="primary-btn" style="flex: 1; background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); box-shadow: none; padding: 14px; font-size: 0.95rem;" onclick="deletePrice('${p.code}', '${p.iso}')">
@@ -3784,11 +3784,11 @@
             modal.scrollTop = 0;
         }
 
-        async function editPrice(code, iso, buy, delay) {
+        async function editPrice(code, iso, buy, delay, qty) {
             document.getElementById('m-code').value = code;
             document.getElementById('m-buy').value = buy;
             document.getElementById('m-delay').value = delay;
-            document.getElementById('m-quantity').value = ''; 
+            document.getElementById('m-quantity').value = qty || ''; 
             document.getElementById('m-send-log').checked = true;
 
             await onCountryCodeInput();
@@ -3832,9 +3832,9 @@
                     container.innerHTML = `
                         <div style="max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 5px;">
                             ${data.map(c => `
-                                <div class="country-option-btn" data-iso="${c.iso}" data-name="${c.name}" onclick="selectCountryOption(this)" style="padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.2s; background: var(--bg);">
+                                <div class="country-option-btn" data-iso="${c.iso}" data-name="${c.name || 'Unknown'}" onclick="selectCountryOption(this)" style="padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.2s; background: var(--bg);">
                                     <span style="font-size: 1.4rem;">${c.flag}</span>
-                                    <span style="font-weight: 600; font-size: 0.95rem; color: var(--text-p);">${c.name}</span>
+                                    <span style="font-weight: 600; font-size: 0.95rem; color: var(--text-primary);">${c.name || 'Unknown'}</span>
                                 </div>
                             `).join('')}
                         </div>

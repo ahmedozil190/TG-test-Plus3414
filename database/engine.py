@@ -73,6 +73,16 @@ async def init_db():
             if 'extra_id' not in s_cols:
                 await conn.execute(text("ALTER TABLE api_servers ADD COLUMN extra_id VARCHAR(100)"))
                 print("Successfully added extra_id column to api_servers")
+
+            # 5. country_prices.log_quantity
+            def check_cp_cols(connection):
+                cursor = connection.execute(text("PRAGMA table_info(country_prices)"))
+                return [row[1] for row in cursor]
+            
+            cp_cols = await conn.run_sync(check_cp_cols)
+            if 'log_quantity' not in cp_cols:
+                await conn.execute(text("ALTER TABLE country_prices ADD COLUMN log_quantity INTEGER DEFAULT 1000"))
+                print("Successfully added log_quantity column to country_prices")
                 
         except Exception as e:
             print(f"Migration check failed: {e}")

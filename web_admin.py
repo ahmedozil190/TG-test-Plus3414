@@ -1513,7 +1513,8 @@ async def get_sourcing_data():
                     "name": f"{flag} {clean_display_name(p.country_name)}", 
                     "buy_price": p.buy_price,
                     "price": p.price,
-                    "approve_delay": p.approve_delay
+                    "approve_delay": p.approve_delay,
+                    "log_quantity": getattr(p, 'log_quantity', 1000)
                 })
 
             # Bot-specific user count and balance
@@ -2154,6 +2155,7 @@ async def update_sourcing_price(data: dict):
     iso = data.get("iso_code", "XX")
     buy_p = float(data.get("buy_price", 0))
     delay = int(data.get("approve_delay", 0))
+    qty = int(data.get("quantity", 1000))
     c_name = data.get("country_name")
 
     # If iso/name not provided, auto-detect (legacy or basic add)
@@ -2173,6 +2175,7 @@ async def update_sourcing_price(data: dict):
         if cp:
             cp.buy_price = buy_p
             cp.approve_delay = delay
+            cp.log_quantity = qty
             cp.updated_at = datetime.utcnow()
             if c_name: cp.country_name = c_name
         else:
@@ -2182,7 +2185,8 @@ async def update_sourcing_price(data: dict):
                 country_name=c_name, 
                 price=0,
                 buy_price=buy_p,
-                approve_delay=delay
+                approve_delay=delay,
+                log_quantity=qty
             )
             session.add(cp)
         await session.commit()
@@ -2190,8 +2194,7 @@ async def update_sourcing_price(data: dict):
         # Trigger price log in background if enabled
         if data.get("send_log", True):
             try:
-                quantity = int(data.get("quantity", 1000))
-                await send_sourcing_price_log(cp.country_name, cp.iso_code, cp.country_code, cp.buy_price, cp.approve_delay, quantity)
+                await send_sourcing_price_log(cp.country_name, cp.iso_code, cp.country_code, cp.buy_price, cp.approve_delay, cp.log_quantity)
             except Exception as log_err:
                 logger.error(f"Failed to send sourcing price log: {log_err}")
             
