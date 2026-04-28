@@ -123,8 +123,10 @@ async def send_purchase_log(user_id: int, country_name: str, price: float, phone
             
         flag = "🌐"
         try:
-            _, _, iso = resolve_country_info(country_name)
-            if iso: flag = get_flag_emoji(iso)
+            # Pass the phone to resolve_country_info to get accurate flag/name
+            _, _, iso = resolve_country_info(country_name, full_phone=phone)
+            if iso and iso != "XX": 
+                flag = get_flag_emoji(iso)
         except: pass
         
         masked_id = str(user_id)
@@ -147,11 +149,11 @@ async def send_purchase_log(user_id: int, country_name: str, price: float, phone
             "• account purchased successfully .\n\n"
             f"• For country :- {safe_country}{flag} \n"
             "• Application Type :- Telegram .\n\n"
-            f"• Number :- <code>{masked_phone}</code> 📞.\n"
-            f"• Activation code :- <code>{code}</code> 💬.\n\n"
-            f"• Password :- <code>{display_password}</code> 🔑.\n"
+            f"• Number :- {masked_phone} 📞.\n"
+            f"• Activation code :- {code} 💬.\n\n"
+            f"• Password :- {display_password} 🔑.\n"
             f"• Price :- <b>${price:.2f}</b> 💵.\n\n"
-            f"• ID buyer :- <code>{masked_id}</code> 👨🏻💻 ."
+            f"• ID buyer :- {masked_id} 👨🏻💻 ."
         )
         
         payload = {
