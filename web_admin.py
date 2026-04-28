@@ -11,7 +11,7 @@ from fastapi.responses import HTMLResponse
 from sqlalchemy.future import select
 from sqlalchemy import select, delete, update, func, text, or_, cast, String
 from database.engine import async_session
-from database.models import User, Account, Transaction, AccountStatus, TransactionType, CountryPrice, WithdrawalRequest, WithdrawalStatus, UserCountryPrice, Deposit, AppSetting, UserStorePrice, ApiServer
+from database.models import User, Account, Transaction, AccountStatus, TransactionType, CountryPrice, WithdrawalRequest, WithdrawalStatus, UserCountryPrice, Deposit, AppSetting, UserStorePrice, ApiServer, SubscriptionChannel
 import re
 import pycountry
 import hmac
@@ -3147,10 +3147,10 @@ async def save_system_settings(data: dict):
         for key, value in data.items():
             stmt = select(AppSetting).where(AppSetting.key == key)
             res = await session.execute(stmt)
-            s = res.scalar_one_or_none()
+            obj = res.scalar_one_or_none()
             
-            if s:
-                s.value = str(value)
+            if obj:
+                obj.value = str(value)
             else:
                 session.add(AppSetting(key=key, value=str(value)))
         
@@ -3158,3 +3158,31 @@ async def save_system_settings(data: dict):
         return {"status": "success"}
 
 # --- End of Web Admin SOURCINGPRO ---
+@app.get("/api/admin/subscription-channels")
+async def get_subscription_channels():
+    async with async_session() as session:
+        result = await session.execute(select(SubscriptionChannel))
+        channels = result.scalars().all()
+        return [{"id": c.id, "username": c.username, "link": c.link} for c in channels]
+
+@app.post("/api/admin/subscription-channels")
+async def add_subscription_channel(data: dict):
+    username = data.get("username")
+    link = data.get("link")
+    if not username or not link:
+        return {"ok": False, "error": "Username and Link are required"}
+    
+    async with async_session() as session:
+        new_channel = SubscriptionChannel(username=username, link=link)
+        session.add(new_channel)
+        await session.commit()
+        return {"ok": True}
+
+@app.delete("/api/admin/subscription-channels/{channel_id}")
+async def delete_subscription_channel(channel_id: int):
+    async with async_session() as session:
+        channel = await session.get(SubscriptionChannel, channel_id)
+        if channel:
+            await session.delete(channel)
+            await session.commit()
+        return {"ok": True}

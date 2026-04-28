@@ -83,6 +83,8 @@ async def init_db():
             if 'log_quantity' not in cp_cols:
                 await conn.execute(text("ALTER TABLE country_prices ADD COLUMN log_quantity INTEGER DEFAULT 1000"))
                 print("Successfully added log_quantity column to country_prices")
+
+            # 6. Ensure subscription_channels table exists (Base.metadata.create_all handles this usually, but init_db runs it)
                 
         except Exception as e:
             print(f"Migration check failed: {e}")

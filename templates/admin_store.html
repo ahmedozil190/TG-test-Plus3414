@@ -2358,11 +2358,26 @@
                     <i class="fas fa-arrow-left"></i> Back to Settings
                 </button>
 
-                <div class="card" style="padding: 22px; margin-bottom: 20px;">
-                    <h3 style="font-size: 1.1rem; margin-bottom: 20px; color: #8b5cf6;"><i
-                            class="fas fa-broadcast-tower" style="margin-right: 8px;"></i> Subscriptions</h3>
-                    <p style="color: var(--text-s); font-size: 0.9rem;">Manage your official channels and subscription
-                        requirements here.</p>
+                <h3 style="margin-bottom: 20px; font-weight: 800; font-size: 1.15rem; color: var(--text-p);">Managed Channels</h3>
+                
+                <div id="sub-channels-list">
+                    <!-- Channels will be populated here -->
+                </div>
+
+                <div class="card" style="padding: 28px; margin-top: 20px;">
+                    <h4 style="margin-bottom: 20px; font-weight: 700; font-size: 1.05rem; color: var(--text-p);">Add New Channel</h4>
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <input type="text" id="new-sub-username" class="search-input"
+                            style="margin-bottom: 0; padding: 16px; font-size: 1rem; height: auto;"
+                            placeholder="@username">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 25px;">
+                        <input type="text" id="new-sub-link" class="search-input"
+                            style="margin-bottom: 0; padding: 16px; font-size: 1rem; height: auto;"
+                            placeholder="https://t.me/...">
+                    </div>
+                    <button class="primary-btn" onclick="addSubscriptionChannel()"
+                        style="width: 100%; padding: 16px; border-radius: 12px; font-weight: 700;">Add Channel</button>
                 </div>
             </section>
 
@@ -2859,6 +2874,8 @@
             try {
                 const res = await fetch('/api/admin/store/data');
                 const data = await res.json();
+                
+                await fetchSubscriptionChannels();
 
                 // Inventory (Home)
                 const htn = document.getElementById('home-total-numbers');
@@ -2987,6 +3004,104 @@
                 console.error(e);
                 showToast(currentLang === 'ar' ? 'خطأ' : 'Error', 'Connection error', 'error');
             }
+        }
+
+        async function fetchSubscriptionChannels() {
+            try {
+                const res = await fetch('/api/admin/subscription-channels');
+                if (res.ok) {
+                    const channels = await res.json();
+                    renderSubscriptionChannels(channels);
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        function renderSubscriptionChannels(channels) {
+            const list = document.getElementById('sub-channels-list');
+            if (channels.length === 0) {
+                list.innerHTML = '<p style="color: var(--text-s); text-align: center; padding: 20px;">No channels added yet.</p>';
+                return;
+            }
+            
+            let html = '';
+            channels.forEach((ch, index) => {
+                html += `
+                <div style="position: relative; margin-bottom: 30px;">
+                    <div style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--accent-purple); color: white; width: 30px; height: 30px; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-weight: 800; font-size: 0.9rem; z-index: 10; box-shadow: 0 4px 10px rgba(139, 92, 246, 0.3);">
+                        ${index + 1}
+                    </div>
+                    <div class="card" style="padding: 24px; border: 1px solid rgba(255, 255, 255, 0.05); background: var(--bg-elevated); margin-bottom: 20px; border-radius: 16px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: rgba(0,0,0,0.02); padding: 15px; border-radius: 12px; border: 1px solid var(--border);">
+                            <span style="font-size: 0.8rem; font-weight: 800; color: var(--text-s); text-transform: uppercase;">USERNAME</span>
+                            <span style="font-weight: 800; color: var(--warning);">${ch.username}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: rgba(0,0,0,0.02); padding: 15px; border-radius: 12px; border: 1px solid var(--border);">
+                            <span style="font-size: 0.8rem; font-weight: 800; color: var(--text-s); text-transform: uppercase;">LINK</span>
+                            <span style="font-weight: 700; color: #3b82f6; font-size: 0.9rem; word-break: break-all;">${ch.link}</span>
+                        </div>
+                        <button class="primary-btn" onclick="deleteSubscriptionChannel(${ch.id})" style="width: 100%; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); padding: 14px; border-radius: 12px; font-weight: 700;">
+                            <i class="fas fa-trash-alt" style="margin-right: 8px;"></i> Delete Channel
+                        </button>
+                    </div>
+                </div>
+                `;
+            });
+            list.innerHTML = html;
+        }
+
+        async function addSubscriptionChannel() {
+            const username = document.getElementById('new-sub-username').value.trim();
+            const link = document.getElementById('new-sub-link').value.trim();
+            if (!username || !link) {
+                showToast('Error', 'Username and Link are required', 'error');
+                return;
+            }
+            
+            const btn = event.currentTarget;
+            const oldText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch('/api/admin/subscription-channels', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, link })
+                });
+                const data = await res.json();
+                if (data.ok) {
+                    document.getElementById('new-sub-username').value = '';
+                    document.getElementById('new-sub-link').value = '';
+                    showToast('Success', 'Channel added successfully!', 'success');
+                    await fetchSubscriptionChannels();
+                } else {
+                    showToast('Error', data.error || 'Failed to add channel', 'error');
+                }
+            } catch (e) {
+                showToast('Error', e.message, 'error');
+            } finally {
+                btn.innerHTML = oldText;
+                btn.disabled = false;
+            }
+        }
+
+        async function deleteSubscriptionChannel(id) {
+            tg.showConfirm("Are you sure you want to delete this channel?", async (yes) => {
+                if (yes) {
+                    try {
+                        const res = await fetch(`/api/admin/subscription-channels/${id}`, { method: 'DELETE' });
+                        const data = await res.json();
+                        if (data.ok) {
+                            showToast('Success', 'Channel deleted successfully', 'success');
+                            await fetchSubscriptionChannels();
+                        }
+                    } catch (e) {
+                        showToast('Error', e.message, 'error');
+                    }
+                }
+            });
         }
 
         async function loadServers() {

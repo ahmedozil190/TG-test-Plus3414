@@ -134,3 +134,10 @@ class ApiServer(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
+
+class SubscriptionChannel(Base):
+    __tablename__ = 'subscription_channels'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    username = Column(String, nullable=False) # e.g. "@OzZoOSMS"
+    link = Column(String, nullable=False) # e.g. "https://t.me/OzZoOSMS"
+    created_at = Column(DateTime, default=datetime.utcnow)
