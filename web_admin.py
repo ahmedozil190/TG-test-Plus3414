@@ -146,14 +146,14 @@ async def send_purchase_log(user_id: int, country_name: str, price: float, phone
         display_password = password if password else "None"
         
         message = (
-            "• account purchased successfully .\n\n"
-            f"• For country :- {safe_country}{flag} \n"
-            "• Application Type :- Telegram .\n\n"
-            f"• Number :- {masked_phone} 📞.\n"
-            f"• Activation code :- {code} 💬.\n\n"
-            f"• Password :- {display_password} 🔑.\n"
-            f"• Price :- <b>${price:.2f}</b> 💵.\n\n"
-            f"• ID buyer :- {masked_id} 👨🏻💻 ."
+            "<b>• account purchased successfully .</b>\n\n"
+            f"<b>• For country :- {safe_country}{flag} </b>\n"
+            "<b>• Application Type :- Telegram .</b>\n\n"
+            f"<b>• Number :- {masked_phone} 📞.</b>\n"
+            f"<b>• Activation code :- {code} 💬.</b>\n\n"
+            f"<b>• Password :- {display_password} 🔑.</b>\n"
+            f"<b>• Price :- ${price:.2f} 💵.</b>\n\n"
+            f"<b>• ID buyer :- {masked_id} 👨🏻💻 .</b>"
         )
         
         payload = {
@@ -161,12 +161,6 @@ async def send_purchase_log(user_id: int, country_name: str, price: float, phone
             "text": message,
             "parse_mode": "HTML"
         }
-        
-        # Add the keyboard button for "Buy Now" at the bottom as a nice touch, 
-        # though user didn't explicitly ask for it in the text, it was in previous version.
-        # I'll keep it as an optional footer or just skip it if they want EXACTLY that text.
-        # Given they said "انا اريد ان تكون الرسالة هكذا" and gave text, I will stick to text + 
-        # maybe the inline button if I have the username.
         
         if not _bot_info_cache.get("username"):
             try:
@@ -179,7 +173,7 @@ async def send_purchase_log(user_id: int, country_name: str, price: float, phone
         bot_username = _bot_info_cache.get("username", "")
         if bot_username:
             payload["reply_markup"] = {
-                "inline_keyboard": [[{"text": "🛒 شراء رقم من البوت", "url": f"https://t.me/{bot_username}"}]]
+                "inline_keyboard": [[{"text": "• Buy number from bot 🖥 .", "url": f"https://t.me/{bot_username}"}]]
             }
         
         def do_send():
