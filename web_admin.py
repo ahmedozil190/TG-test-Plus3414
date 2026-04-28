@@ -106,34 +106,37 @@ async def send_purchase_log(user_id: int, country_name: str, price: float, phone
     """Send a purchase log to the configured Telegram channel."""
     try:
         from config import BOT_TOKEN
-        import urllib.request
-        import json
+        import requests
         
         async with async_session() as session:
             stmt = select(AppSetting).where(AppSetting.key == "purchase_log_channel_id")
             res = await session.execute(stmt)
             obj = res.scalar_one_or_none()
             if not obj or not obj.value:
+                logger.info("Purchase log skipped: No channel ID configured.")
                 return
             channel_id = obj.value.strip()
+            # Standardize channel ID
+            if channel_id.isdigit() or (channel_id.startswith('-') and channel_id[1:].isdigit()):
+                if not channel_id.startswith('-100') and not channel_id.startswith('-'):
+                    channel_id = f"-100{channel_id}"
+                elif channel_id.startswith('-') and not channel_id.startswith('-100'):
+                    # Handle cases where user might have put - but forgot 100 for a channel
+                    pass 
             
             bn_stmt = select(AppSetting).where(AppSetting.key == "bot_name")
             bn_obj = (await session.execute(bn_stmt)).scalar_one_or_none()
             custom_bot_name = bn_obj.value if bn_obj else ""
             
         if not _bot_info_cache.get("username"):
-            def get_bot_info():
-                try:
-                    req = urllib.request.Request(f"https://api.telegram.org/bot{BOT_TOKEN}/getMe")
-                    with urllib.request.urlopen(req, timeout=2) as r:
-                        data = json.loads(r.read().decode())
-                        if data.get("ok"):
-                            return data["result"].get("first_name", "Bot"), data["result"].get("username", "")
-                except: return "Bot", ""
-                return "Bot", ""
-            b_name, b_user = await asyncio.to_thread(get_bot_info)
-            _bot_info_cache["name"] = b_name
-            _bot_info_cache["username"] = b_user
+            try:
+                r = requests.get(f"https://api.telegram.org/bot{BOT_TOKEN}/getMe", timeout=5)
+                if r.ok:
+                    data = r.json()
+                    _bot_info_cache["name"] = data["result"].get("first_name", "Bot")
+                    _bot_info_cache["username"] = data["result"].get("username", "")
+            except Exception as e:
+                logger.error(f"Error fetching bot info: {e}")
             
         bot_name = custom_bot_name or _bot_info_cache.get("name", "Bot")
         bot_username = _bot_info_cache.get("username", "")
@@ -157,16 +160,17 @@ async def send_purchase_log(user_id: int, country_name: str, price: float, phone
         now_date = datetime.now().strftime("%Y-%m-%d")
         now_time = datetime.now().strftime("%I:%M %p")
         
-        safe_bot_name = bot_name.replace('*', '').replace('_', '').replace('`', '')
-        safe_country = country_name.replace('*', '').replace('_', ' ').replace('`', '')
+        # HTML escaping
+        safe_bot_name = bot_name.replace('<', '&lt;').replace('>', '&gt;')
+        safe_country = country_name.replace('<', '&lt;').replace('>', '&gt;')
         bot_footer = f"🤖 @{bot_username}" if bot_username else f"🤖 {safe_bot_name}"
         
         message = (
-            f"**{safe_bot_name}** 🩸\n"
-            f"✅ **Purchase report #Successful ( {flag} #{safe_country.replace(' ', '')} )**\n"
-            f"⏰ **At time:** {now_date} | {now_time}\n"
-            f"🔔 **Activation code:** `{code}`\n"
-            f"🛍 **Purchase details** 👇\n"
+            f"<b>{safe_bot_name}</b> 🩸\n"
+            f"✅ <b>Purchase report #Successful ( {flag} #{safe_country.replace(' ', '')} )</b>\n"
+            f"⏰ <b>At time:</b> {now_date} | {now_time}\n"
+            f"🔔 <b>Activation code:</b> <code>{code}</code>\n"
+            f"🛍 <b>Purchase details</b> 👇\n"
             f"{bot_footer}"
         )
         
@@ -183,26 +187,26 @@ async def send_purchase_log(user_id: int, country_name: str, price: float, phone
         if bot_username:
             keyboard["inline_keyboard"].append([{"text": "🛒 Buy Now", "url": f"https://t.me/{bot_username}"}])
             
-        url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
         payload = {
             "chat_id": channel_id,
             "text": message,
-            "parse_mode": "Markdown",
+            "parse_mode": "HTML",
             "reply_markup": keyboard
         }
         
         def do_send():
             try:
-                import requests
-                r = requests.post(url, json=payload, timeout=5)
+                r = requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", json=payload, timeout=10)
                 if not r.ok:
-                    logger.error(f"Telegram API Error: {r.text}")
+                    logger.error(f"Telegram API Error: {r.text} | Payload: {payload}")
+                else:
+                    logger.info(f"Purchase log sent successfully to {channel_id}")
             except Exception as e:
-                logger.error(f"Requests Error: {e}")
+                logger.error(f"Requests Error in do_send: {e}")
             
         await asyncio.to_thread(do_send)
     except Exception as e:
-        logger.error(f"Error sending purchase log: {e}")
+        logger.error(f"Error in send_purchase_log: {e}")
 
 def resolve_country_info(country_code_str: str, full_phone: str = None):
     """Resolve ISO code and Country Name. Handles numeric codes, Alpha-2, and Alpha-3."""
