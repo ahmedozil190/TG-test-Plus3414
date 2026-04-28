@@ -43,6 +43,7 @@
             --input-bg: #09090b;
             --shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
             --tab-bg: rgba(255, 255, 255, 0.05);
+            --switch-bg: rgba(255, 255, 255, 0.15);
         }
 
         .light-mode {
@@ -59,6 +60,7 @@
             --input-bg: #f1f2f6;
             --shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
             --tab-bg: rgba(0, 0, 0, 0.05);
+            --switch-bg: rgba(0, 0, 0, 0.15);
         }
 
         * {
@@ -1552,7 +1554,7 @@
             position: absolute;
             cursor: pointer;
             inset: 0;
-            background: rgba(255, 255, 255, 0.1);
+            background: var(--switch-bg);
             border-radius: 30px;
             transition: 0.4s;
         }
