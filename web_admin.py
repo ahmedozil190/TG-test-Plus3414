@@ -3159,21 +3159,22 @@ async def save_system_settings(data: dict):
 
 # --- End of Web Admin SOURCINGPRO ---
 @app.get("/api/admin/subscription-channels")
-async def get_subscription_channels():
+async def get_subscription_channels(bot_type: str = "store"):
     async with async_session() as session:
-        result = await session.execute(select(SubscriptionChannel))
+        result = await session.execute(select(SubscriptionChannel).where(SubscriptionChannel.bot_type == bot_type))
         channels = result.scalars().all()
-        return [{"id": c.id, "username": c.username, "link": c.link} for c in channels]
+        return [{"id": c.id, "bot_type": c.bot_type, "username": c.username, "link": c.link} for c in channels]
 
 @app.post("/api/admin/subscription-channels")
 async def add_subscription_channel(data: dict):
+    bot_type = data.get("bot_type", "store")
     username = data.get("username")
     link = data.get("link")
     if not username or not link:
         return {"ok": False, "error": "Username and Link are required"}
     
     async with async_session() as session:
-        new_channel = SubscriptionChannel(username=username, link=link)
+        new_channel = SubscriptionChannel(bot_type=bot_type, username=username, link=link)
         session.add(new_channel)
         await session.commit()
         return {"ok": True}

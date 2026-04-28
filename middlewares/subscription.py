@@ -10,6 +10,10 @@ import logging
 logger = logging.getLogger(__name__)
 
 class SubscriptionMiddleware(BaseMiddleware):
+    def __init__(self, bot_type: str = "store"):
+        self.bot_type = bot_type
+        super().__init__()
+
     async def __call__(
         self,
         handler: Callable[[TelegramObject, Dict[str, Any]], Awaitable[Any]],
@@ -44,7 +48,7 @@ class SubscriptionMiddleware(BaseMiddleware):
                 return await handler(event, data)
 
             async with async_session() as session:
-                result = await session.execute(select(SubscriptionChannel))
+                result = await session.execute(select(SubscriptionChannel).where(SubscriptionChannel.bot_type == self.bot_type))
                 channels = result.scalars().all()
 
             if not channels:

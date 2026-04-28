@@ -4118,7 +4118,7 @@
 
         async function fetchSubscriptionChannels() {
             try {
-                const res = await fetch('/api/admin/subscription-channels');
+                const res = await fetch('/api/admin/subscription-channels?bot_type=sourcing');
                 if (res.ok) {
                     const channels = await res.json();
                     renderSubscriptionChannels(channels);
@@ -4178,7 +4178,7 @@
                 const res = await fetch('/api/admin/subscription-channels', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, link })
+                    body: JSON.stringify({ bot_type: 'sourcing', username, link })
                 });
                 const data = await res.json();
                 if (data.ok) {

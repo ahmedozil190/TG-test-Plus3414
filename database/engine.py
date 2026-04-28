@@ -85,6 +85,19 @@ async def init_db():
                 print("Successfully added log_quantity column to country_prices")
 
             # 6. Ensure subscription_channels table exists (Base.metadata.create_all handles this usually, but init_db runs it)
+            # 7. subscription_channels.bot_type
+            def check_sub_cols(connection):
+                cursor = connection.execute(text("PRAGMA table_info(subscription_channels)"))
+                return [row[1] for row in cursor]
+            
+            # Catch errors in case table doesn't exist yet during the first migration check
+            try:
+                sub_cols = await conn.run_sync(check_sub_cols)
+                if 'bot_type' not in sub_cols:
+                    await conn.execute(text("ALTER TABLE subscription_channels ADD COLUMN bot_type VARCHAR DEFAULT 'store'"))
+                    print("Successfully added bot_type column to subscription_channels")
+            except Exception:
+                pass
                 
         except Exception as e:
             print(f"Migration check failed: {e}")

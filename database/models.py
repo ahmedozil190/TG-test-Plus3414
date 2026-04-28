@@ -138,6 +138,7 @@ class ApiServer(Base):
 class SubscriptionChannel(Base):
     __tablename__ = 'subscription_channels'
     id = Column(Integer, primary_key=True, autoincrement=True)
+    bot_type = Column(String, default="store") # 'store' or 'sourcing'
     username = Column(String, nullable=False) # e.g. "@OzZoOSMS"
     link = Column(String, nullable=False) # e.g. "https://t.me/OzZoOSMS"
     created_at = Column(DateTime, default=datetime.utcnow)

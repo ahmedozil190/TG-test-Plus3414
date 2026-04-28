@@ -137,7 +137,7 @@ async def main():
     
     # Register middleware
     dp_buyer.update.outer_middleware(MaintenanceMiddleware())
-    dp_buyer.update.outer_middleware(SubscriptionMiddleware())
+    dp_buyer.update.outer_middleware(SubscriptionMiddleware(bot_type="store"))
     dp_buyer.update.outer_middleware(UserUpdateMiddleware(bot_type="store"))
 
     # Seller Bot (Optional token)
@@ -150,7 +150,7 @@ async def main():
             
             # Register middleware
             dp_seller.update.outer_middleware(MaintenanceMiddleware())
-            dp_seller.update.outer_middleware(SubscriptionMiddleware())
+            dp_seller.update.outer_middleware(SubscriptionMiddleware(bot_type="sourcing"))
             dp_seller.update.outer_middleware(UserUpdateMiddleware(bot_type="sourcing"))
             
             logger.info("Seller Bot configured.")
