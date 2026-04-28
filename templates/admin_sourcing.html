@@ -3788,7 +3788,9 @@
             document.getElementById('m-code').value = code;
             document.getElementById('m-buy').value = buy;
             document.getElementById('m-delay').value = delay;
-            document.getElementById('m-quantity').value = qty || ''; 
+            
+            // If qty is provided (from p.log_quantity), show it. Otherwise default to 1000.
+            document.getElementById('m-quantity').value = qty || 1000; 
             document.getElementById('m-send-log').checked = true;
 
             await onCountryCodeInput();
