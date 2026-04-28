@@ -3036,11 +3036,11 @@
                 <div class="list-item" style="display: flex; flex-direction: column; gap: 15px; padding: 20px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.02); padding: 12px 15px; border-radius: 10px; border: 1px solid var(--border);">
                         <span style="font-size: 0.8rem; font-weight: 800; color: var(--text-s); text-transform: uppercase;">USERNAME</span>
-                        <span style="font-weight: 800; color: var(--warning);"><i class="fas fa-check-circle" style="color: var(--success); margin-right: 5px;"></i> ${ch.username}</span>
+                        <span style="flex: 1; text-align: right; margin-left: 15px; word-break: break-all; font-weight: 800; color: var(--warning);">${ch.username}</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.02); padding: 12px 15px; border-radius: 10px; border: 1px solid var(--border);">
                         <span style="font-size: 0.8rem; font-weight: 800; color: var(--text-s); text-transform: uppercase;">LINK</span>
-                        <span style="font-weight: 700; color: #3b82f6; font-size: 0.9rem; word-break: break-all;">${ch.link}</span>
+                        <span style="flex: 1; text-align: right; margin-left: 15px; word-break: break-all; font-weight: 700; color: #3b82f6; font-size: 0.9rem;">${ch.link}</span>
                     </div>
                     <button class="primary-btn" onclick="deleteSubscriptionChannel(${ch.id})" style="width: 100%; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); padding: 14px; border-radius: 10px; font-weight: 700;">
                         <i class="fas fa-trash-alt" style="margin-right: 8px;"></i> Delete Channel
