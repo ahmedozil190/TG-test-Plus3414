@@ -257,11 +257,17 @@ async def send_sourcing_price_log(country_name: str, iso_code: str, country_code
             headers={'Content-Type': 'application/json'},
             method='POST'
         )
-        with urllib.request.urlopen(req, timeout=10) as response:
-            pass
+        try:
+            with urllib.request.urlopen(req, timeout=10) as response:
+                pass
+        except urllib.error.HTTPError as e:
+            error_msg = e.read().decode()
+            logger.error(f"Telegram API Details: {error_msg}")
+            raise Exception(f"Telegram API Error: {error_msg}")
             
     except Exception as e:
         logger.error(f"Error sending sourcing price log: {e}")
+        raise e
 
 def resolve_country_info(country_code_str: str, full_phone: str = None):
     """Resolve ISO code and Country Name. Handles numeric codes, Alpha-2, and Alpha-3."""
