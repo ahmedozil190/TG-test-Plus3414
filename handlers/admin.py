@@ -24,7 +24,6 @@ async def cmd_id(message: Message):
 @router.message(Command("admin"))
 async def cmd_admin(message: Message, state: FSMContext):
     if not is_admin(message.from_user.id):
-        await message.reply(f"⚠️ البوت يرى أنك لست آدمن!\nرقمك هو: {message.from_user.id}\nالأرقام المسجلة كآدمن في البوت حالياً هي: {ADMIN_IDS}\n\n(يبدو أن ملف .env لديك لم يقرأ التعديل الجديد أو لم تحفظه!).")
         return
         
     await state.clear()
