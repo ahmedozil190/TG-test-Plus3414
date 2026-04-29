@@ -810,27 +810,25 @@
 
         .toast {
             position: fixed;
-            top: 75px;
-            right: 15px;
-            transform: translateX(120%);
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
             background: var(--bg-elevated);
             color: var(--text-p);
-            padding: 16px 20px;
-            border-radius: 16px;
+            padding: 14px 24px;
+            border-radius: 50px;
             border: 1px solid var(--border);
             z-index: 10000;
             transition: transform 0.4s var(--ease);
             font-weight: 600;
-            max-width: 300px;
-            width: 80%;
-            pointer-events: auto;
-            box-shadow: var(--shadow);
+            white-space: nowrap;
+            pointer-events: none;
+            box-shadow: var(--shadow-lg);
             font-size: 0.85rem;
-            backdrop-filter: blur(12px);
         }
 
         .toast.show {
-            transform: translateX(0);
+            transform: translateX(-50%) translateY(0);
         }
 
         /* ─── Confirmation Modal ─── */
@@ -1503,34 +1501,42 @@
     <div class="toast" id="toast"></div>
 
     <!-- Maintenance Overlay -->
-    <div id="maintenance-overlay" style="display: none; position: fixed; inset: 0; background: var(--bg); z-index: 10000; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 30px;">
-        <div style="width: 80px; height: 80px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border-radius: 24px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin-bottom: 25px;">
+    <div id="maintenance-overlay"
+        style="display: none; position: fixed; inset: 0; background: var(--bg); z-index: 10000; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 30px;">
+        <div
+            style="width: 80px; height: 80px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border-radius: 24px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin-bottom: 25px;">
             <i class="fas fa-tools"></i>
         </div>
-        <h1 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 12px; color: var(--text-p);">Under Maintenance</h1>
+        <h1 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 12px; color: var(--text-p);">Under Maintenance
+        </h1>
         <p style="color: var(--text-s); font-size: 1rem; max-width: 300px; line-height: 1.6; margin-bottom: 30px;">
             Sourcing panel is currently undergoing scheduled maintenance. We'll be back online shortly!
         </p>
-        <div style="padding: 12px 24px; background: var(--card-glass); border: 1px solid var(--border); border-radius: 12px; color: var(--text-s); font-size: 0.85rem; font-weight: 600;">
+        <div
+            style="padding: 12px 24px; background: var(--card-glass); border: 1px solid var(--border); border-radius: 12px; color: var(--text-s); font-size: 0.85rem; font-weight: 600;">
             Estimated time: 30-60 mins
         </div>
     </div>
-    
+
     <!-- Subscription Required Overlay -->
-    <div id="subscription-overlay" style="display: none; position: fixed; inset: 0; background: var(--bg); z-index: 10000; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 30px;">
-        <div style="width: 80px; height: 80px; background: rgba(88, 101, 242, 0.1); color: var(--accent); border-radius: 24px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin-bottom: 25px;">
+    <div id="subscription-overlay"
+        style="display: none; position: fixed; inset: 0; background: var(--bg); z-index: 10000; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 30px;">
+        <div
+            style="width: 80px; height: 80px; background: rgba(88, 101, 242, 0.1); color: var(--accent); border-radius: 24px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin-bottom: 25px;">
             <i class="fas fa-lock"></i>
         </div>
-        <h1 id="sub-title" style="font-size: 1.8rem; font-weight: 800; margin-bottom: 12px; color: var(--text-p);">Subscription Required</h1>
-        <p id="sub-desc" style="color: var(--text-s); font-size: 1rem; max-width: 300px; line-height: 1.6; margin-bottom: 30px;">
+        <h1 id="sub-title" style="font-size: 1.8rem; font-weight: 800; margin-bottom: 12px; color: var(--text-p);">
+            Subscription Required</h1>
+        <p id="sub-desc"
+            style="color: var(--text-s); font-size: 1rem; max-width: 300px; line-height: 1.6; margin-bottom: 30px;">
             To use the bot and access this panel, you must join our channels first.
         </p>
-        
+
         <div id="sub-channels-list-ui" style="width: 100%; max-width: 300px; margin-bottom: 20px;">
             <!-- Channels buttons will be injected here -->
         </div>
 
-        <button id="sub-check-btn" onclick="init(true)" class="btn-action" style="width: 100%; max-width: 300px;">
+        <button id="sub-check-btn" onclick="init()" class="btn-action" style="width: 100%; max-width: 300px;">
             I have joined, open panel
         </button>
     </div>
@@ -1578,30 +1584,22 @@
                 title: "Subscription Required",
                 desc: "To use the bot and access this panel, you must join our channels first.",
                 check: "I have joined, open panel",
-                join: "Join",
-                error_title: "Subscription Required",
-                error_desc: "You must join all channels first before accessing the panel."
+                join: "Join"
             },
             ar: {
                 title: "الاشتراك إجباري",
                 desc: "لاستخدام البوت والوصول لهذه اللوحة، يجب عليك الانضمام لقنواتنا أولاً.",
                 check: "لقد اشتركت، افتح اللوحة",
-                join: "انضمام",
-                error_title: "الاشتراك مطلوب",
-                error_desc: "يجب عليك الانضمام لجميع القنوات أولاً قبل الدخول للوحة."
+                join: "انضمام"
             }
         };
 
-        async function checkSubscription(isManual = false) {
+        async function checkSubscription() {
             try {
                 const res = await fetch(`/api/check-subscription?user_id=${userId}&bot_type=sourcing`);
                 const data = await res.json();
                 if (!data.ok) {
                     showSubscriptionOverlay(data.channels);
-                    if (isManual) {
-                        const lang = userLang === 'ar' ? 'ar' : 'en';
-                        showToast(`<span style="color:var(--error)">${subTranslations[lang].error_title}:</span> ${subTranslations[lang].error_desc}`);
-                    }
                     return false;
                 }
                 hideSubscriptionOverlay();
@@ -1636,33 +1634,8 @@
             if (overlay) overlay.style.display = 'none';
         }
 
-        async function init(isManual = false) {
-            // Determine lang
-            if (tg.initDataUnsafe?.user?.language_code === 'ar') {
-                userLang = 'ar';
-            } else {
-                userLang = 'en';
-            }
-            const lang = userLang === 'ar' ? 'ar' : 'en';
-
-            const subBtn = document.getElementById('sub-check-btn');
-            const originalBtnText = subBtn ? subBtn.innerText : '';
-
-            if (!isManual) {
-                const loader = document.getElementById('loader');
-                if (loader) loader.classList.remove('hide');
-            } else if (subBtn) {
-                subBtn.disabled = true;
-                subBtn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> ${lang === 'ar' ? 'جاري التحقق...' : 'Checking...'}`;
-            }
-
-            const isSubscribed = await checkSubscription(isManual);
-
-            if (isManual && subBtn) {
-                subBtn.disabled = false;
-                subBtn.innerText = originalBtnText;
-            }
-
+        async function init() {
+            const isSubscribed = await checkSubscription();
             if (!isSubscribed) {
                 const loader = document.getElementById('loader');
                 if (loader) loader.classList.add('hide');
@@ -2315,4 +2288,16 @@
     </script>
 </body>
 
-</html>
+</html> let sStr = (seconds < 10 ? '0' : '' ) + seconds; el.innerText=hStr + mStr + sStr; }); }
+    setInterval(updateAllCountdowns, 1000); init(); // ─── Startup Logic ─── window.onload=()=> {
+    // Check hash for persistence
+    const hash = window.location.hash.replace('#', '');
+    const validViews = ['dashboard', 'submit', 'withdraw', 'pricing', 'support'];
+    if (hash && validViews.includes(hash)) {
+    changeView(hash);
+    }
+    };
+    </script>
+    </body>
+
+    </html>

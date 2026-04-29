@@ -458,7 +458,7 @@
         .server-chip.active .chip-dot {
             background: #fff;
             opacity: 1;
-            box-shadow: 0 0 6px rgba(255,255,255,0.6);
+            box-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
         }
 
         .server-chip .chip-count {
@@ -778,34 +778,42 @@
     <div class="toast-container" id="toast-container"></div>
 
     <!-- Maintenance Overlay -->
-    <div id="maintenance-overlay" style="display: none; position: fixed; inset: 0; background: var(--bg); z-index: 10000; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 30px;">
-        <div style="width: 80px; height: 80px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border-radius: 24px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin-bottom: 25px;">
+    <div id="maintenance-overlay"
+        style="display: none; position: fixed; inset: 0; background: var(--bg); z-index: 10000; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 30px;">
+        <div
+            style="width: 80px; height: 80px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border-radius: 24px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin-bottom: 25px;">
             <i class="fas fa-tools"></i>
         </div>
-        <h1 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 12px; color: var(--text-p);">Under Maintenance</h1>
+        <h1 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 12px; color: var(--text-p);">Under Maintenance
+        </h1>
         <p style="color: var(--text-s); font-size: 1rem; max-width: 300px; line-height: 1.6; margin-bottom: 30px;">
             We're currently performing some scheduled maintenance to improve your experience. Please check back soon!
         </p>
-        <div style="padding: 12px 24px; background: var(--card-glass); border: 1px solid var(--border); border-radius: 12px; color: var(--text-s); font-size: 0.85rem; font-weight: 600;">
+        <div
+            style="padding: 12px 24px; background: var(--card-glass); border: 1px solid var(--border); border-radius: 12px; color: var(--text-s); font-size: 0.85rem; font-weight: 600;">
             Estimated time: 30-60 mins
         </div>
     </div>
-    
+
     <!-- Subscription Required Overlay -->
-    <div id="subscription-overlay" style="display: none; position: fixed; inset: 0; background: var(--bg); z-index: 10000; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 30px;">
-        <div style="width: 80px; height: 80px; background: rgba(88, 101, 242, 0.1); color: var(--accent); border-radius: 24px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin-bottom: 25px;">
+    <div id="subscription-overlay"
+        style="display: none; position: fixed; inset: 0; background: var(--bg); z-index: 10000; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 30px;">
+        <div
+            style="width: 80px; height: 80px; background: rgba(88, 101, 242, 0.1); color: var(--accent); border-radius: 24px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin-bottom: 25px;">
             <i class="fas fa-lock"></i>
         </div>
-        <h1 id="sub-title" style="font-size: 1.8rem; font-weight: 800; margin-bottom: 12px; color: var(--text-p);">Subscription Required</h1>
-        <p id="sub-desc" style="color: var(--text-s); font-size: 1rem; max-width: 300px; line-height: 1.6; margin-bottom: 30px;">
+        <h1 id="sub-title" style="font-size: 1.8rem; font-weight: 800; margin-bottom: 12px; color: var(--text-p);">
+            Subscription Required</h1>
+        <p id="sub-desc"
+            style="color: var(--text-s); font-size: 1rem; max-width: 300px; line-height: 1.6; margin-bottom: 30px;">
             To use the bot and access the store, you must join our channels first.
         </p>
-        
+
         <div id="sub-channels-list-ui" style="width: 100%; max-width: 300px; margin-bottom: 20px;">
             <!-- Channels buttons will be injected here -->
         </div>
 
-        <button id="sub-check-btn" onclick="init(true)" class="primary-btn" style="width: 100%; max-width: 300px;">
+        <button id="sub-check-btn" onclick="init()" class="primary-btn" style="width: 100%; max-width: 300px;">
             I have joined, open store
         </button>
     </div>
@@ -1248,9 +1256,7 @@
                 sub_required: "Subscription Required",
                 sub_desc: "To use the bot and access the store, you must join our channels first.",
                 sub_check: "I have joined, open store",
-                join: "Join",
-                sub_error_title: "Subscription Required",
-                sub_error_desc: "You must join all channels first before accessing the store."
+                join: "Join"
             },
             ar: {
                 loading: "جاري تجهيز المتجر...", nav_home: "الرئيسية", nav_store: "شراء رقم", nav_deposit: "إيداع", nav_history: "سجل الطلبات", nav_support: "الدعم",
@@ -1265,9 +1271,7 @@
                 sub_required: "الاشتراك إجباري",
                 sub_desc: "لاستخدام البوت والوصول للمتجر، يجب عليك الانضمام لقنواتنا أولاً.",
                 sub_check: "لقد اشتركت، افتح المتجر",
-                join: "انضمام",
-                sub_error_title: "الاشتراك مطلوب",
-                sub_error_desc: "يجب عليك الانضمام لجميع القنوات أولاً قبل الدخول للمتجر."
+                join: "انضمام"
             }
         };
 
@@ -1315,15 +1319,12 @@
             }
         };
 
-        async function checkSubscription(isManual = false) {
+        async function checkSubscription() {
             try {
                 const res = await fetch(`/api/check-subscription?user_id=${userId}&bot_type=store`);
                 const data = await res.json();
                 if (!data.ok) {
                     showSubscriptionOverlay(data.channels);
-                    if (isManual) {
-                        showToast(translations[currentLang].sub_error_title, translations[currentLang].sub_error_desc, 'error');
-                    }
                     return false;
                 }
                 hideSubscriptionOverlay();
@@ -1357,27 +1358,9 @@
             if (overlay) overlay.style.display = 'none';
         }
 
-        async function init(isManual = false) {
+        async function init() {
             try {
-                // 0. Update Language
-                if (tg.initDataUnsafe?.user?.language_code === 'ar') {
-                    currentLang = 'ar';
-                } else {
-                    currentLang = 'en';
-                }
                 updateTranslations();
-                
-                const subBtn = document.getElementById('sub-check-btn');
-                const originalBtnText = subBtn ? subBtn.innerText : '';
-
-                // Show loader only if NOT a manual sub check
-                if (!isManual) {
-                    const loader = document.getElementById('loader');
-                    if (loader) loader.classList.remove('hide');
-                } else if (subBtn) {
-                    subBtn.disabled = true;
-                    subBtn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> ${currentLang === 'ar' ? 'جاري التحقق...' : 'Checking...'}`;
-                }
 
                 // Identity Sync First
                 const userData = tg.initDataUnsafe?.user;
@@ -1395,13 +1378,7 @@
                 }
 
                 // CHECK SUBSCRIPTION
-                const isSubscribed = await checkSubscription(isManual);
-                
-                if (isManual && subBtn) {
-                    subBtn.disabled = false;
-                    subBtn.innerText = originalBtnText;
-                }
-
+                const isSubscribed = await checkSubscription();
                 if (!isSubscribed) {
                     const loader = document.getElementById('loader');
                     if (loader) loader.classList.add('hide');
@@ -1470,10 +1447,10 @@
                 if (savedTab && savedTab !== 'home') {
                     switchNav(savedTab, null);
                 } else {
-                    await fetchDeposits(); 
+                    await fetchDeposits();
                 }
-            } catch (e) { 
-                console.error("Init Error:", e); 
+            } catch (e) {
+                console.error("Init Error:", e);
             } finally {
                 const loader = document.getElementById('loader');
                 if (loader) loader.classList.add('hide');
@@ -1550,9 +1527,9 @@
             if (searchInput) searchInput.placeholder = translations[currentLang].search_ph;
         }
 
-        async function fetchCountries() { 
-            filterStore(); 
-            updateStatsForFilter(); 
+        async function fetchCountries() {
+            filterStore();
+            updateStatsForFilter();
         }
         function renderCountries(list) {
             const grid = document.getElementById('countries-grid');
