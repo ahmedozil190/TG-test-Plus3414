@@ -1359,12 +1359,24 @@
 
         async function init(isManual = false) {
             try {
+                // 0. Update Language
+                if (tg.initDataUnsafe?.user?.language_code === 'ar') {
+                    currentLang = 'ar';
+                } else {
+                    currentLang = 'en';
+                }
                 updateTranslations();
                 
+                const subBtn = document.getElementById('sub-check-btn');
+                const originalBtnText = subBtn ? subBtn.innerText : '';
+
                 // Show loader only if NOT a manual sub check
                 if (!isManual) {
                     const loader = document.getElementById('loader');
                     if (loader) loader.classList.remove('hide');
+                } else if (subBtn) {
+                    subBtn.disabled = true;
+                    subBtn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> ${currentLang === 'ar' ? 'جاري التحقق...' : 'Checking...'}`;
                 }
 
                 // Identity Sync First
@@ -1384,6 +1396,12 @@
 
                 // CHECK SUBSCRIPTION
                 const isSubscribed = await checkSubscription(isManual);
+                
+                if (isManual && subBtn) {
+                    subBtn.disabled = false;
+                    subBtn.innerText = originalBtnText;
+                }
+
                 if (!isSubscribed) {
                     const loader = document.getElementById('loader');
                     if (loader) loader.classList.add('hide');

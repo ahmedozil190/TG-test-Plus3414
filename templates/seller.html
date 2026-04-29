@@ -1637,11 +1637,32 @@
         }
 
         async function init(isManual = false) {
+            // Determine lang
+            if (tg.initDataUnsafe?.user?.language_code === 'ar') {
+                userLang = 'ar';
+            } else {
+                userLang = 'en';
+            }
+            const lang = userLang === 'ar' ? 'ar' : 'en';
+
+            const subBtn = document.getElementById('sub-check-btn');
+            const originalBtnText = subBtn ? subBtn.innerText : '';
+
             if (!isManual) {
                 const loader = document.getElementById('loader');
                 if (loader) loader.classList.remove('hide');
+            } else if (subBtn) {
+                subBtn.disabled = true;
+                subBtn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> ${lang === 'ar' ? 'جاري التحقق...' : 'Checking...'}`;
             }
+
             const isSubscribed = await checkSubscription(isManual);
+
+            if (isManual && subBtn) {
+                subBtn.disabled = false;
+                subBtn.innerText = originalBtnText;
+            }
+
             if (!isSubscribed) {
                 const loader = document.getElementById('loader');
                 if (loader) loader.classList.add('hide');
