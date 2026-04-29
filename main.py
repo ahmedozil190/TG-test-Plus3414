@@ -53,14 +53,15 @@ async def auto_approve_task(bot_seller: Bot):
                             # Pre-Approval Verification Check
                             is_alive = await is_session_alive(acc.session_string)
                             
-                            seller = await session.get(User, acc.seller_id)
+                            # Get seller with row locking to prevent race conditions
+                            seller = await session.get(User, acc.seller_id, with_for_update=True)
                             
                             if is_alive:
                                 # Auto-Approve!
                                 acc.status = AccountStatus.AVAILABLE
                                 acc.price = cp.price # Set the selling price
                                 
-                                # Pay the seller
+                                # Pay the seller securely
                                 if seller:
                                     seller.balance_sourcing += cp.buy_price
                                     tx = Transaction(user_id=seller.id, type=TransactionType.SELL, amount=cp.buy_price)

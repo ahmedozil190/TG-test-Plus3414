@@ -1889,7 +1889,7 @@
                 const res = await fetch('/api/seller/withdraw', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ user_id: userId, amount: amt, method: currentMethod, address: addr })
+                    body: JSON.stringify({ user_id: userId, amount: amt, method: currentMethod, address: addr, init_data: tg.initData })
                 });
 
                 const data = await res.json();

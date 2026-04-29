@@ -12,6 +12,7 @@ from sqlalchemy.future import select
 from sqlalchemy import select, delete, update, func, text, or_, cast, String
 from database.engine import async_session
 from database.models import User, Account, Transaction, AccountStatus, TransactionType, CountryPrice, WithdrawalRequest, WithdrawalStatus, UserCountryPrice, Deposit, AppSetting, UserStorePrice, ApiServer, SubscriptionChannel
+from urllib.parse import parse_qsl
 import re
 import pycountry
 import hmac
@@ -51,6 +52,7 @@ class WithdrawSubmit(BaseModel):
     amount: float
     method: str
     address: str
+    init_data: str # Added for security verification
 
 class WithdrawAction(BaseModel):
     request_id: int
@@ -101,6 +103,28 @@ def get_flag_emoji(country_code: str):
         return "🌐"
 
 _bot_info_cache = {}
+
+def verify_telegram_auth(init_data: str, bot_token: str, expected_user_id: int) -> bool:
+    """Verifies that the request actually comes from the claimed user using Telegram Web App Hash."""
+    try:
+        if not init_data: return False
+        parsed_data = dict(parse_qsl(init_data))
+        hash_str = parsed_data.pop('hash', None)
+        if not hash_str: return False
+        
+        # Check if the user ID in init_data matches the claimed user_id
+        user_obj = json.loads(parsed_data.get('user', '{}'))
+        if int(user_obj.get('id', 0)) != expected_user_id:
+            logger.warning(f"Auth Mismatch: Claims {expected_user_id} but InitData is for {user_obj.get('id')}")
+            return False
+            
+        data_check_string = '\n'.join([f"{k}={v}" for k, v in sorted(parsed_data.items())])
+        secret_key = hmac.new(b"WebAppData", bot_token.encode(), hashlib.sha256).digest()
+        calculated_hash = hmac.new(secret_key, data_check_string.encode(), hashlib.sha256).hexdigest()
+        return calculated_hash == hash_str
+    except Exception as e:
+        logger.error(f"Auth Verification Exception: {e}")
+        return False
 
 async def send_purchase_log(user_id: int, country_name: str, price: float, phone: str, code: str, password: str = None):
     """Send a purchase log to the configured Telegram channel."""
@@ -568,6 +592,7 @@ class UserStorePriceCreate(BaseModel):
 class StoreBuy(BaseModel):
     user_id: int
     country: str
+    init_data: str # Added for security verification
 
 class UserSync(BaseModel):
     user_id: int
@@ -1010,7 +1035,13 @@ async def get_store_data(user_id: int = None):
 async def store_buy(data: StoreBuy):
     try:
         async with async_session() as session:
-            user = await session.get(User, data.user_id)
+            # 1. AUTH VERIFICATION
+            from config import BOT_TOKEN
+            if not verify_telegram_auth(data.init_data, BOT_TOKEN, data.user_id):
+                raise HTTPException(status_code=401, detail="Unauthorized: Telegram identity verification failed.")
+
+            # Secure User Fetch with Row Locking
+            user = await session.get(User, data.user_id, with_for_update=True)
             if not user: raise HTTPException(status_code=404, detail="User not found")
             
             # 0. Local Server Toggle
@@ -2703,7 +2734,13 @@ async def clear_accounts_admin(key: str):
 @app.post("/api/seller/withdraw")
 async def seller_withdraw(req: WithdrawSubmit):
     async with async_session() as session:
-        user = await session.get(User, req.user_id)
+        # 1. AUTH VERIFICATION
+        from config import SELLER_BOT_TOKEN
+        if not verify_telegram_auth(req.init_data, SELLER_BOT_TOKEN, req.user_id):
+            raise HTTPException(status_code=401, detail="Unauthorized: Telegram identity verification failed.")
+
+        # Secure User Fetch with Row Locking
+        user = await session.get(User, req.user_id, with_for_update=True)
         if not user:
             raise HTTPException(status_code=403, detail="User not verified for sourcing bot.")
         
