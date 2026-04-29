@@ -3033,14 +3033,16 @@
             }
             
             list.innerHTML = channels.map((ch, index) => `
-                <div class="list-item" style="display: flex; flex-direction: column; gap: 15px; padding: 20px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-hover, rgba(128,128,128,0.05)); padding: 14px 15px; border-radius: 10px; border: 1px solid var(--border);">
-                        <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-s); text-transform: uppercase; min-width: 80px;">USERNAME</span>
-                        <span style="flex: 1; text-align: right; margin-left: 15px; word-break: break-all; font-weight: normal; font-size: 0.95rem; color: var(--warning);">${ch.username}</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-hover, rgba(128,128,128,0.05)); padding: 14px 15px; border-radius: 10px; border: 1px solid var(--border);">
-                        <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-s); text-transform: uppercase; min-width: 80px;">LINK</span>
-                        <span style="flex: 1; text-align: right; margin-left: 15px; word-break: break-all; font-weight: normal; font-size: 0.95rem; color: #3b82f6;">${ch.link}</span>
+                <div class="list-item" style="padding: 20px;">
+                    <div style="display: grid; grid-auto-rows: 1fr; gap: 15px; margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: transparent; padding: 14px 15px; border-radius: 10px; border: 1px solid var(--border);">
+                            <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-s); text-transform: uppercase; min-width: 80px;">USERNAME</span>
+                            <span style="flex: 1; text-align: right; margin-left: 15px; word-break: break-all; font-weight: normal; font-size: 0.95rem; color: var(--warning);">${ch.username}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: transparent; padding: 14px 15px; border-radius: 10px; border: 1px solid var(--border);">
+                            <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-s); text-transform: uppercase; min-width: 80px;">LINK</span>
+                            <span style="flex: 1; text-align: right; margin-left: 15px; word-break: break-all; font-weight: normal; font-size: 0.95rem; color: #3b82f6;">${ch.link}</span>
+                        </div>
                     </div>
                     <button class="primary-btn" onclick="deleteSubscriptionChannel(${ch.id})" style="width: 100%; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); padding: 14px; border-radius: 10px; font-weight: 700;">
                         <i class="fas fa-trash-alt" style="margin-right: 8px;"></i> Delete Channel
