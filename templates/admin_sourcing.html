@@ -2205,7 +2205,8 @@
                             must be an admin in this channel to post price updates.</span>
                     </div>
                     <div style="display: flex; gap: 10px;">
-                        <button class="primary-btn" onclick="saveSettings()" style="flex: 1;">Save Price Channel</button>
+                        <button class="primary-btn" onclick="saveSettings()" style="flex: 1;">Save Price
+                            Channel</button>
                     </div>
                 </div>
             </section>
@@ -2218,7 +2219,8 @@
                 </button>
 
                 <div class="card" style="padding: 28px; margin-bottom: 20px;">
-                    <h4 style="margin-bottom: 20px; font-weight: 700; font-size: 1.05rem; color: var(--text-p);">Add New Channel</h4>
+                    <h4 style="margin-bottom: 20px; font-weight: 700; font-size: 1.05rem; color: var(--text-p);">Add New
+                        Channel</h4>
                     <div class="form-group" style="margin-bottom: 20px;">
                         <input type="text" id="new-sub-username" class="search-input"
                             style="margin-bottom: 0; padding: 16px; font-size: 1rem; height: auto;"
@@ -2316,13 +2318,16 @@
                 <input type="number" id="m-quantity" class="input-field" placeholder="1000">
             </div>
 
-            <div style="background: rgba(139, 92, 246, 0.05); border: 1px solid rgba(139, 92, 246, 0.1); border-radius: 12px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 25px;">
+            <div
+                style="background: rgba(139, 92, 246, 0.05); border: 1px solid rgba(139, 92, 246, 0.1); border-radius: 12px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 25px;">
                 <div style="display: flex; align-items: center; gap: 12px;">
-                    <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(139, 92, 246, 0.1); color: #8b5cf6; display: flex; align-items: center; justify-content: center;">
+                    <div
+                        style="width: 38px; height: 38px; border-radius: 10px; background: rgba(139, 92, 246, 0.1); color: #8b5cf6; display: flex; align-items: center; justify-content: center;">
                         <i class="fas fa-paper-plane" style="font-size: 0.9rem;"></i>
                     </div>
                     <div>
-                        <div style="font-size: 0.9rem; font-weight: 600; color: var(--text-primary);">Send to Channel</div>
+                        <div style="font-size: 0.9rem; font-weight: 600; color: var(--text-primary);">Send to Channel
+                        </div>
                         <div style="font-size: 0.7rem; color: var(--text-s);">Post update to price channel</div>
                     </div>
                 </div>
@@ -3200,7 +3205,7 @@
             try {
                 const res = await fetch('/api/admin/sourcing/data');
                 const data = await res.json();
-                
+
                 await fetchSubscriptionChannels();
 
                 // Inventory (Home)
@@ -3798,10 +3803,10 @@
             document.getElementById('m-code').value = '';
             document.getElementById('m-buy').value = '';
             document.getElementById('m-delay').value = '';
-            document.getElementById('m-quantity').value = ''; 
+            document.getElementById('m-quantity').value = '';
             document.getElementById('m-send-log').checked = true;
             document.getElementById('m-country-container').innerHTML = `<input type="text" class="input-field" value="${currentLang === 'ar' ? 'بانتظار الكود...' : 'Waiting...'}" readonly style="cursor: not-allowed;">`;
-            
+
             const modal = document.getElementById('price-modal');
             modal.classList.add('active');
             modal.scrollTop = 0;
@@ -3811,13 +3816,13 @@
             document.getElementById('m-code').value = code;
             document.getElementById('m-buy').value = buy;
             document.getElementById('m-delay').value = delay;
-            
+
             // If qty is provided (from p.log_quantity), show it. Otherwise default to 1000.
-            document.getElementById('m-quantity').value = qty || 1000; 
+            document.getElementById('m-quantity').value = qty || 1000;
             document.getElementById('m-send-log').checked = true;
 
             await onCountryCodeInput();
-            
+
             // Handle highlighting for multiple countries (like +1) or selecting for single
             const options = document.querySelectorAll('.country-option-btn');
             if (options.length > 0) {
@@ -3865,7 +3870,7 @@
                         </div>
                         <input type="hidden" id="m-iso-box" data-iso="" data-name="">
                     `;
-                    
+
                     // If only one country, auto-select it
                     if (data.length === 1) {
                         const firstOption = container.querySelector('.country-option-btn');
@@ -4141,18 +4146,16 @@
                 </div>`;
                 return;
             }
-            
+
             list.innerHTML = channels.map((ch, index) => `
-                <div class="list-item" style="padding: 20px;">
-                    <div style="display: grid; grid-auto-rows: 1fr; gap: 15px; margin-bottom: 15px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; background: transparent; padding: 14px 15px; border-radius: 10px; border: 1px solid var(--border);">
-                            <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-s); text-transform: uppercase; min-width: 80px;">USERNAME</span>
-                            <span style="flex: 1; text-align: right; margin-left: 15px; word-break: break-all; font-weight: normal; font-size: 0.95rem; color: var(--warning);">${ch.username}</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; background: transparent; padding: 14px 15px; border-radius: 10px; border: 1px solid var(--border);">
-                            <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-s); text-transform: uppercase; min-width: 80px;">LINK</span>
-                            <span style="flex: 1; text-align: right; margin-left: 15px; word-break: break-all; font-weight: normal; font-size: 0.95rem; color: #3b82f6;">${ch.link}</span>
-                        </div>
+                <div class="list-item" style="display: flex; flex-direction: column; gap: 15px; padding: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: transparent; padding: 14px 15px; border-radius: 10px; border: 1px solid var(--border);">
+                        <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-s); text-transform: uppercase; min-width: 80px;">USERNAME</span>
+                        <span style="flex: 1; text-align: right; margin-left: 15px; word-break: break-all; font-weight: normal; font-size: 0.95rem; color: var(--warning);">${ch.username}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: transparent; padding: 14px 15px; border-radius: 10px; border: 1px solid var(--border);">
+                        <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-s); text-transform: uppercase; min-width: 80px;">LINK</span>
+                        <span style="flex: 1; text-align: right; margin-left: 15px; word-break: break-all; font-weight: normal; font-size: 0.95rem; color: #3b82f6;">${ch.link}</span>
                     </div>
                     <button class="primary-btn" onclick="deleteSubscriptionChannel(${ch.id})" style="width: 100%; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); padding: 14px; border-radius: 10px; font-weight: 700;">
                         <i class="fas fa-trash-alt" style="margin-right: 8px;"></i> Delete Channel
@@ -4168,7 +4171,7 @@
                 showToast('Error', 'Username and Link are required', 'error');
                 return;
             }
-            
+
             const btn = event.currentTarget;
             const oldText = btn.innerHTML;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
