@@ -2213,12 +2213,10 @@
 
             <!-- ===== Subscriptions Sub-Section ===== -->
             <section id="section-settings-subscriptions" class="view-section">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; margin-bottom: 25px;">
-                    <h2 style="margin: 0;">Subscriptions</h2>
-                    <button class="settings-back-btn" onclick="switchNav('settings', null)">
+                <button class="settings-back-btn" onclick="switchNav('settings', null)"
+                    style="margin-top: 10px; margin-bottom: 20px;">
                         <i class="fas fa-arrow-left"></i> Back to Settings
                     </button>
-                </div>
 
                 <div class="card" style="padding: 28px; margin-bottom: 20px;">
                     <h4 style="margin-bottom: 20px; font-weight: 700; font-size: 1.05rem; color: var(--text-p);">Add New
@@ -3185,14 +3183,19 @@
                 settings: 'nav_settings',
                 withdrawals: 'nav_withdrawals',
                 'user-prices': 'nav_user_prices',
-                'settings-subscriptions': 'nav_settings',
-                'settings-general': 'nav_settings'
+                'settings-subscriptions': 'Subscriptions',
+                'settings-general': 'General Settings'
             };
             const titleEl = document.getElementById('page-title');
             if (titleEl) {
-                const translationKey = titleMap[id] || 'nav_dashboard';
-                titleEl.setAttribute('data-i18n', translationKey);
-                titleEl.innerText = translations[currentLang][translationKey] || id;
+                if (titleMap[id] && !id.includes('settings-')) {
+                    const translationKey = titleMap[id];
+                    titleEl.setAttribute('data-i18n', translationKey);
+                    titleEl.innerText = translations[currentLang][translationKey] || id;
+                } else {
+                    titleEl.removeAttribute('data-i18n');
+                    titleEl.innerText = titleMap[id] || id;
+                }
             }
         }
 
