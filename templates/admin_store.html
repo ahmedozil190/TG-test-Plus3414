@@ -3012,6 +3012,8 @@
         }
 
         async function fetchSubscriptionChannels() {
+            const list = document.getElementById('sub-channels-list');
+            if (list) list.innerHTML = '<div style="text-align: center; padding: 20px; opacity: 0.5;"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
             try {
                 const res = await fetch(`/api/admin/subscription-channels?bot_type=store&t=${Date.now()}`);
                 if (res.ok) {
@@ -3090,20 +3092,24 @@
         }
 
         async function deleteSubscriptionChannel(id) {
-            tg.showConfirm("Are you sure you want to delete this channel?", async (yes) => {
-                if (yes) {
-                    try {
-                        const res = await fetch(`/api/admin/subscription-channels/${id}`, { method: 'DELETE' });
-                        const data = await res.json();
-                        if (data.ok) {
-                            showToast('Success', 'Channel deleted successfully', 'success');
-                            await fetchSubscriptionChannels();
-                        }
-                    } catch (e) {
-                        showToast('Error', e.message, 'error');
+            const confirmed = await showConfirm(
+                currentLang === 'ar' ? 'هل أنت متأكد؟' : 'Are you sure?',
+                currentLang === 'ar' ? 'هل تريد حقاً حذف هذه القناة؟' : 'Do you really want to delete this channel?',
+                currentLang === 'ar' ? 'حذف' : 'Delete',
+                'fas fa-trash-alt', 'rgba(239, 68, 68, 0.1)', '#ef4444', 'danger'
+            );
+            if (confirmed) {
+                try {
+                    const res = await fetch(`/api/admin/subscription-channels/${id}`, { method: 'DELETE' });
+                    const data = await res.json();
+                    if (data.ok) {
+                        showToast('Success', 'Channel deleted successfully', 'success');
+                        await fetchSubscriptionChannels();
                     }
+                } catch (e) {
+                    showToast('Error', e.message, 'error');
                 }
-            });
+            }
         }
 
         async function loadServers() {
