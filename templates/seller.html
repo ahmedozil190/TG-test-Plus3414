@@ -1770,6 +1770,12 @@
 
                 userBalance = data.user.balance;
                 document.getElementById('currBal').innerHTML = `${userBalance.toFixed(2)} <span>USD</span>`;
+                
+                // Also update the input if we are on the withdraw page
+                const withdrawInput = document.getElementById('withdrawAmount');
+                if (withdrawInput) {
+                    withdrawInput.value = userBalance.toFixed(2);
+                }
                 document.getElementById('pendBal').innerHTML = `${data.user.pending_balance.toFixed(2)} <span>USD</span>`;
                 document.getElementById('totalWith').innerHTML = `${data.user.total_withdrawn.toFixed(2)} <span>USD</span>`;
 
