@@ -2372,7 +2372,7 @@
                             style="margin-bottom: 0; padding: 16px; font-size: 1rem; height: auto;"
                             placeholder="https://t.me/...">
                     </div>
-                    <button class="primary-btn" onclick="addSubscriptionChannel()"
+                    <button class="primary-btn" onclick="addSubscriptionChannel(this)"
                         style="width: 100%; padding: 16px; border-radius: 12px; font-weight: 700;">Add Channel</button>
                 </div>
 
@@ -3055,7 +3055,7 @@
             `).join('');
         }
 
-        async function addSubscriptionChannel() {
+        async function addSubscriptionChannel(btn) {
             const username = document.getElementById('new-sub-username').value.trim();
             const link = document.getElementById('new-sub-link').value.trim();
             if (!username || !link) {
@@ -3063,7 +3063,6 @@
                 return;
             }
 
-            const btn = event.currentTarget;
             const oldText = btn.innerHTML;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
             btn.disabled = true;
