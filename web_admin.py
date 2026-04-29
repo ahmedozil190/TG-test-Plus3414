@@ -2746,7 +2746,7 @@ async def seller_submit_otp(data: SellerOTPSubmit):
         
         # Custom 2FA Handling
         if "password" in err_msg_lower or "two-step" in err_msg_lower:
-            raise HTTPException(status_code=400, detail="عذراً، هذا الحساب محمي بـ 'التحقق بخطوتين'. يرجى تعطيله من الإعدادات ثم المحاولة مجدداً.")
+            raise HTTPException(status_code=400, detail="Disable Two-Step Verification, and try again")
             
         if any(msg in err_msg_lower for msg in ["restricted", "frozen", "security check"]):
             raise HTTPException(status_code=400, detail=err_msg)
