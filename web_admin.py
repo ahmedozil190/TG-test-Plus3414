@@ -3177,7 +3177,8 @@ async def add_subscription_channel(data: dict):
         new_channel = SubscriptionChannel(bot_type=bot_type, username=username, link=link)
         session.add(new_channel)
         await session.commit()
-        return {"ok": True}
+        await session.refresh(new_channel)
+        return {"ok": True, "id": new_channel.id}
 
 @app.delete("/api/admin/subscription-channels/{channel_id}")
 async def delete_subscription_channel(channel_id: int):

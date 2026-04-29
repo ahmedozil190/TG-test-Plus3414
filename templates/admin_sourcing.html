@@ -2237,11 +2237,8 @@
                 </div>
 
                 <div class="card" style="padding: 22px;">
-                    <div class="section-header" style="margin-top: 0; margin-bottom: 35px; display: flex; justify-content: space-between; align-items: center;">
+                    <div class="section-header" style="margin-top: 0; margin-bottom: 35px;">
                         <h2 style="margin: 0;">Managed Channels</h2>
-                        <button onclick="fetchSubscriptionChannels()" style="background: transparent; border: none; color: var(--accent); cursor: pointer; padding: 8px;">
-                            <i class="fas fa-sync-alt"></i>
-                        </button>
                     </div>
                     <div class="list-container" id="sub-channels-list">
                         <!-- Channels will be populated here -->
@@ -4136,21 +4133,40 @@
         }
 
         async function fetchSubscriptionChannels() {
-            console.log('Fetching subscription channels...');
             const list = document.getElementById('sub-channels-list');
             if (list) list.innerHTML = '<div style="text-align: center; padding: 20px; opacity: 0.5;"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
             try {
                 const res = await fetch(`/api/admin/subscription-channels?bot_type=sourcing&t=${Date.now()}`);
                 if (res.ok) {
                     const channels = await res.json();
-                    console.log('Channels received:', channels);
                     renderSubscriptionChannels(channels);
-                } else {
-                    console.error('Fetch failed:', res.status);
                 }
             } catch (e) {
-                console.error('Fetch error:', e);
+                console.error(e);
             }
+        }
+
+        function buildChannelCard(ch) {
+            const div = document.createElement('div');
+            div.className = 'list-item';
+            div.dataset.chId = ch.id;
+            div.style.cssText = 'display:flex;flex-direction:column;align-items:stretch;gap:0;padding:20px;background:transparent;border-radius:12px;border:1px solid var(--border);margin-bottom:12px;';
+            div.innerHTML = `
+                <div style="display:grid;grid-template-columns:1fr;gap:15px;margin-bottom:15px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;background:transparent;padding:14px 15px;border-radius:10px;border:1px solid var(--border);">
+                        <span style="font-size:0.7rem;font-weight:800;color:var(--text-s);text-transform:uppercase;min-width:80px;">USERNAME</span>
+                        <span style="flex:1;text-align:right;margin-left:15px;word-break:break-all;font-weight:normal;font-size:0.95rem;color:var(--warning);">${ch.username}</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;background:transparent;padding:14px 15px;border-radius:10px;border:1px solid var(--border);">
+                        <span style="font-size:0.7rem;font-weight:800;color:var(--text-s);text-transform:uppercase;min-width:80px;">LINK</span>
+                        <span style="flex:1;text-align:right;margin-left:15px;word-break:break-all;font-weight:normal;font-size:0.95rem;color:#3b82f6;">${ch.link}</span>
+                    </div>
+                </div>
+                <button class="primary-btn" onclick="deleteSubscriptionChannel(${ch.id}, this)" style="width:100%;background:rgba(239,68,68,0.1);color:var(--danger) !important;border:1px solid rgba(239,68,68,0.2);padding:14px;border-radius:10px;font-weight:700;box-shadow:none;">
+                    <i class="fas fa-trash-alt" style="margin-right:8px;color:var(--danger);"></i> Delete Channel
+                </button>
+            `;
+            return div;
         }
 
         function renderSubscriptionChannels(channels) {
@@ -4163,24 +4179,8 @@
                 </div>`;
                 return;
             }
-
-            list.innerHTML = channels.map((ch, index) => `
-                <div class="list-item" style="display: flex; flex-direction: column; align-items: stretch; gap: 0; padding: 20px; background: transparent; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 12px;">
-                    <div style="display: grid; grid-template-columns: 1fr; grid-auto-rows: 1fr; gap: 15px; margin-bottom: 15px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; background: transparent; padding: 14px 15px; border-radius: 10px; border: 1px solid var(--border);">
-                            <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-s); text-transform: uppercase; min-width: 80px;">USERNAME</span>
-                            <span style="flex: 1; text-align: right; margin-left: 15px; word-break: break-all; font-weight: normal; font-size: 0.95rem; color: var(--warning);">${ch.username}</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; background: transparent; padding: 14px 15px; border-radius: 10px; border: 1px solid var(--border);">
-                            <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-s); text-transform: uppercase; min-width: 80px;">LINK</span>
-                            <span style="flex: 1; text-align: right; margin-left: 15px; word-break: break-all; font-weight: normal; font-size: 0.95rem; color: #3b82f6;">${ch.link}</span>
-                        </div>
-                    </div>
-                    <button class="primary-btn" onclick="deleteSubscriptionChannel(${ch.id})" style="width: 100%; background: rgba(239, 68, 68, 0.1); color: var(--danger) !important; border: 1px solid rgba(239, 68, 68, 0.2); padding: 14px; border-radius: 10px; font-weight: 700; box-shadow: none;">
-                        <i class="fas fa-trash-alt" style="margin-right: 8px; color: var(--danger);"></i> Delete Channel
-                    </button>
-                </div>
-            `).join('');
+            list.innerHTML = '';
+            channels.forEach(ch => list.appendChild(buildChannelCard(ch)));
         }
 
         async function addSubscriptionChannel(btn) {
@@ -4206,7 +4206,11 @@
                     document.getElementById('new-sub-username').value = '';
                     document.getElementById('new-sub-link').value = '';
                     showToast('Success', 'Channel added successfully!', 'success');
-                    await fetchSubscriptionChannels();
+                    // Optimistic UI: append new card directly
+                    const list = document.getElementById('sub-channels-list');
+                    const emptyDiv = list.querySelector('div[style*="dashed"]');
+                    if (emptyDiv) list.innerHTML = '';
+                    list.appendChild(buildChannelCard({ id: data.id, username, link }));
                 } else {
                     showToast('Error', data.error || 'Failed to add channel', 'error');
                 }
@@ -4218,7 +4222,7 @@
             }
         }
 
-        async function deleteSubscriptionChannel(id) {
+        async function deleteSubscriptionChannel(id, btn) {
             const confirmed = await showConfirm(
                 currentLang === 'ar' ? 'هل أنت متأكد؟' : 'Are you sure?',
                 currentLang === 'ar' ? 'هل تريد حقاً حذف هذه القناة؟' : 'Do you really want to delete this channel?',
@@ -4230,8 +4234,19 @@
                     const res = await fetch(`/api/admin/subscription-channels/${id}`, { method: 'DELETE' });
                     const data = await res.json();
                     if (data.ok) {
+                        // Optimistic UI: remove card directly from DOM
+                        const card = btn ? btn.closest('.list-item') : document.querySelector(`.list-item[data-ch-id="${id}"]`);
+                        if (card) {
+                            card.remove();
+                            const list = document.getElementById('sub-channels-list');
+                            if (list && list.children.length === 0) {
+                                list.innerHTML = `<div style="text-align: center; padding: 40px 20px; background: var(--card-glass); border-radius: 16px; border: 1px dashed var(--border); backdrop-filter: blur(10px);">
+                                    <i class="fas fa-broadcast-tower" style="font-size: 2.5rem; color: var(--text-secondary); opacity: 0.3; margin-bottom: 12px;"></i>
+                                    <p style="color: var(--text-secondary); font-weight: 600; font-size: 0.95rem;">No channels added yet.</p>
+                                </div>`;
+                            }
+                        }
                         showToast('Success', 'Channel deleted successfully', 'success');
-                        await fetchSubscriptionChannels();
                     }
                 } catch (e) {
                     showToast('Error', e.message, 'error');
