@@ -105,9 +105,15 @@ async def submit_app_code(user_id: int, phone_number: str, phone_code_hash: str,
                             break
                             
                 except Exception as e:
-                    # Only catch actual Pyrogram errors that mean the session got dropped
-                    if "Unauthorized" in str(type(e)) or "UserDeactivated" in str(type(e)):
-                        error_to_raise = f"Session revoked by Telegram. ({type(e).__name__})"
+                    # If we can't send a message to a bot, it's a high signal of a restricted account
+                    err_type = type(e).__name__
+                    if any(x in err_type for x in ["PeerFlood", "UserRestricted", "Forbidden", "ChatWriteForbidden"]):
+                        error_to_raise = f"This account is messaging-restricted/spam-blocked. ({err_type})"
+                    elif any(x in err_type for x in ["Unauthorized", "UserDeactivated"]):
+                        error_to_raise = f"Session revoked by Telegram. ({err_type})"
+                    else:
+                        logging.warning(f"Unexpected SpamBot check error: {e}")
+                        # Don't fail the whole login on unknown bot errors unless it's a clear restriction
 
         except Exception as e:
             logging.error(f"Internal Health Check Error: {e}")
@@ -178,16 +184,24 @@ async def is_session_alive(session_string: str) -> bool:
         await client.connect()
         me = await client.get_me()
         if not me or me.is_scam or me.is_fake or me.is_restricted:
-            raise Exception("Account Restricted/Fake")
+            return False
         
-        await asyncio.sleep(0.5)
-        test_msg = await client.send_message("me", "Ping")
-        await test_msg.delete()
-        
-        return True
+        # Check SpamBot instead of 'me' for real messaging capability
+        target_bot = 178220800
+        try:
+            await client.send_message(target_bot, "/start")
+            # If we sent successfully, the account can message bots (not completely restricted)
+            return True
+        except Exception as e:
+            err_type = type(e).__name__
+            if any(x in err_type for x in ["PeerFlood", "UserRestricted", "Forbidden", "ChatWriteForbidden"]):
+                return False # Messaging restricted
+            # If it's a different error (like Timeout), we might still consider it alive if me.id exists
+            # but usually for a sourcing bot, if it can't message SpamBot, it's useless.
+            return False
+            
     except Exception as e:
-        err_msg = str(e).lower()
-        logging.warning(f"Session failed keep-alive check: {err_msg}")
+        logging.warning(f"Session failed alive check: {e}")
         return False
     finally:
         try:
