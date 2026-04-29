@@ -1364,8 +1364,7 @@
 
                 <div class="input-group">
                     <label>Withdraw Amount (USD)</label>
-                    <input type="number" id="withdrawAmount" class="w-input" placeholder="0.00"
-                        oninput="validateWithdraw()">
+                    <input type="number" id="withdrawAmount" class="w-input" placeholder="0.00" readonly oninput="validateWithdraw()">
                     <div id="minWarning" style="font-size:0.7rem; color:var(--error); margin-top:5px; display:none">
                         Minimum amount not reached.</div>
                 </div>
@@ -1707,6 +1706,11 @@
             if (targetView) targetView.classList.add('active');
             if (targetBtn) targetBtn.classList.add('active');
 
+            if (viewId === 'withdraw') {
+                document.getElementById('withdrawAmount').value = userBalance.toFixed(2);
+                validateWithdraw();
+            }
+
             // Update URL Hash for persistence
             window.location.hash = viewId;
 
@@ -1738,6 +1742,8 @@
         };
 
         // ─── Data Services ───
+        let userBalance = 0;
+
         async function fetchSellerData() {
             try {
                 const res = await fetch(`/api/seller/data?user_id=${userId}`);
@@ -1762,7 +1768,8 @@
                     return;
                 }
 
-                document.getElementById('currBal').innerHTML = `${data.user.balance.toFixed(2)} <span>USD</span>`;
+                userBalance = data.user.balance;
+                document.getElementById('currBal').innerHTML = `${userBalance.toFixed(2)} <span>USD</span>`;
                 document.getElementById('pendBal').innerHTML = `${data.user.pending_balance.toFixed(2)} <span>USD</span>`;
                 document.getElementById('totalWith').innerHTML = `${data.user.total_withdrawn.toFixed(2)} <span>USD</span>`;
 

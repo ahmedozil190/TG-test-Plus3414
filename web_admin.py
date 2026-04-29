@@ -2780,32 +2780,28 @@ async def seller_withdraw(req: WithdrawSubmit):
         if not user:
             raise HTTPException(status_code=403, detail="User not verified for sourcing bot.")
         
-        # Validation: Check amount and balance
-        if req.amount <= 0:
-            raise HTTPException(status_code=400, detail="Invalid amount")
-            
+        # Validation: Use FULL balance for withdrawal
+        withdraw_amount = user.balance_sourcing
+        
         min_amount = 4.0 if "TRX" in req.method else 10.0
-        if req.amount < min_amount:
+        if withdraw_amount < min_amount:
             raise HTTPException(status_code=400, detail=f"Minimum withdrawal is ${min_amount}")
         
-        if user.balance_sourcing < req.amount:
-            raise HTTPException(status_code=400, detail="Insufficient balance")
-        
-        if req.amount <= 0.20:
+        if withdraw_amount <= 0.20:
             raise HTTPException(status_code=400, detail="Amount too low to cover fees")
 
         # Create Request
         tid = generate_transaction_id()
         withdraw = WithdrawalRequest(
             user_id=req.user_id,
-            amount=req.amount,
+            amount=withdraw_amount,
             method=req.method,
             address=req.address,
             transaction_id=tid
         )
         
         # Deduct balance immediately
-        user.balance_sourcing -= req.amount
+        user.balance_sourcing = 0
         
         session.add(withdraw)
         await session.commit()
