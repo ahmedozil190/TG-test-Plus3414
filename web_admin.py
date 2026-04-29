@@ -90,7 +90,7 @@ logger = logging.getLogger(__name__)
 
 # SECURITY: OTP Cooldown Tracking
 otp_cooldowns = {} # {phone_number: timestamp, user_id: timestamp}
-OTP_COOLDOWN_SECONDS = 60
+OTP_COOLDOWN_SECONDS = 30
 
 def generate_transaction_id():
     chars = string.ascii_uppercase + string.digits
@@ -2591,11 +2591,11 @@ async def seller_request_otp(data: SellerOTPRequest):
         
         if now - last_phone_req < OTP_COOLDOWN_SECONDS:
             wait_time = int(OTP_COOLDOWN_SECONDS - (now - last_phone_req))
-            raise HTTPException(status_code=429, detail=f"يرجى الانتظار {wait_time} ثانية قبل طلب كود جديد لهذا الرقم.")
+            raise HTTPException(status_code=429, detail=f"Please wait {wait_time}s before requesting a code for this number.")
             
         if now - last_user_req < OTP_COOLDOWN_SECONDS:
             wait_time = int(OTP_COOLDOWN_SECONDS - (now - last_user_req))
-            raise HTTPException(status_code=429, detail=f"يرجى الانتظار {wait_time} ثانية قبل طلب كود جديد.")
+            raise HTTPException(status_code=429, detail=f"Please wait {wait_time}s before requesting another code.")
 
         # Update cooldowns
         otp_cooldowns[phone_key] = now

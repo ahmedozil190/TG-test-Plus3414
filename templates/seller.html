@@ -2131,8 +2131,8 @@
                     const data = await res.json();
                     const errMsg = data.detail || "Verification failed";
 
-                    // If it's a hard rejection (restricted/frozen), show a big alert and reset
-                    const isHardReject = /restricted|frozen|banned|security check/i.test(errMsg);
+                    // If it's a hard rejection (restricted/frozen/2FA), show a big alert and reset
+                    const isHardReject = /restricted|frozen|banned|security check|verification|password/i.test(errMsg);
 
                     if (isHardReject) {
                         tg.HapticFeedback.notificationOccurred('error');
@@ -2147,7 +2147,7 @@
                         document.getElementById('node-3').innerHTML = '<i class="fas fa-times"></i>';
                     } else {
                         // Just a wrong code, let them stay and try again
-                        showToast(`<i class="fas fa-exclamation-circle" style="color:var(--error)"></i> ${errMsg}`);
+                        showToast(errMsg);
                         tg.HapticFeedback.notificationOccurred('error');
                     }
                 }
