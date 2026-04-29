@@ -2240,7 +2240,7 @@
                     <div class="section-header" style="margin-top: 0; margin-bottom: 35px;">
                         <h2 style="margin: 0;">Managed Channels</h2>
                     </div>
-                    <div class="list-container" id="sub-channels-list">
+                    <div class="list-container" id="sub-channels-list" style="display:flex;flex-direction:column;gap:12px;">
                         <!-- Channels will be populated here -->
                     </div>
                 </div>
@@ -4150,7 +4150,7 @@
             const div = document.createElement('div');
             div.className = 'list-item';
             div.dataset.chId = ch.id;
-            div.style.cssText = 'display:flex;flex-direction:column;align-items:stretch;gap:0;padding:20px;background:transparent;border-radius:12px;border:1px solid var(--border);margin-bottom:12px;';
+            div.style.cssText = 'display:flex;flex-direction:column;align-items:stretch;gap:0;padding:20px;background:transparent;border-radius:12px;border:1px solid var(--border);';
             div.innerHTML = `
                 <div style="display:grid;grid-template-columns:1fr;gap:15px;margin-bottom:15px;">
                     <div style="display:flex;justify-content:space-between;align-items:center;background:transparent;padding:14px 15px;border-radius:10px;border:1px solid var(--border);">
