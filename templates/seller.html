@@ -810,25 +810,27 @@
 
         .toast {
             position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
+            top: 75px;
+            right: 15px;
+            transform: translateX(120%);
             background: var(--bg-elevated);
             color: var(--text-p);
-            padding: 14px 24px;
-            border-radius: 50px;
+            padding: 16px 20px;
+            border-radius: 16px;
             border: 1px solid var(--border);
             z-index: 10000;
             transition: transform 0.4s var(--ease);
             font-weight: 600;
-            white-space: nowrap;
-            pointer-events: none;
-            box-shadow: var(--shadow-lg);
+            max-width: 300px;
+            width: 80%;
+            pointer-events: auto;
+            box-shadow: var(--shadow);
             font-size: 0.85rem;
+            backdrop-filter: blur(12px);
         }
 
         .toast.show {
-            transform: translateX(-50%) translateY(0);
+            transform: translateX(0);
         }
 
         /* ─── Confirmation Modal ─── */
@@ -1528,7 +1530,7 @@
             <!-- Channels buttons will be injected here -->
         </div>
 
-        <button id="sub-check-btn" onclick="init()" class="btn-action" style="width: 100%; max-width: 300px;">
+        <button id="sub-check-btn" onclick="init(true)" class="btn-action" style="width: 100%; max-width: 300px;">
             I have joined, open panel
         </button>
     </div>
@@ -1576,22 +1578,30 @@
                 title: "Subscription Required",
                 desc: "To use the bot and access this panel, you must join our channels first.",
                 check: "I have joined, open panel",
-                join: "Join"
+                join: "Join",
+                error_title: "Subscription Required",
+                error_desc: "You must join all channels first before accessing the panel."
             },
             ar: {
                 title: "الاشتراك إجباري",
                 desc: "لاستخدام البوت والوصول لهذه اللوحة، يجب عليك الانضمام لقنواتنا أولاً.",
                 check: "لقد اشتركت، افتح اللوحة",
-                join: "انضمام"
+                join: "انضمام",
+                error_title: "الاشتراك مطلوب",
+                error_desc: "يجب عليك الانضمام لجميع القنوات أولاً قبل الدخول للوحة."
             }
         };
 
-        async function checkSubscription() {
+        async function checkSubscription(isManual = false) {
             try {
                 const res = await fetch(`/api/check-subscription?user_id=${userId}&bot_type=sourcing`);
                 const data = await res.json();
                 if (!data.ok) {
                     showSubscriptionOverlay(data.channels);
+                    if (isManual) {
+                        const lang = userLang === 'ar' ? 'ar' : 'en';
+                        showToast(`<span style="color:var(--error)">${subTranslations[lang].error_title}:</span> ${subTranslations[lang].error_desc}`);
+                    }
                     return false;
                 }
                 hideSubscriptionOverlay();
@@ -1626,8 +1636,12 @@
             if (overlay) overlay.style.display = 'none';
         }
 
-        async function init() {
-            const isSubscribed = await checkSubscription();
+        async function init(isManual = false) {
+            if (!isManual) {
+                const loader = document.getElementById('loader');
+                if (loader) loader.classList.remove('hide');
+            }
+            const isSubscribed = await checkSubscription(isManual);
             if (!isSubscribed) {
                 const loader = document.getElementById('loader');
                 if (loader) loader.classList.add('hide');

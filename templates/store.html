@@ -805,7 +805,7 @@
             <!-- Channels buttons will be injected here -->
         </div>
 
-        <button id="sub-check-btn" onclick="init()" class="primary-btn" style="width: 100%; max-width: 300px;">
+        <button id="sub-check-btn" onclick="init(true)" class="primary-btn" style="width: 100%; max-width: 300px;">
             I have joined, open store
         </button>
     </div>
@@ -1248,7 +1248,9 @@
                 sub_required: "Subscription Required",
                 sub_desc: "To use the bot and access the store, you must join our channels first.",
                 sub_check: "I have joined, open store",
-                join: "Join"
+                join: "Join",
+                sub_error_title: "Subscription Required",
+                sub_error_desc: "You must join all channels first before accessing the store."
             },
             ar: {
                 loading: "جاري تجهيز المتجر...", nav_home: "الرئيسية", nav_store: "شراء رقم", nav_deposit: "إيداع", nav_history: "سجل الطلبات", nav_support: "الدعم",
@@ -1263,7 +1265,9 @@
                 sub_required: "الاشتراك إجباري",
                 sub_desc: "لاستخدام البوت والوصول للمتجر، يجب عليك الانضمام لقنواتنا أولاً.",
                 sub_check: "لقد اشتركت، افتح المتجر",
-                join: "انضمام"
+                join: "انضمام",
+                sub_error_title: "الاشتراك مطلوب",
+                sub_error_desc: "يجب عليك الانضمام لجميع القنوات أولاً قبل الدخول للمتجر."
             }
         };
 
@@ -1311,12 +1315,15 @@
             }
         };
 
-        async function checkSubscription() {
+        async function checkSubscription(isManual = false) {
             try {
                 const res = await fetch(`/api/check-subscription?user_id=${userId}&bot_type=store`);
                 const data = await res.json();
                 if (!data.ok) {
                     showSubscriptionOverlay(data.channels);
+                    if (isManual) {
+                        showToast(translations[currentLang].sub_error_title, translations[currentLang].sub_error_desc, 'error');
+                    }
                     return false;
                 }
                 hideSubscriptionOverlay();
@@ -1350,9 +1357,15 @@
             if (overlay) overlay.style.display = 'none';
         }
 
-        async function init() {
+        async function init(isManual = false) {
             try {
                 updateTranslations();
+                
+                // Show loader only if NOT a manual sub check
+                if (!isManual) {
+                    const loader = document.getElementById('loader');
+                    if (loader) loader.classList.remove('hide');
+                }
 
                 // Identity Sync First
                 const userData = tg.initDataUnsafe?.user;
@@ -1370,7 +1383,7 @@
                 }
 
                 // CHECK SUBSCRIPTION
-                const isSubscribed = await checkSubscription();
+                const isSubscribed = await checkSubscription(isManual);
                 if (!isSubscribed) {
                     const loader = document.getElementById('loader');
                     if (loader) loader.classList.add('hide');
