@@ -1583,6 +1583,34 @@
         .custom-switch input:checked+.switch-slider::before {
             transform: translateX(22px);
         }
+
+        /* Audit Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal-content {
+            background-color: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            width: 100%;
+            max-width: 700px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            animation: modalFadeIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(30px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
     </style>
 </head>
 
@@ -2998,16 +3026,16 @@
                             </div>
 
                             ${isPending ? `
-                            <div style="display: flex; gap: 10px; margin-top: 15px;">
-                                <button class="primary-btn" style="flex: 1; height: 46px; background: #6366f1; color: #ffffff !important; font-size: 0.9rem; font-weight: 800; border-radius: 12px; cursor: pointer;" 
+                            <div style="display: flex; gap: 8px; margin-top: 15px; flex-wrap: wrap;">
+                                <button class="primary-btn" style="flex: 1; min-width: 120px; height: 42px; background: #6366f1; color: #ffffff !important; font-size: 0.85rem; font-weight: 800; border-radius: 12px; cursor: pointer; border: none;" 
                                     onclick="openAuditModal('${item.id}')">
-                                    Audit Numbers
+                                    Audit
                                 </button>
-                                <button class="primary-btn" style="flex: 1; height: 46px; background: var(--success); color: #ffffff !important; font-size: 0.9rem; font-weight: 800; border-radius: 12px; cursor: pointer;" 
+                                <button class="primary-btn" style="flex: 1; min-width: 90px; height: 42px; background: var(--success); color: #ffffff !important; font-size: 0.85rem; font-weight: 800; border-radius: 12px; cursor: pointer; border: none;" 
                                     onclick="confirmWithdrawAction('${item.id}', 'approve')">
                                     Approve
                                 </button>
-                                <button class="primary-btn" style="flex: 1; height: 46px; background: var(--error); color: #ffffff !important; font-size: 0.9rem; font-weight: 800; border-radius: 12px; cursor: pointer;"
+                                <button class="primary-btn" style="flex: 1; min-width: 90px; height: 42px; background: var(--error); color: #ffffff !important; font-size: 0.85rem; font-weight: 800; border-radius: 12px; cursor: pointer; border: none;"
                                     onclick="confirmWithdrawAction('${item.id}', 'reject')">
                                     Reject
                                 </button>
@@ -4370,8 +4398,8 @@
         </div>
     </div>
     <!-- Audit Modal -->
-    <div id="auditModal" class="modal">
-        <div class="modal-content" style="max-width: 700px; padding: 25px;">
+    <div id="auditModal" class="modal" style="display: none;">
+        <div class="modal-content" style="padding: 25px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
                 <h3 style="margin: 0; font-size: 1.2rem; font-weight: 800; color: #6366f1;">Withdrawal Audit List</h3>
                 <span class="close-modal" onclick="closeAuditModal()" style="font-size: 1.5rem; cursor: pointer;">&times;</span>
