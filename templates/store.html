@@ -1231,7 +1231,7 @@
         tg.onEvent('themeChanged', applyTheme);
         applyTheme();
 
-        let currentLang = tg.initDataUnsafe?.user?.language_code === 'ar' ? 'ar' : 'en';
+        let currentLang = 'en';
         let countries = [];
         let serversList = [];
         let activeServerFilter = 'all';
@@ -1257,8 +1257,6 @@
                 sub_desc: "To use the bot and access the store, you must join our channels first.",
                 sub_check: "I have joined, open store",
                 join: "Join",
-                sub_error_title: "Subscription Required",
-                sub_error_desc: "You must join all channels first before accessing the store.",
                 checking: "Checking..."
             },
             ar: {
@@ -1275,8 +1273,6 @@
                 sub_desc: "لاستخدام البوت والوصول للمتجر، يجب عليك الانضمام لقنواتنا أولاً.",
                 sub_check: "لقد اشتركت، افتح المتجر",
                 join: "انضمام",
-                sub_error_title: "الاشتراك مطلوب",
-                sub_error_desc: "يجب عليك الانضمام لجميع القنوات أولاً قبل الدخول للمتجر.",
                 checking: "جاري التحقق..."
             }
         };
@@ -1325,22 +1321,19 @@
             }
         };
 
-        async function checkSubscription(isManual = false) {
+        async function checkSubscription() {
             try {
                 const res = await fetch(`/api/check-subscription?user_id=${userId}&bot_type=store`);
                 const data = await res.json();
                 if (!data.ok) {
                     showSubscriptionOverlay(data.channels);
-                    if (isManual) {
-                        showToast(translations[currentLang].sub_error_title, translations[currentLang].sub_error_desc, 'error');
-                    }
                     return false;
                 }
                 hideSubscriptionOverlay();
                 return true;
             } catch (e) {
                 console.error("Sub check error:", e);
-                return true; 
+                return true; // Bypass on error to not lock out users if API fails
             }
         }
 
@@ -1369,6 +1362,10 @@
 
         async function init(isManual = false) {
             try {
+                // Determine language
+                if (tg.initDataUnsafe?.user?.language_code === 'ar') {
+                    currentLang = 'ar';
+                }
                 updateTranslations();
 
                 const subBtn = document.getElementById('sub-check-btn');
@@ -1395,13 +1392,12 @@
                 }
 
                 // CHECK SUBSCRIPTION
-                const isSubscribed = await checkSubscription(isManual);
+                const isSubscribed = await checkSubscription();
                 
                 if (isManual && subBtn) {
                     subBtn.disabled = false;
                     subBtn.innerText = originalText;
                 }
-
                 if (!isSubscribed) {
                     const loader = document.getElementById('loader');
                     if (loader) loader.classList.add('hide');

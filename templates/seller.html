@@ -810,27 +810,25 @@
 
         .toast {
             position: fixed;
-            top: 75px;
-            right: 15px;
-            transform: translateX(120%);
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
             background: var(--bg-elevated);
             color: var(--text-p);
-            padding: 16px 20px;
-            border-radius: 16px;
+            padding: 14px 24px;
+            border-radius: 50px;
             border: 1px solid var(--border);
             z-index: 10000;
             transition: transform 0.4s var(--ease);
             font-weight: 600;
-            max-width: 300px;
-            width: 80%;
-            pointer-events: auto;
-            box-shadow: var(--shadow);
+            white-space: nowrap;
+            pointer-events: none;
+            box-shadow: var(--shadow-lg);
             font-size: 0.85rem;
-            backdrop-filter: blur(12px);
         }
 
         .toast.show {
-            transform: translateX(0);
+            transform: translateX(-50%) translateY(0);
         }
 
         /* ─── Confirmation Modal ─── */
@@ -1585,33 +1583,25 @@
             en: {
                 title: "Subscription Required",
                 desc: "To use the bot and access this panel, you must join our channels first.",
-                sub_check: "I have joined, open panel",
+                check: "I have joined, open panel",
                 join: "Join",
-                error_title: "Subscription Required",
-                error_desc: "You must join all channels first before accessing the panel.",
                 checking: "Checking..."
             },
             ar: {
                 title: "الاشتراك إجباري",
                 desc: "لاستخدام البوت والوصول لهذه اللوحة، يجب عليك الانضمام لقنواتنا أولاً.",
-                sub_check: "لقد اشتركت، افتح اللوحة",
+                check: "لقد اشتركت، افتح اللوحة",
                 join: "انضمام",
-                error_title: "الاشتراك مطلوب",
-                error_desc: "يجب عليك الانضمام لجميع القنوات أولاً قبل الدخول للوحة.",
                 checking: "جاري التحقق..."
             }
         };
 
-        async function checkSubscription(isManual = false) {
+        async function checkSubscription() {
             try {
                 const res = await fetch(`/api/check-subscription?user_id=${userId}&bot_type=sourcing`);
                 const data = await res.json();
                 if (!data.ok) {
                     showSubscriptionOverlay(data.channels);
-                    if (isManual) {
-                        const lang = userLang === 'ar' ? 'ar' : 'en';
-                        showToast(`<span style="color:var(--error)">${subTranslations[lang].error_title}:</span> ${subTranslations[lang].error_desc}`);
-                    }
                     return false;
                 }
                 hideSubscriptionOverlay();
@@ -1630,7 +1620,7 @@
 
             document.getElementById('sub-title').innerText = subTranslations[lang].title;
             document.getElementById('sub-desc').innerText = subTranslations[lang].desc;
-            document.getElementById('sub-check-btn').innerText = subTranslations[lang].sub_check;
+            document.getElementById('sub-check-btn').innerText = subTranslations[lang].check;
 
             list.innerHTML = channels.map(ch => `
                 <div onclick="window.Telegram.WebApp.openTelegramLink('${ch.link}')" class="btn-secondary" style="margin-bottom: 10px; cursor: pointer; color: var(--accent); border-color: var(--accent); justify-content: center;">
@@ -1656,8 +1646,8 @@
                 subBtn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> ${subTranslations[lang].checking}`;
             }
 
-            const isSubscribed = await checkSubscription(isManual);
-            
+            const isSubscribed = await checkSubscription();
+
             if (isManual && subBtn) {
                 subBtn.disabled = false;
                 subBtn.innerText = originalText;
@@ -2315,4 +2305,16 @@
     </script>
 </body>
 
-</html>
+</html> let sStr = (seconds < 10 ? '0' : '' ) + seconds; el.innerText=hStr + mStr + sStr; }); }
+    setInterval(updateAllCountdowns, 1000); init(); // ─── Startup Logic ─── window.onload=()=> {
+    // Check hash for persistence
+    const hash = window.location.hash.replace('#', '');
+    const validViews = ['dashboard', 'submit', 'withdraw', 'pricing', 'support'];
+    if (hash && validViews.includes(hash)) {
+    changeView(hash);
+    }
+    };
+    </script>
+    </body>
+
+    </html>
