@@ -2076,11 +2076,16 @@
                         <h2 data-i18n="nav_withdrawals" style="margin: 0; font-size: 1rem;">Withdrawal Requests</h2>
                     </div>
 
-                    <div class="tabs-row" style="margin-bottom: 25px;">
-                        <button class="tab-btn active" id="withdraw-tab-pending"
-                            onclick="switchWithdrawTab('pending', this)">PENDING</button>
-                        <button class="tab-btn" id="withdraw-tab-approved"
-                            onclick="switchWithdrawTab('approved', this)">APPROVED</button>
+                    <div class="tabs-row" style="margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; gap: 8px;">
+                            <button class="tab-btn active" id="withdraw-tab-pending"
+                                onclick="switchWithdrawTab('pending', this)">PENDING</button>
+                            <button class="tab-btn" id="withdraw-tab-approved"
+                                onclick="switchWithdrawTab('approved', this)">APPROVED</button>
+                        </div>
+                        <button class="pg-btn" onclick="generateDebugAuditData()" style="background: rgba(99, 102, 241, 0.1); color: #6366f1; border: 1px dashed #6366f1; font-size: 0.7rem; padding: 5px 10px; border-radius: 8px;">
+                            <i class="fas fa-bug"></i> Test Audit
+                        </button>
                     </div>
                     <div class="list-container" id="withdrawals-list"></div>
                     <!-- Pagination -->
@@ -4487,6 +4492,25 @@
                 const accId = btn.getAttribute('onclick').match(/\d+/)[0];
                 await checkOneAuditNumber(accId, btn);
                 await new Promise(r => setTimeout(r, 500)); // Small gap to avoid spamming
+            }
+        }
+
+        async function generateDebugAuditData() {
+            if (!confirm("This will create 3 fake numbers and a withdrawal request for testing. Proceed?")) return;
+            const tg = window.Telegram?.WebApp;
+            const userId = tg?.initDataUnsafe?.user?.id || 0;
+            
+            try {
+                const res = await fetch('/api/admin/debug/generate-test-data', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId })
+                });
+                const data = await res.json();
+                alert(data.message);
+                fetchAdminWithdrawals(1, 'pending');
+            } catch (e) {
+                alert("Error: " + e);
             }
         }
     </script>
