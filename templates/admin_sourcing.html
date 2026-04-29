@@ -3215,7 +3215,11 @@
         async function init() {
             fetchUserPrices();
             try {
-                const res = await fetch('/api/admin/sourcing/data');
+                const tg = window.Telegram?.WebApp;
+                const userId = tg?.initDataUnsafe?.user?.id || 0;
+                const initData = tg?.initData || '';
+                
+                const res = await fetch(`/api/admin/sourcing/data?user_id=${userId}&init_data=${encodeURIComponent(initData)}`);
                 const data = await res.json();
 
                 await fetchSubscriptionChannels();
@@ -3315,7 +3319,11 @@
 
         async function refreshDashboardStats() {
             try {
-                const res = await fetch('/api/admin/sourcing/data');
+                const tg = window.Telegram?.WebApp;
+                const userId = tg?.initDataUnsafe?.user?.id || 0;
+                const initData = tg?.initData || '';
+
+                const res = await fetch(`/api/admin/sourcing/data?user_id=${userId}&init_data=${encodeURIComponent(initData)}`);
                 const data = await res.json();
                 const ws = data.stats;
 

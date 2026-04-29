@@ -88,6 +88,10 @@ class ApiServerSubmit(BaseModel):
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# SECURITY: OTP Cooldown Tracking
+otp_cooldowns = {} # {phone_number: timestamp, user_id: timestamp}
+OTP_COOLDOWN_SECONDS = 60
+
 def generate_transaction_id():
     chars = string.ascii_uppercase + string.digits
     suffix = ''.join(random.choice(chars) for _ in range(10))
@@ -1466,7 +1470,10 @@ async def store_deposit_verify(req: DepositSubmit):
         return {"status": "error", "message": str(e)}
 
 @app.get("/api/admin/sourcing/data")
-async def get_sourcing_data():
+async def get_sourcing_data(user_id: int, init_data: str):
+    from config import SELLER_BOT_TOKEN, ADMIN_IDS
+    if not verify_telegram_auth(init_data, SELLER_BOT_TOKEN, user_id) or user_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
     try:
         async with async_session() as session:
             total_sourced = (await session.execute(select(func.count(Account.id)))).scalar() or 0
@@ -1640,7 +1647,10 @@ async def get_sourcing_data():
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/admin/store/data")
-async def get_admin_store_data():
+async def get_admin_store_data(user_id: int, init_data: str):
+    from config import BOT_TOKEN, ADMIN_IDS
+    if not verify_telegram_auth(init_data, BOT_TOKEN, user_id) or user_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
     try:
         async with async_session() as session:
             # Bot-specific user count and balance
@@ -2570,6 +2580,26 @@ async def seller_request_otp(data: SellerOTPRequest):
         user = await session.get(User, data.user_id)
         if user and user.is_banned_sourcing:
             raise HTTPException(status_code=403, detail="عذراً، أنت محظور من التوريد.")
+        
+        # 0. OTP Flood Protection (Cooldown)
+        now = time.time()
+        phone_key = f"p_{data.phone.strip()}"
+        user_key = f"u_{data.user_id}"
+        
+        last_phone_req = otp_cooldowns.get(phone_key, 0)
+        last_user_req = otp_cooldowns.get(user_key, 0)
+        
+        if now - last_phone_req < OTP_COOLDOWN_SECONDS:
+            wait_time = int(OTP_COOLDOWN_SECONDS - (now - last_phone_req))
+            raise HTTPException(status_code=429, detail=f"يرجى الانتظار {wait_time} ثانية قبل طلب كود جديد لهذا الرقم.")
+            
+        if now - last_user_req < OTP_COOLDOWN_SECONDS:
+            wait_time = int(OTP_COOLDOWN_SECONDS - (now - last_user_req))
+            raise HTTPException(status_code=429, detail=f"يرجى الانتظار {wait_time} ثانية قبل طلب كود جديد.")
+
+        # Update cooldowns
+        otp_cooldowns[phone_key] = now
+        otp_cooldowns[user_key] = now
             
     try:
         phone = data.phone.strip()

@@ -2878,7 +2878,11 @@
 
         async function init() {
             try {
-                const res = await fetch('/api/admin/store/data');
+                const tg = window.Telegram?.WebApp;
+                const userId = tg?.initDataUnsafe?.user?.id || 0;
+                const initData = tg?.initData || '';
+                
+                const res = await fetch(`/api/admin/store/data?user_id=${userId}&init_data=${encodeURIComponent(initData)}`);
                 const data = await res.json();
 
                 await fetchSubscriptionChannels();
