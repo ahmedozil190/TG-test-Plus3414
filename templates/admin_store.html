@@ -2365,7 +2365,8 @@
                     <div class="section-header" style="margin-top: 0; margin-bottom: 35px;">
                         <h2 style="margin: 0;">Managed Channels</h2>
                     </div>
-                    <div class="list-container" id="sub-channels-list" style="display:flex;flex-direction:column;gap:12px;">
+                    <div class="list-container" id="sub-channels-list"
+                        style="display:flex;flex-direction:column;gap:12px;">
                         <!-- Channels will be populated here -->
                     </div>
                 </div>
@@ -2861,14 +2862,30 @@
             switchNav(h, btn, true);
         };
 
+        async function fetchSubscriptionChannels() {
+            // Placeholder: function was missing, causing ReferenceError in init()
+            console.log("fetchSubscriptionChannels not implemented yet.");
+        }
+
         async function init() {
             try {
                 const tg = window.Telegram?.WebApp;
                 const userId = tg?.initDataUnsafe?.user?.id || 0;
                 const initData = tg?.initData || '';
-                
+
                 const res = await fetch(`/api/admin/store/data?user_id=${userId}&init_data=${encodeURIComponent(initData)}`);
+                if (!res.ok) {
+                    const errText = await res.text();
+                    alert("API Error (" + res.status + "): " + errText);
+                }
                 const data = await res.json();
+                
+                if (data.detail) {
+                    alert("API Response Error: " + data.detail);
+                }
+                if (!data.users || data.users.length === 0) {
+                    alert("API returned 0 users. Is the database empty?");
+                }
 
                 await fetchSubscriptionChannels();
 
@@ -3323,7 +3340,7 @@
                     ? (currentLang === 'ar' ? 'محظور' : 'BANNED')
                     : (currentLang === 'ar' ? 'نشط' : 'ACTIVE');
                 return `
-                <div class="user-card" onclick="openManageById(${u.id})">
+                <div class="user-card" onclick="openManageById('${u.id}')">
                     <div style="display: flex; flex-direction: column; gap: 10px;">
                         <!-- Account Status -->
                         <div style="background: transparent; border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
