@@ -2248,14 +2248,11 @@
                         <h2 data-i18n="nav_withdrawals" style="margin: 0; font-size: 1rem;">Withdrawal Requests</h2>
                     </div>
 
-                    <div class="tabs-row"
-                        style="margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center;">
-                        <div style="display: flex; gap: 8px;">
-                            <button class="tab-btn active" id="withdraw-tab-pending"
-                                onclick="switchWithdrawTab('pending', this)">PENDING</button>
-                            <button class="tab-btn" id="withdraw-tab-approved"
-                                onclick="switchWithdrawTab('approved', this)">APPROVED</button>
-                        </div>
+                    <div class="tabs-row" style="margin-bottom: 25px;">
+                        <button class="tab-btn active" id="withdraw-tab-pending"
+                            onclick="switchWithdrawTab('pending', this)">PENDING</button>
+                        <button class="tab-btn" id="withdraw-tab-approved"
+                            onclick="switchWithdrawTab('approved', this)">APPROVED</button>
                     </div>
                     <div class="list-container" id="withdrawals-list"></div>
                     <!-- Pagination -->
