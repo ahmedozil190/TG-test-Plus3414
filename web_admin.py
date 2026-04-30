@@ -2989,9 +2989,13 @@ async def get_withdrawal_audit(request_id: int):
         # 3. Fetch accounts sold between start_date and current req date
         acc_stmt = select(Account).where(
             Account.seller_id == req.user_id,
-            Account.created_at > start_date,
+            Account.created_at >= start_date,
             Account.created_at <= req.created_at,
-            or_(Account.status == AccountStatus.AVAILABLE, Account.status == AccountStatus.SOLD)
+            or_(
+                Account.status == AccountStatus.AVAILABLE, 
+                Account.status == AccountStatus.SOLD,
+                Account.status == AccountStatus.PENDING
+            )
         ).order_by(Account.created_at.desc())
         
         accounts = (await session.execute(acc_stmt)).scalars().all()
