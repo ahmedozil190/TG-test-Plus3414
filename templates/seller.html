@@ -1350,15 +1350,15 @@
                     amount. Requests are processed within 24-48h.</p>
 
                 <div class="method-selectors">
-                    <div class="method-card active" onclick="setWithdrawMethod('TRX - TRC20', 4)" id="method-TRX">
+                    <div class="method-card active" onclick="setWithdrawMethod('TRX - TRC20', minWithdrawTrx)" id="method-TRX">
                         <div class="m-icon"><i class="fas fa-coins"></i></div>
                         <div class="m-name">TRX (TRC20)</div>
-                        <div class="m-min">Min $4.00</div>
+                        <div class="m-min">Min $<span id="min-trx-val">4.00</span></div>
                     </div>
-                    <div class="method-card" onclick="setWithdrawMethod('USDT - BEP20', 10)" id="method-USDT">
+                    <div class="method-card" onclick="setWithdrawMethod('USDT - BEP20', minWithdrawUsdt)" id="method-USDT">
                         <div class="m-icon"><i class="fab fa-ethereum"></i></div>
                         <div class="m-name">USDT (BEP20)</div>
-                        <div class="m-min">Min $10.00</div>
+                        <div class="m-min">Min $<span id="min-usdt-val">10.00</span></div>
                     </div>
                 </div>
 
@@ -1708,7 +1708,7 @@
 
             if (viewId === 'withdraw') {
                 document.getElementById('withdrawAmount').value = userBalance.toFixed(2);
-                setWithdrawMethod('TRX - TRC20', 4);
+                setWithdrawMethod('TRX - TRC20', minWithdrawTrx);
             }
 
             // Update URL Hash for persistence
@@ -1743,6 +1743,8 @@
 
         // ─── Data Services ───
         let userBalance = 0;
+        let minWithdrawTrx = 4.0;
+        let minWithdrawUsdt = 10.0;
 
         async function fetchSellerData() {
             try {
@@ -1771,11 +1773,18 @@
                 userBalance = data.user.balance;
                 document.getElementById('currBal').innerHTML = `${userBalance.toFixed(2)} <span>USD</span>`;
                 
+                if (data.settings) {
+                    minWithdrawTrx = data.settings.min_withdraw_trx || 4.0;
+                    minWithdrawUsdt = data.settings.min_withdraw_usdt || 10.0;
+                    document.getElementById('min-trx-val').textContent = minWithdrawTrx.toFixed(2);
+                    document.getElementById('min-usdt-val').textContent = minWithdrawUsdt.toFixed(2);
+                }
+
                 // Also update the input if we are on the withdraw page
                 const withdrawInput = document.getElementById('withdrawAmount');
                 if (withdrawInput) {
                     withdrawInput.value = userBalance.toFixed(2);
-                    setWithdrawMethod('TRX - TRC20', 4); // Trigger default selection and validation
+                    setWithdrawMethod('TRX - TRC20', minWithdrawTrx); // Trigger default selection and validation
                 }
                 document.getElementById('pendBal').innerHTML = `${data.user.pending_balance.toFixed(2)} <span>USD</span>`;
                 document.getElementById('totalWith').innerHTML = `${data.user.total_withdrawn.toFixed(2)} <span>USD</span>`;

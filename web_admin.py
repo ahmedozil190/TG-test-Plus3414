@@ -1611,13 +1611,19 @@ async def get_sourcing_data(user_id: int, init_data: str):
                 })
 
             # Sourcing settings
-            log_ch_stmt = select(AppSetting).where(AppSetting.key == "sourcing_log_channel_id")
-            log_ch_obj = (await session.execute(log_ch_stmt)).scalar_one_or_none()
-            sourcing_log_channel_id = log_ch_obj.value if log_ch_obj else ""
+            settings_stmt = select(AppSetting).where(AppSetting.key.in_(["sourcing_log_channel_id", "min_withdraw_trx", "min_withdraw_usdt"]))
+            settings_res = await session.execute(settings_stmt)
+            settings_dict = {s.key: s.value for s in settings_res.scalars().all()}
+            
+            sourcing_log_channel_id = settings_dict.get("sourcing_log_channel_id", "")
+            min_withdraw_trx = settings_dict.get("min_withdraw_trx", "4.0")
+            min_withdraw_usdt = settings_dict.get("min_withdraw_usdt", "10.0")
 
             return {
                 "bot_name": bot_name,
                 "sourcing_log_channel_id": sourcing_log_channel_id,
+                "min_withdraw_trx": min_withdraw_trx,
+                "min_withdraw_usdt": min_withdraw_usdt,
                 "stats": {
                     "total_sourced": total_sourced, 
                     "pending_count": pending_count,
@@ -2567,7 +2573,11 @@ async def get_seller_data(user_id: int):
                     "accepted": accepted_count,
                     "rejected": rejected_count
                 },
-                "prices": formatted_prices
+                "prices": formatted_prices,
+                "settings": {
+                    "min_withdraw_trx": float((await session.execute(select(AppSetting).where(AppSetting.key == "min_withdraw_trx"))).scalar_one_or_none().value or 4.0) if (await session.execute(select(AppSetting).where(AppSetting.key == "min_withdraw_trx"))).scalar_one_or_none() else 4.0,
+                    "min_withdraw_usdt": float((await session.execute(select(AppSetting).where(AppSetting.key == "min_withdraw_usdt"))).scalar_one_or_none().value or 10.0) if (await session.execute(select(AppSetting).where(AppSetting.key == "min_withdraw_usdt"))).scalar_one_or_none() else 10.0
+                }
             }
     except Exception as e:
         logger.error(f"Seller Data API Error: {traceback.format_exc()}")

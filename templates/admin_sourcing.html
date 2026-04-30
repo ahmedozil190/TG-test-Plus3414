@@ -2240,10 +2240,20 @@
                             placeholder="e.g. -100123456789">
                         <span style="font-size: 0.75rem; color: var(--text-s); margin-top: 5px; display: block;">The bot
                             must be an admin in this channel to post price updates.</span>
+                    <div class="form-group" style="margin-bottom: 25px;">
+                        <label style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">Withdrawal Minimum (TRX)</label>
+                        <input type="number" id="setting-min-withdraw-trx" class="search-input"
+                            style="margin-bottom: 0; padding: 16px; font-size: 1rem; height: auto;"
+                            placeholder="e.g. 4.0">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 25px;">
+                        <label style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">Withdrawal Minimum (USDT)</label>
+                        <input type="number" id="setting-min-withdraw-usdt" class="search-input"
+                            style="margin-bottom: 0; padding: 16px; font-size: 1rem; height: auto;"
+                            placeholder="e.g. 10.0">
                     </div>
                     <div style="display: flex; gap: 10px;">
-                        <button class="primary-btn" onclick="saveSettings()" style="flex: 1;">Save Price
-                            Channel</button>
+                        <button class="primary-btn" onclick="saveSettings()" style="flex: 1;">Save Settings</button>
                     </div>
                 </div>
             </section>
@@ -3345,6 +3355,14 @@
                     const slcInput = document.getElementById('setting-sourcing-log-channel');
                     if (slcInput) slcInput.value = data.sourcing_log_channel_id;
                 }
+                if (data.min_withdraw_trx) {
+                    const trxMin = document.getElementById('setting-min-withdraw-trx');
+                    if (trxMin) trxMin.value = data.min_withdraw_trx;
+                }
+                if (data.min_withdraw_usdt) {
+                    const usdtMin = document.getElementById('setting-min-withdraw-usdt');
+                    if (usdtMin) usdtMin.value = data.min_withdraw_usdt;
+                }
                 renderUsers(filteredUsers || allUsers);
             } catch (e) { console.error('Init Error:', e); }
             finally {
@@ -4131,11 +4149,18 @@
 
         async function saveSettings() {
             const logChannel = document.getElementById('setting-sourcing-log-channel').value;
+            const trxMin = document.getElementById('setting-min-withdraw-trx').value;
+            const usdtMin = document.getElementById('setting-min-withdraw-usdt').value;
+            
             try {
                 const res = await fetch('/api/admin/system/settings', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ sourcing_log_channel_id: logChannel })
+                    body: JSON.stringify({ 
+                        sourcing_log_channel_id: logChannel,
+                        min_withdraw_trx: trxMin,
+                        min_withdraw_usdt: usdtMin
+                    })
                 });
                 const data = await res.json();
                 if (data.status === 'success') {
