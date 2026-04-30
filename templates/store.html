@@ -1161,7 +1161,7 @@
     </main>
 
     <!-- Referrals Section -->
-    <section id="section-referrals" class="view-panel" style="padding: 25px 20px;">
+    <section id="section-referrals" class="view-panel" style="padding: 25px 20px 100px 20px; overflow-y: auto;">
         <div style="background: linear-gradient(135deg, rgba(88, 101, 242, 0.2), rgba(139, 92, 246, 0.1)); border: 1px solid var(--accent); border-radius: var(--radius-lg); padding: 30px; text-align: center; margin-bottom: 25px;">
             <div style="width: 70px; height: 70px; background: var(--accent); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 15px; box-shadow: 0 10px 30px var(--accent-glow);">
                 <i class="fas fa-gift"></i>
@@ -1171,12 +1171,13 @@
                 Share your link and get <strong style="color: var(--success);">$0.005</strong> for every user who joins, plus <strong style="color: var(--success);">1%</strong> commission on their deposits!
             </p>
             
-            <div style="background: var(--bg); border: 1px dashed var(--border); border-radius: 14px; padding: 15px; position: relative;">
-                <span style="font-size: 0.75rem; color: var(--text-s); font-weight: 700; display: block; margin-bottom: 5px;">YOUR LINK</span>
-                <div id="ref-link-val" style="font-size: 0.95rem; font-weight: 600; color: var(--text-p); word-break: break-all; margin-right: 30px;">
+            <div onclick="copyReferralLink()" style="background: var(--bg); border: 1px dashed var(--border); border-radius: 14px; padding: 15px; cursor: pointer; transition: all 0.2s ease; text-align: left;" 
+                 onmouseover="this.style.borderColor='var(--accent)';" onmouseout="this.style.borderColor='var(--border)';"
+                 title="Tap to copy">
+                <span style="font-size: 0.75rem; color: var(--text-s); font-weight: 700; display: block; margin-bottom: 5px; text-transform: uppercase;">Your Link (Tap to copy)</span>
+                <div id="ref-link-val" style="font-size: 0.95rem; font-weight: 600; color: var(--text-p); word-break: break-all;">
                     Loading...
                 </div>
-                <i class="fas fa-copy" onclick="copyReferralLink()" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--accent); font-size: 1.2rem; cursor: pointer; padding: 10px;"></i>
             </div>
         </div>
 
