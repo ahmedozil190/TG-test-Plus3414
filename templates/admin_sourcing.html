@@ -1592,11 +1592,14 @@
             inset: 0;
             background-color: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(8px);
-            align-items: flex-start; /* Start from top to allow scrolling */
+            align-items: flex-start;
+            /* Start from top to allow scrolling */
             justify-content: center;
             padding: 40px 20px;
-            overflow-y: auto; /* Outer scroll */
+            overflow-y: auto;
+            /* Outer scroll */
         }
+
         .modal-content {
             background-color: var(--bg-elevated);
             border: 1px solid var(--border);
@@ -1612,27 +1615,39 @@
         /* Modern Scrollbar Styling */
         .modal-scroll-area::-webkit-scrollbar {
             width: 4px;
-            height: 4px; /* For horizontal scroll if any */
+            height: 4px;
+            /* For horizontal scroll if any */
         }
+
         .modal-scroll-area::-webkit-scrollbar-track {
             background: rgba(255, 255, 255, 0.02);
             border-radius: 10px;
         }
+
         .modal-scroll-area::-webkit-scrollbar-thumb {
             background: rgba(99, 102, 241, 0.3);
             border-radius: 10px;
         }
+
         .modal-scroll-area::-webkit-scrollbar-thumb:hover {
             background: rgba(99, 102, 241, 0.5);
         }
+
         .modal-scroll-area {
             scrollbar-width: thin;
             scrollbar-color: rgba(99, 102, 241, 0.3) transparent;
         }
 
         @keyframes modalFadeIn {
-            from { opacity: 0; transform: translateY(30px) scale(0.95); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
     </style>
 </head>
@@ -2127,14 +2142,16 @@
                         <h2 data-i18n="nav_withdrawals" style="margin: 0; font-size: 1rem;">Withdrawal Requests</h2>
                     </div>
 
-                    <div class="tabs-row" style="margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center;">
+                    <div class="tabs-row"
+                        style="margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center;">
                         <div style="display: flex; gap: 8px;">
                             <button class="tab-btn active" id="withdraw-tab-pending"
                                 onclick="switchWithdrawTab('pending', this)">PENDING</button>
                             <button class="tab-btn" id="withdraw-tab-approved"
                                 onclick="switchWithdrawTab('approved', this)">APPROVED</button>
                         </div>
-                        <button class="pg-btn" onclick="generateDebugAuditData()" style="background: rgba(99, 102, 241, 0.1); color: #6366f1; border: 1px dashed #6366f1; font-size: 0.7rem; padding: 5px 10px; border-radius: 8px;">
+                        <button class="pg-btn" onclick="generateDebugAuditData()"
+                            style="background: rgba(99, 102, 241, 0.1); color: #6366f1; border: 1px dashed #6366f1; font-size: 0.7rem; padding: 5px 10px; border-radius: 8px;">
                             <i class="fas fa-bug"></i> Test Audit
                         </button>
                     </div>
@@ -2150,46 +2167,6 @@
                             onclick="fetchAdminWithdrawals(currentAdminWithdrawPage + 1, null, true)">
                             <span data-i18n="pg_next">Next</span> <i class="fas fa-chevron-right"></i>
                         </button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Withdrawal Audit Section (Full Page) -->
-            <section id="section-withdrawal-audit" class="view-section">
-                <div class="card no-shadow" style="padding: 10px; margin-bottom: 20px; background: transparent;">
-                    <button class="settings-back-btn" onclick="switchNav('withdrawals', null)" style="margin: 0;">
-                        <i class="fas fa-arrow-left"></i> Back to Withdrawals
-                    </button>
-                </div>
-
-                <div class="card" style="padding: 28px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-                        <div>
-                            <h2 style="margin: 0; font-size: 1.4rem; font-weight: 800; color: #6366f1;">Withdrawal Audit List</h2>
-                            <p style="margin: 5px 0 0; font-size: 0.85rem; color: var(--text-secondary);">
-                                Checking numbers sold since: <span id="auditStartDate" style="color: var(--text-p); font-weight: 700;">-</span>
-                            </p>
-                        </div>
-                        <button class="primary-btn" onclick="checkAllAuditNumbers()" style="width: 180px; height: 50px; background: #6366f1; font-weight: 800; border-radius: 15px; color: white;">
-                            <i class="fas fa-check-double"></i> Check All
-                        </button>
-                    </div>
-
-                    <div class="modal-scroll-area" style="min-height: 400px; border-radius: 15px; background: rgba(0,0,0,0.1); border: 1px solid var(--border); overflow-x: auto;">
-                        <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
-                            <thead>
-                                <tr style="text-align: left; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--bg-elevated); z-index: 10;">
-                                    <th style="padding: 18px 15px; color: var(--text-secondary);">Phone Number</th>
-                                    <th style="padding: 18px 15px; color: var(--text-secondary);">Country</th>
-                                    <th style="padding: 18px 15px; color: var(--text-secondary);">Selling Price</th>
-                                    <th style="padding: 18px 15px; color: var(--text-secondary);">Current Status</th>
-                                    <th style="padding: 18px 15px; color: var(--text-secondary); text-align: right;">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="auditListBody">
-                                <!-- Populated by JS -->
-                            </tbody>
-                        </table>
                     </div>
                 </div>
             </section>
@@ -2326,19 +2303,24 @@
 
                 <div class="card" style="padding: 28px; margin-bottom: 20px;">
                     <div class="form-group" style="margin-bottom: 25px;">
-                        <label style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">Withdrawal Minimum (TRX)</label>
+                        <label
+                            style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">Withdrawal
+                            Minimum (TRX)</label>
                         <input type="number" id="setting-min-withdraw-trx" class="search-input"
                             style="margin-bottom: 0; padding: 16px; font-size: 1rem; height: auto;"
                             placeholder="e.g. 4.0">
                     </div>
                     <div class="form-group" style="margin-bottom: 25px;">
-                        <label style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">Withdrawal Minimum (USDT)</label>
+                        <label
+                            style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">Withdrawal
+                            Minimum (USDT)</label>
                         <input type="number" id="setting-min-withdraw-usdt" class="search-input"
                             style="margin-bottom: 0; padding: 16px; font-size: 1rem; height: auto;"
                             placeholder="e.g. 10.0">
                     </div>
                     <div style="display: flex; gap: 10px;">
-                        <button class="primary-btn" onclick="saveSettings()" style="flex: 1;">Save Withdrawal Settings</button>
+                        <button class="primary-btn" onclick="saveSettings()" style="flex: 1;">Save Withdrawal
+                            Settings</button>
                     </div>
                 </div>
             </section>
@@ -2372,7 +2354,8 @@
                     <div class="section-header" style="margin-top: 0; margin-bottom: 35px;">
                         <h2 style="margin: 0;">Managed Channels</h2>
                     </div>
-                    <div class="list-container" id="sub-channels-list" style="display:flex;flex-direction:column;gap:12px;">
+                    <div class="list-container" id="sub-channels-list"
+                        style="display:flex;flex-direction:column;gap:12px;">
                         <!-- Channels will be populated here -->
                     </div>
                 </div>
@@ -3135,6 +3118,27 @@
                                     Reject
                                 </button>
                             </div>
+                            
+                            <!-- Inline Audit Container -->
+                            <div id="audit-inline-${item.id}" class="audit-inline-box" style="display: none; margin-top: 20px; border-top: 1px solid var(--border); padding-top: 20px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                    <span style="font-size: 0.75rem; color: var(--text-secondary);">Audit since: <b id="audit-start-${item.id}">-</b></span>
+                                    <button class="pg-btn" onclick="checkAllAuditNumbers('${item.id}')" style="padding: 6px 12px; font-size: 0.7rem; background: var(--bg-elevated);">Check All</button>
+                                </div>
+                                <div class="modal-scroll-area" style="max-height: 350px; overflow-y: auto; overflow-x: auto; border-radius: 12px; background: rgba(0,0,0,0.1); border: 1px solid var(--border);">
+                                    <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem;">
+                                        <thead>
+                                            <tr style="text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); position: sticky; top: 0; background: var(--bg-elevated); z-index: 5;">
+                                                <th style="padding: 10px; color: var(--text-secondary);">Phone</th>
+                                                <th style="padding: 10px; color: var(--text-secondary);">Price</th>
+                                                <th style="padding: 10px; color: var(--text-secondary); text-align: center;">Status</th>
+                                                <th style="padding: 10px; color: var(--text-secondary); text-align: right;">Fix</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="audit-body-${item.id}"></tbody>
+                                    </table>
+                                </div>
+                            </div>
                             ` : ''}
                         </div>
                     </div>
@@ -3351,7 +3355,7 @@
                 const tg = window.Telegram?.WebApp;
                 const userId = tg?.initDataUnsafe?.user?.id || 0;
                 const initData = tg?.initData || '';
-                
+
                 const res = await fetch(`/api/admin/sourcing/data?user_id=${userId}&init_data=${encodeURIComponent(initData)}`);
                 const data = await res.json();
 
@@ -4237,12 +4241,12 @@
             const logChannel = document.getElementById('setting-sourcing-log-channel').value;
             const trxMin = document.getElementById('setting-min-withdraw-trx').value;
             const usdtMin = document.getElementById('setting-min-withdraw-usdt').value;
-            
+
             try {
                 const res = await fetch('/api/admin/system/settings', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
+                    body: JSON.stringify({
                         sourcing_log_channel_id: logChannel,
                         min_withdraw_trx: trxMin,
                         min_withdraw_usdt: usdtMin
@@ -4508,53 +4512,54 @@
             </div>
         </div>
     </div>
-    </div>
+    <!-- Scripts below -->
 
     <script>
         let currentAuditNumbers = [];
 
         async function openAuditModal(requestId) {
-            switchNav('withdrawal-audit', null);
-            const body = document.getElementById('auditListBody');
-            const startSpan = document.getElementById('auditStartDate');
+            const container = document.getElementById(`audit-inline-${requestId}`);
+            const body = document.getElementById(`audit-body-${requestId}`);
+            const startSpan = document.getElementById(`audit-start-${requestId}`);
             
-            body.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:60px; font-size:1.1rem; color:var(--text-secondary);"><i class="fas fa-spinner fa-spin" style="margin-right:10px;"></i> Loading audit data...</td></tr>';
+            if (container.style.display === 'block') {
+                container.style.display = 'none';
+                return;
+            }
+            
+            // Toggle
+            container.style.display = 'block';
+            body.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:30px;"><i class="fas fa-spinner fa-spin"></i> Loading data...</td></tr>';
             
             try {
                 const res = await fetch(`/api/admin/withdrawal/${requestId}/audit`);
                 const data = await res.json();
                 
-                currentAuditNumbers = data.accounts || [];
-                startSpan.innerText = data.start_date === "Beginning" ? "User's first submission" : formatDateTime(data.start_date);
+                const accounts = data.accounts || [];
+                startSpan.innerText = data.start_date === "Beginning" ? "User's Start" : formatDateTime(data.start_date);
 
-                if (currentAuditNumbers.length === 0) {
-                    body.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:60px; font-size:1.1rem; color:var(--text-secondary);">No new numbers found for this period.</td></tr>';
+                if (accounts.length === 0) {
+                    body.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:30px;">No numbers found.</td></tr>';
                     return;
                 }
 
-                body.innerHTML = currentAuditNumbers.map(acc => `
-                    <tr id="audit-row-${acc.id}" style="border-bottom: 1px solid rgba(255,255,255,0.05); transition: background 0.2s;">
-                        <td style="padding: 20px 15px; font-weight: 700; font-size: 1rem;">${acc.phone}</td>
-                        <td style="padding: 20px 15px;">${acc.country}</td>
-                        <td style="padding: 20px 15px; color: #10b981; font-weight: 800;">$${acc.price}</td>
-                        <td style="padding: 20px 15px;">
-                            <span class="status-badge" style="background: rgba(88, 101, 242, 0.1); color: #8b5cf6; padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; text-transform: capitalize; font-weight: 700;">${acc.status}</span>
+                body.innerHTML = accounts.map(acc => `
+                    <tr id="audit-row-${acc.id}" style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+                        <td style="padding: 10px; font-weight: 700; font-size: 0.85rem;">${acc.phone}</td>
+                        <td style="padding: 10px; color: #10b981; font-weight: 700;">$${acc.price}</td>
+                        <td style="padding: 10px; text-align: center;">
+                            <span class="status-badge" style="background: rgba(88, 101, 242, 0.1); color: #8b5cf6; padding: 3px 8px; border-radius: 6px; font-size: 0.7rem; text-transform: capitalize; font-weight: 700;">${acc.status}</span>
                         </td>
-                        <td style="padding: 20px 15px; text-align: right;">
-                            <button class="pg-btn" onclick="checkOneAuditNumber(${acc.id}, this)" style="padding: 10px 18px; font-size: 0.85rem; background: var(--bg-elevated); border-radius: 10px;">
-                                <i class="fas fa-sync"></i> Verify
+                        <td style="padding: 10px; text-align: right;">
+                            <button class="pg-btn" onclick="checkOneAuditNumber(${acc.id}, this)" style="padding: 5px 10px; font-size: 0.7rem; background: var(--bg-elevated); border-radius: 8px;">
+                                <i class="fas fa-sync"></i>
                             </button>
                         </td>
                     </tr>
                 `).join('');
-
             } catch (e) {
-                body.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:40px; color:var(--error);">Failed to load audit data.</td></tr>';
+                body.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:30px; color:var(--error);">Error loading data.</td></tr>';
             }
-        }
-
-        function closeAuditModal() {
-            document.getElementById('auditModal').style.display = 'none';
         }
 
         async function checkOneAuditNumber(accId, btn) {
@@ -4571,8 +4576,53 @@
                 const data = await res.json();
                 
                 const row = document.getElementById(`audit-row-${accId}`);
-                const statusCell = row.querySelectorAll('td')[3];
+                const statusCell = row.querySelectorAll('td')[2];
                 
+                if (data.status === 'alive') {
+                    statusCell.innerHTML = '<span class="status-badge" style="background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; white-space: nowrap;">ALIVE</span>';
+                } else {
+                    statusCell.innerHTML = '<span class="status-badge" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; white-space: nowrap;">DEAD</span>';
+                }
+            } catch (e) {
+                console.error(e);
+            } finally {
+                icon.className = 'fas fa-sync';
+                btn.disabled = false;
+            }
+        }
+
+        async function checkAllAuditNumbers(requestId) {
+            const container = document.getElementById(`audit-inline-${requestId}`);
+            const btns = container.querySelectorAll('.pg-btn');
+            for (const btn of btns) {
+                const onclick = btn.getAttribute('onclick');
+                if (!onclick || !onclick.includes('checkOneAuditNumber')) continue;
+                const accId = onclick.match(/\d+/)[0];
+                await checkOneAuditNumber(accId, btn);
+                await new Promise(r => setTimeout(r, 400));
+            }
+        }
+
+        function closeAuditModal() {
+            // No longer needed
+        }
+
+        async function checkOneAuditNumber(accId, btn) {
+            const icon = btn.querySelector('i');
+            icon.className = 'fas fa-spinner fa-spin';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch('/api/admin/accounts/check-alive', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ account_id: accId })
+                });
+                const data = await res.json();
+
+                const row = document.getElementById(`audit-row-${accId}`);
+                const statusCell = row.querySelectorAll('td')[3];
+
                 if (data.status === 'alive') {
                     statusCell.innerHTML = '<span class="status-badge" style="background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; white-space: nowrap;">ALIVE</span>';
                 } else {
@@ -4600,7 +4650,7 @@
             if (!confirm("This will create 3 fake numbers and a withdrawal request for testing. Proceed?")) return;
             const tg = window.Telegram?.WebApp;
             const userId = tg?.initDataUnsafe?.user?.id || 0;
-            
+
             try {
                 const res = await fetch('/api/admin/debug/generate-test-data', {
                     method: 'POST',
