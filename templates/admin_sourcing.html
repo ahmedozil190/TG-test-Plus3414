@@ -3118,6 +3118,35 @@
                                     Reject
                                 </button>
                             </div>
+
+                            <!-- Inline Audit Container -->
+                            <div id="audit-inline-${item.id}" class="audit-inline-box" style="display: none; margin-top: 20px; border-top: 1px solid var(--border); padding-top: 20px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                    <span style="font-size: 0.75rem; color: var(--text-secondary);">Audit since: <b id="audit-start-${item.id}">-</b></span>
+                                    <button class="pg-btn" onclick="checkAllAuditNumbers('${item.id}')" style="padding: 6px 12px; font-size: 0.7rem; background: var(--bg-elevated);">Check All</button>
+                                </div>
+                                
+                                <!-- Audit Header (Fixed) -->
+                                <div style="background: var(--bg-elevated); border-radius: 12px 12px 0 0; border: 1px solid var(--border); border-bottom: none;">
+                                    <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem; table-layout: fixed;">
+                                        <thead>
+                                            <tr style="text-align: left;">
+                                                <th style="padding: 12px; color: var(--text-secondary); width: 40%;">Phone</th>
+                                                <th style="padding: 12px; color: var(--text-secondary); width: 25%;">Price</th>
+                                                <th style="padding: 12px; color: var(--text-secondary); width: 25%; text-align: center;">Status</th>
+                                                <th style="padding: 12px; color: var(--text-secondary); width: 10%; text-align: right;">Fix</th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+
+                                <!-- Audit Body (Scrollable Area Starts Here) -->
+                                <div class="modal-scroll-area" style="max-height: 300px; overflow-y: auto; overflow-x: hidden; border: 1px solid var(--border); border-radius: 0 0 12px 12px; background: rgba(0,0,0,0.1);">
+                                    <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem; table-layout: fixed;">
+                                        <tbody id="audit-body-${item.id}"></tbody>
+                                    </table>
+                                </div>
+                            </div>
                             ` : ''}
                         </div>
                     </div>
@@ -4491,99 +4520,59 @@
             </div>
         </div>
     </div>
-    <!-- Audit Modal -->
-    <div id="auditModal" class="modal" style="display: none;">
-        <div class="modal-content" style="padding: 25px;">
-            <div
-                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
-                <h3 style="margin: 0; font-size: 1.2rem; font-weight: 800; color: #6366f1;">Withdrawal Audit List</h3>
-                <span class="close-modal" onclick="closeAuditModal()"
-                    style="font-size: 1.5rem; cursor: pointer;">&times;</span>
-            </div>
-            <div id="auditInfo"
-                style="margin-bottom: 20px; font-size: 0.85rem; color: var(--text-secondary); background: rgba(99, 102, 241, 0.05); padding: 12px; border-radius: 10px;">
-                Checking numbers sold since: <span id="auditStartDate"
-                    style="color: var(--text-p); font-weight: 700;">-</span>
-            </div>
-
-            <div class="modal-scroll-area"
-                style="height: 320px; overflow-y: auto; overflow-x: auto; margin-bottom: 20px; border-radius: 12px; background: rgba(0,0,0,0.1); border: 1px solid var(--border);">
-                <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
-                    <thead>
-                        <tr
-                            style="text-align: left; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--bg-elevated); z-index: 10;">
-                            <th style="padding: 12px 8px; color: var(--text-secondary);">Phone</th>
-                            <th style="padding: 12px 8px; color: var(--text-secondary);">Country</th>
-                            <th style="padding: 12px 8px; color: var(--text-secondary);">Price</th>
-                            <th style="padding: 12px 8px; color: var(--text-secondary);">Status</th>
-                            <th style="padding: 12px 8px; color: var(--text-secondary); text-align: right;">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="auditListBody">
-                        <!-- Rows populated by JS -->
-                    </tbody>
-                </table>
-            </div>
-
-            <div style="display: flex; gap: 12px; margin-top: 10px;">
-                <button class="primary-btn" onclick="checkAllAuditNumbers()"
-                    style="flex: 1; height: 50px; background: #6366f1; font-weight: 800; border-radius: 15px; color: white;">
-                    <i class="fas fa-check-double"></i> Check All
-                </button>
-                <button class="primary-btn" onclick="closeAuditModal()"
-                    style="width: 120px; height: 50px; background: var(--bg-elevated); color: var(--text-p); border: 1px solid var(--border); border-radius: 15px;">
-                    Close
-                </button>
-            </div>
-        </div>
+    <!-- Scripts below -->
     </div>
 
     <script>
         let currentAuditNumbers = [];
 
         async function openAuditModal(requestId) {
-            const modal = document.getElementById('auditModal');
-            const body = document.getElementById('auditListBody');
-            const startSpan = document.getElementById('auditStartDate');
-
-            body.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:40px;">Loading audit data...</td></tr>';
-            modal.style.display = 'flex';
-
+            const container = document.getElementById(`audit-inline-${requestId}`);
+            const body = document.getElementById(`audit-body-${requestId}`);
+            const startSpan = document.getElementById(`audit-start-${requestId}`);
+            
+            if (container.style.display === 'block') {
+                container.style.display = 'none';
+                return;
+            }
+            
+            // Close others
+            document.querySelectorAll('.audit-inline-box').forEach(b => {
+                if (b.id !== `audit-inline-${requestId}`) b.style.display = 'none';
+            });
+            
+            container.style.display = 'block';
+            body.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:30px;"><i class="fas fa-spinner fa-spin"></i> Loading data...</td></tr>';
+            
             try {
                 const res = await fetch(`/api/admin/withdrawal/${requestId}/audit`);
                 const data = await res.json();
+                
+                const accounts = data.accounts || [];
+                startSpan.innerText = data.start_date === "Beginning" ? "User's Start" : formatDateTime(data.start_date);
 
-                currentAuditNumbers = data.accounts || [];
-                startSpan.innerText = data.start_date === "Beginning" ? "User's first submission" : formatDateTime(data.start_date);
-
-                if (currentAuditNumbers.length === 0) {
-                    body.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:40px;">No new numbers found for this period.</td></tr>';
+                if (accounts.length === 0) {
+                    body.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:30px;">No numbers found.</td></tr>';
                     return;
                 }
 
-                body.innerHTML = currentAuditNumbers.map(acc => `
-                    <tr id="audit-row-${acc.id}" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                        <td style="padding: 12px 8px; font-weight: 700;">${acc.phone}</td>
-                        <td style="padding: 12px 8px; font-size: 0.75rem;">${acc.country}</td>
-                        <td style="padding: 12px 8px; color: #10b981; font-weight: 800;">$${acc.price}</td>
-                        <td style="padding: 12px 8px;">
-                            <span class="status-badge" style="background: rgba(88, 101, 242, 0.1); color: #8b5cf6; padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; text-transform: capitalize;">${acc.status}</span>
+                body.innerHTML = accounts.map(acc => `
+                    <tr id="audit-row-${acc.id}" style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+                        <td style="padding: 10px; font-weight: 700; font-size: 0.85rem; width: 40%; word-break: break-all;">${acc.phone}</td>
+                        <td style="padding: 10px; color: #10b981; font-weight: 700; width: 25%;">$${acc.price}</td>
+                        <td style="padding: 10px; text-align: center; width: 25%;">
+                            <span class="status-badge" style="background: rgba(88, 101, 242, 0.1); color: #8b5cf6; padding: 3px 8px; border-radius: 6px; font-size: 0.7rem; text-transform: capitalize; font-weight: 700;">${acc.status}</span>
                         </td>
-                        <td style="padding: 12px 8px; text-align: right;">
-                            <button class="pg-btn" onclick="checkOneAuditNumber(${acc.id}, this)" style="padding: 6px 12px; font-size: 0.7rem; background: var(--bg-elevated);">
+                        <td style="padding: 10px; text-align: right; width: 10%;">
+                            <button class="pg-btn" onclick="checkOneAuditNumber(${acc.id}, this)" style="padding: 5px 10px; font-size: 0.7rem; background: var(--bg-elevated); border-radius: 8px;">
                                 <i class="fas fa-sync"></i>
                             </button>
                         </td>
                     </tr>
                 `).join('');
-
             } catch (e) {
-                body.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:40px; color:var(--error);">Failed to load audit data.</td></tr>';
+                body.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:30px; color:var(--error);">Error loading data.</td></tr>';
             }
-        }
-
-        function closeAuditModal() {
-            document.getElementById('auditModal').style.display = 'none';
         }
 
         async function checkOneAuditNumber(accId, btn) {
@@ -4598,10 +4587,10 @@
                     body: JSON.stringify({ account_id: accId })
                 });
                 const data = await res.json();
-
+                
                 const row = document.getElementById(`audit-row-${accId}`);
-                const statusCell = row.querySelectorAll('td')[3];
-
+                const statusCell = row.querySelectorAll('td')[2];
+                
                 if (data.status === 'alive') {
                     statusCell.innerHTML = '<span class="status-badge" style="background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; white-space: nowrap;">ALIVE</span>';
                 } else {
@@ -4615,14 +4604,17 @@
             }
         }
 
-        async function checkAllAuditNumbers() {
-            const btns = document.querySelectorAll('#auditListBody .pg-btn');
+        async function checkAllAuditNumbers(requestId) {
+            const container = document.getElementById(`audit-inline-${requestId}`);
+            const btns = container.querySelectorAll('.pg-btn');
             for (const btn of btns) {
-                // Trigger click but wait for it
-                const accId = btn.getAttribute('onclick').match(/\d+/)[0];
+                const onclick = btn.getAttribute('onclick');
+                if (!onclick || !onclick.includes('checkOneAuditNumber')) continue;
+                const accId = onclick.match(/\d+/)[0];
                 await checkOneAuditNumber(accId, btn);
-                await new Promise(r => setTimeout(r, 500)); // Small gap to avoid spamming
+                await new Promise(r => setTimeout(r, 400));
             }
+        }
         }
 
         async function generateDebugAuditData() {
