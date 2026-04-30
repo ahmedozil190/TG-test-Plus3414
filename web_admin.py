@@ -3033,38 +3033,7 @@ async def admin_check_account_alive(data: dict):
         except Exception as e:
             return {"status": "dead", "error": str(e)}
 
-@app.post("/api/admin/debug/generate-test-data")
-async def generate_test_audit_data(data: dict):
-    user_id = data.get("user_id")
-    async with async_session() as session:
-        import random
-        import string
-        for i in range(3):
-            phone = f"+999{random.randint(1000000, 9999999)}"
-            acc = Account(
-                phone_number=phone,
-                country="TestCountry",
-                price=2.0,
-                session_string="fake_session",
-                status=AccountStatus.AVAILABLE,
-                seller_id=user_id,
-                created_at=datetime.now()
-            )
-            session.add(acc)
-        
-        tx_id = "AUDIT-TEST-" + ''.join(random.choices(string.ascii_uppercase, k=5))
-        req = WithdrawalRequest(
-            user_id=user_id,
-            amount=6.0,
-            method="TEST-PAY",
-            address="Audit-Test-Address",
-            transaction_id=tx_id,
-            status=WithdrawalStatus.PENDING,
-            created_at=datetime.now()
-        )
-        session.add(req)
-        await session.commit()
-        return {"status": "success", "message": "Test data generated!"}
+
 
 
 

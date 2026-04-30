@@ -2256,10 +2256,6 @@
                             <button class="tab-btn" id="withdraw-tab-approved"
                                 onclick="switchWithdrawTab('approved', this)">APPROVED</button>
                         </div>
-                        <button class="pg-btn" onclick="generateDebugAuditData()"
-                            style="background: rgba(99, 102, 241, 0.1); color: #6366f1; border: 1px dashed #6366f1; font-size: 0.7rem; padding: 5px 10px; border-radius: 8px;">
-                            <i class="fas fa-bug"></i> Test Audit
-                        </button>
                     </div>
                     <div class="list-container" id="withdrawals-list"></div>
                     <!-- Pagination -->
@@ -2675,7 +2671,8 @@
                 btn_ban_user: "Ban User",
                 btn_unban_user: "Unban User",
                 ph_amount: "Amount...",
-                search_custom_users_ph: "Search for ID, Name, or Country..."
+                search_custom_users_ph: "Search for ID, Name, or Country...",
+                lbl_user_start: "User's Start"
             },
             ar: {
                 nav_dashboard: "الرئيسية",
@@ -2777,7 +2774,9 @@
                 btn_ban_user: "حظر المستخدم",
                 btn_unban_user: "إلغاء حظر المستخدم",
                 lbl_pending_balance: "الرصيد المعلق",
-                ph_amount: "المبلغ..."
+                ph_amount: "المبلغ...",
+                lbl_user_start: "بداية النشاط"
+            }
             }
         };
 
@@ -3213,7 +3212,7 @@
                             <div style="display: flex; gap: 8px; margin-top: 15px; flex-wrap: wrap;">
                                 <button class="primary-btn" style="flex: 1; min-width: 120px; height: 42px; background: #6366f1; color: #ffffff !important; font-size: 0.85rem; font-weight: 800; border-radius: 12px; cursor: pointer; border: none;" 
                                     onclick="openAuditModal('${item.id}')">
-                                    Audit
+                                    Numbers
                                 </button>
                                 <button class="primary-btn" style="flex: 1; min-width: 90px; height: 42px; background: var(--success); color: #ffffff !important; font-size: 0.85rem; font-weight: 800; border-radius: 12px; cursor: pointer; border: none;" 
                                     onclick="confirmWithdrawAction('${item.id}', 'approve')">
@@ -4629,7 +4628,8 @@
                 const data = await res.json();
 
                 const accounts = data.accounts || [];
-                const formattedDate = data.start_date === "Beginning" ? "User's Start" : formatDateTime(data.start_date);
+                const startLabel = translations[currentLang].lbl_user_start || "User's Start";
+                const formattedDate = data.start_date === "Beginning" ? startLabel : formatDateTime(data.start_date);
                 titleEl.innerText = "Numbers - " + formattedDate;
 
                 if (accounts.length === 0) {
@@ -4710,24 +4710,7 @@
             }
         }
 
-        async function generateDebugAuditData() {
-            if (!confirm("This will create 3 fake numbers and a withdrawal request for testing. Proceed?")) return;
-            const tg = window.Telegram?.WebApp;
-            const userId = tg?.initDataUnsafe?.user?.id || 0;
 
-            try {
-                const res = await fetch('/api/admin/debug/generate-test-data', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ user_id: userId })
-                });
-                const data = await res.json();
-                alert(data.message);
-                fetchAdminWithdrawals(1, 'pending');
-            } catch (e) {
-                alert("Error: " + e);
-            }
-        }
     </script>
 </body>
 
