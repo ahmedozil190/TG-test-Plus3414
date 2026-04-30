@@ -838,6 +838,9 @@
             <div class="nav-item" id="m-deposit" onclick="switchNav('deposit', this)">
                 <i class="fas fa-wallet"></i> <span data-i18n="nav_deposit">Deposit</span>
             </div>
+            <div class="nav-item" id="m-referrals" onclick="switchNav('referrals', this)">
+                <i class="fas fa-users"></i> <span data-i18n="nav_referrals">Referrals</span>
+            </div>
             <div class="nav-item" id="m-support" onclick="switchNav('support', this)">
                 <i class="fas fa-headset"></i> <span data-i18n="nav_support">Support</span>
             </div>
@@ -1157,6 +1160,44 @@
         </section>
     </main>
 
+    <!-- Referrals Section -->
+    <section id="section-referrals" class="view-panel" style="padding: 25px 20px;">
+        <div style="background: linear-gradient(135deg, rgba(88, 101, 242, 0.2), rgba(139, 92, 246, 0.1)); border: 1px solid var(--accent); border-radius: var(--radius-lg); padding: 30px; text-align: center; margin-bottom: 25px;">
+            <div style="width: 70px; height: 70px; background: var(--accent); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 15px; box-shadow: 0 10px 30px var(--accent-glow);">
+                <i class="fas fa-gift"></i>
+            </div>
+            <h2 style="font-weight: 800; font-size: 1.4rem; margin-bottom: 8px;">Invite Friends & Earn</h2>
+            <p style="color: var(--text-s); font-size: 0.95rem; line-height: 1.5; margin-bottom: 20px;">
+                Share your link and get <strong style="color: var(--success);">$0.005</strong> for every user who joins!
+            </p>
+            
+            <div style="background: var(--bg); border: 1px dashed var(--border); border-radius: 14px; padding: 15px; position: relative;">
+                <span style="font-size: 0.75rem; color: var(--text-s); font-weight: 700; display: block; margin-bottom: 5px;">YOUR LINK</span>
+                <div id="ref-link-val" style="font-size: 0.95rem; font-weight: 600; color: var(--text-p); word-break: break-all; margin-right: 30px;">
+                    Loading...
+                </div>
+                <i class="fas fa-copy" onclick="copyReferralLink()" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--accent); font-size: 1.2rem; cursor: pointer; padding: 10px;"></i>
+            </div>
+        </div>
+
+        <div class="grid-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div class="info-card" style="margin-bottom: 0; padding: 20px; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                <div class="info-card-icon" style="background: rgba(88, 101, 242, 0.1); color: var(--accent); margin-bottom: 10px; width: 50px; height: 50px; font-size: 1.3rem;">
+                    <i class="fas fa-users"></i>
+                </div>
+                <span class="info-card-lbl">Total Invited</span>
+                <span class="info-card-val" id="ref-total-count" style="font-size: 1.8rem; margin-top: 5px;">0</span>
+            </div>
+            <div class="info-card" style="margin-bottom: 0; padding: 20px; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                <div class="info-card-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success); margin-bottom: 10px; width: 50px; height: 50px; font-size: 1.3rem;">
+                    <i class="fas fa-hand-holding-dollar"></i>
+                </div>
+                <span class="info-card-lbl">Total Earnings</span>
+                <span class="info-card-val" id="ref-total-earnings" style="font-size: 1.8rem; margin-top: 5px; color: var(--success);">$0.00</span>
+            </div>
+        </div>
+    </section>
+
     <!-- Buy Modal -->
     <div class="modal-overlay" id="buy-modal">
         <div class="modal-sheet">
@@ -1439,6 +1480,14 @@
                     const nameForUI = (data.user.full_name && data.user.full_name !== 'Unknown') ? data.user.full_name : (userData?.first_name || "User");
                     const initialEl = document.getElementById('userInitial');
                     if (initialEl) initialEl.innerText = nameForUI.charAt(0).toUpperCase();
+
+                    const refCountEl = document.getElementById('ref-total-count');
+                    if(refCountEl) {
+                        refCountEl.innerText = data.user.referral_count || 0;
+                        document.getElementById('ref-total-earnings').innerText = `$${parseFloat(data.user.referral_earnings || 0).toFixed(3)}`;
+                        const botUsername = data.bot_username || "YourBot";
+                        document.getElementById('ref-link-val').innerText = `https://t.me/${botUsername}?start=${userId}`;
+                    }
                 }
 
                 if (data.deposit_methods) {
@@ -2014,6 +2063,16 @@
                 await fetchDeposits();
                 document.getElementById('deposit-history-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
+        }
+
+        function copyReferralLink() {
+            const link = document.getElementById('ref-link-val').innerText;
+            if(!link || link === "Loading...") return;
+            navigator.clipboard.writeText(link).then(() => {
+                showToast("Copied!", "Referral link copied to clipboard.", false);
+            }).catch(() => {
+                showToast("Error", "Failed to copy link.", true);
+            });
         }
     </script>
 </body>

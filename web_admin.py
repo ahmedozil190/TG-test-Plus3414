@@ -970,14 +970,20 @@ async def get_store_data(user_id: int = None):
                     unique_countries = (await session.execute(
                         select(func.count(func.distinct(Account.country))).where(Account.buyer_id == user_id)
                     )).scalar() or 0
+                    
+                    referral_count = (await session.execute(
+                        select(func.count(User.id)).where(User.referred_by == user_id)
+                    )).scalar() or 0
+                    referral_earnings = user.referral_earnings or 0.0
 
             # Calculate Stats
             total_numbers = sum(c['count'] for c in countries)
             countries_count = len(set(c['name'] for c in countries))
             lowest_price = min((c['buy_price'] for c in countries), default=0.0)
 
-            # Fetch bot name
+            # Fetch bot name and username
             bot_name = "Numbers Store"
+            bot_username = "BotUsername"
             try:
                 from config import BOT_TOKEN
                 import urllib.request
@@ -988,9 +994,9 @@ async def get_store_data(user_id: int = None):
                         with urllib.request.urlopen(req, timeout=2) as r:
                             res_data = json.loads(r.read().decode())
                             if res_data.get("ok"):
-                                return res_data["result"].get("first_name", "Numbers Store")
-                    except: return "Numbers Store"
-                bot_name = await asyncio.to_thread(fetch_name)
+                                return res_data["result"].get("first_name", "Numbers Store"), res_data["result"].get("username", "BotUsername")
+                    except: return "Numbers Store", "BotUsername"
+                bot_name, bot_username = await asyncio.to_thread(fetch_name)
             except: pass
 
             # Fetch Deposit Addresses
@@ -1009,6 +1015,7 @@ async def get_store_data(user_id: int = None):
         return {
             "maintenance_mode": False,
             "bot_name": bot_name,
+            "bot_username": bot_username,
             "countries": countries,
             "servers": server_names,
             "user": {
@@ -1018,7 +1025,9 @@ async def get_store_data(user_id: int = None):
                 "total_deposits": total_deposits,
                 "completed_orders": completed_orders,
                 "active_orders": active_orders,
-                "unique_countries": unique_countries
+                "unique_countries": unique_countries,
+                "referral_count": referral_count,
+                "referral_earnings": referral_earnings
             },
             "stats": {
                 "total_numbers": total_numbers,
