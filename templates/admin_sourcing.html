@@ -2154,6 +2154,46 @@
                 </div>
             </section>
 
+            <!-- Withdrawal Audit Section (Full Page) -->
+            <section id="section-withdrawal-audit" class="view-section">
+                <div class="card no-shadow" style="padding: 10px; margin-bottom: 20px; background: transparent;">
+                    <button class="settings-back-btn" onclick="switchNav('withdrawals', null)" style="margin: 0;">
+                        <i class="fas fa-arrow-left"></i> Back to Withdrawals
+                    </button>
+                </div>
+
+                <div class="card" style="padding: 28px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                        <div>
+                            <h2 style="margin: 0; font-size: 1.4rem; font-weight: 800; color: #6366f1;">Withdrawal Audit List</h2>
+                            <p style="margin: 5px 0 0; font-size: 0.85rem; color: var(--text-secondary);">
+                                Checking numbers sold since: <span id="auditStartDate" style="color: var(--text-p); font-weight: 700;">-</span>
+                            </p>
+                        </div>
+                        <button class="primary-btn" onclick="checkAllAuditNumbers()" style="width: 180px; height: 50px; background: #6366f1; font-weight: 800; border-radius: 15px; color: white;">
+                            <i class="fas fa-check-double"></i> Check All
+                        </button>
+                    </div>
+
+                    <div class="modal-scroll-area" style="min-height: 400px; border-radius: 15px; background: rgba(0,0,0,0.1); border: 1px solid var(--border); overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                            <thead>
+                                <tr style="text-align: left; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--bg-elevated); z-index: 10;">
+                                    <th style="padding: 18px 15px; color: var(--text-secondary);">Phone Number</th>
+                                    <th style="padding: 18px 15px; color: var(--text-secondary);">Country</th>
+                                    <th style="padding: 18px 15px; color: var(--text-secondary);">Selling Price</th>
+                                    <th style="padding: 18px 15px; color: var(--text-secondary);">Current Status</th>
+                                    <th style="padding: 18px 15px; color: var(--text-secondary); text-align: right;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="auditListBody">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
             <!-- ===== History Section ===== -->
             <section id="section-history" class="view-section">
                 <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px;">
@@ -4468,56 +4508,18 @@
             </div>
         </div>
     </div>
-    <!-- Audit Modal -->
-    <div id="auditModal" class="modal" style="display: none;">
-        <div class="modal-content" style="padding: 25px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
-                <h3 style="margin: 0; font-size: 1.2rem; font-weight: 800; color: #6366f1;">Withdrawal Audit List</h3>
-                <span class="close-modal" onclick="closeAuditModal()" style="font-size: 1.5rem; cursor: pointer;">&times;</span>
-            </div>
-            <div id="auditInfo" style="margin-bottom: 20px; font-size: 0.85rem; color: var(--text-secondary); background: rgba(99, 102, 241, 0.05); padding: 12px; border-radius: 10px;">
-                Checking numbers sold since: <span id="auditStartDate" style="color: var(--text-p); font-weight: 700;">-</span>
-            </div>
-            
-            <div class="modal-scroll-area" style="height: 320px; overflow-y: auto; overflow-x: auto; margin-bottom: 20px; border-radius: 12px; background: rgba(0,0,0,0.1); border: 1px solid var(--border);">
-                <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
-                    <thead>
-                        <tr style="text-align: left; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--bg-elevated); z-index: 10;">
-                            <th style="padding: 12px 8px; color: var(--text-secondary);">Phone</th>
-                            <th style="padding: 12px 8px; color: var(--text-secondary);">Country</th>
-                            <th style="padding: 12px 8px; color: var(--text-secondary);">Price</th>
-                            <th style="padding: 12px 8px; color: var(--text-secondary);">Status</th>
-                            <th style="padding: 12px 8px; color: var(--text-secondary); text-align: right;">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="auditListBody">
-                        <!-- Rows populated by JS -->
-                    </tbody>
-                </table>
-            </div>
-
-            <div style="display: flex; gap: 12px; margin-top: 10px;">
-                <button class="primary-btn" onclick="checkAllAuditNumbers()" style="flex: 1; height: 50px; background: #6366f1; font-weight: 800; border-radius: 15px; color: white;">
-                    <i class="fas fa-check-double"></i> Check All
-                </button>
-                <button class="primary-btn" onclick="closeAuditModal()" style="width: 120px; height: 50px; background: var(--bg-elevated); color: var(--text-p); border: 1px solid var(--border); border-radius: 15px;">
-                    Close
-                </button>
-            </div>
-        </div>
     </div>
 
     <script>
         let currentAuditNumbers = [];
 
         async function openAuditModal(requestId) {
-            const modal = document.getElementById('auditModal');
+            switchNav('withdrawal-audit', null);
             const body = document.getElementById('auditListBody');
             const startSpan = document.getElementById('auditStartDate');
             
-            body.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:40px;">Loading audit data...</td></tr>';
-            modal.style.display = 'flex';
-
+            body.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:60px; font-size:1.1rem; color:var(--text-secondary);"><i class="fas fa-spinner fa-spin" style="margin-right:10px;"></i> Loading audit data...</td></tr>';
+            
             try {
                 const res = await fetch(`/api/admin/withdrawal/${requestId}/audit`);
                 const data = await res.json();
@@ -4526,21 +4528,21 @@
                 startSpan.innerText = data.start_date === "Beginning" ? "User's first submission" : formatDateTime(data.start_date);
 
                 if (currentAuditNumbers.length === 0) {
-                    body.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:40px;">No new numbers found for this period.</td></tr>';
+                    body.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:60px; font-size:1.1rem; color:var(--text-secondary);">No new numbers found for this period.</td></tr>';
                     return;
                 }
 
                 body.innerHTML = currentAuditNumbers.map(acc => `
-                    <tr id="audit-row-${acc.id}" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                        <td style="padding: 12px 8px; font-weight: 700;">${acc.phone}</td>
-                        <td style="padding: 12px 8px; font-size: 0.75rem;">${acc.country}</td>
-                        <td style="padding: 12px 8px; color: #10b981; font-weight: 800;">$${acc.price}</td>
-                        <td style="padding: 12px 8px;">
-                            <span class="status-badge" style="background: rgba(88, 101, 242, 0.1); color: #8b5cf6; padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; text-transform: capitalize;">${acc.status}</span>
+                    <tr id="audit-row-${acc.id}" style="border-bottom: 1px solid rgba(255,255,255,0.05); transition: background 0.2s;">
+                        <td style="padding: 20px 15px; font-weight: 700; font-size: 1rem;">${acc.phone}</td>
+                        <td style="padding: 20px 15px;">${acc.country}</td>
+                        <td style="padding: 20px 15px; color: #10b981; font-weight: 800;">$${acc.price}</td>
+                        <td style="padding: 20px 15px;">
+                            <span class="status-badge" style="background: rgba(88, 101, 242, 0.1); color: #8b5cf6; padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; text-transform: capitalize; font-weight: 700;">${acc.status}</span>
                         </td>
-                        <td style="padding: 12px 8px; text-align: right;">
-                            <button class="pg-btn" onclick="checkOneAuditNumber(${acc.id}, this)" style="padding: 6px 12px; font-size: 0.7rem; background: var(--bg-elevated);">
-                                <i class="fas fa-sync"></i>
+                        <td style="padding: 20px 15px; text-align: right;">
+                            <button class="pg-btn" onclick="checkOneAuditNumber(${acc.id}, this)" style="padding: 10px 18px; font-size: 0.85rem; background: var(--bg-elevated); border-radius: 10px;">
+                                <i class="fas fa-sync"></i> Verify
                             </button>
                         </td>
                     </tr>
