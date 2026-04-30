@@ -4592,7 +4592,7 @@
     <div id="auditDrawerOverlay" class="audit-drawer-overlay" onclick="closeAuditDrawer()"></div>
     <div id="auditDrawer" class="audit-drawer">
         <div class="audit-drawer-header" style="padding: 15px 25px;">
-            <h3 style="margin: 0; font-size: 1.1rem; font-weight: 800; color: var(--text-p);">Withdrawal Audit</h3>
+            <h3 id="auditHeaderTitle" style="margin: 0; font-size: 1.1rem; font-weight: 800; color: var(--text-p);">Numbers - ...</h3>
             <button onclick="closeAuditDrawer()" style="background: none; border: none; color: var(--text-secondary); font-size: 1.2rem; cursor: pointer;">
                 <i class="fas fa-times"></i>
             </button>
@@ -4634,7 +4634,9 @@
                 const data = await res.json();
 
                 const accounts = data.accounts || [];
-                startSpan.innerText = data.start_date === "Beginning" ? "User's Start" : formatDateTime(data.start_date);
+                const formattedDate = data.start_date === "Beginning" ? "User's Start" : formatDateTime(data.start_date);
+                startSpan.innerText = formattedDate;
+                document.getElementById('auditHeaderTitle').innerText = "Numbers - " + formattedDate;
 
                 if (accounts.length === 0) {
                     content.innerHTML = '<div style="text-align:center; padding:100px; color:var(--text-secondary); opacity:0.5;"><i class="fas fa-ghost fa-3x" style="margin-bottom:15px;"></i><br>No numbers found for this period.</div>';
