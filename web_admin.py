@@ -1698,7 +1698,7 @@ async def get_admin_store_data(user_id: int, init_data: str):
 
             # Deposit stats
             total_deposit_requests = (await session.execute(select(func.count(Deposit.id)))).scalar() or 0
-            total_deposits_amount = (await session.execute(select(func.sum(Deposit.amount))).where(Deposit.id != None)).scalar() or 0.0
+            total_deposits_amount = (await session.execute(select(func.sum(Deposit.amount)).where(Deposit.id != None))).scalar() or 0.0
 
             # Price stats
             active_countries_count = (await session.execute(select(func.count(CountryPrice.id)).where(CountryPrice.price > 0))).scalar() or 0
