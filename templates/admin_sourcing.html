@@ -60,7 +60,7 @@
         }
 
         .audit-drawer-header {
-            padding: 20px 25px;
+            padding: 30px 25px;
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
@@ -69,6 +69,7 @@
             position: sticky;
             top: 0;
             z-index: 10;
+            backdrop-filter: blur(10px);
         }
 
         .audit-card {
@@ -4586,17 +4587,23 @@
     <div id="auditDrawerOverlay" class="audit-drawer-overlay" onclick="closeAuditDrawer()"></div>
     <div id="auditDrawer" class="audit-drawer">
         <div class="audit-drawer-header">
-            <div>
-                <h3 style="margin: 0; font-size: 1.25rem; font-weight: 800; color: var(--accent-purple);">Withdrawal Audit</h3>
-                <p style="margin: 4px 0 0; font-size: 0.75rem; color: var(--text-secondary);">
-                    Audit numbers sold since: <b id="auditDrawerStart" style="color: var(--text-p);">-</b>
-                </p>
-            </div>
             <div style="display: flex; align-items: center; gap: 15px;">
-                <button class="pg-btn" onclick="checkAllAuditNumbers()" style="padding: 8px 16px; font-size: 0.8rem; background: rgba(139, 92, 246, 0.1); color: var(--accent-purple); border-radius: 12px; font-weight: 700; border: 1px solid rgba(139, 92, 246, 0.2);">
-                    <i class="fas fa-check-double" style="margin-right: 8px;"></i> Check All
+                <div style="width: 45px; height: 45px; background: rgba(139, 92, 246, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--accent-purple); font-size: 1.2rem;">
+                    <i class="fas fa-clipboard-check"></i>
+                </div>
+                <div>
+                    <h3 style="margin: 0; font-size: 1.2rem; font-weight: 800; color: var(--text-p); letter-spacing: -0.5px;">Audit Review</h3>
+                    <div style="margin-top: 4px; display: flex; align-items: center; gap: 6px;">
+                        <span style="font-size: 0.7rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Since</span>
+                        <span id="auditDrawerStart" style="font-size: 0.75rem; color: var(--accent-purple); font-weight: 700; background: rgba(139, 92, 246, 0.05); padding: 2px 8px; border-radius: 6px;">-</span>
+                    </div>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <button class="pg-btn" onclick="checkAllAuditNumbers()" style="padding: 10px 18px; font-size: 0.75rem; background: var(--accent-purple); color: white; border-radius: 12px; font-weight: 800; border: none; white-space: nowrap; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3); display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-check-double"></i> Check All
                 </button>
-                <button onclick="closeAuditDrawer()" style="background: none; border: none; color: var(--text-secondary); font-size: 1.5rem; cursor: pointer;">
+                <button onclick="closeAuditDrawer()" style="width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-secondary); border-radius: 10px; cursor: pointer; transition: all 0.2s;">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
