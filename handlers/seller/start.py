@@ -34,7 +34,7 @@ async def seller_start_cmd(message: Message, bot: Bot = None):
             # Set the "Open Panel" menu button
             await bot.set_chat_menu_button(
                 chat_id=message.from_user.id,
-                menu_button=MenuButtonWebApp(text="Open Panel", web_app=WebAppInfo(url=SELLER_URL))
+                menu_button=MenuButtonWebApp(text="Open", web_app=WebAppInfo(url=SELLER_URL))
             )
         except:
             pass
@@ -50,28 +50,9 @@ async def seller_start_cmd(message: Message, bot: Bot = None):
             await message.answer("🚫 عذراً، لقد تم حظرك من استخدام بوت التوريد.")
             return
         
-    lang = user.language
-    if lang == "ar":
-        welcome_text = (
-            "- مرحبًا بك في لوحة استقبال الحسابات الاحترافية 🎊 .\n\n"
-            "- اضغط على الزر أدناه لبدء بيع حساباتك ومتابعة أرباحك بشكل أسرع وأكثر سلاسة."
-        )
-        btn_panel = "🚀 فتح لوحة الموردين"
-        btn_balance = "💰 عرض رصيدي"
-        btn_prices = "📊 قائمة الأسعار"
-        btn_support = "🆘 الدعم الفني"
-    else:
-        welcome_text = (
-            "- Welcome to the Professional Sourcing Panel 🎊 .\n\n"
-            "- Click the button below to start selling your accounts and track your earnings faster and smoother."
-        )
-        btn_panel = "🚀 Open Sourcing Panel"
-        btn_balance = "💰 View My Balance"
-        btn_prices = "📊 Price List"
-        btn_support = "🆘 Support"
-    
+    welcome_text = "Welcome to the Sourcing Panel! 🚀\nClick the button below to open."
     markup = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text=btn_panel, web_app=WebAppInfo(url=SELLER_URL))]
+        [InlineKeyboardButton(text="Open", web_app=WebAppInfo(url=SELLER_URL))]
     ])
     
     await message.answer(welcome_text, reply_markup=markup)

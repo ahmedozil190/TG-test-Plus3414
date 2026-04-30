@@ -18,7 +18,7 @@ async def cmd_start(message: Message, bot: Bot = None):
             # Set the "Open Panel" menu button (The blue button in the bottom left)
             await bot.set_chat_menu_button(
                 chat_id=message.from_user.id,
-                menu_button=MenuButtonWebApp(text="Open Store", web_app=WebAppInfo(url=STORE_URL))
+                menu_button=MenuButtonWebApp(text="Open", web_app=WebAppInfo(url=STORE_URL))
             )
         except Exception as e:
             pass
@@ -36,11 +36,7 @@ async def cmd_start(message: Message, bot: Bot = None):
             await session.commit()
             
     await message.answer(
-        "- The main list.\n\n"
-        f"- Your balance:{int(user.balance_store) if user.balance_store == 0 else user.balance_store}$ .\n"
-        f"- Hands of your account:<code>{user.id}</code> .\n"
-        "Official Bot Channel:@MOOO8O .\n"
-        "Gover the bot through the buttons below.",
+        "Welcome to the Store! 🛒\nClick the button below to open.",
         reply_markup=main_keyboard(),
         parse_mode="HTML"
     )
