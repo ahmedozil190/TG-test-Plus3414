@@ -2659,6 +2659,13 @@
         tg.onEvent('themeChanged', applyTheme);
         applyTheme();
 
+        function formatMoney(val) {
+            let num = parseFloat(val || 0);
+            if (num === 0) return "0";
+            let s = num.toFixed(3);
+            return s.replace(/0+$/, '').replace(/\.$/, '.0');
+        }
+
         const translations = {
             en: {
                 nav_dashboard: "Dashboard",
@@ -3232,7 +3239,7 @@
                 <div class="list-item">
                     <div class="item-info">
                         <h4 style="direction: ltr; text-align: left;"><i class="fas fa-check-circle" style="color: var(--success); margin-right: 5px;"></i> ${item.phone}</h4>
-                        <p style="margin-top: 4px;">${item.country} | <span style="color: var(--accent); font-weight: 700;">$${Number(item.price).toFixed(2)}</span> <span style="color: var(--text-secondary); font-size: 0.8rem; margin-left: 8px;">(${translations[currentLang].by_user}: ${item.buyer_id})</span></p>
+                        <p style="margin-top: 4px;">${item.country} | <span style="color: var(--accent); font-weight: 700;">$${formatMoney(item.price)}</span> <span style="color: var(--text-secondary); font-size: 0.8rem; margin-left: 8px;">(${translations[currentLang].by_user}: ${item.buyer_id})</span></p>
                     </div>
                 </div>
             `).join('');
@@ -3293,7 +3300,7 @@
                 <div class="list-item">
                     <div class="item-info">
                         <h4 style="direction: ltr; text-align: left;"><i class="fas fa-check-circle" style="color: var(--success); margin-right: 5px;"></i> ${item.phone}</h4>
-                        <p style="margin-top: 4px;">${item.country} | <span style="color: var(--accent); font-weight: 700;">$${Number(item.price).toFixed(2)}</span> <span style="color: var(--text-secondary); font-size: 0.8rem; margin-left: 8px;">(${translations[currentLang].by_user}: ${item.buyer_id})</span></p>
+                        <p style="margin-top: 4px;">${item.country} | <span style="color: var(--accent); font-weight: 700;">$${formatMoney(item.price)}</span> <span style="color: var(--text-secondary); font-size: 0.8rem; margin-left: 8px;">(${translations[currentLang].by_user}: ${item.buyer_id})</span></p>
                     </div>
                 </div>
             `).join('');
@@ -3434,11 +3441,11 @@
                         </div>
                         <div style="background: transparent; border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
                             <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'الرصيد' : 'Balance'}</span>
-                            <span style="color: #30d158; font-weight: 900; font-size: 1.1rem;">$${Number(u.balance_store).toFixed(2)}</span>
+                            <span style="color: #30d158; font-weight: 900; font-size: 1.1rem;">$${formatMoney(u.balance_store)}</span>
                         </div>
                         <div style="background: transparent; border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
                             <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'إجمالي المنفق' : 'Total Spent'}</span>
-                            <span style="color: #bf5af2; font-weight: 900; font-size: 1.1rem;">$${Number(u.total_spent || 0).toFixed(2)}</span>
+                            <span style="color: #bf5af2; font-weight: 900; font-size: 1.1rem;">$${formatMoney(u.total_spent || 0)}</span>
                         </div>
                         <div style="background: transparent; border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
                             <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'أرقام اشتراها' : 'Purchased'}</span>
@@ -4329,7 +4336,7 @@
             if (reqEl) reqEl.innerText = allDeposits.length;
             if (amtEl) {
                 const sum = allDeposits.reduce((acc, curr) => acc + Number(curr.amount), 0);
-                amtEl.innerText = sum.toFixed(2);
+                amtEl.innerText = formatMoney(sum);
             }
 
             const header = document.getElementById('deposits-history-header');
@@ -4354,7 +4361,7 @@
 
             container.innerHTML = paged.map((item, idx) => {
                 const methodDisp = (item.method || 'Binance Pay').replace(' Pay', '');
-                const details = `$${Number(item.amount).toFixed(2)} - ${methodDisp}`;
+                const details = `$${formatMoney(item.amount)} - ${methodDisp}`;
                 const isLast = idx === paged.length - 1;
                 return `
                 <div class="user-card" style="padding: 20px; margin-bottom: ${isLast ? '0' : '15px'}; cursor: default;">
@@ -4498,7 +4505,7 @@
                         <!-- Sell Price -->
                         <div style="background: transparent; border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
                             <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'السعر' : 'Price'}</span>
-                            <span style="color: var(--accent); font-weight: 900; font-size: 1.1rem;">$${Number(up.sell_price).toFixed(2)}</span>
+                            <span style="color: var(--accent); font-weight: 900; font-size: 1.1rem;">$${formatMoney(up.sell_price)}</span>
                         </div>
                         <!-- User Name -->
                         <div style="background: transparent; border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
@@ -4793,7 +4800,7 @@
 
             <!-- Balance Box -->
             <div class="manage-data-box" style="margin-bottom: 5px;">
-                <div id="manage-balance" class="manage-stat-value" style="font-size: 1.2rem; font-weight: 800;">$0.00
+                <div id="manage-balance" class="manage-stat-value" style="font-size: 1.2rem; font-weight: 800;">0
                 </div>
             </div>
 
