@@ -2339,7 +2339,7 @@
 
                     <button class="primary-btn"
                         style="width: 100%; padding: 16px; font-size: 1.05rem; font-weight: 700; color: #fff !important;"
-                        onclick="saveStoreSettings()">
+                        onclick="saveStoreSettings(this)">
                         <i class="fas fa-save" style="margin-right: 8px;"></i> Save Settings
                     </button>
                 </div>
@@ -3934,17 +3934,19 @@
             }
         }
 
-        async function saveStoreSettings() {
+        async function saveStoreSettings(btn) {
             const key = document.getElementById('setting-binance-key').value.trim();
             const secret = document.getElementById('setting-binance-secret').value.trim();
             const binancePayId = document.getElementById('setting-binance-pay-id').value.trim();
             const trxAddress = document.getElementById('setting-trx-address').value.trim();
             const usdtBep20Address = document.getElementById('setting-usdt-bep20-address').value.trim();
 
-            const btn = document.querySelector('#section-settings .btn-find');
-            btn.disabled = true;
-            const originalHtml = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            let originalHtml = "";
+            if (btn) {
+                btn.disabled = true;
+                originalHtml = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            }
 
             try {
                 const res = await fetch('/api/admin/store/settings', {
@@ -3969,8 +3971,10 @@
                 console.error("Save settings error:", e);
                 showToast("Error", "Connection error", "error");
             } finally {
-                btn.disabled = false;
-                btn.innerHTML = originalHtml;
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = originalHtml;
+                }
             }
         }
 
