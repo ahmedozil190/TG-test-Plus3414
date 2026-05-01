@@ -1532,14 +1532,7 @@ async def store_deposit_verify(req: DepositSubmit):
                     tx_ref = Transaction(user_id=referrer.id, type=TransactionType.REFERRAL, amount=bonus)
                     session.add(tx_ref)
                     
-                    try:
-                        from config import BOT_TOKEN
-                        from aiogram import Bot
-                        notify_bot = Bot(token=BOT_TOKEN)
-                        await notify_bot.send_message(referrer.id, f"🎉 You received a referral bonus of ${bonus:.3f} from a user's deposit!")
-                        await notify_bot.session.close()
-                    except Exception:
-                        pass
+                    # Commission added silently — no notification sent to referrer
             
             await session.commit()
             
