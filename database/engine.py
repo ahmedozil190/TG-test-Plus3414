@@ -98,6 +98,22 @@ async def init_db():
                     print("Successfully added bot_type column to subscription_channels")
             except Exception:
                 pass
+
+            # 8. users.refer_count & referral_bonus_awarded
+            def check_user_cols(connection):
+                cursor = connection.execute(text("PRAGMA table_info(users)"))
+                return [row[1] for row in cursor]
+            
+            try:
+                u_cols = await conn.run_sync(check_user_cols)
+                if 'refer_count' not in u_cols:
+                    await conn.execute(text("ALTER TABLE users ADD COLUMN refer_count INTEGER DEFAULT 0"))
+                    print("Successfully added refer_count column to users")
+                if 'referral_bonus_awarded' not in u_cols:
+                    await conn.execute(text("ALTER TABLE users ADD COLUMN referral_bonus_awarded BOOLEAN DEFAULT 0"))
+                    print("Successfully added referral_bonus_awarded column to users")
+            except Exception:
+                pass
                 
         except Exception as e:
             print(f"Migration check failed: {e}")
