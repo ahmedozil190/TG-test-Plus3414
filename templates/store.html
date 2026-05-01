@@ -1176,7 +1176,7 @@
         <div class="info-card" style="margin-bottom: 25px;">
             <div class="info-card-l">
                 <span class="info-card-lbl">Total Earnings</span>
-                <div class="info-card-val" id="ref-total-earnings">$0.0</div>
+                <div class="info-card-val" id="ref-total-earnings">0.0 USD</div>
             </div>
             <div class="info-card-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">
                 <i class="fas fa-hand-holding-dollar"></i>
@@ -1184,21 +1184,24 @@
         </div>
 
         <!-- Premium Link Card -->
-        <div style="background: rgba(0,0,0,0.3); border: none; border-radius: 24px; padding: 35px 25px; text-align: center; position: relative; overflow: hidden; margin-top: 10px; box-shadow: var(--shadow-sm);">
-            <div style="width: 65px; height: 65px; background: rgba(88, 101, 242, 0.1); color: var(--accent); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; margin: 0 auto 20px;">
+        <div style="background: rgba(0,0,0,0.3); border: none; border-radius: 24px; padding: 35px 25px; text-align: center; position: relative; overflow: hidden; margin-top: 10px; box-shadow: 0 15px 35px rgba(0,0,0,0.3);">
+            <div
+                style="width: 65px; height: 65px; background: rgba(88, 101, 242, 0.1); color: var(--accent); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; margin: 0 auto 20px;">
                 <i class="fas fa-share-nodes"></i>
             </div>
-            
-            <h3 style="font-weight: 800; font-size: 1.3rem; margin-bottom: 10px; color: var(--text-p);">Referral Program</h3>
-            <p style="color: var(--text-s); font-size: 0.92rem; line-height: 1.6; margin-bottom: 30px; max-width: 300px; margin-left: auto; margin-right: auto;">
-                Earn <span style="color: var(--success); font-weight: 800;">$0.005</span> instantly per invite + <span style="color: var(--success); font-weight: 800;">1%</span> lifetime deposit commission!
+
+            <h3 style="font-weight: 800; font-size: 1.3rem; margin-bottom: 10px; color: var(--text-p);">Referral Program
+            </h3>
+            <p
+                style="color: var(--text-s); font-size: 0.92rem; line-height: 1.6; margin-bottom: 30px; max-width: 300px; margin-left: auto; margin-right: auto;">
+                Earn <span style="color: var(--success); font-weight: 800;">$0.005</span> instantly per invite + <span
+                    style="color: var(--success); font-weight: 800;">1%</span> lifetime deposit commission!
             </p>
 
             <div onclick="copyReferralLink()"
                 style="background: transparent; border: 1px solid var(--border); border-radius: 18px; padding: 22px; cursor: pointer; transition: all 0.3s ease; position: relative;"
                 onmouseover="this.style.borderColor='var(--accent)';"
-                onmouseout="this.style.borderColor='var(--border)';"
-                title="Click to Copy">
+                onmouseout="this.style.borderColor='var(--border)';" title="Click to Copy">
                 <div id="ref-link-val"
                     style="font-size: 1rem; font-weight: 700; color: var(--accent); word-break: break-all; font-family: 'JetBrains Mono', monospace; margin-bottom: 8px;">
                     Loading...
@@ -1226,7 +1229,7 @@
                 </div>
                 <div style="display: flex; justify-content: space-between;">
                     <span style="color: var(--text-s);" data-i18n="lbl_price">Price</span>
-                    <span id="buy-price-val" style="font-weight: 800; color: var(--success);">$0.00</span>
+                    <span id="buy-price-val" style="font-weight: 800; color: var(--success);">0.00 USD</span>
                 </div>
             </div>
             <button class="primary-btn" id="btn-final-buy" onclick="execBuy()">
@@ -1496,8 +1499,8 @@
 
                     const refCountEl = document.getElementById('ref-total-count');
                     if (refCountEl) {
-                        refCountEl.innerText = data.user.referral_count || 0;
-                        document.getElementById('ref-total-earnings').innerText = `$${parseFloat(data.user.referral_earnings || 0).toFixed(1)}`;
+                        refCountEl.innerHTML = `${data.user.referral_count || 0} <span>USERS</span>`;
+                        document.getElementById('ref-total-earnings').innerText = `${parseFloat(data.user.referral_earnings || 0).toFixed(1)} USD`;
                         const botUsername = data.bot_username || "YourBot";
                         document.getElementById('ref-link-val').innerText = `https://t.me/${botUsername}?start=REF${userId}`;
                     }
@@ -1621,7 +1624,7 @@
                         <span class="c-flag">${c.flag}</span>
                         <div><div class="c-name">${c.name}</div><div class="c-stock">${c.count} ${translations[currentLang].available}</div></div>
                     </div>
-                    <div class="c-price">${c.buy_price.toFixed(2)}$</div>
+                    <div class="c-price">${c.buy_price.toFixed(2)} USD</div>
                 </div>
             `).join('');
         }
@@ -1695,13 +1698,13 @@
 
             document.getElementById('stat-total-numbers').innerHTML = `${totalNumbers} <span>NUMBERS</span>`;
             document.getElementById('stat-countries').innerHTML = `${countriesCount} <span>COUNTRIES</span>`;
-            document.getElementById('stat-lowest-price').innerHTML = `${lowestPrice.toFixed(2)}$`;
+            document.getElementById('stat-lowest-price').innerHTML = `${lowestPrice.toFixed(2)} <span>USD</span>`;
         }
 
         function openBuyModal(c) {
             selectedCountry = c;
             document.getElementById('buy-country-name').innerText = c.name;
-            document.getElementById('buy-price-val').innerText = `${c.buy_price.toFixed(2)}$`;
+            document.getElementById('buy-price-val').innerText = `${c.buy_price.toFixed(2)} USD`;
             document.getElementById('buy-modal').style.display = 'flex';
         }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
