@@ -3352,6 +3352,43 @@ async def save_system_settings(data: dict):
         await session.commit()
         return {"status": "success"}
 
+@app.post("/api/admin/store/referral-settings")
+async def save_referral_settings(data: dict):
+    async with async_session() as session:
+        keys = {
+            "referral_join_bonus": str(data.get("join_bonus", "0")),
+            "referral_commission_percent": str(data.get("commission_percent", "0"))
+        }
+        for key, value in keys.items():
+            stmt = select(AppSetting).where(AppSetting.key == key)
+            res = await session.execute(stmt)
+            obj = res.scalar_one_or_none()
+            if obj:
+                obj.value = value
+            else:
+                session.add(AppSetting(key=key, value=value))
+        await session.commit()
+        return {"status": "success"}
+
+@app.post("/api/admin/store/general-settings")
+async def save_store_general_settings(data: dict):
+    async with async_session() as session:
+        keys = {
+            "bot_name": data.get("bot_name"),
+            "purchase_log_channel_id": data.get("purchase_log_channel_id")
+        }
+        for key, value in keys.items():
+            if value is None: continue
+            stmt = select(AppSetting).where(AppSetting.key == key)
+            res = await session.execute(stmt)
+            obj = res.scalar_one_or_none()
+            if obj:
+                obj.value = str(value)
+            else:
+                session.add(AppSetting(key=key, value=str(value)))
+        await session.commit()
+        return {"status": "success"}
+
 # --- End of Web Admin SOURCINGPRO ---
 @app.get("/api/admin/subscription-channels")
 async def get_subscription_channels(bot_type: str = "store"):
