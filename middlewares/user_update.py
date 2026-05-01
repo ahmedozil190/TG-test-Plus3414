@@ -34,10 +34,7 @@ class UserUpdateMiddleware(BaseMiddleware):
                     user = result.scalar_one_or_none()
                     
                     if not user:
-                        # SECURITY: Check if this is a /start command with referral (to avoid race condition with handlers/start.py)
-                        is_referral_start = False
-                        
-                        # In Aiogram 3 outer_middleware on Dispatcher, 'event' is an Update object
+                        # Logic to handle Referral BEFORE any blocking happens
                         from aiogram.types import Update, Message
                         msg = None
                         if isinstance(event, Message):
@@ -45,27 +42,48 @@ class UserUpdateMiddleware(BaseMiddleware):
                         elif isinstance(event, Update) and event.message:
                             msg = event.message
                             
-                        if msg and msg.text:
-                            logger.info(f"Middleware Debug: Message text is '{msg.text}'")
-                            if msg.text.startswith('/start') and len(msg.text.split()) > 1:
-                                is_referral_start = True
-                                logger.info(f"Middleware: Detected referral start for {user_id}, skipping auto-creation to allow handler to process.")
+                        referral_id = None
+                        if msg and msg.text and msg.text.startswith('/start') and len(msg.text.split()) > 1:
+                            start_param = msg.text.split()[1]
+                            if start_param.startswith("REF"):
+                                try: referral_id = int(start_param.replace("REF", ""))
+                                except: pass
                             else:
-                                logger.info(f"Middleware Debug: Not a referral start. split len: {len(msg.text.split())}")
-                        else:
-                            logger.info(f"Middleware Debug: No message text found.")
+                                try: referral_id = int(start_param)
+                                except: pass
+
+                        # Create the user object
+                        user = User(
+                            id=user_id, 
+                            full_name=full_name, 
+                            username=username,
+                            is_active_store=(self.bot_type == "store"),
+                            is_active_sourcing=(self.bot_type == "sourcing")
+                        )
                         
-                        if not is_referral_start:
-                            # Auto-create if not exists (helpful for background sync)
-                            user = User(
-                                id=user_id, 
-                                full_name=full_name, 
-                                username=username,
-                                is_active_store=(self.bot_type == "store"),
-                                is_active_sourcing=(self.bot_type == "sourcing")
-                            )
-                            session.add(user)
-                            logger.info(f"Middleware: Created new user {user_id} for {self.bot_type}")
+                        # Award bonus if referral exists
+                        if referral_id and referral_id != user_id:
+                            from database.models import AppSetting, Transaction, TransactionType
+                            referrer = (await session.execute(select(User).where(User.id == referral_id))).scalar_one_or_none()
+                            if referrer:
+                                bonus_obj = (await session.execute(select(AppSetting).where(AppSetting.key == "referral_join_bonus"))).scalar_one_or_none()
+                                bonus_val = float(bonus_obj.value) if bonus_obj and bonus_obj.value else 0.005
+                                
+                                user.referred_by = referral_id
+                                referrer.balance_store += bonus_val
+                                referrer.referral_earnings = (referrer.referral_earnings or 0.0) + bonus_val
+                                
+                                txn = Transaction(user_id=referral_id, type=TransactionType.REFERRAL, amount=bonus_val)
+                                session.add(txn)
+                                
+                                # Notify referrer
+                                bot = data.get("bot")
+                                if bot:
+                                    try: await bot.send_message(referral_id, f"🎁 You earned ${bonus_val} From a referral")
+                                    except: pass
+                        
+                        session.add(user)
+                        logger.info(f"Middleware: Auto-created user {user_id} with referral award to {user.referred_by}")
                     else:
                         # Update if changed
                         changed = False

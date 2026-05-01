@@ -42,18 +42,7 @@ async def cmd_start(message: Message, bot: Bot = None):
             except ValueError:
                 pass
     
-    async with async_session() as session:
-        stmt = select(User).where(User.id == user_id)
-        result = await session.execute(stmt)
-        user = result.scalar_one_or_none()
-        
-        # User creation is now handled by UserUpdateMiddleware
-        if not user:
-            # Fallback if middleware skipped it somehow
-            user = User(id=user_id)
-            session.add(user)
-            await session.commit()
-            
+    # Referral and user creation is now handled by UserUpdateMiddleware
     await message.answer(
         "Welcome to the Store! 🛒\nClick the button below to open.",
         reply_markup=main_keyboard(),
