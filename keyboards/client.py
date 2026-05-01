@@ -5,9 +5,6 @@ def main_keyboard():
     return InlineKeyboardMarkup(inline_keyboard=[
         [
             InlineKeyboardButton(text="Open", web_app=WebAppInfo(url=STORE_URL))
-        ],
-        [
-            InlineKeyboardButton(text="🎁 Referral Program", callback_data="my_referral")
         ]
     ])
 
