@@ -1474,11 +1474,15 @@ async def store_deposit_verify(req: DepositSubmit):
             tx = Transaction(user_id=user.id, type=TransactionType.DEPOSIT, amount=amount)
             session.add(tx)
             
-            # Referral 1% Bonus
+            # Referral Deposit Bonus
             if user.referred_by:
                 referrer = (await session.execute(select(User).where(User.id == user.referred_by))).scalar_one_or_none()
                 if referrer:
-                    bonus = amount * 0.01
+                    # Fetch Dynamic Commission %
+                    comm_obj = (await session.execute(select(AppSetting).where(AppSetting.key == "referral_commission_percent"))).scalar_one_or_none()
+                    comm_percent = float(comm_obj.value) if comm_obj and comm_obj.value else 1.0
+                    
+                    bonus = amount * (comm_percent / 100.0)
                     referrer.balance_store += bonus
                     referrer.referral_earnings = (referrer.referral_earnings or 0.0) + bonus
                     tx_ref = Transaction(user_id=referrer.id, type=TransactionType.REFERRAL, amount=bonus)
