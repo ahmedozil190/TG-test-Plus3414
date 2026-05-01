@@ -1198,12 +1198,12 @@
             
             <div style="display: flex; justify-content: center; gap: 25px; margin-bottom: 40px;">
                 <div style="text-align: center;">
-                    <div style="font-size: 1.2rem; font-weight: 900; color: var(--success); margin-bottom: 2px;">$0.005</div>
+                    <div id="ref-join-bonus-val" style="font-size: 1.2rem; font-weight: 900; color: var(--success); margin-bottom: 2px;">$0.005</div>
                     <div style="font-size: 0.65rem; font-weight: 800; color: var(--text-s); text-transform: uppercase; letter-spacing: 1px;">Upon Joining</div>
                 </div>
                 <div style="width: 1px; height: 40px; background: var(--border); align-self: center;"></div>
                 <div style="text-align: center;">
-                    <div style="font-size: 1.2rem; font-weight: 900; color: var(--accent); margin-bottom: 2px;">1%</div>
+                    <div id="ref-commission-val" style="font-size: 1.2rem; font-weight: 900; color: var(--accent); margin-bottom: 2px;">1%</div>
                     <div style="font-size: 0.65rem; font-weight: 800; color: var(--text-s); text-transform: uppercase; letter-spacing: 1px;">On Deposits</div>
                 </div>
             </div>
@@ -1508,6 +1508,16 @@
                         const botUsername = data.bot_username || "YourBot";
                         document.getElementById('ref-link-val').innerText = `https://t.me/${botUsername}?start=REF${userId}`;
                     }
+                }
+
+                // Render Referral Program Settings
+                const refBonusValEl = document.getElementById('ref-join-bonus-val');
+                const refCommValEl = document.getElementById('ref-commission-val');
+                if (refBonusValEl && data.referral_join_bonus !== undefined) {
+                    refBonusValEl.innerText = `$${data.referral_join_bonus}`;
+                }
+                if (refCommValEl && data.referral_commission_percent !== undefined) {
+                    refCommValEl.innerText = `${data.referral_commission_percent}%`;
                 }
 
                 if (data.deposit_methods) {

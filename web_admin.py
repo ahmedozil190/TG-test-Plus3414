@@ -1018,6 +1018,12 @@ async def get_store_data(user_id: int = None):
             final_trx = addr_settings.get("TRX_ADDRESS") or ""
             final_usdt_bep20 = addr_settings.get("USDT_BEP20_ADDRESS") or ""
 
+            # Fetch Referral Settings
+            ref_bonus_obj = (await session.execute(select(AppSetting).where(AppSetting.key == "referral_join_bonus"))).scalar_one_or_none()
+            ref_comm_obj = (await session.execute(select(AppSetting).where(AppSetting.key == "referral_commission_percent"))).scalar_one_or_none()
+            
+            ref_bonus = float(ref_bonus_obj.value) if ref_bonus_obj and ref_bonus_obj.value else 0.005
+            ref_comm = float(ref_comm_obj.value) if ref_comm_obj and ref_comm_obj.value else 1.0
 
         return {
             "maintenance_mode": False,
@@ -1025,6 +1031,8 @@ async def get_store_data(user_id: int = None):
             "bot_username": bot_username,
             "countries": countries,
             "servers": server_names,
+            "referral_join_bonus": ref_bonus,
+            "referral_commission_percent": ref_comm,
             "user": {
                 "balance": balance,
                 "total_orders": total_orders,
