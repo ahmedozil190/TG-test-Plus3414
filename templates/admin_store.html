@@ -2245,6 +2245,15 @@
                         <span class="settings-text">API Servers</span>
                         <i class="fas fa-chevron-right settings-arrow"></i>
                     </div>
+
+                    <!-- Referral Program -->
+                    <div class="settings-item" onclick="switchNav('settings-referral', null)">
+                        <div class="settings-icon-box" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">
+                            <i class="fas fa-share-nodes"></i>
+                        </div>
+                        <span class="settings-text">Referral Program</span>
+                        <i class="fas fa-chevron-right settings-arrow"></i>
+                    </div>
                 </div>
             </section>
 
@@ -2426,6 +2435,41 @@
                             <p>No API servers connected yet. Add your first provider to start selling numbers.</p>
                         </div>
                     </div>
+                </div>
+            </section>
+
+            <!-- ===== 4. Referral Program Page ===== -->
+            <section id="section-settings-referral" class="view-section">
+                <button class="settings-back-btn" onclick="switchNav('settings', null)"
+                    style="margin-top: 10px; margin-bottom: 20px;">
+                    <i class="fas fa-arrow-left"></i> Back to Settings
+                </button>
+
+                <div class="card" style="padding: 28px; margin-bottom: 20px;">
+                    <div class="form-group" style="margin-bottom: 25px;">
+                        <label
+                            style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">Join
+                            Bonus (USD)</label>
+                        <input type="number" id="setting-ref-join-bonus" class="search-input" step="0.001"
+                            style="margin-bottom: 0; padding: 16px; font-size: 1rem; height: auto;"
+                            placeholder="e.g. 0.005">
+                        <span style="font-size: 0.75rem; color: var(--text-s); margin-top: 5px; display: block;">Instant
+                            reward given to the inviter when a new user joins via their link.</span>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 25px;">
+                        <label
+                            style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">Commission
+                            (%)</label>
+                        <input type="number" id="setting-ref-commission" class="search-input" step="0.1"
+                            style="margin-bottom: 0; padding: 16px; font-size: 1rem; height: auto;" placeholder="e.g. 1">
+                        <span style="font-size: 0.75rem; color: var(--text-s); margin-top: 5px; display: block;">Percentage
+                            earned by the inviter from every deposit made by their referrals.</span>
+                    </div>
+
+                    <button class="primary-btn" onclick="saveReferralSettings(this)"
+                        style="width: 100%; padding: 16px; border-radius: 12px; font-weight: 700;">Save Referral
+                        Settings</button>
                 </div>
             </section>
 
@@ -2998,6 +3042,45 @@
                     showToast(currentLang === 'ar' ? 'خطأ' : 'Error', data.message || 'Failed to save', 'error');
                 }
             } catch (e) {
+                console.error('Error saving general settings', e);
+                showToast(currentLang === 'ar' ? 'خطأ' : 'Error', 'Connection failed', 'error');
+            }
+        }
+
+        async function saveReferralSettings(btn) {
+            const joinBonus = document.getElementById('setting-ref-join-bonus').value;
+            const commission = document.getElementById('setting-ref-commission').value;
+
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            }
+
+            try {
+                const res = await fetch('/api/admin/store/referral-settings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        join_bonus: parseFloat(joinBonus) || 0,
+                        commission_percent: parseFloat(commission) || 0
+                    })
+                });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    showToast(currentLang === 'ar' ? 'تم الحفظ' : 'Saved', currentLang === 'ar' ? 'تم حفظ إعدادات الإحالة' : 'Referral settings saved', 'success');
+                } else {
+                    showToast(currentLang === 'ar' ? 'خطأ' : 'Error', data.message || 'Failed to save', 'error');
+                }
+            } catch (e) {
+                console.error('Error saving referral settings', e);
+                showToast(currentLang === 'ar' ? 'خطأ' : 'Error', 'Connection failed', 'error');
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = 'Save Referral Settings';
+                }
+            }
+        }
                 console.error(e);
                 showToast(currentLang === 'ar' ? 'خطأ' : 'Error', 'Connection error', 'error');
             }
@@ -3829,6 +3912,10 @@
                 document.getElementById('setting-binance-pay-id').value = data.binance_pay_id || "";
                 document.getElementById('setting-trx-address').value = data.trx_address || "";
                 document.getElementById('setting-usdt-bep20-address').value = data.usdt_bep20_address || "";
+
+                // Set referral settings
+                document.getElementById('setting-ref-join-bonus').value = data.referral_join_bonus || 0;
+                document.getElementById('setting-ref-commission').value = data.referral_commission_percent || 0;
             } catch (e) {
                 console.error("Fetch settings error:", e);
                 showToast("Error", "Could not fetch settings", "error");
