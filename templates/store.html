@@ -1208,13 +1208,36 @@
                 </div>
             </div>
 
-            <div onclick="copyReferralLink()" style="background: transparent; border: 1px solid var(--border); border-radius: 22px; padding: 22px; cursor: pointer; transition: all 0.3s ease; position: relative; z-index: 2;" 
-                 onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
-                <div id="ref-link-val" style="font-size: 1rem; font-weight: 700; color: var(--accent); word-break: break-all; margin-bottom: 8px; font-family: 'JetBrains Mono', monospace; opacity: 0.95;">Loading...</div>
-                <div style="font-size: 0.72rem; color: var(--text-s); text-transform: uppercase; letter-spacing: 2px; font-weight: 800;">
-                    <i class="far fa-copy" style="margin-right: 6px;"></i> Tap to Copy
+            <!-- Modern Referral Link Box -->
+            <div onclick="copyReferralLink()" class="referral-box" style="background: var(--bg); border: 1px solid var(--border); border-radius: 24px; padding: 25px; cursor: pointer; transition: all 0.3s var(--ease); position: relative; z-index: 2; margin-top: 10px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px; opacity: 0.8;">
+                    <i class="fas fa-link" style="color: var(--accent); font-size: 0.9rem;"></i>
+                    <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-s); text-transform: uppercase; letter-spacing: 1.5px;">Your Unique Link</span>
                 </div>
+                
+                <div id="ref-link-val" style="font-size: 0.95rem; font-weight: 700; color: var(--accent); word-break: break-all; margin-bottom: 20px; font-family: 'JetBrains Mono', monospace; line-height: 1.6; background: rgba(88, 101, 242, 0.05); padding: 15px; border-radius: 16px; border: 1px dashed rgba(88, 101, 242, 0.2);">Loading...</div>
+                
+                <div class="copy-action-label" style="display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--text-p); font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">
+                    <i class="fas fa-copy" style="font-size: 1rem; color: var(--accent);"></i>
+                    <span>Tap to Copy</span>
+                </div>
+                
+                <!-- Hover effect glow -->
+                <div class="box-glow" style="position: absolute; inset: 0; background: radial-gradient(circle at center, var(--accent-glow) 0%, transparent 70%); opacity: 0; transition: opacity 0.3s ease; pointer-events: none; border-radius: 24px;"></div>
             </div>
+
+            <style>
+                .referral-box:active {
+                    transform: scale(0.97);
+                }
+                .referral-box:hover .box-glow {
+                    opacity: 0.1;
+                }
+                .referral-box:hover {
+                    border-color: var(--accent) !important;
+                    box-shadow: 0 10px 30px rgba(88, 101, 242, 0.1), inset 0 2px 10px rgba(0,0,0,0.1) !important;
+                }
+            </style>
         </div>
     </section>
 
@@ -2106,6 +2129,7 @@
             const link = document.getElementById('ref-link-val').innerText;
             if (!link || link === "Loading...") return;
             navigator.clipboard.writeText(link).then(() => {
+                tg.HapticFeedback.notificationOccurred('success');
                 showToast("Copied!", "Referral link copied to clipboard.", false);
             }).catch(() => {
                 showToast("Error", "Failed to copy link.", true);
