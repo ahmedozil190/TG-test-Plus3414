@@ -1226,6 +1226,20 @@ async def purge_sold_accounts(key: str):
         logger.error(f"System Purge Error: {e}")
         return {"status": "error", "message": str(e)}
 
+@app.get("/api/v1/system/purge-users")
+async def purge_all_users(key: str):
+    if key != "purge_users_99":
+        return {"status": "error", "message": "Access denied"}
+    try:
+        async with async_session() as session:
+            # Delete all users (will cascade to transactions/deposits if configured)
+            await session.execute(delete(User))
+            await session.commit()
+        return {"status": "success", "message": "All users have been deleted from the database"}
+    except Exception as e:
+        logger.error(f"System Purge Users Error: {e}")
+        return {"status": "error", "message": str(e)}
+
 @app.get("/api/store/get-code")
 async def store_get_code(user_id: int, phone: str):
     from services.session_manager import get_telegram_login_code
