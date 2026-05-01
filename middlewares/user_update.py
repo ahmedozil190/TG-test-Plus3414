@@ -36,10 +36,18 @@ class UserUpdateMiddleware(BaseMiddleware):
                     if not user:
                         # SECURITY: Check if this is a /start command with referral (to avoid race condition with handlers/start.py)
                         is_referral_start = False
-                        from aiogram.types import Message
-                        if isinstance(event, Message) and event.text and event.text.startswith('/start') and len(event.text.split()) > 1:
+                        
+                        # In Aiogram 3 outer_middleware on Dispatcher, 'event' is an Update object
+                        from aiogram.types import Update, Message
+                        msg = None
+                        if isinstance(event, Message):
+                            msg = event
+                        elif isinstance(event, Update) and event.message:
+                            msg = event.message
+                            
+                        if msg and msg.text and msg.text.startswith('/start') and len(msg.text.split()) > 1:
                             is_referral_start = True
-                            logger.info(f"Middleware: Detected referral start for {user_id}, skipping auto-creation to allow handler to process.")
+                            logger.info(f"Middleware: Detected referral start for {user_id}, skipping auto-creation.")
                         
                         if not is_referral_start:
                             # Auto-create if not exists (helpful for background sync)
