@@ -1491,50 +1491,6 @@
             font-weight: 500;
         }
 
-        /* ========== Unique Search Box for Custom Users ========== */
-        .unique-search-container {
-            position: relative;
-            margin-bottom: 25px;
-            background: rgba(139, 92, 246, 0.05);
-            border-radius: 18px;
-            border: 1.5px solid rgba(139, 92, 246, 0.2);
-            padding: 4px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            align-items: center;
-        }
-
-        .unique-search-container:focus-within {
-            border-color: var(--accent-purple);
-            box-shadow: 0 0 15px rgba(139, 92, 246, 0.15);
-            background: rgba(139, 92, 246, 0.08);
-            transform: translateY(-2px);
-        }
-
-        .unique-search-icon {
-            position: absolute;
-            left: 20px;
-            color: var(--accent-purple);
-            font-size: 1.1rem;
-            transition: 0.3s;
-        }
-
-        .unique-search-input {
-            width: 100%;
-            background: transparent;
-            border: none;
-            padding: 16px 16px 16px 50px;
-            color: var(--text-primary);
-            font-size: 1rem;
-            font-weight: 600;
-            outline: none;
-        }
-
-        .unique-search-input::placeholder {
-            color: rgba(156, 163, 175, 0.6);
-            font-weight: 500;
-        }
-
         /* ========== Desktop ========== */
         @media (min-width: 1024px) {
             .container {
@@ -2155,7 +2111,7 @@
                 </div>
 
                 <!-- Search -->
-                <div class="card no-shadow" style="padding: 18px; margin-bottom: 25px;">
+                <div class="card" style="padding: 18px; margin-bottom: 25px;">
                     <input class="search-input" type="text" id="user-search" placeholder="Search users..."
                         data-i18n-placeholder="search_placeholder">
                     <button class="btn-find" onclick="searchUsers()">
@@ -2167,7 +2123,7 @@
                 </div>
 
                 <!-- User Management -->
-                <div id="user-mgmt-section" class="card no-shadow" style="padding: 22px;">
+                <div id="user-mgmt-section" class="card" style="padding: 22px;">
                     <div
                         style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                         <h3 style="color: var(--text-secondary); font-size: 1rem; font-weight: 700;"
@@ -2569,6 +2525,13 @@
         }
         tg.onEvent('themeChanged', applyTheme);
 
+        function formatMoney(val) {
+            let num = parseFloat(val || 0);
+            if (num === 0) return "0";
+            let s = num.toFixed(3);
+            return s.replace(/0+$/, '').replace(/\.$/, '.0');
+        }
+
         function formatDateTime(isoStr) {
             if (!isoStr) return "N/A";
             try {
@@ -2848,7 +2811,7 @@
                         <!-- Price -->
                         <div style="background: transparent; border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
                             <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'السعر' : 'Price'}</span>
-                            <span style="color: var(--accent); font-weight: 900; font-size: 1.1rem;">$${Number(up.buy_price).toFixed(2)}</span>
+                            <span style="color: var(--accent); font-weight: 900; font-size: 1.1rem;">$${formatMoney(up.buy_price)}</span>
                         </div>
                         <!-- User Name -->
                         <div style="background: transparent; border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
@@ -3185,7 +3148,7 @@
                             </div>
                             <div style="${rowS}">
                                 <span style="${lblS}">DETAILS</span>
-                                <span style="color: #10b981; font-weight: 800; font-size: 0.95rem; text-align: right;">$${parseFloat(item.amount).toFixed(2)} - ${simpleMethod}</span>
+                                <span style="color: #10b981; font-weight: 800; font-size: 0.95rem; text-align: right;">$${formatMoney(item.amount)} - ${simpleMethod}</span>
                             </div>
                             <div style="${rowS}">
                                 <span style="${lblS}">ID</span>
@@ -3460,8 +3423,8 @@
                 if (hwp) hwp.innerText = data.stats.withdraw_pending || 0;
                 if (hwa) hwa.innerText = data.stats.withdraw_approved || 0;
                 if (hwr) hwr.innerText = data.stats.withdraw_rejected || 0;
-                if (hwpa) hwpa.innerText = parseFloat(data.stats.withdraw_pending_amount || 0).toFixed(2);
-                if (htp) htp.innerText = parseFloat(data.stats.total_paid_amount || 0).toFixed(2);
+                if (hwpa) hwpa.innerText = formatMoney(data.stats.withdraw_pending_amount || 0);
+                if (htp) htp.innerText = formatMoney(data.stats.total_paid_amount || 0);
 
                 // Buying Prices (Home)
                 const hacEl = document.getElementById('home-stat-active-countries');
@@ -3701,12 +3664,12 @@
                         <!-- Balance -->
                         <div style="background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
                             <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'الرصيد' : 'Balance'}</span>
-                            <span style="color: #30d158; font-weight: 900; font-size: 1.1rem;">$${Number(u.balance_sourcing).toFixed(2)}</span>
+                            <span style="color: #30d158; font-weight: 900; font-size: 1.1rem;">$${formatMoney(u.balance_sourcing)}</span>
                         </div>
                         <!-- Pending Balance -->
                         <div style="background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
                             <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'الرصيد المعلق' : 'Pending Balance'}</span>
-                            <span style="color: #ff9f0a; font-weight: 800; font-size: 1rem;">$${Number(u.pending_balance || 0).toFixed(2)}</span>
+                            <span style="color: #ff9f0a; font-weight: 800; font-size: 1rem;">$${formatMoney(u.pending_balance || 0)}</span>
                         </div>
                         <!-- Sold Count -->
                         <div style="background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
@@ -3760,7 +3723,7 @@
             document.getElementById('manage-name').innerText = (u.full_name || u.id).toUpperCase();
             const displayId = (u.username || 'N/A').toString();
             document.getElementById('manage-id').innerText = displayId.startsWith('@') ? displayId : '@' + displayId;
-            document.getElementById('manage-balance').innerText = `$${Number(u.balance_sourcing).toFixed(2)}`;
+            document.getElementById('manage-balance').innerText = `$${formatMoney(u.balance_sourcing)}`;
             document.getElementById('adjust-amount').value = '';
 
             const banBtn = document.getElementById('manage-ban-btn');
@@ -3817,7 +3780,7 @@
 
             if (res.ok) {
                 currentUser.balance_sourcing = newBalance;
-                document.getElementById('manage-balance').innerText = `$${newBalance.toFixed(2)}`;
+                document.getElementById('manage-balance').innerText = `$${formatMoney(newBalance)}`;
                 input.value = '';
                 init(); // Refresh data in background
             }
@@ -3925,7 +3888,7 @@
                 <div class="list-item">
                     <div class="item-info">
                         <h4>${item.phone}</h4>
-                        <p>${item.country} | <span style="color: var(--accent); font-weight: 700;">$${item.buy_price}</span></p>
+                        <p>${item.country} | <span style="color: var(--accent); font-weight: 700;">$${formatMoney(item.buy_price)}</span></p>
                     </div>
                     <span class="badge ${item.status === 'AVAILABLE' ? 'badge-success' : 'badge-warning'}">${item.status}</span>
                 </div>
@@ -4293,7 +4256,7 @@
 
                         <div style="${rowS}">
                             <span style="${lblS}">${translations[currentLang].lbl_price}</span>
-                            <span style="color: #3b82f6; font-weight: 900; font-size: 1.2rem; text-align: right;">$${Number(item.buy_price).toFixed(2)}</span>
+                            <span style="color: #3b82f6; font-weight: 900; font-size: 1.2rem; text-align: right;">$${formatMoney(item.buy_price)}</span>
                         </div>
                         <div style="${rowS}">
                             <span style="${lblS}">${translations[currentLang].lbl_date}</span>
