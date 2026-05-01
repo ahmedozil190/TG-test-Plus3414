@@ -48,12 +48,15 @@ async def cmd_start(message: Message, bot: Bot = None):
         user = result.scalar_one_or_none()
         
         if not user:
+            print(f"DEBUG: New user detected: {user_id}")
             user = User(id=user_id)
             if referral_id and referral_id != user_id:
+                print(f"DEBUG: Referral ID found: {referral_id}")
                 referrer = (await session.execute(select(User).where(User.id == referral_id))).scalar_one_or_none()
                 if referrer:
+                    print(f"DEBUG: Referrer {referral_id} exists. Awarding bonus...")
                     # Fetch Dynamic Join Bonus
-                    from database.models import AppSetting
+                    from database.models import AppSetting, Transaction, TransactionType
                     bonus_obj = (await session.execute(select(AppSetting).where(AppSetting.key == "referral_join_bonus"))).scalar_one_or_none()
                     bonus_val = float(bonus_obj.value) if bonus_obj and bonus_obj.value else 0.005
                     
@@ -61,7 +64,6 @@ async def cmd_start(message: Message, bot: Bot = None):
                     referrer.balance_store += bonus_val
                     referrer.referral_earnings = (referrer.referral_earnings or 0.0) + bonus_val
                     
-                    from database.models import Transaction, TransactionType
                     txn = Transaction(user_id=referral_id, type=TransactionType.REFERRAL, amount=bonus_val)
                     session.add(txn)
                     
@@ -69,11 +71,17 @@ async def cmd_start(message: Message, bot: Bot = None):
                     if bot:
                         try:
                             await bot.send_message(referral_id, f"🆓 You earned ${bonus_val} From a referral")
-                        except:
-                            pass
+                            print(f"DEBUG: Notification sent to {referral_id}")
+                        except Exception as e:
+                            print(f"DEBUG: Failed to notify referrer: {e}")
+                else:
+                    print(f"DEBUG: Referrer {referral_id} not found in DB.")
             
             session.add(user)
             await session.commit()
+            print(f"DEBUG: User {user_id} saved to DB.")
+        else:
+            print(f"DEBUG: User {user_id} already exists. Skipping referral logic.")
             
     await message.answer(
         "Welcome to the Store! 🛒\nClick the button below to open.",
