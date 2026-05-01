@@ -41,7 +41,9 @@ class User(Base):
     
     # Referral System
     referred_by = Column(BigInteger, ForeignKey('users.id'), nullable=True)
+    refer_count = Column(Integer, default=0) # Total number of people referred
     referral_earnings = Column(Float, default=0.0)
+    referral_bonus_awarded = Column(Boolean, default=False)
 
 class Account(Base):
     __tablename__ = 'accounts'

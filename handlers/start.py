@@ -42,6 +42,33 @@ async def cmd_start(message: Message, bot: Bot = None):
             except ValueError:
                 pass
     
+    async with async_session() as session:
+        stmt = select(User).where(User.id == user_id)
+        result = await session.execute(stmt)
+        user = result.scalar_one_or_none()
+        
+        if user and user.referred_by and not user.referral_bonus_awarded:
+            referrer_id = user.referred_by
+            referrer = (await session.execute(select(User).where(User.id == referrer_id))).scalar_one_or_none()
+            if referrer:
+                from database.models import AppSetting, Transaction, TransactionType
+                bonus_obj = (await session.execute(select(AppSetting).where(AppSetting.key == "referral_join_bonus"))).scalar_one_or_none()
+                bonus_val = float(bonus_obj.value) if bonus_obj and bonus_obj.value else 0.005
+                
+                referrer.balance_store += bonus_val
+                referrer.referral_earnings = (referrer.referral_earnings or 0.0) + bonus_val
+                user.referral_bonus_awarded = True
+                
+                txn = Transaction(user_id=referrer_id, type=TransactionType.REFERRAL, amount=bonus_val)
+                session.add(txn)
+                
+                # Notify referrer
+                try: await bot.send_message(referrer_id, f"🎁 You earned ${bonus_val} From a referral")
+                except: pass
+                
+                await session.commit()
+                logger.info(f"Referral Awarded: User {user_id} joined via {referrer_id}, awarded ${bonus_val}")
+    
     # Referral and user creation is now handled by UserUpdateMiddleware
     await message.answer(
         "Welcome to the Store! 🛒\nClick the button below to open.",

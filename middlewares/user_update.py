@@ -58,32 +58,12 @@ class UserUpdateMiddleware(BaseMiddleware):
                             full_name=full_name, 
                             username=username,
                             is_active_store=(self.bot_type == "store"),
-                            is_active_sourcing=(self.bot_type == "sourcing")
+                            is_active_sourcing=(self.bot_type == "sourcing"),
+                            referred_by=referral_id if (referral_id and referral_id != user_id) else None,
+                            referral_bonus_awarded=False
                         )
-                        
-                        # Award bonus if referral exists
-                        if referral_id and referral_id != user_id:
-                            from database.models import AppSetting, Transaction, TransactionType
-                            referrer = (await session.execute(select(User).where(User.id == referral_id))).scalar_one_or_none()
-                            if referrer:
-                                bonus_obj = (await session.execute(select(AppSetting).where(AppSetting.key == "referral_join_bonus"))).scalar_one_or_none()
-                                bonus_val = float(bonus_obj.value) if bonus_obj and bonus_obj.value else 0.005
-                                
-                                user.referred_by = referral_id
-                                referrer.balance_store += bonus_val
-                                referrer.referral_earnings = (referrer.referral_earnings or 0.0) + bonus_val
-                                
-                                txn = Transaction(user_id=referral_id, type=TransactionType.REFERRAL, amount=bonus_val)
-                                session.add(txn)
-                                
-                                # Notify referrer
-                                bot = data.get("bot")
-                                if bot:
-                                    try: await bot.send_message(referral_id, f"🎁 You earned ${bonus_val} From a referral")
-                                    except: pass
-                        
                         session.add(user)
-                        logger.info(f"Middleware: Auto-created user {user_id} with referral award to {user.referred_by}")
+                        logger.info(f"Middleware: Created new user {user_id} with pending referral_by={user.referred_by}")
                     else:
                         # Update if changed
                         changed = False
