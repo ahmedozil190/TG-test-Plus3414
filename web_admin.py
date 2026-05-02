@@ -3441,12 +3441,10 @@ async def get_admin_sourcing_history(
         offset = (page - 1) * limit
         base_stmt = select(Account)
         
-        is_phone_jump = False
-        if search and (search.startswith("+") or search.startswith(" ")):
-            is_phone_jump = True
-
-        # 1. Status Filter (Bypassed ONLY for + searches)
-        if not is_phone_jump:
+        # 1. Status Filter (Bypassed if searching)
+        is_searching = bool(search and search.strip())
+        
+        if not is_searching:
             if filter == "PENDING":
                 base_stmt = base_stmt.where(Account.status == AccountStatus.PENDING)
             elif filter == "ACCEPTED":
@@ -3457,7 +3455,7 @@ async def get_admin_sourcing_history(
                 base_stmt = base_stmt.where(Account.status == AccountStatus.REJECTED, Account.reject_reason.ilike("%spam%"))
         
         # 2. Search Filter (Phone or ID)
-        if search and search.strip():
+        if is_searching:
             s = f"%{search.strip()}%"
             base_stmt = base_stmt.where(
                 or_(

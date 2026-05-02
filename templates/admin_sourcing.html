@@ -2860,6 +2860,10 @@
         const USERS_PER_PAGE = 5;
         let currentPage = 1;
         let allPrices = [];
+        let currentHistoryFilter = 'PENDING';
+        let historySearchQuery = '';
+        let originalHistoryLabel = 'PENDING';
+        let originalHistoryColor = '#fbbf24';
         let allUserPrices = [];
         let filteredUserPrices = null;
 
@@ -4008,6 +4012,26 @@
 
         async function fetchAdminHistory(page) {
             try {
+                // UI Mode Switch
+                const label = document.getElementById('current-filter-label');
+                const dot = document.getElementById('filter-status-dot');
+                
+                if (historySearchQuery) {
+                    label.innerText = currentLang === 'ar' ? 'نتائج البحث' : 'SEARCH RESULTS';
+                    label.style.color = 'var(--accent)';
+                    dot.style.background = 'var(--accent)';
+                } else {
+                    label.innerText = currentHistoryFilter;
+                    // Restore original colors based on filter
+                    let color = '#fbbf24';
+                    if (currentHistoryFilter === 'ACCEPTED') color = '#10b981';
+                    else if (currentHistoryFilter === 'FROZEN') color = '#3b82f6';
+                    else if (currentHistoryFilter === 'SPAM') color = '#ef4444';
+                    
+                    label.style.color = color;
+                    dot.style.background = color;
+                }
+
                 const query = encodeURIComponent(historySearchQuery);
                 const res = await fetch(`/api/admin/sourcing/history?page=${page}&limit=${ADMIN_HISTORY_LIMIT}&filter=${currentHistoryFilter}&search=${query}`);
                 const data = await res.json();
@@ -4392,28 +4416,6 @@
         function renderHistory(list) {
             const container = document.getElementById('history-list');
             if (!container) return;
-
-            // Simple UI Switch for Phone Search (Triggered by +)
-            if (historySearchQuery && (historySearchQuery.startsWith("+") || historySearchQuery.startsWith(" ")) && list && list.length > 0) {
-                const first = list[0];
-                let statusToSet = 'PENDING';
-                let colorToSet = '#fbbf24';
-
-                if (first.status === 'AVAILABLE' || first.status === 'SOLD') {
-                    statusToSet = 'ACCEPTED'; colorToSet = '#10b981';
-                } else if (first.status === 'REJECTED') {
-                    if (first.reject_reason) {
-                        const r = first.reject_reason.toLowerCase();
-                        if (r.includes('frozen')) { statusToSet = 'FROZEN'; colorToSet = '#3b82f6'; }
-                        else if (r.includes('spam')) { statusToSet = 'SPAM'; colorToSet = '#ef4444'; }
-                    }
-                }
-                
-                document.getElementById('filter-status-dot').style.background = colorToSet;
-                document.getElementById('current-filter-label').style.color = colorToSet;
-                document.getElementById('current-filter-label').innerText = statusToSet;
-                currentHistoryFilter = statusToSet;
-            }
 
             if (!list || !list.length) {
                 container.innerHTML = `
