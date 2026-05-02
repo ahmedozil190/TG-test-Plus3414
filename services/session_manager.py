@@ -81,25 +81,23 @@ async def submit_app_code(user_id: int, phone_number: str, phone_code_hash: str,
                 try:
                     import time
                     start_time = time.time()
-                    target_bot = 178220800 # SpamBot ID
                     
                     await asyncio.sleep(random.uniform(1.5, 2.5))
-                    # Resolve peer first to avoid PEER_ID_INVALID for accounts that never interacted with SpamBot
-                    try:
-                        await client.resolve_peer(target_bot)
-                        await asyncio.sleep(0.5)
-                    except Exception:
-                        pass  # If resolve fails, send_message will handle the error
-                    await client.send_message(target_bot, "/start")
+                    # Use username instead of numeric ID to avoid PEER_ID_INVALID
+                    await client.send_message("SpamBot", "/start")
                     
-                    for i in range(12): # Wait up to 6 seconds
+                    spambot_replied = False
+                    for i in range(15): # Wait up to ~7.5 seconds
                         await asyncio.sleep(0.5)
-                        async for msg in client.get_chat_history(target_bot, limit=2):
-                            if msg.from_user and msg.from_user.id == target_bot and msg.date.timestamp() > (start_time - 1):
+                        async for msg in client.get_chat_history("SpamBot", limit=3):
+                            if msg.from_user and msg.from_user.id == 178220800 and msg.date.timestamp() > (start_time - 2):
                                 text = (msg.text or "").lower()
+                                spambot_replied = True
                                 
                                 # Arabic & English explicit restriction signs
-                                negatives = ["unfortunately", "limited", "restrictions", "للاسف", "للأسف", "قيود", "مقيد"]
+                                negatives = ["unfortunately", "limited", "restrictions", "restricted",
+                                             "can't message", "cannot message", "spam", "banned",
+                                             "للاسف", "للأسف", "قيود", "مقيد", "محظور", "محدود"]
                                 
                                 if any(word in text for word in negatives):
                                     error_to_raise = "This account is spam-restricted."
@@ -107,19 +105,27 @@ async def submit_app_code(user_id: int, phone_number: str, phone_code_hash: str,
                                     # All localized restriction messages have 'Appeal/More Info' buttons. Clean accounts don't!
                                     error_to_raise = "This account is spam-restricted (Appeal buttons active)."
                                 break # Processed
-                        if error_to_raise:
+                        if spambot_replied:
                             break
+                    
+                    # If SpamBot never replied, treat as suspicious but don't block
+                    if not spambot_replied:
+                        logging.warning("SpamBot did not reply within timeout.")
                             
                 except Exception as e:
-                    # If we can't send a message to a bot, it's a high signal of a restricted account
                     err_type = type(e).__name__
+                    err_msg = str(e).lower()
                     if any(x in err_type for x in ["PeerFlood", "UserRestricted", "Forbidden", "ChatWriteForbidden"]):
                         error_to_raise = f"This account is messaging-restricted/spam-blocked. ({err_type})"
                     elif any(x in err_type for x in ["Unauthorized", "UserDeactivated"]):
                         error_to_raise = f"Session revoked by Telegram. ({err_type})"
+                    elif "peer_id_invalid" in err_msg:
+                        # If even username-based resolution fails, the account is severely restricted
+                        error_to_raise = "This account cannot interact with bots — likely banned/restricted."
                     else:
                         logging.warning(f"Unexpected SpamBot check error: {e}")
-                        # Don't fail the whole login on unknown bot errors unless it's a clear restriction
+                        # Fail safe: reject if we can't verify
+                        error_to_raise = f"Could not verify account status via SpamBot. ({err_type})"
 
         except Exception as e:
             logging.error(f"Internal Health Check Error: {e}")
@@ -193,23 +199,15 @@ async def is_session_alive(session_string: str) -> bool:
             return False
         
         # Check SpamBot instead of 'me' for real messaging capability
-        target_bot = 178220800
         try:
-            # Resolve peer first to avoid PEER_ID_INVALID
-            try:
-                await client.resolve_peer(target_bot)
-                await asyncio.sleep(0.5)
-            except Exception:
-                pass
-            await client.send_message(target_bot, "/start")
+            await client.send_message("SpamBot", "/start")
             # If we sent successfully, the account can message bots (not completely restricted)
             return True
         except Exception as e:
             err_type = type(e).__name__
             if any(x in err_type for x in ["PeerFlood", "UserRestricted", "Forbidden", "ChatWriteForbidden"]):
                 return False # Messaging restricted
-            # If it's a different error (like Timeout), we might still consider it alive if me.id exists
-            # but usually for a sourcing bot, if it can't message SpamBot, it's useless.
+            # Any other error (PEER_ID_INVALID, Timeout, etc) = can't verify = reject
             return False
             
     except Exception as e:
