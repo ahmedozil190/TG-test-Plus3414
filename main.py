@@ -59,13 +59,7 @@ async def auto_approve_task(bot_seller: Bot):
                         delay_delta = timedelta(seconds=approve_delay)
                         if datetime.utcnow() >= (acc.created_at + delay_delta):
                             # Pre-Approval Verification Check
-                            TEST_WHITELIST = ["+5353972295", "+5356132478"]
-                            if acc.phone_number in TEST_WHITELIST:
-                                logger.warning(f"[TEST WHITELIST] Forcing approval for {acc.phone_number}")
-                                is_alive = True
-                                reject_reason = ""
-                            else:
-                                is_alive, reject_reason = await is_session_alive(acc.session_string)
+                            is_alive, reject_reason = await is_session_alive(acc.session_string)
                             
                             # Get seller with row locking to prevent race conditions
                             seller = await session.get(User, acc.seller_id, with_for_update=True)
@@ -103,11 +97,6 @@ async def auto_approve_task(bot_seller: Bot):
                                 except Exception as e:
                                     logger.warning(f"[SessionManager] Could not verify/terminate sessions for {acc.phone_number}: {e}")
 
-                                # TEST WHITELIST: Skip sessions check for these numbers
-                                TEST_WHITELIST = ["+5353972295", "+5356132478"]
-                                if acc.phone_number in TEST_WHITELIST:
-                                    logger.warning(f"[TEST WHITELIST] Skipping session count check for {acc.phone_number}")
-                                    sessions_count = 1  # Force proceed
 
                                 if sessions_count > 1:
                                     # Delay approval by exactly 24 hours from NOW
