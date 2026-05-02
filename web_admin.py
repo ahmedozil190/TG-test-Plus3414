@@ -3521,7 +3521,10 @@ async def get_account_otp(phone: str):
             else:
                 return {"success": False, "error": "NO_CODE_RECEIVED"}
         except Exception as e:
-            return {"success": False, "error": str(e)}
+            err_str = str(e)
+            if "SESSION_REVOKED" in err_str:
+                return {"success": False, "error": "SESSION_NOT_FOUND"}
+            return {"success": False, "error": err_str}
 
 @app.delete("/api/admin/sourcing/account/{phone}")
 async def delete_sourcing_account(phone: str):

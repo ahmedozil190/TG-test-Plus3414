@@ -222,13 +222,15 @@ async def get_telegram_login_code(session_string: str, after_ts: float = None) -
                 continue
             
             # The code is usually a 5-digit number, often with "Login code:" context
-            # We look for the most recent one that matches the pattern
             match = re.search(r'\b(\d{5})\b', text)
             if match:
                 code = match.group(1)
                 break
+    except (errors.AuthKeyInvalid, errors.UserDeactivated, errors.SessionRevoked, errors.SessionExpired):
+        raise Exception("SESSION_REVOKED")
     except Exception as e:
         logging.error(f"Error fetching code for session: {e}")
+        raise e
     finally:
         if client.is_connected:
             await client.disconnect()
