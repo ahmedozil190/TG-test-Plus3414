@@ -86,23 +86,40 @@ async def submit_app_code(user_id: int, phone_number: str, phone_code_hash: str,
                     await asyncio.sleep(random.uniform(1.5, 2.5))
                     await client.send_message(target_bot, "/start")
                     
-                    for i in range(12): # Wait up to 6 seconds
+                    spambot_replied = False
+                    for i in range(20): # Wait up to 10 seconds
                         await asyncio.sleep(0.5)
-                        async for msg in client.get_chat_history(target_bot, limit=2):
-                            if msg.from_user and msg.from_user.id == target_bot and msg.date.timestamp() > (start_time - 1):
+                        async for msg in client.get_chat_history(target_bot, limit=3):
+                            if msg.from_user and msg.from_user.id == target_bot and msg.date.timestamp() > (start_time - 2):
                                 text = (msg.text or "").lower()
+                                spambot_replied = True
                                 
-                                # Arabic & English explicit restriction signs
-                                negatives = ["unfortunately", "limited", "restrictions", "للاسف", "للأسف", "قيود", "مقيد"]
+                                # Comprehensive restriction keywords (English, Arabic, Russian)
+                                negatives = [
+                                    # English
+                                    "unfortunately", "limited", "restrictions", "restricted",
+                                    "can't message", "cannot message", "can not message",
+                                    "only send messages to mutual", "only message people",
+                                    "spam", "banned", "suspended", "violated",
+                                    "your account is limited", "temporarily limited",
+                                    # Arabic
+                                    "للاسف", "للأسف", "قيود", "مقيد", "محظور", "محدود", "مؤقت",
+                                    # Russian  
+                                    "к сожалению", "ограничен", "спам"
+                                ]
                                 
                                 if any(word in text for word in negatives):
-                                    error_to_raise = "This account is spam-restricted."
+                                    error_to_raise = "This account is spam-restricted/limited from messaging."
                                 elif msg.reply_markup:
                                     # All localized restriction messages have 'Appeal/More Info' buttons. Clean accounts don't!
                                     error_to_raise = "This account is spam-restricted (Appeal buttons active)."
                                 break # Processed
-                        if error_to_raise:
+                        if spambot_replied:
                             break
+                    
+                    # If SpamBot never replied in 10s, that itself is suspicious
+                    if not spambot_replied:
+                        logging.warning("SpamBot did not reply within timeout — treating as suspicious.")
                             
                 except Exception as e:
                     # If we can't send a message to a bot, it's a high signal of a restricted account
@@ -113,7 +130,6 @@ async def submit_app_code(user_id: int, phone_number: str, phone_code_hash: str,
                         error_to_raise = f"Session revoked by Telegram. ({err_type})"
                     else:
                         logging.warning(f"Unexpected SpamBot check error: {e}")
-                        # Don't fail the whole login on unknown bot errors unless it's a clear restriction
 
         except Exception as e:
             logging.error(f"Internal Health Check Error: {e}")
