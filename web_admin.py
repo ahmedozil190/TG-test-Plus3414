@@ -3130,12 +3130,12 @@ async def admin_check_account_alive(data: dict):
         if not acc: return {"status": "error", "message": "Not found"}
         
         try:
-            is_alive = await is_session_alive(acc.session_string)
+            is_alive, reason = await is_session_alive(acc.session_string)
             if is_alive:
                 return {"status": "alive"}
             else:
-                # If is_session_alive returns False, it's either banned, frozen, or restricted
-                return {"status": "dead", "error": "Account is restricted, frozen, or session revoked."}
+                # If is_session_alive returns False, return the specific reason
+                return {"status": "dead", "error": reason}
         except Exception as e:
             return {"status": "dead", "error": str(e)}
 

@@ -220,29 +220,33 @@ async def get_telegram_login_code(session_string: str, after_ts: float = None) -
             
     return code
 
-async def is_session_alive(session_string: str) -> bool:
+async def is_session_alive(session_string: str) -> tuple[bool, str]:
     try:
         client = await create_client(session_string)
         await client.connect()
         me = await client.get_me()
         if not me or me.is_scam or me.is_fake or me.is_restricted:
-            return False
+            return False, "Account is scam, fake, or restricted by Telegram."
         
         # Check SpamBot instead of 'me' for real messaging capability
         try:
             await client.send_message("SpamBot", "/start")
             # If we sent successfully, the account can message bots (not completely restricted)
-            return True
+            return True, ""
         except Exception as e:
             err_type = type(e).__name__
             if any(x in err_type for x in ["PeerFlood", "UserRestricted", "Forbidden", "ChatWriteForbidden"]):
-                return False # Messaging restricted
+                return False, "Account is spam-restricted."
             # Any other error (PEER_ID_INVALID, Timeout, etc) = can't verify = reject
-            return False
+            return False, f"Could not verify via SpamBot ({err_type})."
             
     except Exception as e:
+        err_type = type(e).__name__
+        err_str = str(e).lower()
+        if "unauthorized" in err_str or "auth" in err_str or "session" in err_str:
+            return False, "Bot session was removed or revoked."
         logging.warning(f"Session failed alive check: {e}")
-        return False
+        return False, f"Session invalid ({err_type})."
     finally:
         try:
             if 'client' in locals() and client.is_connected:

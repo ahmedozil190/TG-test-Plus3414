@@ -51,7 +51,7 @@ async def auto_approve_task(bot_seller: Bot):
                         delay_delta = timedelta(seconds=cp.approve_delay)
                         if datetime.utcnow() >= (acc.created_at + delay_delta):
                             # Pre-Approval Verification Check
-                            is_alive = await is_session_alive(acc.session_string)
+                            is_alive, reject_reason = await is_session_alive(acc.session_string)
                             
                             # Get seller with row locking to prevent race conditions
                             seller = await session.get(User, acc.seller_id, with_for_update=True)
@@ -134,7 +134,7 @@ async def auto_approve_task(bot_seller: Bot):
                                         await bot_seller.send_message(
                                             seller.id,
                                             f"❌ **Rejected:** `{acc.phone_number}`\n"
-                                            f"Account is banned, frozen, or restricted.",
+                                            f"{reject_reason}",
                                             parse_mode="Markdown"
                                         )
                                     except Exception as n_err:
