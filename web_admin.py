@@ -2938,7 +2938,22 @@ async def seller_withdraw(req: WithdrawSubmit):
         # Validation: Use FULL balance for withdrawal
         withdraw_amount = user.balance_sourcing
         
-        min_amount = 4.0 if "TRX" in req.method else 10.0
+        # Get dynamic withdrawal minimums from AppSetting
+        trx_setting = (await session.execute(select(AppSetting).where(AppSetting.key == "min_withdraw_trx"))).scalar()
+        usdt_setting = (await session.execute(select(AppSetting).where(AppSetting.key == "min_withdraw_usdt"))).scalar()
+        
+        try:
+            min_trx = float(trx_setting.value) if trx_setting and trx_setting.value else 4.0
+        except ValueError:
+            min_trx = 4.0
+            
+        try:
+            min_usdt = float(usdt_setting.value) if usdt_setting and usdt_setting.value else 10.0
+        except ValueError:
+            min_usdt = 10.0
+        
+        min_amount = min_trx if "TRX" in req.method else min_usdt
+        
         if withdraw_amount < min_amount:
             raise HTTPException(status_code=400, detail=f"Minimum withdrawal is ${min_amount}")
         
