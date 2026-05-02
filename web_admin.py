@@ -2042,35 +2042,28 @@ async def save_store_settings(req: StoreSettingsSubmit):
 @app.get("/api/admin/system/maintenance")
 async def get_maintenance():
     async with async_session() as session:
+        # Fetch target keys only, no fallbacks to avoid cross-bot interference
         mnt_store = (await session.execute(select(AppSetting).where(AppSetting.key == "maintenance_mode_store"))).scalar_one_or_none()
         mnt_src = (await session.execute(select(AppSetting).where(AppSetting.key == "maintenance_mode_sourcing"))).scalar_one_or_none()
         
-        # Fallback to old key if new ones don't exist
-        if not mnt_store or not mnt_src:
-            old_mnt = (await session.execute(select(AppSetting).where(AppSetting.key == "maintenance_mode"))).scalar_one_or_none()
-            old_val = (old_mnt.value.lower() == "true") if old_mnt else False
-            
-            store_val = (mnt_store.value.lower() == "true") if mnt_store else old_val
-            src_val = (mnt_src.value.lower() == "true") if mnt_src else old_val
-        else:
-            store_val = (mnt_store.value.lower() == "true")
-            src_val = (mnt_src.value.lower() == "true")
-
         return {
-            "store_enabled": store_val,
-            "sourcing_enabled": src_val
+            "store_enabled": (mnt_store.value.lower() == "true") if mnt_store else False,
+            "sourcing_enabled": (mnt_src.value.lower() == "true") if mnt_src else False
         }
 
 @app.post("/api/admin/system/maintenance")
 async def set_maintenance(enabled: bool, target: str = "sourcing"):
     async with async_session() as session:
         key = f"maintenance_mode_{target}"
+        logger.info(f"[Maintenance] Setting {key} to {enabled}")
+        
         setting = (await session.execute(select(AppSetting).where(AppSetting.key == key))).scalar_one_or_none()
         if not setting:
             setting = AppSetting(key=key, value="true" if enabled else "false")
             session.add(setting)
         else:
             setting.value = "true" if enabled else "false"
+        
         await session.commit()
         return {"status": "success"}
 
