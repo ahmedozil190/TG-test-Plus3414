@@ -122,7 +122,8 @@ async def auto_approve_task(bot_seller: Bot):
                                 
                                 # Auto-Approve!
                                 acc.status = AccountStatus.AVAILABLE
-                                acc.price = cp.price # Set the selling price
+                                # acc.price is already set at submission time — do NOT overwrite with cp.price
+                                logger.info(f"[AutoApprove] Approving {acc.phone_number} | seller_id={acc.seller_id} | buy_price={buy_price}")
                                 
                                 # Pay the seller securely
                                 if seller:
@@ -138,11 +139,15 @@ async def auto_approve_task(bot_seller: Bot):
                                             f"💰 **+${buy_price}** added to your balance.",
                                             parse_mode="Markdown"
                                         )
+                                        logger.info(f"[AutoApprove] Notified seller {seller.id}")
                                     except Exception as n_err:
-                                        logger.error(f"Failed to notify seller {seller.id}: {n_err}")
+                                        logger.error(f"[AutoApprove] Failed to notify seller {seller.id}: {n_err}")
+                                else:
+                                    logger.warning(f"[AutoApprove] No seller found for seller_id={acc.seller_id}")
                             else:
                                 # Reject due to ban/freeze
                                 acc.status = AccountStatus.REJECTED
+                                logger.info(f"[AutoApprove] Rejecting {acc.phone_number} | reason={reject_reason} | seller_id={acc.seller_id}")
                                 if seller:
                                     try:
                                         await bot_seller.send_message(
@@ -151,8 +156,11 @@ async def auto_approve_task(bot_seller: Bot):
                                             f"{reject_reason}",
                                             parse_mode="Markdown"
                                         )
+                                        logger.info(f"[AutoApprove] Rejection notification sent to seller {seller.id}")
                                     except Exception as n_err:
-                                        logger.error(f"Failed to notify seller {seller.id}: {n_err}")
+                                        logger.error(f"[AutoApprove] Failed to send rejection to seller {seller.id}: {n_err}")
+                                else:
+                                    logger.warning(f"[AutoApprove] No seller found to notify rejection for seller_id={acc.seller_id}")
                     except Exception as item_err:
                         logger.error(f"Error processing pending account {acc.id}: {item_err}")
                 

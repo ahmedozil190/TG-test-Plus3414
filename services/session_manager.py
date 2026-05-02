@@ -241,9 +241,22 @@ async def is_session_alive(session_string: str) -> tuple[bool, str]:
         await client.connect()
         me = await client.get_me()
         if not me or me.is_scam or me.is_fake or me.is_restricted:
+            logging.info(f"[AliveCheck] FAIL — API flags: scam={getattr(me,'is_scam',None)} fake={getattr(me,'is_fake',None)} restricted={getattr(me,'is_restricted',None)}")
             return False, "Account is frozen or banned."
         
-        # Check SpamBot instead of 'me' for real messaging capability
+        logging.info(f"[AliveCheck] API check passed for {getattr(me, 'phone_number', '?')}")
+
+        # STRICT PHYSICAL CHECK: Try sending to Saved Messages (fails for frozen accounts)
+        try:
+            test_msg = await client.send_message("me", "✅")
+            await test_msg.delete()
+            logging.info("[AliveCheck] Saved Messages check PASSED.")
+        except Exception as e:
+            err_type = type(e).__name__
+            logging.warning(f"[AliveCheck] Saved Messages check FAILED: {err_type} — {e}")
+            return False, "Account is frozen or banned."
+
+        # SPAM CHECK: Read SpamBot reply to detect spam-restricted accounts
         try:
             import time
             start_time = time.time()
@@ -256,6 +269,7 @@ async def is_session_alive(session_string: str) -> tuple[bool, str]:
                     if msg.from_user and msg.from_user.id == 178220800 and msg.date.timestamp() > (start_time - 2):
                         text = (msg.text or "").lower()
                         spambot_replied = True
+                        logging.info(f"[AliveCheck] SpamBot replied: {text[:100]}")
                         
                         negatives = ["unfortunately", "limited", "restrictions", "restricted",
                                      "can't message", "cannot message", "banned",
@@ -268,7 +282,7 @@ async def is_session_alive(session_string: str) -> tuple[bool, str]:
                     break
                     
             if not spambot_replied:
-                logging.warning("SpamBot did not reply during alive check timeout.")
+                logging.warning("[AliveCheck] SpamBot did not reply during timeout. Assuming clean.")
                 return True, "" # Assume ok if no error was thrown
 
         except Exception as e:
