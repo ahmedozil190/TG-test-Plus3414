@@ -3132,17 +3132,16 @@ async def test_notifications(user_id: int):
         test_price = 1.25
         
         messages = [
-            f"⏳ **Pending:** `{test_phone}` Sessions Found. Wait **24h**.",
-            f"🎉 Approved `{test_phone}` Add {test_price}$",
-            f"❌ **Rejected:** `{test_phone}`\nAccount is Frozen",
-            f"❌ **Rejected:** `{test_phone}`\nAccount is Spam",
+            f"⏳ Pending: <code>{test_phone}</code> Sessions Found. Wait 24h.",
+            f"🎉 Approved <code>{test_phone}</code> Add {test_price}$",
+            f"❌ Rejected: <code>{test_phone}</code>\nAccount is Frozen",
+            f"❌ Rejected: <code>{test_phone}</code>\nAccount is Spam",
             f"🎉 Congrats <code>{test_tx}</code> withdrawal {test_amt}$",
             f"❌ Rejected <code>{test_tx}</code> withdrawal {test_amt}$"
         ]
         
         for msg in messages:
-            parse_mode = "HTML" if "<code>" in msg else "Markdown"
-            await bot.send_message(user_id, msg, parse_mode=parse_mode)
+            await bot.send_message(user_id, msg, parse_mode="HTML")
             
         return {"status": "success"}
     except Exception as e:

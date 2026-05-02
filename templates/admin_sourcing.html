@@ -4712,20 +4712,19 @@
             try {
                 const userId = tg?.initDataUnsafe?.user?.id;
                 if (!userId) {
-                    showToast("User ID not found! Are you running inside Telegram?", "error");
+                    alert("User ID not found! Are you running inside Telegram?");
                     return;
                 }
-                showToast("Sending test messages...", "info");
                 const res = await fetch(`/api/admin/test-notifications?user_id=${userId}`);
                 const data = await res.json();
                 if (data.status === "success") {
-                    showToast("Test notifications sent! Check your bot.", "success");
+                    tg.showAlert("Test notifications sent! Check your bot.");
                 } else {
-                    showToast(data.message || "Failed to send notifications", "error");
+                    alert(data.message || "Failed to send notifications");
                 }
             } catch (e) {
                 console.error("Test notifications error:", e);
-                showToast("Connection error", "error");
+                alert("Connection error");
             }
         }
 
