@@ -3105,18 +3105,19 @@ async def get_withdrawal_audit(request_id: int):
 
 @app.post("/api/admin/accounts/check-alive")
 async def admin_check_account_alive(data: dict):
-    from services.session_manager import create_client
+    from services.session_manager import is_session_alive
     acc_id = data.get("account_id")
     async with async_session() as session:
         acc = await session.get(Account, acc_id)
         if not acc: return {"status": "error", "message": "Not found"}
         
         try:
-            client = await create_client(acc.session_string)
-            await client.connect()
-            await client.get_me()
-            await client.disconnect()
-            return {"status": "alive"}
+            is_alive = await is_session_alive(acc.session_string)
+            if is_alive:
+                return {"status": "alive"}
+            else:
+                # If is_session_alive returns False, it's either banned, frozen, or restricted
+                return {"status": "dead", "error": "Account is restricted, frozen, or session revoked."}
         except Exception as e:
             return {"status": "dead", "error": str(e)}
 
