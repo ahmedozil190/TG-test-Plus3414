@@ -3658,7 +3658,7 @@
                 const userId = tg?.initDataUnsafe?.user?.id || 0;
                 const initData = tg?.initData || '';
 
-                const res = await fetch(`/api/admin/sourcing/data?user_id=${userId}&init_data=${encodeURIComponent(initData)}`);
+                const res = await fetch(`/api/admin/sourcing/data?user_id=${userId}&init_data=${encodeURIComponent(initData)}&_t=${Date.now()}`);
                 const data = await res.json();
                 const ws = data.stats;
 
@@ -3671,9 +3671,19 @@
 
                 document.getElementById('stat-history-pending').innerText = ws.pending_count;
                 document.getElementById('stat-history-accepted').innerText = ws.accepted_sourced;
-                document.getElementById('stat-history-rejected').innerText = ws.rejected_sourced;
-                if (document.getElementById('stat-history-frozen')) document.getElementById('stat-history-frozen').innerText = ws.frozen_count || 0;
-                if (document.getElementById('stat-history-spam')) document.getElementById('stat-history-spam').innerText = ws.spam_count || 0;
+                document.getElementById('stat-history-rejected').innerText = ws.rejected_sourced || 0;
+                
+                const frozenEl = document.getElementById('stat-history-frozen');
+                if (frozenEl) {
+                    frozenEl.innerText = ws.frozen_count || 0;
+                    console.log("Updating frozen to:", ws.frozen_count);
+                }
+                
+                const spamEl = document.getElementById('stat-history-spam');
+                if (spamEl) {
+                    spamEl.innerText = ws.spam_count || 0;
+                    console.log("Updating spam to:", ws.spam_count);
+                }
             } catch (e) { }
         }
 
