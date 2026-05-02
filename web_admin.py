@@ -3448,7 +3448,7 @@ async def get_admin_sourcing_history(
             if s_clean.startswith("+") or (s_clean.isdigit() and len(s_clean) >= 10):
                 is_phone_only_search = True
 
-        # 1. Status Filter (Bypassed ONLY if it's a clear phone search starting with +)
+        # 1. Status Filter (Bypassed ONLY if it's a clear phone search)
         if not is_phone_only_search:
             if filter == "PENDING":
                 base_stmt = base_stmt.where(Account.status == AccountStatus.PENDING)

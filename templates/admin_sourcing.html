@@ -766,13 +766,15 @@
         .custom-dropdown {
             position: relative;
         }
+
         .dropdown-item:hover {
-            background: rgba(255,255,255,0.05) !important;
+            background: rgba(255, 255, 255, 0.05) !important;
             color: #fff !important;
         }
+
         .dropdown-trigger:hover {
-            background: rgba(255,255,255,0.1) !important;
-            border-color: rgba(255,255,255,0.2) !important;
+            background: rgba(255, 255, 255, 0.1) !important;
+            border-color: rgba(255, 255, 255, 0.2) !important;
         }
 
         .pg-btn:disabled {
@@ -1726,13 +1728,27 @@
         }
 
         @keyframes toastIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
 
         @keyframes toastOut {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(100%); opacity: 0; }
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
         }
     </style>
 </head>
@@ -2286,8 +2302,8 @@
 
                 <!-- History Search -->
                 <div class="card" style="padding: 18px; margin-bottom: 25px;">
-                    <input class="search-input" type="text" id="history-search" placeholder="Search Phone or Seller ID..."
-                        data-i18n-placeholder="search_history_placeholder">
+                    <input class="search-input" type="text" id="history-search"
+                        placeholder="Search Phone or Seller ID..." data-i18n-placeholder="search_history_placeholder">
                     <button class="btn-find" onclick="searchHistory()">
                         <i class="fas fa-search"></i> <span data-i18n="btn_find">Find</span>
                     </button>
@@ -2297,26 +2313,43 @@
                 </div>
 
                 <div class="card" id="history-section-card" style="padding: 22px;">
-                    <div class="section-header" style="margin-top: 0; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between;">
+                    <div class="section-header"
+                        style="margin-top: 0; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between;">
                         <h2 data-i18n="nav_history" style="margin: 0; font-size: 1rem;">Accounts History</h2>
                         <div class="custom-dropdown" id="history-filter-dropdown">
-                            <button class="dropdown-trigger" onclick="toggleFilterDropdown()" style="display: flex; align-items: center; gap: 8px; background: var(--card-glass); border: 1px solid var(--border); padding: 6px 12px; border-radius: 10px; color: var(--text-primary); cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.2s;">
-                                <span id="filter-status-dot" style="width: 8px; height: 8px; border-radius: 50%; background: #fbbf24;"></span>
+                            <button class="dropdown-trigger" onclick="toggleFilterDropdown()"
+                                style="display: flex; align-items: center; gap: 8px; background: var(--card-glass); border: 1px solid var(--border); padding: 6px 12px; border-radius: 10px; color: var(--text-primary); cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.2s;">
+                                <span id="filter-status-dot"
+                                    style="width: 8px; height: 8px; border-radius: 50%; background: #fbbf24;"></span>
                                 <span id="current-filter-label" style="color: #fbbf24;">PENDING</span>
-                                <i class="fas fa-chevron-down" style="font-size: 0.7rem; opacity: 0.5; margin-left: 4px;"></i>
+                                <i class="fas fa-chevron-down"
+                                    style="font-size: 0.7rem; opacity: 0.5; margin-left: 4px;"></i>
                             </button>
-                            <div class="dropdown-menu" id="filter-menu" style="display: none; position: absolute; top: calc(100% + 8px); right: 0; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 12px; min-width: 150px; z-index: 100; box-shadow: var(--shadow); overflow: hidden; backdrop-filter: blur(10px);">
-                                <div class="dropdown-item" onclick="setHistoryFilter('PENDING', '#fbbf24')" style="padding: 10px 15px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
-                                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #fbbf24;"></span> PENDING
+                            <div class="dropdown-menu" id="filter-menu"
+                                style="display: none; position: absolute; top: calc(100% + 8px); right: 0; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 12px; min-width: 150px; z-index: 100; box-shadow: var(--shadow); overflow: hidden; backdrop-filter: blur(10px);">
+                                <div class="dropdown-item" onclick="setHistoryFilter('PENDING', '#fbbf24')"
+                                    style="padding: 10px 15px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
+                                    <span
+                                        style="width: 8px; height: 8px; border-radius: 50%; background: #fbbf24;"></span>
+                                    PENDING
                                 </div>
-                                <div class="dropdown-item" onclick="setHistoryFilter('ACCEPTED', '#10b981')" style="padding: 10px 15px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
-                                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #10b981;"></span> ACCEPTED
+                                <div class="dropdown-item" onclick="setHistoryFilter('ACCEPTED', '#10b981')"
+                                    style="padding: 10px 15px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
+                                    <span
+                                        style="width: 8px; height: 8px; border-radius: 50%; background: #10b981;"></span>
+                                    ACCEPTED
                                 </div>
-                                <div class="dropdown-item" onclick="setHistoryFilter('FROZEN', '#3b82f6')" style="padding: 10px 15px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
-                                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #3b82f6;"></span> FROZEN
+                                <div class="dropdown-item" onclick="setHistoryFilter('FROZEN', '#3b82f6')"
+                                    style="padding: 10px 15px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
+                                    <span
+                                        style="width: 8px; height: 8px; border-radius: 50%; background: #3b82f6;"></span>
+                                    FROZEN
                                 </div>
-                                <div class="dropdown-item" onclick="setHistoryFilter('SPAM', '#ef4444')" style="padding: 10px 15px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
-                                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #ef4444;"></span> SPAM
+                                <div class="dropdown-item" onclick="setHistoryFilter('SPAM', '#ef4444')"
+                                    style="padding: 10px 15px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
+                                    <span
+                                        style="width: 8px; height: 8px; border-radius: 50%; background: #ef4444;"></span>
+                                    SPAM
                                 </div>
                             </div>
                         </div>
@@ -2340,7 +2373,8 @@
             <section id="section-settings" class="view-section">
                 <div id="settings-main-menu" class="settings-menu active">
                     <!-- Maintenance Mode Toggle -->
-                    <div class="settings-item" style="cursor: default; border-bottom: 1px solid var(--border); margin-bottom: 10px; padding-bottom: 20px;">
+                    <div class="settings-item"
+                        style="cursor: default; border-bottom: 1px solid var(--border); margin-bottom: 10px; padding-bottom: 20px;">
                         <div class="settings-icon-box" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">
                             <i class="fas fa-tools"></i>
                         </div>
@@ -2349,13 +2383,15 @@
                             <span style="font-size: 0.75rem; color: var(--text-s);">Stops bot for users</span>
                         </div>
                         <label class="custom-switch">
-                            <input type="checkbox" id="src-maintenance-toggle" onchange="toggleMaintenanceMode(this.checked, 'sourcing')">
+                            <input type="checkbox" id="src-maintenance-toggle"
+                                onchange="toggleMaintenanceMode(this.checked, 'sourcing')">
                             <span class="switch-slider"></span>
                         </label>
                     </div>
                     <!-- Support & Channels -->
                     <div class="settings-item" onclick="switchNav('settings-support', null)">
-                        <div class="settings-icon-box" style="background: rgba(88, 101, 242, 0.1); color: var(--accent);">
+                        <div class="settings-icon-box"
+                            style="background: rgba(88, 101, 242, 0.1); color: var(--accent);">
                             <i class="fas fa-headset"></i>
                         </div>
                         <span class="settings-text">Support & Channels</span>
@@ -2458,7 +2494,8 @@
 
                 <div class="card" style="padding: 28px; margin-bottom: 20px;">
                     <div class="form-group" style="margin-bottom: 25px;">
-                        <label style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">
+                        <label
+                            style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">
                             Price Channel
                         </label>
                         <input type="text" id="setting-sourcing-log-channel" class="search-input"
@@ -2466,7 +2503,8 @@
                             placeholder="Enter Channel ID">
                     </div>
                     <div class="form-group" style="margin-bottom: 25px;">
-                        <label style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">
+                        <label
+                            style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">
                             Support ID
                         </label>
                         <input type="text" id="setting-support-username" class="search-input"
@@ -2475,7 +2513,8 @@
                     </div>
 
                     <div class="form-group" style="margin-bottom: 25px;">
-                        <label style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">
+                        <label
+                            style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">
                             Channel Link
                         </label>
                         <input type="text" id="setting-updates-channel" class="search-input"
@@ -3935,7 +3974,7 @@
             const menu = document.getElementById('filter-menu');
             const isVisible = menu.style.display === 'block';
             menu.style.display = isVisible ? 'none' : 'block';
-            
+
             // Close on click outside
             if (!isVisible) {
                 setTimeout(() => {
@@ -3952,15 +3991,15 @@
         function setHistoryFilter(f, color) {
             currentHistoryFilter = f;
             currentAdminHistoryPage = 1;
-            
+
             // Update Label and Color
             const label = document.getElementById('current-filter-label');
             const dot = document.getElementById('filter-status-dot');
-            
+
             label.innerText = f;
             label.style.color = color;
             dot.style.background = color;
-            
+
             document.getElementById('filter-menu').style.display = 'none';
 
             fetchAdminHistory(1);
@@ -3970,7 +4009,7 @@
             try {
                 const res = await fetch(`/api/admin/sourcing/history?page=${page}&limit=${ADMIN_HISTORY_LIMIT}&filter=${currentHistoryFilter}&search=${historySearchQuery}`);
                 const data = await res.json();
-                
+
                 if (data.server_now) {
                     window.serverTimeOffset = data.server_now - new Date().getTime();
                 }
@@ -4367,7 +4406,7 @@
                         else if (r.includes('spam')) { statusToSet = 'SPAM'; colorToSet = '#ef4444'; }
                     }
                 }
-                
+
                 // If it's a phone search, visually sync the filter label to the result's category
                 const sClean = historySearchQuery.trim();
                 const isLikelyPhone = sClean.startsWith("+") || (/^\d+$/.test(sClean) && sClean.length >= 10);
@@ -4780,8 +4819,11 @@
     <div id="auditDrawerOverlay" class="audit-drawer-overlay" onclick="closeAuditDrawer()"></div>
     <div id="auditDrawer" class="audit-drawer">
         <div class="audit-drawer-header" style="padding: 15px 25px;">
-            <h3 id="auditHeaderTitle" style="margin: 0; font-size: 0.9rem; font-weight: 800; color: var(--text-p); opacity: 0.9;">Numbers - ...</h3>
-            <button onclick="closeAuditDrawer()" style="background: none; border: none; color: var(--text-secondary); font-size: 1.2rem; cursor: pointer;">
+            <h3 id="auditHeaderTitle"
+                style="margin: 0; font-size: 0.9rem; font-weight: 800; color: var(--text-p); opacity: 0.9;">Numbers -
+                ...</h3>
+            <button onclick="closeAuditDrawer()"
+                style="background: none; border: none; color: var(--text-secondary); font-size: 1.2rem; cursor: pointer;">
                 <i class="fas fa-times"></i>
             </button>
         </div>
@@ -4789,8 +4831,10 @@
             <!-- Cards populated by JS -->
         </div>
 
-        <div style="position: absolute; bottom: 0; left: 0; width: 100%; padding: 15px 25px; background: var(--bg); border-top: 1px solid var(--border); box-shadow: 0 -10px 30px rgba(0,0,0,0.1);">
-            <button class="primary-btn" onclick="checkAllAuditNumbers()" style="width: 100%; height: 48px; background: var(--accent-purple); color: white; border-radius: 12px; font-weight: 800; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.2);">
+        <div
+            style="position: absolute; bottom: 0; left: 0; width: 100%; padding: 15px 25px; background: var(--bg); border-top: 1px solid var(--border); box-shadow: 0 -10px 30px rgba(0,0,0,0.1);">
+            <button class="primary-btn" onclick="checkAllAuditNumbers()"
+                style="width: 100%; height: 48px; background: var(--accent-purple); color: white; border-radius: 12px; font-weight: 800; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.2);">
                 <i class="fas fa-check-double"></i> Check All Numbers
             </button>
         </div>
@@ -4914,10 +4958,10 @@
                 div.style.cssText = 'position:fixed;top:80px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;width:auto;max-width:280px;pointer-events:none;';
                 document.body.appendChild(div);
             }
-            
+
             const toast = document.createElement('div');
             toast.className = `toast toast-${type}`;
-            
+
             let icon = 'fa-info-circle';
             let color = '#3b82f6';
             if (type === 'success') { icon = 'fa-check-circle'; color = '#10b981'; }
@@ -4931,7 +4975,7 @@
             const subText = isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)';
 
             toast.style.cssText = `background:${bg};backdrop-filter:blur(20px);border:1px solid ${border};border-left:3px solid ${color};padding:10px 16px;border-radius:12px;display:flex;align-items:center;gap:12px;box-shadow:0 10px 30px rgba(0,0,0,0.15);animation:toastIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;pointer-events:auto;`;
-            
+
             toast.innerHTML = `
                 <div style="width:28px;height:28px;border-radius:8px;background:rgba(0,0,0,0.03);display:flex;align-items:center;justify-content:center;color:${color};flex-shrink:0;">
                     <i class="fas ${icon}" style="font-size:0.9rem;"></i>
@@ -4941,9 +4985,9 @@
                     <div style="font-size:0.68rem;color:${subText};font-weight:500;">${desc || ''}</div>
                 </div>
             `;
-            
+
             document.getElementById('toast-container').appendChild(toast);
-            
+
             setTimeout(() => {
                 toast.style.animation = 'toastOut 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards';
                 setTimeout(() => toast.remove(), 500);
@@ -4954,16 +4998,16 @@
             try {
                 // Show loading toast (English only as requested)
                 showToast('Requesting OTP', 'Connecting to Telegram services...', 'info');
-                
+
                 const res = await fetch(`/api/admin/sourcing/account/${phone}/code`);
                 const data = await res.json();
-                
+
                 if (data.success) {
                     showOTPModal(phone, data.code);
                 } else {
                     let errMsg = 'Failed to get code';
                     let errTitle = 'Error';
-                    
+
                     if (data.error === 'ACCOUNT_NOT_FOUND') {
                         errMsg = 'Account record not found in database';
                     } else if (data.error === 'SESSION_NOT_FOUND') {
@@ -4973,7 +5017,7 @@
                     } else {
                         errMsg = data.error || 'Connection failure';
                     }
-                    
+
                     showToast(errTitle, errMsg, 'error');
                 }
             } catch (e) {
@@ -4985,7 +5029,7 @@
         function showOTPModal(phone, code) {
             document.getElementById('otp-phone-display').innerText = phone;
             document.getElementById('otp-code-display').innerText = code;
-            
+
             // Set dynamic text
             const title = document.getElementById('otp-modal-title');
             const btn = document.getElementById('otp-modal-close-btn');
@@ -5011,17 +5055,17 @@
                 currentLang === 'ar' ? 'إزالة' : 'Remove',
                 'fas fa-trash', 'rgba(239, 68, 68, 0.1)', '#ef4444', 'danger'
             );
-            
+
             if (!confirmed) return;
 
             try {
                 const res = await fetch(`/api/admin/sourcing/account/${phone}`, { method: 'DELETE' });
                 const data = await res.json();
-                
+
                 if (data.success) {
-                    showToast(currentLang === 'ar' ? 'تم الحذف' : 'Deleted', 
-                              currentLang === 'ar' ? 'تمت إزالة الحساب بنجاح' : 'Account removed successfully', 
-                              'success');
+                    showToast(currentLang === 'ar' ? 'تم الحذف' : 'Deleted',
+                        currentLang === 'ar' ? 'تمت إزالة الحساب بنجاح' : 'Account removed successfully',
+                        'success');
                     fetchAdminHistory(currentAdminHistoryPage);
                 } else {
                     showToast(currentLang === 'ar' ? 'خطأ' : 'Error', data.error || 'Failed to remove', 'error');
@@ -5036,18 +5080,25 @@
 
     <!-- OTP Display Modal -->
     <div id="otp-modal-overlay" class="confirm-overlay" onclick="closeOTPModal()">
-        <div class="confirm-modal" style="max-width: 320px; padding: 30px 20px; background: var(--bg-elevated); border: 1px solid var(--border);" onclick="event.stopPropagation()">
-            <div class="confirm-icon" style="background: rgba(139, 92, 246, 0.1); color: var(--accent-purple); width: 60px; height: 60px; font-size: 1.5rem; margin-bottom: 20px;">
+        <div class="confirm-modal"
+            style="max-width: 320px; padding: 30px 20px; background: var(--bg-elevated); border: 1px solid var(--border);"
+            onclick="event.stopPropagation()">
+            <div class="confirm-icon"
+                style="background: rgba(139, 92, 246, 0.1); color: var(--accent-purple); width: 60px; height: 60px; font-size: 1.5rem; margin-bottom: 20px;">
                 <i class="fas fa-shield-alt"></i>
             </div>
-            <div id="otp-phone-display" style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 5px;">+123456789</div>
-            <div id="otp-modal-title" style="font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin-bottom: 20px;">
+            <div id="otp-phone-display" style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 5px;">
+                +123456789</div>
+            <div id="otp-modal-title"
+                style="font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin-bottom: 20px;">
                 Your Login Code
             </div>
-            <div id="otp-code-display" style="font-size: 3.5rem; font-weight: 900; color: var(--accent); letter-spacing: 5px; font-family: 'Outfit', sans-serif; margin-bottom: 25px; background: var(--card-glass); padding: 15px; border-radius: 16px; border: 1px dashed var(--border);">
+            <div id="otp-code-display"
+                style="font-size: 3.5rem; font-weight: 900; color: var(--accent); letter-spacing: 5px; font-family: 'Outfit', sans-serif; margin-bottom: 25px; background: var(--card-glass); padding: 15px; border-radius: 16px; border: 1px dashed var(--border);">
                 00000
             </div>
-            <button id="otp-modal-close-btn" class="primary-btn" onclick="closeOTPModal()" style="width: 100%; height: 50px; border-radius: 15px; font-weight: 800;">
+            <button id="otp-modal-close-btn" class="primary-btn" onclick="closeOTPModal()"
+                style="width: 100%; height: 50px; border-radius: 15px; font-weight: 800;">
                 Done
             </button>
         </div>
