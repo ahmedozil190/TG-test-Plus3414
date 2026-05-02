@@ -4968,7 +4968,7 @@
                     } else if (data.error === 'SESSION_NOT_FOUND') {
                         errMsg = 'No active session found for this number';
                     } else if (data.error === 'NO_CODE_RECEIVED') {
-                        errMsg = 'No recent code received from Telegram';
+                        errMsg = 'No recent code received';
                     } else {
                         errMsg = data.error || 'Connection failure';
                     }
@@ -4984,6 +4984,18 @@
         function showOTPModal(phone, code) {
             document.getElementById('otp-phone-display').innerText = phone;
             document.getElementById('otp-code-display').innerText = code;
+            
+            // Set dynamic text
+            const title = document.getElementById('otp-modal-title');
+            const btn = document.getElementById('otp-modal-close-btn');
+            if (currentLang === 'ar') {
+                title.innerText = 'كود الدخول الخاص بك';
+                btn.innerText = 'حسناً';
+            } else {
+                title.innerText = 'Your Login Code';
+                btn.innerText = 'Done';
+            }
+
             document.getElementById('otp-modal-overlay').classList.add('active');
         }
 
@@ -5028,14 +5040,14 @@
                 <i class="fas fa-shield-alt"></i>
             </div>
             <div id="otp-phone-display" style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 5px;">+123456789</div>
-            <div style="font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin-bottom: 20px;">
-                ${currentLang === 'ar' ? 'كود الدخول الخاص بك' : 'Your Login Code'}
+            <div id="otp-modal-title" style="font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin-bottom: 20px;">
+                Your Login Code
             </div>
             <div id="otp-code-display" style="font-size: 3.5rem; font-weight: 900; color: var(--accent); letter-spacing: 5px; font-family: 'Outfit', sans-serif; margin-bottom: 25px; background: var(--card-glass); padding: 15px; border-radius: 16px; border: 1px dashed var(--border);">
                 00000
             </div>
-            <button class="primary-btn" onclick="closeOTPModal()" style="width: 100%; height: 50px; border-radius: 15px; font-weight: 800;">
-                ${currentLang === 'ar' ? 'حسناً' : 'Done'}
+            <button id="otp-modal-close-btn" class="primary-btn" onclick="closeOTPModal()" style="width: 100%; height: 50px; border-radius: 15px; font-weight: 800;">
+                Done
             </button>
         </div>
     </div>
