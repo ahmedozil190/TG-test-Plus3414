@@ -44,6 +44,11 @@ class MaintenanceMiddleware(BaseMiddleware):
                 result = await session.execute(stmt)
                 setting = result.scalar_one_or_none()
                 is_maintenance = setting and str(setting.value).lower() == "true"
+                
+                ch_link = None
+                if is_maintenance and not is_admin:
+                    ch_obj = (await session.execute(select(AppSetting).where(AppSetting.key == "UPDATES_CHANNEL"))).scalar_one_or_none()
+                    ch_link = ch_obj.value if ch_obj else None
 
             if is_maintenance and not is_admin:
                 # BLOCK non-admins
@@ -55,10 +60,6 @@ class MaintenanceMiddleware(BaseMiddleware):
                     elif event.callback_query: target = event.callback_query
 
                 if target:
-                    from database.models import AppSetting
-                    ch_obj = (await session.execute(select(AppSetting).where(AppSetting.key == "UPDATES_CHANNEL"))).scalar_one_or_none()
-                    ch_link = ch_obj.value if ch_obj else None
-                    
                     markup = None
                     if ch_link:
                         markup = InlineKeyboardMarkup(inline_keyboard=[
