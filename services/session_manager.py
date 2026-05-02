@@ -132,16 +132,16 @@ async def submit_app_code(user_id: int, phone_number: str, phone_code_hash: str,
                 except Exception as e:
                     err_type = type(e).__name__
                     err_msg = str(e).lower()
-                    if any(x in err_type for x in ["PeerFlood", "UserRestricted", "Forbidden", "ChatWriteForbidden"]):
+                    if "youblockeduser" in err_msg or "youblockeduser" in err_type.lower():
+                        error_to_raise = "Please unblock @SpamBot on this account and try again. / يرجى إلغاء حظر بوت @SpamBot في هذا الحساب والمحاولة مرة أخرى."
+                    elif any(x in err_type for x in ["PeerFlood", "UserRestricted", "Forbidden", "ChatWriteForbidden"]):
                         error_to_raise = f"This account is messaging-restricted/spam-blocked. ({err_type})"
                     elif any(x in err_type for x in ["Unauthorized", "UserDeactivated"]):
                         error_to_raise = f"Session revoked by Telegram. ({err_type})"
                     elif "peer_id_invalid" in err_msg:
-                        # If even username-based resolution fails, the account is severely restricted
                         error_to_raise = "This account cannot interact with bots — likely banned/restricted."
                     else:
                         logging.warning(f"Unexpected SpamBot check error: {e}")
-                        # Fail safe: reject if we can't verify
                         error_to_raise = f"Could not verify account status via SpamBot. ({err_type})"
 
         except Exception as e:

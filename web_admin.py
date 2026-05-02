@@ -90,7 +90,7 @@ logger = logging.getLogger(__name__)
 
 # SECURITY: OTP Cooldown Tracking
 otp_cooldowns = {} # {phone_number: timestamp, user_id: timestamp}
-OTP_COOLDOWN_SECONDS = 30
+OTP_COOLDOWN_SECONDS = 15
 
 def generate_transaction_id():
     chars = string.ascii_uppercase + string.digits
@@ -209,8 +209,6 @@ async def send_purchase_log(user_id: int, country_name: str, price: float, phone
                 r = requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", json=payload, timeout=10)
                 if not r.ok:
                     logger.error(f"Telegram API Error: {r.text} | Payload: {payload}")
-                else:
-                    logger.info(f"Purchase log sent successfully to {channel_id}")
             except Exception as e:
                 logger.error(f"Requests Error in do_send: {e}")
             
@@ -2827,11 +2825,11 @@ async def seller_request_otp(data: SellerOTPRequest):
         
         if now - last_phone_req < OTP_COOLDOWN_SECONDS:
             wait_time = int(OTP_COOLDOWN_SECONDS - (now - last_phone_req))
-            raise HTTPException(status_code=429, detail=f"Please wait {wait_time}s before requesting a code for this number.")
+            raise HTTPException(status_code=429, detail=f"Wait {wait_time}s before requesting a code for this number.")
             
         if now - last_user_req < OTP_COOLDOWN_SECONDS:
             wait_time = int(OTP_COOLDOWN_SECONDS - (now - last_user_req))
-            raise HTTPException(status_code=429, detail=f"Please wait {wait_time}s before requesting another code.")
+            raise HTTPException(status_code=429, detail=f"Wait {wait_time}s before requesting another code.")
 
         # Update cooldowns
         otp_cooldowns[phone_key] = now
