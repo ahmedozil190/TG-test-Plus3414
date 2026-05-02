@@ -119,8 +119,8 @@ async def auto_approve_task(bot_seller: Bot):
                                         try:
                                             await bot_seller.send_message(
                                                 seller.id,
-                                                f"⏳ **Pending:** `{acc.phone_number}` Sessions Found. Wait **24h**.",
-                                                parse_mode="Markdown"
+                                                f"⏳ Pending: <code>{acc.phone_number}</code> Sessions Found. Wait 24h.",
+                                                parse_mode="HTML"
                                             )
                                         except Exception as n_err:
                                             logger.warning(f"Failed to send delay notification to seller: {n_err}")
@@ -143,8 +143,8 @@ async def auto_approve_task(bot_seller: Bot):
                                     try:
                                         await bot_seller.send_message(
                                             seller.id,
-                                            f"🎉 Approved `{acc.phone_number}` Add {buy_price}$",
-                                            parse_mode="Markdown"
+                                            f"🎉 Approved <code>{acc.phone_number}</code> Add {buy_price}$",
+                                            parse_mode="HTML"
                                         )
                                         logger.info(f"[AutoApprove] Notified seller {seller.id}")
                                     except Exception as n_err:
@@ -160,8 +160,8 @@ async def auto_approve_task(bot_seller: Bot):
                                     try:
                                         await bot_seller.send_message(
                                             seller.id,
-                                            f"❌ **Rejected:** `{acc.phone_number}`\n{reject_reason}",
-                                            parse_mode="Markdown"
+                                            f"❌ Rejected: <code>{acc.phone_number}</code> {reject_reason}",
+                                            parse_mode="HTML"
                                         )
                                         logger.info(f"[AutoApprove] Rejection notification sent to seller {seller.id}")
                                     except Exception as n_err:
