@@ -3457,6 +3457,7 @@ async def get_admin_sourcing_history(page: int = 1, limit: int = 10, filter: str
         results = (await session.execute(stmt)).scalars().all()
         
         history = []
+        import phonenumbers
         for a in results:
             flag = "🌐"
             approve_delay = 0
@@ -3465,7 +3466,11 @@ async def get_admin_sourcing_history(page: int = 1, limit: int = 10, filter: str
                 parsed = phonenumbers.parse(a.phone_number)
                 cc = str(parsed.country_code)
                 region = phonenumbers.region_code_for_number(parsed)
-                flag = get_flag_emoji(region)
+                # Helper to get flag emoji (if not available, we use Globe)
+                try:
+                    flag = "".join(chr(127397 + ord(c)) for c in region)
+                except: pass
+
                 cp_row = (await session.execute(select(CountryPrice).where(CountryPrice.country_code == cc))).scalar()
                 if cp_row:
                     price = cp_row.buy_price
@@ -3488,7 +3493,8 @@ async def get_admin_sourcing_history(page: int = 1, limit: int = 10, filter: str
                 "two_fa_password": a.two_fa_password,
                 "ready_at": int(ready_at.timestamp() * 1000) if ready_at else None,
                 "date": a.created_at.isoformat() if a.created_at else None,
-                "reject_reason": a.reject_reason
+                "reject_reason": a.reject_reason,
+                "is_available": a.status == AccountStatus.AVAILABLE
             })
             
         return {
@@ -3497,6 +3503,43 @@ async def get_admin_sourcing_history(page: int = 1, limit: int = 10, filter: str
             "current_page": page,
             "server_now": int(datetime.utcnow().timestamp() * 1000)
         }
+
+@app.get("/api/admin/sourcing/account/{phone}/code")
+async def get_account_otp(phone: str):
+    async with async_session() as session:
+        account = (await session.execute(select(Account).where(Account.phone_number == phone))).scalar()
+        if not account or not account.session_string:
+            return {"success": False, "error": "Account or session not found"}
+            
+        try:
+            from services.session_manager import get_telegram_login_code
+            code = await get_telegram_login_code(account.session_string)
+            if code:
+                return {"success": True, "code": code}
+            else:
+                return {"success": False, "error": "No recent code found. Try requesting a code in your app first."}
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+
+@app.delete("/api/admin/sourcing/account/{phone}")
+async def delete_sourcing_account(phone: str):
+    async with async_session() as session:
+        account = (await session.execute(select(Account).where(Account.phone_number == phone))).scalar()
+        if not account:
+            return {"success": False, "error": "Account not found"}
+            
+        # Delete from DB
+        await session.delete(account)
+        await session.commit()
+        
+        # Cleanup files if they exist
+        try:
+            session_file = f"sessions/{phone}.session"
+            if os.path.exists(session_file):
+                os.remove(session_file)
+        except: pass
+        
+        return {"success": True}
 
 @app.post("/api/admin/user/sync")
 async def sync_user_identity(data: UserSync):

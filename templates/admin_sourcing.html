@@ -1724,6 +1724,16 @@
                 transform: translateY(0) scale(1);
             }
         }
+
+        @keyframes toastIn {
+            from { transform: translate(-50%, -100%); opacity: 0; }
+            to { transform: translate(-50%, 0); opacity: 1; }
+        }
+
+        @keyframes toastOut {
+            from { transform: translate(-50%, 0); opacity: 1; }
+            to { transform: translate(-50%, -100%); opacity: 0; }
+        }
     </style>
 </head>
 
@@ -4384,6 +4394,20 @@
                             </span>
                         </div>
                     </div>
+                    
+                    <!-- Management Actions -->
+                    <div style="display: flex; gap: 10px; margin-top: 15px;">
+                        <button class="primary-btn" 
+                            style="flex: 1; background: rgba(139, 92, 246, 0.1); color: var(--accent-purple); border: 1px solid rgba(139, 92, 246, 0.2); box-shadow: none; padding: 12px; font-size: 0.85rem; font-weight: 700; border-radius: 10px;" 
+                            onclick="getAccountOTP('${item.phone}')">
+                            <i class="fas fa-key" style="margin-right: 5px;"></i> ${currentLang === 'ar' ? 'طلب الكود' : 'Get OTP'}
+                        </button>
+                        <button class="primary-btn" 
+                            style="flex: 1; background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); box-shadow: none; padding: 12px; font-size: 0.85rem; font-weight: 700; border-radius: 10px;" 
+                            onclick="removeAccount('${item.phone}')">
+                            <i class="fas fa-trash" style="margin-right: 5px;"></i> ${currentLang === 'ar' ? 'إزالة' : 'Remove'}
+                        </button>
+                    </div>
                 </div>
                 `;
             }).join('');
@@ -4826,10 +4850,123 @@
             }
         }
 
+        function showToast(title, desc, type = 'error', duration = 4000) {
+            const container = document.getElementById('toast-container');
+            if (!container) {
+                const div = document.createElement('div');
+                div.id = 'toast-container';
+                div.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:10px;width:90%;max-width:350px;pointer-events:none;';
+                document.body.appendChild(div);
+            }
+            
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            
+            let icon = 'fa-info-circle';
+            let color = '#3b82f6';
+            if (type === 'success') { icon = 'fa-check-circle'; color = '#10b981'; }
+            if (type === 'error') { icon = 'fa-exclamation-circle'; color = '#ef4444'; }
+            if (type === 'info') { icon = 'fa-info-circle'; color = '#3b82f6'; }
 
+            toast.style.cssText = `background:rgba(25,25,27,0.9);backdrop-filter:blur(15px);border:1px solid rgba(255,255,255,0.1);border-left:4px solid ${color};padding:15px 20px;border-radius:15px;display:flex;align-items:center;gap:15px;box-shadow:0 15px 35px rgba(0,0,0,0.3);animation:toastIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;pointer-events:auto;margin-bottom:10px;`;
+            
+            toast.innerHTML = `
+                <div style="width:35px;height:35px;border-radius:10px;background:rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:center;color:${color};flex-shrink:0;">
+                    <i class="fas ${icon}" style="font-size:1.1rem;"></i>
+                </div>
+                <div style="flex:1;">
+                    <div style="font-weight:800;font-size:0.9rem;color:#fff;margin-bottom:2px;">${title}</div>
+                    <div style="font-size:0.75rem;color:rgba(255,255,255,0.6);font-weight:500;">${desc || ''}</div>
+                </div>
+            `;
+            
+            document.getElementById('toast-container').appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'toastOut 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+                setTimeout(() => toast.remove(), 500);
+            }, duration);
+        }
 
+        async function getAccountOTP(phone) {
+            try {
+                // Show loading toast
+                showToast(currentLang === 'ar' ? 'جاري الطلب...' : 'Requesting...', 
+                          currentLang === 'ar' ? 'يتم الآن جلب كود الدخول من تيليجرام' : 'Fetching login code from Telegram...', 
+                          'info');
+                
+                const res = await fetch(`/api/admin/sourcing/account/${phone}/code`);
+                const data = await res.json();
+                
+                if (data.success) {
+                    showOTPModal(phone, data.code);
+                } else {
+                    showToast(currentLang === 'ar' ? 'خطأ' : 'Error', data.error || 'Failed to get code', 'error');
+                }
+            } catch (e) {
+                console.error(e);
+                showToast(currentLang === 'ar' ? 'خطأ' : 'Error', 'Failed to communicate with server', 'error');
+            }
+        }
+
+        function showOTPModal(phone, code) {
+            document.getElementById('otp-phone-display').innerText = phone;
+            document.getElementById('otp-code-display').innerText = code;
+            document.getElementById('otp-modal-overlay').classList.add('active');
+        }
+
+        function closeOTPModal() {
+            document.getElementById('otp-modal-overlay').classList.remove('active');
+        }
+
+        async function removeAccount(phone) {
+            const confirmed = await showConfirm(
+                currentLang === 'ar' ? 'إزالة الحساب؟' : 'Remove Account?',
+                currentLang === 'ar' ? `هل أنت متأكد من رغبتك في إزالة الحساب ${phone}؟ سيتم حذفه من قاعدة البيانات والملفات.` : `Are you sure you want to remove account ${phone}? This will delete it from database and storage.`,
+                currentLang === 'ar' ? 'إزالة' : 'Remove',
+                'fas fa-trash', 'rgba(239, 68, 68, 0.1)', '#ef4444', 'danger'
+            );
+            
+            if (!confirmed) return;
+
+            try {
+                const res = await fetch(`/api/admin/sourcing/account/${phone}`, { method: 'DELETE' });
+                const data = await res.json();
+                
+                if (data.success) {
+                    showToast(currentLang === 'ar' ? 'تم الحذف' : 'Deleted', 
+                              currentLang === 'ar' ? 'تمت إزالة الحساب بنجاح' : 'Account removed successfully', 
+                              'success');
+                    fetchAdminHistory(currentAdminHistoryPage);
+                } else {
+                    showToast(currentLang === 'ar' ? 'خطأ' : 'Error', data.error || 'Failed to remove', 'error');
+                }
+            } catch (e) {
+                console.error(e);
+                showToast(currentLang === 'ar' ? 'خطأ' : 'Error', 'Failed to remove account', 'error');
+            }
+        }
 
     </script>
+
+    <!-- OTP Display Modal -->
+    <div id="otp-modal-overlay" class="confirm-overlay" onclick="closeOTPModal()">
+        <div class="confirm-modal" style="max-width: 320px; padding: 30px 20px;" onclick="event.stopPropagation()">
+            <div class="confirm-icon" style="background: rgba(139, 92, 246, 0.1); color: var(--accent-purple); width: 60px; height: 60px; font-size: 1.5rem; margin-bottom: 20px;">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <div id="otp-phone-display" style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 5px;">+123456789</div>
+            <div style="font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin-bottom: 20px;">
+                ${currentLang === 'ar' ? 'كود الدخول الخاص بك' : 'Your Login Code'}
+            </div>
+            <div id="otp-code-display" style="font-size: 3.5rem; font-weight: 900; color: var(--accent); letter-spacing: 5px; font-family: 'Outfit', sans-serif; margin-bottom: 25px; background: rgba(255,255,255,0.03); padding: 15px; border-radius: 16px; border: 1px dashed rgba(255,255,255,0.1);">
+                00000
+            </div>
+            <button class="primary-btn" onclick="closeOTPModal()" style="width: 100%; height: 50px; border-radius: 15px; font-weight: 800;">
+                ${currentLang === 'ar' ? 'حسناً' : 'Done'}
+            </button>
+        </div>
+    </div>
 </body>
 
 </html>
