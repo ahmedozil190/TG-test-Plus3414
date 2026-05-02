@@ -3431,12 +3431,17 @@ async def get_seller_accounts(user_id: int, page: int = 1, limit: int = 10):
         }
 
 @app.get("/api/admin/sourcing/history")
-async def get_admin_sourcing_history(page: int = 1, limit: int = 10, filter: str = "PENDING"):
+async def get_admin_sourcing_history(
+    page: int = 1, 
+    limit: int = 10, 
+    filter: str = "PENDING",
+    search: str = None
+):
     async with async_session() as session:
         offset = (page - 1) * limit
-        
         base_stmt = select(Account)
         
+        # 1. Status Filter
         if filter == "PENDING":
             base_stmt = base_stmt.where(Account.status == AccountStatus.PENDING)
         elif filter == "ACCEPTED":
@@ -3444,10 +3449,18 @@ async def get_admin_sourcing_history(page: int = 1, limit: int = 10, filter: str
         elif filter == "FROZEN":
             base_stmt = base_stmt.where(Account.status == AccountStatus.REJECTED, Account.reject_reason.ilike("%frozen%"))
         elif filter == "SPAM":
-            # Anything rejected that isn't frozen is usually spam or other issues, 
-            # but let's be specific if possible or just assume other rejections are spam for this view
             base_stmt = base_stmt.where(Account.status == AccountStatus.REJECTED, Account.reject_reason.ilike("%spam%"))
         
+        # 2. Search Filter
+        if search and search.strip():
+            s = f"%{search.strip()}%"
+            base_stmt = base_stmt.where(
+                or_(
+                    Account.phone_number.ilike(s),
+                    cast(Account.seller_id, String).ilike(s)
+                )
+            )
+
         total_count = (await session.execute(
             select(func.count()).select_from(base_stmt.subquery())
         )).scalar() or 0

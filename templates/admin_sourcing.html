@@ -2283,6 +2283,19 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- History Search -->
+                <div class="card" style="padding: 18px; margin-bottom: 25px;">
+                    <input class="search-input" type="text" id="history-search" placeholder="Search Phone or Seller ID..."
+                        data-i18n-placeholder="search_history_placeholder">
+                    <button class="btn-find" onclick="searchHistory()">
+                        <i class="fas fa-search"></i> <span data-i18n="btn_find">Find</span>
+                    </button>
+                    <div id="reset-history-search-container" style="display: none; margin-top: 4px;">
+                        <button class="cancel-btn" onclick="resetHistorySearch()" data-i18n="btn_reset">Reset</button>
+                    </div>
+                </div>
+
                 <div class="card" id="history-section-card" style="padding: 22px;">
                     <div class="section-header" style="margin-top: 0; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between;">
                         <h2 data-i18n="nav_history" style="margin: 0; font-size: 1rem;">Accounts History</h2>
@@ -3912,6 +3925,7 @@
 
         let currentAdminHistoryPage = 1;
         let totalAdminHistoryPages = 1;
+        let historySearchQuery = '';
         const ADMIN_HISTORY_LIMIT = 10;
         window.serverTimeOffset = 0;
 
@@ -3954,7 +3968,7 @@
 
         async function fetchAdminHistory(page) {
             try {
-                const res = await fetch(`/api/admin/sourcing/history?page=${page}&limit=${ADMIN_HISTORY_LIMIT}&filter=${currentHistoryFilter}`);
+                const res = await fetch(`/api/admin/sourcing/history?page=${page}&limit=${ADMIN_HISTORY_LIMIT}&filter=${currentHistoryFilter}&search=${historySearchQuery}`);
                 const data = await res.json();
                 
                 if (data.server_now) {
@@ -3967,6 +3981,20 @@
                 renderHistory(data.history);
                 updateAdminHistoryPagination();
             } catch (e) { console.error("Admin History error:", e); }
+        }
+
+        function searchHistory() {
+            const input = document.getElementById('history-search');
+            historySearchQuery = input.value.trim();
+            document.getElementById('reset-history-search-container').style.display = historySearchQuery ? 'block' : 'none';
+            fetchAdminHistory(1);
+        }
+
+        function resetHistorySearch() {
+            historySearchQuery = '';
+            document.getElementById('history-search').value = '';
+            document.getElementById('reset-history-search-container').style.display = 'none';
+            fetchAdminHistory(1);
         }
 
         function updateAdminHistoryPagination() {
