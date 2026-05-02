@@ -39,7 +39,7 @@ class MaintenanceMiddleware(BaseMiddleware):
             
             async with async_session() as session:
                 # Use target key based on bot type
-                key = f"maintenance_mode_{self.bot_type}"
+                key = "STORE_UNDER_MAINTENANCE" if self.bot_type == "store" else "SOURCING_UNDER_MAINTENANCE"
                 stmt = select(AppSetting).where(AppSetting.key == key)
                 result = await session.execute(stmt)
                 setting = result.scalar_one_or_none()

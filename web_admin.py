@@ -684,7 +684,7 @@ async def get_store_data(user_id: int = None):
     try:
         async with async_session() as session:
             # CHECK MAINTENANCE MODE FIRST (Admins bypass)
-            mnt_obj = (await session.execute(select(AppSetting).where(AppSetting.key == "maintenance_mode_store"))).scalar_one_or_none()
+            mnt_obj = (await session.execute(select(AppSetting).where(AppSetting.key == "STORE_UNDER_MAINTENANCE"))).scalar_one_or_none()
             maintenance_mode = (mnt_obj.value.lower() == "true") if mnt_obj else False
             
             from config import ADMIN_IDS
@@ -2042,8 +2042,8 @@ async def save_store_settings(req: StoreSettingsSubmit):
 @app.get("/api/admin/system/maintenance")
 async def get_maintenance():
     async with async_session() as session:
-        mnt_store = (await session.execute(select(AppSetting).where(AppSetting.key == "maintenance_mode_store"))).scalar_one_or_none()
-        mnt_src = (await session.execute(select(AppSetting).where(AppSetting.key == "maintenance_mode_sourcing"))).scalar_one_or_none()
+        mnt_store = (await session.execute(select(AppSetting).where(AppSetting.key == "STORE_UNDER_MAINTENANCE"))).scalar_one_or_none()
+        mnt_src = (await session.execute(select(AppSetting).where(AppSetting.key == "SOURCING_UNDER_MAINTENANCE"))).scalar_one_or_none()
         return {
             "store_enabled": (mnt_store.value.lower() == "true") if mnt_store else False,
             "sourcing_enabled": (mnt_src.value.lower() == "true") if mnt_src else False
@@ -2062,11 +2062,11 @@ async def _update_maintenance(key: str, enabled: bool):
 
 @app.post("/api/admin/store/maintenance")
 async def set_store_maintenance(enabled: bool):
-    return await _update_maintenance("maintenance_mode_store", enabled)
+    return await _update_maintenance("STORE_UNDER_MAINTENANCE", enabled)
 
 @app.post("/api/admin/sourcing/maintenance")
 async def set_sourcing_maintenance(enabled: bool):
-    return await _update_maintenance("maintenance_mode_sourcing", enabled)
+    return await _update_maintenance("SOURCING_UNDER_MAINTENANCE", enabled)
 
 @app.get("/api/admin/store/deposits")
 async def get_store_deposits():
@@ -2606,7 +2606,7 @@ async def get_seller_data(user_id: int):
     try:
         async with async_session() as session:
             # CHECK MAINTENANCE MODE FIRST (Admins bypass)
-            mnt_obj = (await session.execute(select(AppSetting).where(AppSetting.key == "maintenance_mode_sourcing"))).scalar_one_or_none()
+            mnt_obj = (await session.execute(select(AppSetting).where(AppSetting.key == "SOURCING_UNDER_MAINTENANCE"))).scalar_one_or_none()
             maintenance_mode = (mnt_obj.value.lower() == "true") if mnt_obj else False
             
             from config import ADMIN_IDS
