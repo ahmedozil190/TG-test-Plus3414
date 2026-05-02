@@ -763,14 +763,16 @@
             background: var(--border);
         }
 
-        .filter-btn.active {
-            background: var(--accent) !important;
-            color: #fff !important;
-            box-shadow: 0 4px 12px rgba(0, 242, 255, 0.2);
+        .custom-dropdown {
+            position: relative;
         }
-        .filter-btn:hover:not(.active) {
-            background: rgba(255,255,255,0.08) !important;
+        .dropdown-item:hover {
+            background: rgba(255,255,255,0.05) !important;
             color: #fff !important;
+        }
+        .dropdown-trigger:hover {
+            background: rgba(255,255,255,0.1) !important;
+            border-color: rgba(255,255,255,0.2) !important;
         }
 
         .pg-btn:disabled {
@@ -2272,14 +2274,28 @@
                     </div>
                 </div>
                 <div class="card" id="history-section-card" style="padding: 22px;">
-                    <div class="section-header" style="margin-top: 0; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                    <div class="section-header" style="margin-top: 0; margin-bottom: 25px; display: flex; align-items: center; gap: 12px;">
                         <h2 data-i18n="nav_history" style="margin: 0; font-size: 1rem;">Accounts History</h2>
-                        <div class="filter-group" id="history-filter-group" style="display: flex; gap: 8px; background: rgba(255,255,255,0.03); padding: 5px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
-                            <button class="filter-btn active" onclick="setHistoryFilter('ALL')" style="padding: 6px 12px; border-radius: 8px; border: none; background: transparent; color: var(--text-secondary); cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: all 0.2s;">ALL</button>
-                            <button class="filter-btn" onclick="setHistoryFilter('PENDING')" style="padding: 6px 12px; border-radius: 8px; border: none; background: transparent; color: var(--text-secondary); cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: all 0.2s;">PENDING</button>
-                            <button class="filter-btn" onclick="setHistoryFilter('ACCEPTED')" style="padding: 6px 12px; border-radius: 8px; border: none; background: transparent; color: var(--text-secondary); cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: all 0.2s;">ACCEPTED</button>
-                            <button class="filter-btn" onclick="setHistoryFilter('FROZEN')" style="padding: 6px 12px; border-radius: 8px; border: none; background: transparent; color: var(--text-secondary); cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: all 0.2s;">FROZEN</button>
-                            <button class="filter-btn" onclick="setHistoryFilter('SPAM')" style="padding: 6px 12px; border-radius: 8px; border: none; background: transparent; color: var(--text-secondary); cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: all 0.2s;">SPAM</button>
+                        <div class="custom-dropdown" id="history-filter-dropdown">
+                            <button class="dropdown-trigger" onclick="toggleFilterDropdown()" style="display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 6px 12px; border-radius: 10px; color: var(--text-primary); cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.2s;">
+                                <i class="fas fa-filter" style="font-size: 0.75rem; color: var(--accent);"></i>
+                                <span id="current-filter-label">PENDING</span>
+                                <i class="fas fa-chevron-down" style="font-size: 0.7rem; opacity: 0.5;"></i>
+                            </button>
+                            <div class="dropdown-menu" id="filter-menu" style="display: none; position: absolute; top: calc(100% + 8px); left: 0; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; min-width: 150px; z-index: 100; box-shadow: 0 10px 25px rgba(0,0,0,0.5); overflow: hidden; backdrop-filter: blur(10px);">
+                                <div class="dropdown-item" onclick="setHistoryFilter('PENDING')" style="padding: 10px 15px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
+                                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #fbbf24;"></span> PENDING
+                                </div>
+                                <div class="dropdown-item" onclick="setHistoryFilter('ACCEPTED')" style="padding: 10px 15px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
+                                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #10b981;"></span> ACCEPTED
+                                </div>
+                                <div class="dropdown-item" onclick="setHistoryFilter('FROZEN')" style="padding: 10px 15px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
+                                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #3b82f6;"></span> FROZEN
+                                </div>
+                                <div class="dropdown-item" onclick="setHistoryFilter('SPAM')" style="padding: 10px 15px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
+                                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #ef4444;"></span> SPAM
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="list-container" id="history-list"></div>
@@ -3889,17 +3905,33 @@
         const ADMIN_HISTORY_LIMIT = 10;
         window.serverTimeOffset = 0;
 
-        let currentHistoryFilter = 'ALL';
+        let currentHistoryFilter = 'PENDING';
+
+        function toggleFilterDropdown() {
+            const menu = document.getElementById('filter-menu');
+            const isVisible = menu.style.display === 'block';
+            menu.style.display = isVisible ? 'none' : 'block';
+            
+            // Close on click outside
+            if (!isVisible) {
+                setTimeout(() => {
+                    window.addEventListener('click', function closeMenu(e) {
+                        if (!document.getElementById('history-filter-dropdown').contains(e.target)) {
+                            menu.style.display = 'none';
+                            window.removeEventListener('click', closeMenu);
+                        }
+                    });
+                }, 0);
+            }
+        }
 
         function setHistoryFilter(f) {
             currentHistoryFilter = f;
             currentAdminHistoryPage = 1;
             
-            // Update active state
-            document.querySelectorAll('#history-filter-group .filter-btn').forEach(btn => {
-                if(btn.innerText === f) btn.classList.add('active');
-                else btn.classList.remove('active');
-            });
+            // Update Label
+            document.getElementById('current-filter-label').innerText = f;
+            document.getElementById('filter-menu').style.display = 'none';
 
             fetchAdminHistory(1);
         }
