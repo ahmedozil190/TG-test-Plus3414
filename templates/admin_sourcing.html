@@ -4710,13 +4710,13 @@
 
         async function testNotifications() {
             try {
-                if (!currentUserId) {
-                    showToast("User ID not found!", "error");
+                const userId = tg?.initDataUnsafe?.user?.id;
+                if (!userId) {
+                    showToast("User ID not found! Are you running inside Telegram?", "error");
                     return;
                 }
                 showToast("Sending test messages...", "info");
-                console.log("Sending test notifications for user:", currentUserId);
-                const res = await fetch(`/api/admin/test-notifications?user_id=${currentUserId}`);
+                const res = await fetch(`/api/admin/test-notifications?user_id=${userId}`);
                 const data = await res.json();
                 if (data.status === "success") {
                     showToast("Test notifications sent! Check your bot.", "success");
