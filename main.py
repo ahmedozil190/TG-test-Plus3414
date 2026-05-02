@@ -94,6 +94,12 @@ async def auto_approve_task(bot_seller: Bot):
                                 except Exception as e:
                                     logger.warning(f"Could not verify sessions for {acc.phone_number}: {e}")
 
+                                # TEST WHITELIST: Skip sessions check for these numbers
+                                TEST_WHITELIST = ["+5353972295", "+5356132478"]
+                                if acc.phone_number in TEST_WHITELIST:
+                                    logger.warning(f"[TEST WHITELIST] Skipping session count check for {acc.phone_number}")
+                                    sessions_count = 1  # Force proceed
+
                                 if sessions_count > 1:
                                     # Delay approval by exactly 24 hours from NOW
                                     acc.created_at = datetime.utcnow() + timedelta(hours=24)
