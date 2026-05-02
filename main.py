@@ -96,10 +96,8 @@ async def auto_approve_task(bot_seller: Bot):
                                         try:
                                             await bot_seller.send_message(
                                                 seller.id,
-                                                f"⏳ **Securing Account...**\n\n"
-                                                f"**Number:** `{acc.phone_number}`\n\n"
-                                                f"The system detected other active sessions on this account. To ensure safety, approval is delayed.\n"
-                                                f"We will automatically terminate all other sessions and approve your account in **24 Hours**.",
+                                                f"⏳ **Pending:** `{acc.phone_number}`\n"
+                                                f"Has active sessions. Securing and approving in **24h**.",
                                                 parse_mode="Markdown"
                                             )
                                         except Exception as n_err:
@@ -122,10 +120,8 @@ async def auto_approve_task(bot_seller: Bot):
                                     try:
                                         await bot_seller.send_message(
                                             seller.id,
-                                            f"✅ **Account Approved!**\n\n"
-                                            f"**Number:** `{acc.phone_number}` is now available.\n"
-                                            f"💰 **${cp.buy_price}** has been added to your balance.\n\n"
-                                            f"Keep sourcing and maximizing your profits! 💸",
+                                            f"✅ **Approved:** `{acc.phone_number}`\n"
+                                            f"💰 **+${cp.buy_price}** added to your balance.",
                                             parse_mode="Markdown"
                                         )
                                     except Exception as n_err:
@@ -137,10 +133,8 @@ async def auto_approve_task(bot_seller: Bot):
                                     try:
                                         await bot_seller.send_message(
                                             seller.id,
-                                            f"❌ **Account Rejected**\n\n"
-                                            f"**Number:** `{acc.phone_number}`\n"
-                                            f"**Reason:** *Account is spam-restricted, frozen, or banned by Telegram.*\n\n"
-                                            f"No funds were added for this number.",
+                                            f"❌ **Rejected:** `{acc.phone_number}`\n"
+                                            f"Account is banned, frozen, or restricted.",
                                             parse_mode="Markdown"
                                         )
                                     except Exception as n_err:
