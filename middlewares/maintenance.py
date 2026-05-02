@@ -10,6 +10,10 @@ import logging
 logger = logging.getLogger(__name__)
 
 class MaintenanceMiddleware(BaseMiddleware):
+    def __init__(self, bot_type: str = "store"):
+        self.bot_type = bot_type
+        super().__init__()
+
     async def __call__(
         self,
         handler: Callable[[TelegramObject, Dict[str, Any]], Awaitable[Any]],
@@ -34,7 +38,9 @@ class MaintenanceMiddleware(BaseMiddleware):
             is_admin = user_id and user_id in ADMIN_IDS
             
             async with async_session() as session:
-                stmt = select(AppSetting).where(AppSetting.key == "maintenance_mode")
+                # Use target key based on bot type
+                key = f"maintenance_mode_{self.bot_type}"
+                stmt = select(AppSetting).where(AppSetting.key == key)
                 result = await session.execute(stmt)
                 setting = result.scalar_one_or_none()
                 is_maintenance = setting and str(setting.value).lower() == "true"

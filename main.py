@@ -211,7 +211,7 @@ async def main():
     dp_buyer.include_router(main_router)
     
     # Register middleware
-    dp_buyer.update.outer_middleware(MaintenanceMiddleware())
+    dp_buyer.update.outer_middleware(MaintenanceMiddleware(bot_type="store"))
     dp_buyer.update.outer_middleware(UserUpdateMiddleware(bot_type="store"))
     dp_buyer.update.outer_middleware(SubscriptionMiddleware(bot_type="store"))
 
@@ -224,7 +224,7 @@ async def main():
             dp_seller.include_router(seller_router)
             
             # Register middleware
-            dp_seller.update.outer_middleware(MaintenanceMiddleware())
+            dp_seller.update.outer_middleware(MaintenanceMiddleware(bot_type="sourcing"))
             dp_seller.update.outer_middleware(UserUpdateMiddleware(bot_type="sourcing"))
             dp_seller.update.outer_middleware(SubscriptionMiddleware(bot_type="sourcing"))
             
