@@ -3328,6 +3328,7 @@ async def get_admin_sourcing_history(page: int = 1, limit: int = 10):
                 "buy_price": price,
                 "status": a.status.name,
                 "seller_id": a.seller_id,
+                "two_fa_password": a.two_fa_password,
                 "ready_at": int(ready_at.timestamp() * 1000) if ready_at else None,
                 "date": a.created_at.isoformat() if a.created_at else None
             })

@@ -4253,6 +4253,11 @@
                             <span style="${lblS}">${translations[currentLang].lbl_number}</span>
                             <span style="color: #8b5cf6; font-weight: 800; font-size: 1.1rem; text-align: right; direction: ltr;">${item.phone}</span>
                         </div>
+                        
+                        <div style="${rowS}">
+                            <span style="${lblS}">2FA Password</span>
+                            <span style="color: #ec4899; font-weight: 800; font-size: 1.1rem; text-align: right; direction: ltr; font-family: monospace;">${item.two_fa_password || 'N/A'}</span>
+                        </div>
 
                         <div style="${rowS}">
                             <span style="${lblS}">${translations[currentLang].lbl_price}</span>
