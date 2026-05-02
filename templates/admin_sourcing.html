@@ -2325,17 +2325,6 @@
                         <span class="settings-text">Subscriptions</span>
                         <i class="fas fa-chevron-right settings-arrow"></i>
                     </div>
-
-                    <!-- Test Notifications -->
-                    <div class="settings-item" onclick="testNotifications()" style="border-top: 1px solid var(--border); margin-top: 10px; padding-top: 20px;">
-                        <div class="settings-icon-box" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">
-                            <i class="fas fa-paper-plane"></i>
-                        </div>
-                        <div style="flex: 1; display: flex; flex-direction: column;">
-                            <span class="settings-text" style="margin-bottom: 2px;">Test Notifications</span>
-                            <span style="font-size: 0.75rem; color: var(--text-s);">Send all message templates to your bot</span>
-                        </div>
-                    </div>
                 </div>
             </section>
 
@@ -4708,25 +4697,7 @@
         }
 
 
-        async function testNotifications() {
-            try {
-                const userId = tg?.initDataUnsafe?.user?.id;
-                if (!userId) {
-                    alert("User ID not found! Are you running inside Telegram?");
-                    return;
-                }
-                const res = await fetch(`/api/admin/test-notifications?user_id=${userId}`);
-                const data = await res.json();
-                if (data.status === "success") {
-                    tg.showAlert("Test notifications sent! Check your bot.");
-                } else {
-                    alert(data.message || "Failed to send notifications");
-                }
-            } catch (e) {
-                console.error("Test notifications error:", e);
-                alert("Connection error");
-            }
-        }
+
 
     </script>
 </body>
