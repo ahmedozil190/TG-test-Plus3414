@@ -104,9 +104,6 @@ async def submit_app_code(user_id: int, phone_number: str, phone_code_hash: str,
                                 
                                 if any(word in text for word in negatives):
                                     error_to_raise = "This account is spam-restricted."
-                                elif msg.reply_markup:
-                                    # All localized restriction messages have 'Appeal/More Info' buttons. Clean accounts don't!
-                                    error_to_raise = "This account is spam-restricted (Appeal buttons active)."
                                 else:
                                     logging.info("SpamBot check PASSED — account is clean.")
                                 break # Processed
