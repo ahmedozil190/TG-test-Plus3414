@@ -2298,15 +2298,6 @@
                         </label>
                     </div>
 
-                    <!-- Price Channel Settings -->
-                    <div class="settings-item" onclick="switchNav('settings-general', null)">
-                        <div class="settings-icon-box" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">
-                            <i class="fas fa-bullhorn"></i>
-                        </div>
-                        <span class="settings-text">Price Channel</span>
-                        <i class="fas fa-chevron-right settings-arrow"></i>
-                    </div>
-
                     <!-- Withdrawal Settings -->
                     <div class="settings-item" onclick="switchNav('settings-withdrawal', null)">
                         <div class="settings-icon-box" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
@@ -2325,39 +2316,17 @@
                         <i class="fas fa-chevron-right settings-arrow"></i>
                     </div>
 
-                    <!-- Support & Channel -->
+                    <!-- Support & Channels -->
                     <div class="settings-item" onclick="switchNav('settings-support', null)">
                         <div class="settings-icon-box" style="background: rgba(88, 101, 242, 0.1); color: var(--accent);">
                             <i class="fas fa-headset"></i>
                         </div>
-                        <span class="settings-text">Support & Channel</span>
+                        <span class="settings-text">Support & Channels</span>
                         <i class="fas fa-chevron-right settings-arrow"></i>
                     </div>
                 </div>
             </section>
 
-            <!-- ===== Price Channel Page ===== -->
-            <section id="section-settings-general" class="view-section">
-                <button class="settings-back-btn" onclick="switchNav('settings', null)">
-                    <i class="fas fa-arrow-left"></i> Back to Settings
-                </button>
-
-                <div class="card" style="padding: 28px; margin-bottom: 20px;">
-                    <div class="form-group" style="margin-bottom: 25px;">
-                        <label
-                            style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">Sourcing
-                            Log Channel ID</label>
-                        <input type="text" id="setting-sourcing-log-channel" class="search-input"
-                            style="margin-bottom: 0; padding: 16px; font-size: 1rem; height: auto;"
-                            placeholder="e.g. -100123456789">
-                        <span style="font-size: 0.75rem; color: var(--text-s); margin-top: 5px; display: block;">The bot
-                            must be an admin in this channel to post price updates.</span>
-                    </div>
-                    <div style="display: flex; gap: 10px;">
-                        <button class="primary-btn" onclick="saveSettings()" style="flex: 1;">Save Settings</button>
-                    </div>
-                </div>
-            </section>
 
             <section id="section-settings-withdrawal" class="view-section">
                 <button class="settings-back-btn" onclick="switchNav('settings', null)">
@@ -2424,7 +2393,7 @@
                 </div>
             </section>
 
-            <!-- ===== 4. Support & Channel Page ===== -->
+            <!-- ===== 4. Support & Channels Page ===== -->
             <section id="section-settings-support" class="view-section">
                 <button class="settings-back-btn" onclick="switchNav('settings', null)"
                     style="margin-top: 10px; margin-bottom: 20px;">
@@ -2432,6 +2401,14 @@
                 </button>
 
                 <div class="card" style="padding: 28px; margin-bottom: 20px;">
+                    <div class="form-group" style="margin-bottom: 25px;">
+                        <label style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">
+                            Price Channel
+                        </label>
+                        <input type="text" id="setting-sourcing-log-channel" class="search-input"
+                            style="margin-bottom: 0; padding: 16px; font-size: 1rem; height: auto;"
+                            placeholder="e.g. -100123456789">
+                    </div>
                     <div class="form-group" style="margin-bottom: 25px;">
                         <label style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">
                             Support ID
@@ -3413,7 +3390,7 @@
                 'settings-subscriptions': 'Subscriptions',
                 'settings-general': 'Price Channel',
                 'settings-withdrawal': 'Withdrawal Settings',
-                'settings-support': 'Support & Channel'
+                'settings-support': 'Support & Channels'
             };
             const titleEl = document.getElementById('page-title');
             if (titleEl) {
@@ -4379,7 +4356,8 @@
 
         async function saveSupportSettings(btn) {
             const username = document.getElementById('setting-support-username').value;
-            const channel = document.getElementById('setting-updates-channel').value;
+            const updatesChannel = document.getElementById('setting-updates-channel').value;
+            const logChannel = document.getElementById('setting-sourcing-log-channel').value;
             const originalText = btn.innerHTML;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
             btn.disabled = true;
@@ -4390,7 +4368,8 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         SUPPORT_USERNAME: username,
-                        UPDATES_CHANNEL: channel
+                        UPDATES_CHANNEL: updatesChannel,
+                        SOURCING_LOG_CHANNEL_ID: logChannel
                     })
                 });
                 const data = await res.json();

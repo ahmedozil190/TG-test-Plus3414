@@ -2062,7 +2062,7 @@ async def save_support_settings(data: dict):
     try:
         async with async_session() as session:
             for k, v in data.items():
-                if k not in ["SUPPORT_USERNAME", "UPDATES_CHANNEL"]: continue
+                if k not in ["SUPPORT_USERNAME", "UPDATES_CHANNEL", "PURCHASE_LOG_CHANNEL_ID", "SOURCING_LOG_CHANNEL_ID"]: continue
                 obj = (await session.execute(select(AppSetting).where(AppSetting.key == k))).scalar_one_or_none()
                 if obj:
                     obj.value = v.strip()
