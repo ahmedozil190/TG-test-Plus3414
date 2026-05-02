@@ -2920,7 +2920,7 @@ async def seller_request_otp(data: SellerOTPRequest):
                 wait_str = f"{wait_secs // 3600}h {(wait_secs % 3600) // 60}m"
             else:
                 wait_str = f"{wait_secs // 60}m {wait_secs % 60}s"
-            raise HTTPException(status_code=429, detail=f"Telegram rate limit. Try again in {wait_str}.")
+            raise HTTPException(status_code=429, detail=f"FLOOD|{wait_str}")
         if any(x in err_lower for x in ["banned", "frozen", "security"]):
             raise HTTPException(status_code=400, detail=err_msg)
         raise HTTPException(status_code=500, detail=f"Request error: {str(e)}")

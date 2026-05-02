@@ -2160,6 +2160,7 @@
                     currentPhone = data.phone;
                     document.getElementById('displayPhone').textContent = currentPhone;
                     tg.HapticFeedback.notificationOccurred('success');
+                    hideInlineError();
 
                     // Update Stepper
                     document.getElementById('node-1').className = 'step-node completed';
@@ -2168,15 +2169,60 @@
                     document.getElementById('step-phone').style.display = 'none';
                     document.getElementById('step-otp').style.display = 'block';
                 } else {
-                    showToast(data.detail || "Error");
+                    const detail = data.detail || '';
+                    if (res.status === 429 && detail.startsWith('FLOOD|')) {
+                        const waitTime = detail.split('|')[1] || '?';
+                        tg.HapticFeedback.notificationOccurred('error');
+                        showInlineError(
+                            'Rate Limited',
+                            `This number was requested too many times. Please wait ${waitTime} before trying again.`
+                        );
+                    } else if (res.status === 429) {
+                        showInlineError('⏳ Please Wait', detail);
+                    } else {
+                        showToast("Error", detail || "Request failed", "error");
+                    }
                 }
             } catch (err) {
-                showToast("Server Error");
+                showToast("Error", "Server connection failed", "error");
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = 'Get Verification Code <i class="fas fa-angle-right"></i>';
             }
         }
+
+        function showInlineError(title, desc) {
+            let box = document.getElementById('inline-error-box');
+            if (!box) {
+                box = document.createElement('div');
+                box.id = 'inline-error-box';
+                // Insert after the detection area
+                const detArea = document.getElementById('detectionArea');
+                if (detArea && detArea.parentNode) {
+                    detArea.parentNode.insertBefore(box, detArea.nextSibling);
+                }
+            }
+            const isDark = tg?.colorScheme === 'dark';
+            const bg = isDark ? 'rgba(239,68,68,0.12)' : 'rgba(254,226,226,1)';
+            const border = isDark ? 'rgba(239,68,68,0.3)' : 'rgba(239,68,68,0.4)';
+            box.style.cssText = `
+                background: ${bg}; border: 1px solid ${border}; border-left: 4px solid #ef4444;
+                border-radius: 14px; padding: 14px 16px; margin-top: 12px;
+                animation: toastIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            `;
+            box.innerHTML = `
+                <div style="font-weight:800;font-size:0.9rem;color:#ef4444;margin-bottom:4px;">${title}</div>
+                <div style="font-size:0.8rem;color:${isDark ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.65)'};line-height:1.5;">${desc}</div>
+            `;
+            clearTimeout(box._timeout);
+            box._timeout = setTimeout(() => hideInlineError(), 10000);
+        }
+
+        function hideInlineError() {
+            const box = document.getElementById('inline-error-box');
+            if (box) box.remove();
+        }
+
 
         async function submitOTP() {
             const code = document.getElementById('otpInput').value.trim();
