@@ -2274,25 +2274,25 @@
                     </div>
                 </div>
                 <div class="card" id="history-section-card" style="padding: 22px;">
-                    <div class="section-header" style="margin-top: 0; margin-bottom: 25px; display: flex; align-items: center; gap: 12px;">
+                    <div class="section-header" style="margin-top: 0; margin-bottom: 25px; display: flex; align-items: center; gap: 12px; justify-content: flex-end; flex-direction: row-reverse;">
                         <h2 data-i18n="nav_history" style="margin: 0; font-size: 1rem;">Accounts History</h2>
                         <div class="custom-dropdown" id="history-filter-dropdown">
                             <button class="dropdown-trigger" onclick="toggleFilterDropdown()" style="display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 6px 12px; border-radius: 10px; color: var(--text-primary); cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.2s;">
-                                <i class="fas fa-filter" style="font-size: 0.75rem; color: var(--accent);"></i>
-                                <span id="current-filter-label">PENDING</span>
-                                <i class="fas fa-chevron-down" style="font-size: 0.7rem; opacity: 0.5;"></i>
+                                <span id="filter-status-dot" style="width: 8px; height: 8px; border-radius: 50%; background: #fbbf24;"></span>
+                                <span id="current-filter-label" style="color: #fbbf24;">PENDING</span>
+                                <i class="fas fa-chevron-down" style="font-size: 0.7rem; opacity: 0.5; margin-left: 4px;"></i>
                             </button>
-                            <div class="dropdown-menu" id="filter-menu" style="display: none; position: absolute; top: calc(100% + 8px); left: 0; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; min-width: 150px; z-index: 100; box-shadow: 0 10px 25px rgba(0,0,0,0.5); overflow: hidden; backdrop-filter: blur(10px);">
-                                <div class="dropdown-item" onclick="setHistoryFilter('PENDING')" style="padding: 10px 15px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
+                            <div class="dropdown-menu" id="filter-menu" style="display: none; position: absolute; top: calc(100% + 8px); right: 0; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; min-width: 150px; z-index: 100; box-shadow: 0 10px 25px rgba(0,0,0,0.5); overflow: hidden; backdrop-filter: blur(10px);">
+                                <div class="dropdown-item" onclick="setHistoryFilter('PENDING', '#fbbf24')" style="padding: 10px 15px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
                                     <span style="width: 8px; height: 8px; border-radius: 50%; background: #fbbf24;"></span> PENDING
                                 </div>
-                                <div class="dropdown-item" onclick="setHistoryFilter('ACCEPTED')" style="padding: 10px 15px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
+                                <div class="dropdown-item" onclick="setHistoryFilter('ACCEPTED', '#10b981')" style="padding: 10px 15px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
                                     <span style="width: 8px; height: 8px; border-radius: 50%; background: #10b981;"></span> ACCEPTED
                                 </div>
-                                <div class="dropdown-item" onclick="setHistoryFilter('FROZEN')" style="padding: 10px 15px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
+                                <div class="dropdown-item" onclick="setHistoryFilter('FROZEN', '#3b82f6')" style="padding: 10px 15px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
                                     <span style="width: 8px; height: 8px; border-radius: 50%; background: #3b82f6;"></span> FROZEN
                                 </div>
-                                <div class="dropdown-item" onclick="setHistoryFilter('SPAM')" style="padding: 10px 15px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
+                                <div class="dropdown-item" onclick="setHistoryFilter('SPAM', '#ef4444')" style="padding: 10px 15px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
                                     <span style="width: 8px; height: 8px; border-radius: 50%; background: #ef4444;"></span> SPAM
                                 </div>
                             </div>
@@ -3925,12 +3925,18 @@
             }
         }
 
-        function setHistoryFilter(f) {
+        function setHistoryFilter(f, color) {
             currentHistoryFilter = f;
             currentAdminHistoryPage = 1;
             
-            // Update Label
-            document.getElementById('current-filter-label').innerText = f;
+            // Update Label and Color
+            const label = document.getElementById('current-filter-label');
+            const dot = document.getElementById('filter-status-dot');
+            
+            label.innerText = f;
+            label.style.color = color;
+            dot.style.background = color;
+            
             document.getElementById('filter-menu').style.display = 'none';
 
             fetchAdminHistory(1);

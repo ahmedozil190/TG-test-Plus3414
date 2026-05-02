@@ -3431,7 +3431,7 @@ async def get_seller_accounts(user_id: int, page: int = 1, limit: int = 10):
         }
 
 @app.get("/api/admin/sourcing/history")
-async def get_admin_sourcing_history(page: int = 1, limit: int = 10, filter: str = "ALL"):
+async def get_admin_sourcing_history(page: int = 1, limit: int = 10, filter: str = "PENDING"):
     async with async_session() as session:
         offset = (page - 1) * limit
         
