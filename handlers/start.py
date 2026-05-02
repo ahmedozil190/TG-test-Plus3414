@@ -80,7 +80,13 @@ async def cmd_start(message: Message, bot: Bot = None):
                     [InlineKeyboardButton(text="Contact Support 🎧", url=f"https://t.me/{support_username}")]
                 ])
             
-            await message.answer("<b>🚫 Sorry, you have been banned from using the Bot.</b>", parse_mode="HTML", reply_markup=markup)
+            ban_text = (
+                "<b>🚫 Access Denied</b>\n\n"
+                "Your account has been <b>suspended</b> from using our services.\n"
+                "If you believe this is a mistake, please contact our support team.\n\n"
+                f"<b>Your ID:</b> <code>{user_id}</code>"
+            )
+            await message.answer(ban_text, parse_mode="HTML", reply_markup=markup)
             return
     
     # Referral and user creation is now handled by UserUpdateMiddleware
