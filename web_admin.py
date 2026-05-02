@@ -1629,8 +1629,8 @@ async def get_sourcing_data(user_id: int, init_data: str):
             available_count = (await session.execute(select(func.count(Account.id)).where(Account.status == AccountStatus.AVAILABLE))).scalar() or 0
             sold_count = (await session.execute(select(func.count(Account.id)).where(Account.status == AccountStatus.SOLD))).scalar() or 0
             rejected_sourced = (await session.execute(select(func.count(Account.id)).where(Account.status == AccountStatus.REJECTED))).scalar() or 0
-            frozen_count = (await session.execute(select(func.count(Account.id)).where(Account.status == AccountStatus.REJECTED, Account.reject_reason.ilike("%frozen%")))).scalar() or 0
-            spam_count = (await session.execute(select(func.count(Account.id)).where(Account.status == AccountStatus.REJECTED, Account.reject_reason.ilike("%spam%")))).scalar() or 0
+            frozen_count = (await session.execute(select(func.count(Account.id)).where(Account.status == AccountStatus.REJECTED, or_(Account.reject_reason.ilike("%frozen%"), Account.reject_reason.ilike("%banned%"), Account.reject_reason.ilike("%revoked%"))))).scalar() or 0
+            spam_count = (await session.execute(select(func.count(Account.id)).where(Account.status == AccountStatus.REJECTED, or_(Account.reject_reason.ilike("%spam%"), Account.reject_reason.ilike("%restricted%"))))).scalar() or 0
             
             # Withdrawal stats
             withdraw_pending = (await session.execute(select(func.count(WithdrawalRequest.id)).where(WithdrawalRequest.status == WithdrawalStatus.PENDING))).scalar() or 0
