@@ -68,6 +68,10 @@ async def cmd_start(message: Message, bot: Bot = None):
                 
                 await session.commit()
                 logger.info(f"Referral Awarded: User {user_id} joined via {referrer_id}, awarded ${bonus_val}")
+        
+        if user and user.is_banned_store:
+            await message.answer("🚫 Sorry, you have been banned from using the Bot.")
+            return
     
     # Referral and user creation is now handled by UserUpdateMiddleware
     await message.answer(
