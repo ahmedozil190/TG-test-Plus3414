@@ -1768,9 +1768,17 @@ async def get_sourcing_data(user_id: int, init_data: str):
             min_withdraw_trx = settings_dict.get("min_withdraw_trx", "4.0")
             min_withdraw_usdt = settings_dict.get("min_withdraw_usdt", "10.0")
 
+            # Support & Channel settings
+            support_username_obj = (await session.execute(select(AppSetting).where(AppSetting.key == "SUPPORT_USERNAME"))).scalar_one_or_none()
+            updates_channel_obj = (await session.execute(select(AppSetting).where(AppSetting.key == "UPDATES_CHANNEL"))).scalar_one_or_none()
+            support_username = support_username_obj.value if support_username_obj else ""
+            updates_channel = updates_channel_obj.value if updates_channel_obj else ""
+
             return {
                 "bot_name": bot_name,
                 "sourcing_log_channel_id": sourcing_log_channel_id,
+                "support_username": support_username,
+                "updates_channel": updates_channel,
                 "min_withdraw_trx": min_withdraw_trx,
                 "min_withdraw_usdt": min_withdraw_usdt,
                 "stats": {
@@ -1822,6 +1830,12 @@ async def get_admin_store_data(user_id: int, init_data: str):
                 log_ch_stmt = select(AppSetting).where(AppSetting.key == "purchase_log_channel_id")
                 log_ch_obj = (await session.execute(log_ch_stmt)).scalar_one_or_none()
                 purchase_log_channel_id = log_ch_obj.value if log_ch_obj else ""
+
+                # Support & Channel settings
+                support_username_obj = (await session.execute(select(AppSetting).where(AppSetting.key == "SUPPORT_USERNAME"))).scalar_one_or_none()
+                updates_channel_obj = (await session.execute(select(AppSetting).where(AppSetting.key == "UPDATES_CHANNEL"))).scalar_one_or_none()
+                support_username = support_username_obj.value if support_username_obj else ""
+                updates_channel = updates_channel_obj.value if updates_channel_obj else ""
                 
                 if not bn_obj:
                     from config import BOT_TOKEN
@@ -1935,6 +1949,8 @@ async def get_admin_store_data(user_id: int, init_data: str):
         return {
             "bot_name": bot_name,
             "purchase_log_channel_id": purchase_log_channel_id,
+            "support_username": support_username,
+            "updates_channel": updates_channel,
             "stats": {
                 "user_count": user_count,
                 "banned_users": banned_users,
