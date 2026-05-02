@@ -254,7 +254,7 @@ async def is_session_alive(session_string: str) -> tuple[bool, str]:
         except Exception as e:
             err_type = type(e).__name__
             logging.warning(f"[AliveCheck] Saved Messages check FAILED: {err_type} — {e}")
-            return False, "Account is Frozen"
+            return False, "Account is Frozen."
 
         # SPAM CHECK: Read SpamBot reply to detect spam-restricted accounts
         try:
@@ -275,7 +275,7 @@ async def is_session_alive(session_string: str) -> tuple[bool, str]:
                                      "can't message", "cannot message", "banned",
                                      "للاسف", "للأسف", "قيود", "مقيد", "محظور", "محدود"]
                         if any(word in text for word in negatives):
-                            return False, "Account is Spam"
+                            return False, "Account is Spam."
                         else:
                             return True, "" # SpamBot confirmed it is clean
                 if spambot_replied:
