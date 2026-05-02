@@ -1184,55 +1184,78 @@
         </div>
 
         <!-- Premium Link Card (Theme Integrated) -->
-        <div style="background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 32px; padding: 45px 30px; text-align: center; position: relative; overflow: hidden; margin-top: 10px; box-shadow: var(--shadow);">
+        <div
+            style="background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 32px; padding: 45px 30px; text-align: center; position: relative; overflow: hidden; margin-top: 10px; box-shadow: var(--shadow);">
             <!-- Decorative Elements -->
-            
-            <div style="width: 75px; height: 75px; background: rgba(88, 101, 242, 0.1); color: var(--accent); border-radius: 24px; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 25px; border: 1px solid var(--border);">
+
+            <div
+                style="width: 75px; height: 75px; background: rgba(88, 101, 242, 0.1); color: var(--accent); border-radius: 24px; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 25px; border: 1px solid var(--border);">
                 <i class="fas fa-rocket"></i>
             </div>
 
-            <h3 style="font-weight: 900; font-size: 1.7rem; margin-bottom: 12px; color: var(--text-p); letter-spacing: -0.5px;">Referral Program</h3>
-            <p style="color: var(--text-s); font-size: 0.95rem; font-weight: 500; margin-bottom: 35px; max-width: 260px; margin-left: auto; margin-right: auto; line-height: 1.5;">
+            <h3
+                style="font-weight: 900; font-size: 1.7rem; margin-bottom: 12px; color: var(--text-p); letter-spacing: -0.5px;">
+                Referral Program</h3>
+            <p
+                style="color: var(--text-s); font-size: 0.95rem; font-weight: 500; margin-bottom: 35px; max-width: 260px; margin-left: auto; margin-right: auto; line-height: 1.5;">
                 Share your link and earn massive rewards from every user!
             </p>
-            
+
             <div style="display: flex; justify-content: center; gap: 25px; margin-bottom: 40px;">
                 <div style="text-align: center;">
-                    <div id="ref-join-bonus-val" style="font-size: 1.2rem; font-weight: 900; color: var(--success); margin-bottom: 2px;">$0.005</div>
-                    <div style="font-size: 0.65rem; font-weight: 800; color: var(--text-s); text-transform: uppercase; letter-spacing: 1px;">Upon Joining</div>
+                    <div id="ref-join-bonus-val"
+                        style="font-size: 1.2rem; font-weight: 900; color: var(--success); margin-bottom: 2px;">$0.005
+                    </div>
+                    <div
+                        style="font-size: 0.65rem; font-weight: 800; color: var(--text-s); text-transform: uppercase; letter-spacing: 1px;">
+                        Upon Joining</div>
                 </div>
                 <div style="width: 1px; height: 40px; background: var(--border); align-self: center;"></div>
                 <div style="text-align: center;">
-                    <div id="ref-commission-val" style="font-size: 1.2rem; font-weight: 900; color: var(--accent); margin-bottom: 2px;">1%</div>
-                    <div style="font-size: 0.65rem; font-weight: 800; color: var(--text-s); text-transform: uppercase; letter-spacing: 1px;">On Deposits</div>
+                    <div id="ref-commission-val"
+                        style="font-size: 1.2rem; font-weight: 900; color: var(--accent); margin-bottom: 2px;">1%</div>
+                    <div
+                        style="font-size: 0.65rem; font-weight: 800; color: var(--text-s); text-transform: uppercase; letter-spacing: 1px;">
+                        On Deposits</div>
                 </div>
             </div>
 
             <!-- Modern Referral Link Box -->
-            <div onclick="copyReferralLink()" class="referral-box" style="background: transparent; border: 1px solid var(--border); border-radius: 24px; padding: 25px; cursor: pointer; transition: all 0.3s var(--ease); position: relative; z-index: 2; margin-top: 10px;">
-                <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px; opacity: 0.8;">
+            <div onclick="copyReferralLink()" class="referral-box"
+                style="background: transparent; border: 1px solid var(--border); border-radius: 24px; padding: 25px; cursor: pointer; transition: all 0.3s var(--ease); position: relative; z-index: 2; margin-top: 10px;">
+                <div
+                    style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px; opacity: 0.8;">
                     <i class="fas fa-link" style="color: var(--accent); font-size: 0.9rem;"></i>
-                    <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-s); text-transform: uppercase; letter-spacing: 1.5px;">Your Unique Link</span>
+                    <span
+                        style="font-size: 0.7rem; font-weight: 800; color: var(--text-s); text-transform: uppercase; letter-spacing: 1.5px;">Your
+                        Unique Link</span>
                 </div>
-                
-                <div id="ref-link-val" style="font-size: 0.95rem; font-weight: 700; color: var(--accent); word-break: break-all; margin-bottom: 20px; font-family: 'JetBrains Mono', monospace; line-height: 1.6; background: transparent; padding: 15px; border-radius: 16px; border: 1px solid var(--border);">Loading...</div>
-                
-                <div class="copy-action-label" style="display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--text-s); font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">
+
+                <div id="ref-link-val"
+                    style="font-size: 0.95rem; font-weight: 700; color: var(--accent); word-break: break-all; margin-bottom: 20px; font-family: 'JetBrains Mono', monospace; line-height: 1.6; background: transparent; padding: 15px; border-radius: 16px; border: 1px solid var(--border);">
+                    Loading...</div>
+
+                <div class="copy-action-label"
+                    style="display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--text-s); font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">
                     <i class="fas fa-copy" style="font-size: 1rem; color: var(--accent); opacity: 0.7;"></i>
                     <span>Tap to Copy</span>
                 </div>
-                
+
                 <!-- Hover effect glow -->
-                <div class="box-glow" style="position: absolute; inset: 0; background: radial-gradient(circle at center, var(--accent-glow) 0%, transparent 70%); opacity: 0; transition: opacity 0.3s ease; pointer-events: none; border-radius: 24px;"></div>
+                <div class="box-glow"
+                    style="position: absolute; inset: 0; background: radial-gradient(circle at center, var(--accent-glow) 0%, transparent 70%); opacity: 0; transition: opacity 0.3s ease; pointer-events: none; border-radius: 24px;">
+                </div>
             </div>
 
             <style>
                 .referral-box:active {
                     transform: scale(0.97);
                 }
+
                 .referral-box:hover .box-glow {
                     opacity: 0.1;
                 }
+
                 .referral-box:hover {
                     border-color: var(--accent) !important;
                     box-shadow: 0 10px 30px rgba(88, 101, 242, 0.1) !important;
@@ -1500,7 +1523,7 @@
                 const data = await resData.json();
 
                 // ─── Status Overlays (Maintenance & Ban) ───
-                const showStatusPage = (icon, title, desc, btnText = '', btnLink = '', isDanger = true) => {
+                const showStatusPage = (icon, title, desc, btnText, btnLink, isDanger = true) => {
                     const accentColor = isDanger ? 'var(--error)' : 'var(--accent)';
                     const accentBg = isDanger ? 'rgba(239, 68, 68, 0.1)' : 'rgba(88, 101, 242, 0.1)';
                     const accentBorder = isDanger ? 'rgba(239, 68, 68, 0.2)' : 'rgba(88, 101, 242, 0.2)';
@@ -1517,12 +1540,11 @@
                                 ${desc}
                             </p>
                             <div style="display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 280px;">
-                                ${btnText ? `
                                 <button onclick="${btnLink}" style="padding: 16px; background: ${btnBg}; color: white; border: none; border-radius: 18px; font-weight: 800; font-size: 1.1rem; cursor: pointer; box-shadow: 0 8px 25px ${btnShadow}; display: flex; align-items: center; justify-content: center; gap: 10px;">
                                     ${btnText}
-                                </button>` : ''}
+                                </button>
                                 <button onclick="window.Telegram.WebApp.close()" style="padding: 16px; background: transparent; color: var(--text-s); border: 1px solid var(--border); border-radius: 18px; font-weight: 700; font-size: 1rem; cursor: pointer;">
-                                    ${currentLang === 'ar' ? 'إغلاق' : 'Close'}
+                                    Close App
                                 </button>
                             </div>
                         </div>
@@ -1533,10 +1555,10 @@
                 if (data.maintenance_store === true || data.maintenance_store === "true") {
                     showStatusPage(
                         'fa-tools',
-                        currentLang === 'ar' ? 'البوت في صيانة' : 'Under Maintenance',
-                        currentLang === 'ar' ? 'نحن نقوم ببعض أعمال الصيانة لتحسين الخدمة. يرجى المحاولة لاحقاً.' : 'We are performing some scheduled maintenance to improve our service. Please check back later.',
-                        '',
-                        ''
+                        'Under Maintenance',
+                        'We are performing some scheduled maintenance to improve our service. Please check back later.',
+                        '<i class="fab fa-telegram"></i> Updates Channel',
+                        "window.Telegram.WebApp.openTelegramLink('https://t.me/NumbersStoreBot')"
                     );
                     return;
                 }
@@ -1545,9 +1567,9 @@
                 if (data.is_banned === true) {
                     showStatusPage(
                         'fa-user-slash',
-                        currentLang === 'ar' ? 'تم تقييد الحساب' : 'Account Restricted',
-                        currentLang === 'ar' ? 'تم تعليق وصولك بسبب انتهاك الشروط. تواصل مع الدعم للمزيد.' : 'Your access has been suspended due to a violation of our terms. Contact support for more info.',
-                        currentLang === 'ar' ? '<i class="fab fa-telegram-plane"></i> تواصل مع الدعم' : '<i class="fab fa-telegram-plane"></i> Contact Support',
+                        'Account Restricted',
+                        'Your access has been suspended due to a violation of our terms. Contact support for more info.',
+                        '<i class="fab fa-telegram-plane"></i> Contact Support',
                         "window.Telegram.WebApp.openTelegramLink('https://t.me/NumbersStoreBot')"
                     );
                     return;

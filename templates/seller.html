@@ -1294,8 +1294,10 @@
                 <p class="w-desc">Account <span id="successPhone" style="font-weight:700"></span> has been submitted for
                     review.</p>
                 <div style="display:flex; gap:10px; margin-top:20px">
-                    <button class="btn-secondary" style="flex:1; opacity:0.9" onclick="resetSubmission()">Try Another</button>
-                    <button class="btn-secondary" style="flex:1; opacity:0.9" onclick="changeView('dashboard')">Home</button>
+                    <button class="btn-secondary" style="flex:1; opacity:0.9" onclick="resetSubmission()">Try
+                        Another</button>
+                    <button class="btn-secondary" style="flex:1; opacity:0.9"
+                        onclick="changeView('dashboard')">Home</button>
                 </div>
             </div>
 
@@ -1306,8 +1308,10 @@
                 <h2 class="w-title">Account Rejected</h2>
                 <p class="w-desc" id="rejectionDesc">This account is restricted or frozen and cannot be accepted.</p>
                 <div style="display:flex; gap:10px; margin-top:20px">
-                    <button class="btn-secondary" style="flex:1; opacity:0.9" onclick="resetSubmission()">Try Another</button>
-                    <button class="btn-secondary" style="flex:1; opacity:0.9" onclick="changeView('dashboard')">Home</button>
+                    <button class="btn-secondary" style="flex:1; opacity:0.9" onclick="resetSubmission()">Try
+                        Another</button>
+                    <button class="btn-secondary" style="flex:1; opacity:0.9"
+                        onclick="changeView('dashboard')">Home</button>
                 </div>
             </div>
 
@@ -1350,12 +1354,14 @@
                     amount. Requests are processed within 24-48h.</p>
 
                 <div class="method-selectors">
-                    <div class="method-card active" onclick="setWithdrawMethod('TRX - TRC20', minWithdrawTrx)" id="method-TRX">
+                    <div class="method-card active" onclick="setWithdrawMethod('TRX - TRC20', minWithdrawTrx)"
+                        id="method-TRX">
                         <div class="m-icon"><i class="fas fa-coins"></i></div>
                         <div class="m-name">TRX (TRC20)</div>
                         <div class="m-min">Min $<span id="min-trx-val">4.00</span></div>
                     </div>
-                    <div class="method-card" onclick="setWithdrawMethod('USDT - BEP20', minWithdrawUsdt)" id="method-USDT">
+                    <div class="method-card" onclick="setWithdrawMethod('USDT - BEP20', minWithdrawUsdt)"
+                        id="method-USDT">
                         <div class="m-icon"><i class="fab fa-ethereum"></i></div>
                         <div class="m-name">USDT (BEP20)</div>
                         <div class="m-min">Min $<span id="min-usdt-val">10.00</span></div>
@@ -1364,7 +1370,8 @@
 
                 <div class="input-group">
                     <label>Withdraw Amount (USD)</label>
-                    <input type="number" id="withdrawAmount" class="w-input" placeholder="0.00" readonly oninput="validateWithdraw()">
+                    <input type="number" id="withdrawAmount" class="w-input" placeholder="0.00" readonly
+                        oninput="validateWithdraw()">
                     <div id="minWarning" style="font-size:0.7rem; color:var(--error); margin-top:5px; display:none">
                         Minimum amount not reached.</div>
                 </div>
@@ -1759,7 +1766,7 @@
                 const data = await res.json();
 
                 // ─── Status Overlays (Maintenance & Ban) ───
-                const showStatusPage = (icon, title, desc, btnText = '', btnLink = '', isDanger = true) => {
+                const showStatusPage = (icon, title, desc, btnText, btnLink, isDanger = true) => {
                     const accentColor = isDanger ? 'var(--error)' : 'var(--accent)';
                     const accentBg = isDanger ? 'rgba(239, 68, 68, 0.1)' : 'rgba(88, 101, 242, 0.1)';
                     const accentBorder = isDanger ? 'rgba(239, 68, 68, 0.2)' : 'rgba(88, 101, 242, 0.2)';
@@ -1776,12 +1783,11 @@
                                 ${desc}
                             </p>
                             <div style="display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 280px;">
-                                ${btnText ? `
                                 <button onclick="${btnLink}" style="padding: 16px; background: ${btnBg}; color: white; border: none; border-radius: 18px; font-weight: 800; font-size: 1.1rem; cursor: pointer; box-shadow: 0 8px 25px ${btnShadow}; display: flex; align-items: center; justify-content: center; gap: 10px;">
                                     ${btnText}
-                                </button>` : ''}
+                                </button>
                                 <button onclick="window.Telegram.WebApp.close()" style="padding: 16px; background: transparent; color: var(--text-s); border: 1px solid var(--border); border-radius: 18px; font-weight: 700; font-size: 1rem; cursor: pointer;">
-                                    ${currentLang === 'ar' ? 'إغلاق' : 'Close'}
+                                    Close App
                                 </button>
                             </div>
                         </div>
@@ -1792,10 +1798,10 @@
                 if (data.maintenance_sourcing === true || data.maintenance_sourcing === "true") {
                     showStatusPage(
                         'fa-tools',
-                        currentLang === 'ar' ? 'البوت في صيانة' : 'Under Maintenance',
-                        currentLang === 'ar' ? 'نحن نقوم ببعض أعمال الصيانة لتحسين الخدمة. يرجى المحاولة لاحقاً.' : 'We are performing some scheduled maintenance to improve our service. Please check back later.',
-                        '',
-                        ''
+                        'Under Maintenance',
+                        'We are performing some scheduled maintenance to improve our service. Please check back later.',
+                        '<i class="fab fa-telegram"></i> Updates Channel',
+                        "window.Telegram.WebApp.openTelegramLink('https://t.me/NumbersStoreBot')"
                     );
                     return;
                 }
@@ -1804,9 +1810,9 @@
                 if (data.is_banned === true) {
                     showStatusPage(
                         'fa-user-slash',
-                        currentLang === 'ar' ? 'تم تقييد الحساب' : 'Account Restricted',
-                        currentLang === 'ar' ? 'تم تعليق وصولك بسبب انتهاك الشروط. تواصل مع الدعم للمزيد.' : 'Your access has been suspended due to a violation of our terms. Contact support for more info.',
-                        currentLang === 'ar' ? '<i class="fab fa-telegram-plane"></i> تواصل مع الدعم' : '<i class="fab fa-telegram-plane"></i> Contact Support',
+                        'Account Restricted',
+                        'Your access has been suspended due to a violation of our terms. Contact support for more info.',
+                        '<i class="fab fa-telegram-plane"></i> Contact Support',
                         "window.Telegram.WebApp.openTelegramLink('https://t.me/NumbersStoreBot')"
                     );
                     return;
@@ -1814,7 +1820,7 @@
 
                 userBalance = data.user.balance;
                 document.getElementById('currBal').innerHTML = `${formatMoney(userBalance)} <span>USD</span>`;
-                
+
                 if (data.settings) {
                     minWithdrawTrx = data.settings.min_withdraw_trx || 4.0;
                     minWithdrawUsdt = data.settings.min_withdraw_usdt || 10.0;
@@ -2207,7 +2213,7 @@
                         document.getElementById('step-rejected').style.display = 'block';
 
                         // Stepper failure look
-                        document.getElementById('node-2').className = 'step-node completed'; 
+                        document.getElementById('node-2').className = 'step-node completed';
                         document.getElementById('node-3').className = 'step-node rejected';
                         document.getElementById('node-3').innerHTML = '<i class="fas fa-times"></i>';
                     } else {
@@ -2260,7 +2266,7 @@
             try {
                 const res = await fetch(`/api/seller/accounts?user_id=${userId}&page=${currentSourcingPage}&limit=${SOURCING_LIMIT}`);
                 const data = await res.json();
-                
+
                 if (data.server_now) {
                     window.serverTimeOffset = data.server_now - new Date().getTime();
                 }
