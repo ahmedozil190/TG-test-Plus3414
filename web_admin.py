@@ -547,6 +547,15 @@ async def run_migrations():
             except Exception as e:
                 logger.warning(f"Failed to sync account prices: {e}")
 
+            # Add two_fa_password column to accounts table if it doesn't exist
+            try:
+                await conn.execute(sqlalchemy.text("ALTER TABLE accounts ADD COLUMN two_fa_password VARCHAR;"))
+                logger.info("Added two_fa_password column to accounts table.")
+            except Exception as e:
+                # It's expected to fail if the column already exists
+                if "duplicate column name" not in str(e).lower():
+                    pass # Ignore silently to prevent log spam if it exists
+                    
         logger.info("DB migration check complete.")
     except Exception as e:
         logger.warning(f"Migration warning: {e}")
