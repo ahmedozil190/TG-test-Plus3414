@@ -4007,7 +4007,8 @@
 
         async function fetchAdminHistory(page) {
             try {
-                const res = await fetch(`/api/admin/sourcing/history?page=${page}&limit=${ADMIN_HISTORY_LIMIT}&filter=${currentHistoryFilter}&search=${historySearchQuery}`);
+                const query = encodeURIComponent(historySearchQuery);
+                const res = await fetch(`/api/admin/sourcing/history?page=${page}&limit=${ADMIN_HISTORY_LIMIT}&filter=${currentHistoryFilter}&search=${query}`);
                 const data = await res.json();
 
                 if (data.server_now) {
