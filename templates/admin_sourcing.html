@@ -2300,12 +2300,12 @@
                     <div class="section-header" style="margin-top: 0; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between;">
                         <h2 data-i18n="nav_history" style="margin: 0; font-size: 1rem;">Accounts History</h2>
                         <div class="custom-dropdown" id="history-filter-dropdown">
-                            <button class="dropdown-trigger" onclick="toggleFilterDropdown()" style="display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 6px 12px; border-radius: 10px; color: var(--text-primary); cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.2s;">
+                            <button class="dropdown-trigger" onclick="toggleFilterDropdown()" style="display: flex; align-items: center; gap: 8px; background: var(--card-glass); border: 1px solid var(--border); padding: 6px 12px; border-radius: 10px; color: var(--text-primary); cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.2s;">
                                 <span id="filter-status-dot" style="width: 8px; height: 8px; border-radius: 50%; background: #fbbf24;"></span>
                                 <span id="current-filter-label" style="color: #fbbf24;">PENDING</span>
                                 <i class="fas fa-chevron-down" style="font-size: 0.7rem; opacity: 0.5; margin-left: 4px;"></i>
                             </button>
-                            <div class="dropdown-menu" id="filter-menu" style="display: none; position: absolute; top: calc(100% + 8px); right: 0; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; min-width: 150px; z-index: 100; box-shadow: 0 10px 25px rgba(0,0,0,0.5); overflow: hidden; backdrop-filter: blur(10px);">
+                            <div class="dropdown-menu" id="filter-menu" style="display: none; position: absolute; top: calc(100% + 8px); right: 0; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 12px; min-width: 150px; z-index: 100; box-shadow: var(--shadow); overflow: hidden; backdrop-filter: blur(10px);">
                                 <div class="dropdown-item" onclick="setHistoryFilter('PENDING', '#fbbf24')" style="padding: 10px 15px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
                                     <span style="width: 8px; height: 8px; border-radius: 50%; background: #fbbf24;"></span> PENDING
                                 </div>
@@ -4351,6 +4351,33 @@
         function renderHistory(list) {
             const container = document.getElementById('history-list');
             if (!container) return;
+
+            // Smart UI Switch for Phone Search
+            if (historySearchQuery && list && list.length > 0) {
+                const first = list[0];
+                let statusToSet = 'PENDING';
+                let colorToSet = '#fbbf24';
+
+                if (first.status === 'AVAILABLE' || first.status === 'SOLD') {
+                    statusToSet = 'ACCEPTED'; colorToSet = '#10b981';
+                } else if (first.status === 'REJECTED') {
+                    if (first.reject_reason) {
+                        const r = first.reject_reason.toLowerCase();
+                        if (r.includes('frozen')) { statusToSet = 'FROZEN'; colorToSet = '#3b82f6'; }
+                        else if (r.includes('spam')) { statusToSet = 'SPAM'; colorToSet = '#ef4444'; }
+                    }
+                }
+                
+                // If it's a phone search, visually sync the filter label to the result's category
+                const sClean = historySearchQuery.trim();
+                if (sClean.startsWith("+") || sClean.isdigit) {
+                    document.getElementById('filter-status-dot').style.background = colorToSet;
+                    document.getElementById('current-filter-label').style.color = colorToSet;
+                    document.getElementById('current-filter-label').innerText = statusToSet;
+                    currentHistoryFilter = statusToSet;
+                }
+            }
+
             if (!list || !list.length) {
                 container.innerHTML = `
                 <div style="text-align: center; padding: 40px 20px; background: var(--card-glass); border-radius: 16px; border: 1px dashed var(--border); margin-top: 0;">
@@ -4896,15 +4923,21 @@
             if (type === 'error') { icon = 'fa-exclamation-circle'; color = '#ef4444'; }
             if (type === 'info') { icon = 'fa-info-circle'; color = '#3b82f6'; }
 
-            toast.style.cssText = `background:rgba(25,25,27,0.95);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.08);border-left:3px solid ${color};padding:10px 16px;border-radius:12px;display:flex;align-items:center;gap:12px;box-shadow:0 10px 30px rgba(0,0,0,0.3);animation:toastIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;pointer-events:auto;`;
+            const isDark = document.body.classList.contains('dark-mode');
+            const bg = isDark ? 'rgba(25,25,27,0.95)' : 'rgba(255,255,255,0.95)';
+            const border = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
+            const text = isDark ? '#fff' : '#000';
+            const subText = isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)';
+
+            toast.style.cssText = `background:${bg};backdrop-filter:blur(20px);border:1px solid ${border};border-left:3px solid ${color};padding:10px 16px;border-radius:12px;display:flex;align-items:center;gap:12px;box-shadow:0 10px 30px rgba(0,0,0,0.15);animation:toastIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;pointer-events:auto;`;
             
             toast.innerHTML = `
-                <div style="width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:center;color:${color};flex-shrink:0;">
+                <div style="width:28px;height:28px;border-radius:8px;background:rgba(0,0,0,0.03);display:flex;align-items:center;justify-content:center;color:${color};flex-shrink:0;">
                     <i class="fas ${icon}" style="font-size:0.9rem;"></i>
                 </div>
                 <div style="flex:1;">
-                    <div style="font-weight:700;font-size:0.8rem;color:#fff;margin-bottom:1px;">${title}</div>
-                    <div style="font-size:0.68rem;color:rgba(255,255,255,0.5);font-weight:500;">${desc || ''}</div>
+                    <div style="font-weight:700;font-size:0.8rem;color:${text};margin-bottom:1px;">${title}</div>
+                    <div style="font-size:0.68rem;color:${subText};font-weight:500;">${desc || ''}</div>
                 </div>
             `;
             
@@ -4990,7 +5023,7 @@
 
     <!-- OTP Display Modal -->
     <div id="otp-modal-overlay" class="confirm-overlay" onclick="closeOTPModal()">
-        <div class="confirm-modal" style="max-width: 320px; padding: 30px 20px;" onclick="event.stopPropagation()">
+        <div class="confirm-modal" style="max-width: 320px; padding: 30px 20px; background: var(--bg-elevated); border: 1px solid var(--border);" onclick="event.stopPropagation()">
             <div class="confirm-icon" style="background: rgba(139, 92, 246, 0.1); color: var(--accent-purple); width: 60px; height: 60px; font-size: 1.5rem; margin-bottom: 20px;">
                 <i class="fas fa-shield-alt"></i>
             </div>
@@ -4998,7 +5031,7 @@
             <div style="font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin-bottom: 20px;">
                 ${currentLang === 'ar' ? 'كود الدخول الخاص بك' : 'Your Login Code'}
             </div>
-            <div id="otp-code-display" style="font-size: 3.5rem; font-weight: 900; color: var(--accent); letter-spacing: 5px; font-family: 'Outfit', sans-serif; margin-bottom: 25px; background: rgba(255,255,255,0.03); padding: 15px; border-radius: 16px; border: 1px dashed rgba(255,255,255,0.1);">
+            <div id="otp-code-display" style="font-size: 3.5rem; font-weight: 900; color: var(--accent); letter-spacing: 5px; font-family: 'Outfit', sans-serif; margin-bottom: 25px; background: var(--card-glass); padding: 15px; border-radius: 16px; border: 1px dashed var(--border);">
                 00000
             </div>
             <button class="primary-btn" onclick="closeOTPModal()" style="width: 100%; height: 50px; border-radius: 15px; font-weight: 800;">

@@ -3441,25 +3441,31 @@ async def get_admin_sourcing_history(
         offset = (page - 1) * limit
         base_stmt = select(Account)
         
-        # 1. Status Filter
-        if filter == "PENDING":
-            base_stmt = base_stmt.where(Account.status == AccountStatus.PENDING)
-        elif filter == "ACCEPTED":
-            base_stmt = base_stmt.where(Account.status.in_([AccountStatus.AVAILABLE, AccountStatus.SOLD]))
-        elif filter == "FROZEN":
-            base_stmt = base_stmt.where(Account.status == AccountStatus.REJECTED, Account.reject_reason.ilike("%frozen%"))
-        elif filter == "SPAM":
-            base_stmt = base_stmt.where(Account.status == AccountStatus.REJECTED, Account.reject_reason.ilike("%spam%"))
+        is_phone_search = False
+        if search and search.strip():
+            # Basic check: if it starts with + or is digits, assume phone search
+            s_clean = search.strip()
+            if s_clean.startswith("+") or s_clean.isdigit():
+                is_phone_search = True
+
+        # 1. Status Filter (Only if NOT a phone search)
+        if not is_phone_search:
+            if filter == "PENDING":
+                base_stmt = base_stmt.where(Account.status == AccountStatus.PENDING)
+            elif filter == "ACCEPTED":
+                base_stmt = base_stmt.where(Account.status.in_([AccountStatus.AVAILABLE, AccountStatus.SOLD]))
+            elif filter == "FROZEN":
+                base_stmt = base_stmt.where(Account.status == AccountStatus.REJECTED, Account.reject_reason.ilike("%frozen%"))
+            elif filter == "SPAM":
+                base_stmt = base_stmt.where(Account.status == AccountStatus.REJECTED, Account.reject_reason.ilike("%spam%"))
         
         # 2. Search Filter
         if search and search.strip():
             s = f"%{search.strip()}%"
-            base_stmt = base_stmt.where(
-                or_(
-                    Account.phone_number.ilike(s),
-                    cast(Account.seller_id, String).ilike(s)
-                )
-            )
+            if is_phone_search:
+                base_stmt = base_stmt.where(Account.phone_number.ilike(s))
+            else:
+                base_stmt = base_stmt.where(cast(Account.seller_id, String).ilike(s))
 
         total_count = (await session.execute(
             select(func.count()).select_from(base_stmt.subquery())
