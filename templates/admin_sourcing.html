@@ -3588,9 +3588,13 @@
                 const hpEl = document.getElementById('stat-history-pending');
                 const haEl = document.getElementById('stat-history-accepted');
                 const hrEl = document.getElementById('stat-history-rejected');
+                const hfEl = document.getElementById('stat-history-frozen');
+                const hsEl = document.getElementById('stat-history-spam');
                 if (hpEl) hpEl.innerText = data.stats.pending_count;
                 if (haEl) haEl.innerText = data.stats.accepted_sourced;
                 if (hrEl) hrEl.innerText = data.stats.rejected_sourced;
+                if (hfEl) hfEl.innerText = data.stats.frozen_count || 0;
+                if (hsEl) hsEl.innerText = data.stats.spam_count || 0;
 
                 // Customers Section (Home)
                 const huTotal = document.getElementById('home-total-users');
@@ -3658,7 +3662,7 @@
                 const userId = tg?.initDataUnsafe?.user?.id || 0;
                 const initData = tg?.initData || '';
 
-                const res = await fetch(`/api/admin/sourcing/data?user_id=${userId}&init_data=${encodeURIComponent(initData)}&_t=${Date.now()}`);
+                const res = await fetch(`/api/admin/sourcing/data?user_id=${userId}&init_data=${encodeURIComponent(initData)}`);
                 const data = await res.json();
                 const ws = data.stats;
 
@@ -3671,19 +3675,9 @@
 
                 document.getElementById('stat-history-pending').innerText = ws.pending_count;
                 document.getElementById('stat-history-accepted').innerText = ws.accepted_sourced;
-                document.getElementById('stat-history-rejected').innerText = ws.rejected_sourced || 0;
-                
-                const frozenEl = document.getElementById('stat-history-frozen');
-                if (frozenEl) {
-                    frozenEl.innerText = ws.frozen_count || 0;
-                    console.log("Updating frozen to:", ws.frozen_count);
-                }
-                
-                const spamEl = document.getElementById('stat-history-spam');
-                if (spamEl) {
-                    spamEl.innerText = ws.spam_count || 0;
-                    console.log("Updating spam to:", ws.spam_count);
-                }
+                document.getElementById('stat-history-rejected').innerText = ws.rejected_sourced;
+                if (document.getElementById('stat-history-frozen')) document.getElementById('stat-history-frozen').innerText = ws.frozen_count || 0;
+                if (document.getElementById('stat-history-spam')) document.getElementById('stat-history-spam').innerText = ws.spam_count || 0;
             } catch (e) { }
         }
 
