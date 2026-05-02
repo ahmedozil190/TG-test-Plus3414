@@ -1500,7 +1500,7 @@
                 const data = await resData.json();
 
                 // ─── Status Overlays (Maintenance & Ban) ───
-                const showStatusPage = (icon, title, desc, btnText, btnLink, isDanger = true) => {
+                const showStatusPage = (icon, title, desc, btnText = '', btnLink = '', isDanger = true) => {
                     const accentColor = isDanger ? 'var(--error)' : 'var(--accent)';
                     const accentBg = isDanger ? 'rgba(239, 68, 68, 0.1)' : 'rgba(88, 101, 242, 0.1)';
                     const accentBorder = isDanger ? 'rgba(239, 68, 68, 0.2)' : 'rgba(88, 101, 242, 0.2)';
@@ -1517,11 +1517,12 @@
                                 ${desc}
                             </p>
                             <div style="display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 280px;">
+                                ${btnText ? `
                                 <button onclick="${btnLink}" style="padding: 16px; background: ${btnBg}; color: white; border: none; border-radius: 18px; font-weight: 800; font-size: 1.1rem; cursor: pointer; box-shadow: 0 8px 25px ${btnShadow}; display: flex; align-items: center; justify-content: center; gap: 10px;">
                                     ${btnText}
-                                </button>
+                                </button>` : ''}
                                 <button onclick="window.Telegram.WebApp.close()" style="padding: 16px; background: transparent; color: var(--text-s); border: 1px solid var(--border); border-radius: 18px; font-weight: 700; font-size: 1rem; cursor: pointer;">
-                                    Close App
+                                    ${currentLang === 'ar' ? 'إغلاق' : 'Close'}
                                 </button>
                             </div>
                         </div>
@@ -1532,10 +1533,10 @@
                 if (data.maintenance_store === true || data.maintenance_store === "true") {
                     showStatusPage(
                         'fa-tools',
-                        'Under Maintenance',
-                        'We are performing some scheduled maintenance to improve our service. Please check back later.',
-                        '<i class="fab fa-telegram"></i> Updates Channel',
-                        "window.Telegram.WebApp.openTelegramLink('https://t.me/NumbersStoreBot')"
+                        currentLang === 'ar' ? 'البوت في صيانة' : 'Under Maintenance',
+                        currentLang === 'ar' ? 'نحن نقوم ببعض أعمال الصيانة لتحسين الخدمة. يرجى المحاولة لاحقاً.' : 'We are performing some scheduled maintenance to improve our service. Please check back later.',
+                        '',
+                        ''
                     );
                     return;
                 }
@@ -1544,9 +1545,9 @@
                 if (data.is_banned === true) {
                     showStatusPage(
                         'fa-user-slash',
-                        'Account Restricted',
-                        'Your access has been suspended due to a violation of our terms. Contact support for more info.',
-                        '<i class="fab fa-telegram-plane"></i> Contact Support',
+                        currentLang === 'ar' ? 'تم تقييد الحساب' : 'Account Restricted',
+                        currentLang === 'ar' ? 'تم تعليق وصولك بسبب انتهاك الشروط. تواصل مع الدعم للمزيد.' : 'Your access has been suspended due to a violation of our terms. Contact support for more info.',
+                        currentLang === 'ar' ? '<i class="fab fa-telegram-plane"></i> تواصل مع الدعم' : '<i class="fab fa-telegram-plane"></i> Contact Support',
                         "window.Telegram.WebApp.openTelegramLink('https://t.me/NumbersStoreBot')"
                     );
                     return;
