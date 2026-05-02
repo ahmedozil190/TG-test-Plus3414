@@ -3119,6 +3119,35 @@ async def admin_withdrawal_action(data: WithdrawAction):
                 
         return {"ok": True, "status": "success", "message": f"Withdrawal {data.action}ed successfully"}
 
+@app.get("/api/admin/test-notifications")
+async def test_notifications(user_id: int):
+    try:
+        bot = getattr(app.state, 'bot_seller', None)
+        if not bot:
+            return {"status": "error", "message": "Bot instance not found"}
+        
+        test_phone = "+1234567890"
+        test_tx = "TX-9999-TEST"
+        test_amt = 50.00
+        test_price = 1.25
+        
+        messages = [
+            f"⏳ **Pending:** `{test_phone}` Sessions Found. Wait **24h**.",
+            f"🎉 Approved `{test_phone}` Add {test_price}$",
+            f"❌ **Rejected:** `{test_phone}`\nAccount is Frozen",
+            f"🎉 Congrats <code>{test_tx}</code> withdrawal {test_amt}$",
+            f"❌ Rejected <code>{test_tx}</code> withdrawal {test_amt}$"
+        ]
+        
+        for msg in messages:
+            parse_mode = "HTML" if "<code>" in msg else "Markdown"
+            await bot.send_message(user_id, msg, parse_mode=parse_mode)
+            
+        return {"status": "success"}
+    except Exception as e:
+        logger.error(f"Test notifications error: {e}")
+        return {"status": "error", "message": str(e)}
+
 @app.get("/api/admin/withdrawal/{request_id}/audit")
 async def get_withdrawal_audit(request_id: int):
     async with async_session() as session:
