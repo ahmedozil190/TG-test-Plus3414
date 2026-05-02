@@ -1788,8 +1788,8 @@ async def get_sourcing_data(user_id: int, init_data: str):
                     "sold_count": sold_count,
                     "accepted_sourced": accepted_sourced,
                     "rejected_sourced": rejected_sourced,
-                    "frozen_count": frozen_count,
-                    "spam_count": spam_count,
+                    "frozen_count": frozen_count, # force
+                    "spam_count": spam_count, # force
                     "total_balance": round(total_sourcing_balance, 2),
                     "user_count": user_count,
                     "withdraw_pending": withdraw_pending,
