@@ -2299,6 +2299,26 @@
                             <i class="fas fa-ban"></i>
                         </div>
                     </div>
+                    <div class="info-card">
+                        <div class="info-card-l">
+                            <span class="info-card-lbl">FROZEN ACCOUNTS</span>
+                            <div class="info-card-val"><span id="stat-history-frozen">0</span> <span
+                                    data-i18n="unit_accs">ACCOUNTS</span></div>
+                        </div>
+                        <div class="info-card-icon" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">
+                            <i class="fas fa-snowflake"></i>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-l">
+                            <span class="info-card-lbl">SPAM ACCOUNTS</span>
+                            <div class="info-card-val"><span id="stat-history-spam">0</span> <span
+                                    data-i18n="unit_accs">ACCOUNTS</span></div>
+                        </div>
+                        <div class="info-card-icon" style="background: rgba(248, 113, 113, 0.1); color: #f87171;">
+                            <i class="fas fa-bullhorn"></i>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- History Search -->
@@ -2340,23 +2360,17 @@
                                         style="width: 8px; height: 8px; border-radius: 50%; background: #10b981;"></span>
                                     ACCEPTED
                                 </div>
-                                <div class="dropdown-item" onclick="setHistoryFilter('REJECTED', '#ef4444')"
-                                    style="padding: 10px 15px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
-                                    <span
-                                        style="width: 8px; height: 8px; border-radius: 50%; background: #ef4444;"></span>
-                                    REJECTED ACCOUNTS
-                                </div>
                                 <div class="dropdown-item" onclick="setHistoryFilter('FROZEN', '#3b82f6')"
                                     style="padding: 10px 15px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
                                     <span
                                         style="width: 8px; height: 8px; border-radius: 50%; background: #3b82f6;"></span>
-                                    FROZEN ACCOUNTS
+                                    FROZEN
                                 </div>
-                                <div class="dropdown-item" onclick="setHistoryFilter('SPAM', '#f87171')"
+                                <div class="dropdown-item" onclick="setHistoryFilter('SPAM', '#ef4444')"
                                     style="padding: 10px 15px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
                                     <span
-                                        style="width: 8px; height: 8px; border-radius: 50%; background: #f87171;"></span>
-                                    SPAM ACCOUNTS
+                                        style="width: 8px; height: 8px; border-radius: 50%; background: #ef4444;"></span>
+                                    SPAM
                                 </div>
                             </div>
                         </div>
@@ -3658,6 +3672,8 @@
                 document.getElementById('stat-history-pending').innerText = ws.pending_count;
                 document.getElementById('stat-history-accepted').innerText = ws.accepted_sourced;
                 document.getElementById('stat-history-rejected').innerText = ws.rejected_sourced;
+                if (document.getElementById('stat-history-frozen')) document.getElementById('stat-history-frozen').innerText = ws.frozen_count || 0;
+                if (document.getElementById('stat-history-spam')) document.getElementById('stat-history-spam').innerText = ws.spam_count || 0;
             } catch (e) { }
         }
 
@@ -4018,7 +4034,7 @@
                 // UI Mode Switch
                 const label = document.getElementById('current-filter-label');
                 const dot = document.getElementById('filter-status-dot');
-                
+
                 if (historySearchQuery) {
                     label.innerText = currentLang === 'ar' ? 'البحث' : 'SEARCH';
                     label.style.color = 'var(--accent)';
@@ -4028,10 +4044,9 @@
                     // Restore original colors based on filter
                     let color = '#fbbf24';
                     if (currentHistoryFilter === 'ACCEPTED') color = '#10b981';
-                    else if (currentHistoryFilter === 'REJECTED') color = '#ef4444';
                     else if (currentHistoryFilter === 'FROZEN') color = '#3b82f6';
-                    else if (currentHistoryFilter === 'SPAM') color = '#f87171';
-                    
+                    else if (currentHistoryFilter === 'SPAM') color = '#ef4444';
+
                     label.style.color = color;
                     dot.style.background = color;
                 }
