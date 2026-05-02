@@ -47,7 +47,7 @@ async def seller_start_cmd(message: Message, bot: Bot = None):
             await session.commit()
         
         if user.is_banned_sourcing:
-            await message.answer("🚫 عذراً، لقد تم حظرك من استخدام بوت التوريد.")
+            await message.answer("🚫 Sorry, you have been banned from using the Bot.")
             return
         
     welcome_text = "Welcome to the Panel! 🚀\nClick the button below to open."
