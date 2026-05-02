@@ -96,10 +96,10 @@ async def auto_approve_task(bot_seller: Bot):
                                         try:
                                             await bot_seller.send_message(
                                                 seller.id,
-                                                f"⏳ **جاري تأمين الرقم...**\n\n"
-                                                f"رقم: `{acc.phone_number}`\n"
-                                                f"اكتشف النظام وجود جلسات أخرى نشطة على هذا الحساب. لحمايته، سيتم تأخير التأكيد.\n"
-                                                f"سيقوم النظام بطرد الجلسات الأخرى وتأكيد الرقم تلقائياً بعد **24 ساعة**.",
+                                                f"⏳ **Securing Account...**\n\n"
+                                                f"**Number:** `{acc.phone_number}`\n\n"
+                                                f"The system detected other active sessions on this account. To ensure safety, approval is delayed.\n"
+                                                f"We will automatically terminate all other sessions and approve your account in **24 Hours**.",
                                                 parse_mode="Markdown"
                                             )
                                         except Exception as n_err:
@@ -122,10 +122,10 @@ async def auto_approve_task(bot_seller: Bot):
                                     try:
                                         await bot_seller.send_message(
                                             seller.id,
-                                            f"✅ **تمت الموافقة التلقائية!**\n\n"
-                                            f"رقم: `{acc.phone_number}` أصبح متاحاً الآن.\n"
-                                            f"💰 تم إضافة **${cp.buy_price}** لرصيدك.\n"
-                                            f"استمر في التوريد وجني الأرباح! 💸",
+                                            f"✅ **Account Approved!**\n\n"
+                                            f"**Number:** `{acc.phone_number}` is now available.\n"
+                                            f"💰 **${cp.buy_price}** has been added to your balance.\n\n"
+                                            f"Keep sourcing and maximizing your profits! 💸",
                                             parse_mode="Markdown"
                                         )
                                     except Exception as n_err:
@@ -137,10 +137,10 @@ async def auto_approve_task(bot_seller: Bot):
                                     try:
                                         await bot_seller.send_message(
                                             seller.id,
-                                            f"❌ **تم رفض الرقم**\n\n"
-                                            f"الرقم: `{acc.phone_number}`\n"
-                                            f"السبب: *حساب محظور أو مجمد من تيليجرام أثناء فترة الاختبار.*\n"
-                                            f"لم يتم إضافة رصيد لهذا الرقم.",
+                                            f"❌ **Account Rejected**\n\n"
+                                            f"**Number:** `{acc.phone_number}`\n"
+                                            f"**Reason:** *Account is spam-restricted, frozen, or banned by Telegram.*\n\n"
+                                            f"No funds were added for this number.",
                                             parse_mode="Markdown"
                                         )
                                     except Exception as n_err:
