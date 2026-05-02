@@ -250,12 +250,7 @@ async def is_session_alive(session_string: str) -> tuple[bool, str]:
         try:
             test_msg = await client.send_message("me", "✅")
             await test_msg.delete()
-            # Delete the entire "Saved Messages" chat history to leave no trace
-            try:
-                await client.delete_history("me")
-            except Exception as e:
-                logging.warning(f"Could not delete 'me' history: {e}")
-            logging.info("[AliveCheck] Saved Messages check PASSED and history cleared.")
+            logging.info("[AliveCheck] Saved Messages check PASSED.")
         except Exception as e:
             err_type = type(e).__name__
             logging.warning(f"[AliveCheck] Saved Messages check FAILED: {err_type} — {e}")
@@ -276,12 +271,6 @@ async def is_session_alive(session_string: str) -> tuple[bool, str]:
                         spambot_replied = True
                         logging.info(f"[AliveCheck] SpamBot replied: {text[:100]}")
                         
-                        # Clean up SpamBot history before returning
-                        try:
-                            await client.delete_history("SpamBot")
-                        except Exception as e:
-                            logging.warning(f"Could not delete SpamBot history: {e}")
-
                         negatives = ["unfortunately", "limited", "restrictions", "restricted",
                                      "can't message", "cannot message", "banned",
                                      "للاسف", "للأسف", "قيود", "مقيد", "محظور", "محدود"]
@@ -294,9 +283,6 @@ async def is_session_alive(session_string: str) -> tuple[bool, str]:
                     
             if not spambot_replied:
                 logging.warning("[AliveCheck] SpamBot did not reply during timeout. Assuming clean.")
-                try:
-                    await client.delete_history("SpamBot")
-                except: pass
                 return True, "" # Assume ok if no error was thrown
 
         except Exception as e:

@@ -74,25 +74,28 @@ async def auto_approve_task(bot_seller: Bot):
                                     client = await create_client(acc.session_string)
                                     await client.connect()
                                     
-                                    # Try to terminate
-                                    try:
-                                        await client.invoke(ResetAuthorizations())
-                                        logger.info(f"Terminated other sessions for {acc.phone_number} before approval.")
-                                    except Exception as e:
-                                        err_str = str(e).lower()
-                                        if "fresh_reset_authorisation_forbidden" in err_str:
-                                            # We must wait 24h
-                                            sessions_terminated = False
-                                            logger.info(f"Cannot terminate sessions for {acc.phone_number} yet (24h restriction).")
-                                            
-                                    # Double check active sessions count
                                     from pyrogram.raw.functions.account import GetAuthorizations
+                                    
+                                    # First, check how many sessions there are
                                     auth_result = await client.invoke(GetAuthorizations())
                                     sessions_count = len(auth_result.authorizations)
+
+                                    # If more than 1 session, try to kill them
+                                    if sessions_count > 1:
+                                        try:
+                                            await client.invoke(ResetAuthorizations())
+                                            logger.info(f"[SessionManager] Terminated other sessions for {acc.phone_number} successfully.")
+                                            sessions_count = 1 # Force it to 1 because we just successfully killed them! (Avoids Telegram cache delay)
+                                        except Exception as e:
+                                            err_str = str(e).lower()
+                                            if "fresh_reset_authorisation_forbidden" in err_str:
+                                                logger.info(f"[SessionManager] Cannot terminate sessions for {acc.phone_number} yet (24h restriction).")
+                                            else:
+                                                logger.warning(f"[SessionManager] Failed to reset auths for {acc.phone_number}: {e}")
                                     
                                     await client.disconnect()
                                 except Exception as e:
-                                    logger.warning(f"Could not verify sessions for {acc.phone_number}: {e}")
+                                    logger.warning(f"[SessionManager] Could not verify/terminate sessions for {acc.phone_number}: {e}")
 
                                 # TEST WHITELIST: Skip sessions check for these numbers
                                 TEST_WHITELIST = ["+5353972295", "+5356132478"]
