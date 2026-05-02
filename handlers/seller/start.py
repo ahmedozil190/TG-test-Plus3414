@@ -47,6 +47,17 @@ async def seller_start_cmd(message: Message, bot: Bot = None):
             await session.commit()
         
         if user.is_banned_sourcing:
+            from database.models import AppSetting
+            support_obj = (await session.execute(select(AppSetting).where(AppSetting.key == "SUPPORT_USERNAME"))).scalar_one_or_none()
+            support_username = support_obj.value if support_obj else None
+            
+            markup = None
+            if support_username:
+                markup = InlineKeyboardMarkup(inline_keyboard=[
+                    [InlineKeyboardButton(text="Contact Support 🎧", url=f"https://t.me/{support_username}")]
+                ])
+            
+            await message.answer("<b>🚫 Your account has been suspended.</b>", parse_mode="HTML", reply_markup=markup)
             return
         
     welcome_text = "Welcome to the Panel! 🚀\nClick the button below to open."

@@ -55,8 +55,20 @@ class MaintenanceMiddleware(BaseMiddleware):
                     elif event.callback_query: target = event.callback_query
 
                 if target:
-                    if isinstance(target, CallbackQuery):
-                        await target.answer()
+                    from database.models import AppSetting
+                    ch_obj = (await session.execute(select(AppSetting).where(AppSetting.key == "UPDATES_CHANNEL"))).scalar_one_or_none()
+                    ch_link = ch_obj.value if ch_obj else None
+                    
+                    markup = None
+                    if ch_link:
+                        markup = InlineKeyboardMarkup(inline_keyboard=[
+                            [InlineKeyboardButton(text="Updates Channel 📢", url=ch_link)]
+                        ])
+
+                    if isinstance(target, Message):
+                        await target.answer("<b>⚠️ The bot is currently under maintenance.</b>", parse_mode="HTML", reply_markup=markup)
+                    elif isinstance(target, CallbackQuery):
+                        await target.answer("Maintenance Mode ⚠️", show_alert=True)
                     return # STOP HERE
 
             return await handler(event, data)
