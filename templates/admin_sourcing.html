@@ -4007,7 +4007,8 @@
 
         async function fetchAdminHistory(page) {
             try {
-                const res = await fetch(`/api/admin/sourcing/history?page=${page}&limit=${ADMIN_HISTORY_LIMIT}&filter=${currentHistoryFilter}&search=${historySearchQuery}`);
+                const query = encodeURIComponent(historySearchQuery);
+                const res = await fetch(`/api/admin/sourcing/history?page=${page}&limit=${ADMIN_HISTORY_LIMIT}&filter=${currentHistoryFilter}&search=${query}`);
                 const data = await res.json();
 
                 if (data.server_now) {
@@ -4391,8 +4392,27 @@
             const container = document.getElementById('history-list');
             if (!container) return;
 
+            // Simple UI Switch for Phone Search (Triggered by +)
+            if (historySearchQuery && (historySearchQuery.startsWith("+") || historySearchQuery.startsWith(" ")) && list && list.length > 0) {
+                const first = list[0];
+                let statusToSet = 'PENDING';
+                let colorToSet = '#fbbf24';
 
-            if (!list || !list.length) {
+                if (first.status === 'AVAILABLE' || first.status === 'SOLD') {
+                    statusToSet = 'ACCEPTED'; colorToSet = '#10b981';
+                } else if (first.status === 'REJECTED') {
+                    if (first.reject_reason) {
+                        const r = first.reject_reason.toLowerCase();
+                        if (r.includes('frozen')) { statusToSet = 'FROZEN'; colorToSet = '#3b82f6'; }
+                        else if (r.includes('spam')) { statusToSet = 'SPAM'; colorToSet = '#ef4444'; }
+                    }
+                }
+                
+                document.getElementById('filter-status-dot').style.background = colorToSet;
+                document.getElementById('current-filter-label').style.color = colorToSet;
+                document.getElementById('current-filter-label').innerText = statusToSet;
+                currentHistoryFilter = statusToSet;
+            }
                 container.innerHTML = `
                 <div style="text-align: center; padding: 40px 20px; background: var(--card-glass); border-radius: 16px; border: 1px dashed var(--border); margin-top: 0;">
                     <i class="fas fa-history" style="font-size: 2.5rem; color: var(--text-secondary); opacity: 0.15; margin-bottom: 12px;"></i>

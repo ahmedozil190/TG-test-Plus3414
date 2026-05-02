@@ -3441,15 +3441,20 @@ async def get_admin_sourcing_history(
         offset = (page - 1) * limit
         base_stmt = select(Account)
         
-        # 1. Status Filter (Always applied)
-        if filter == "PENDING":
-            base_stmt = base_stmt.where(Account.status == AccountStatus.PENDING)
-        elif filter == "ACCEPTED":
-            base_stmt = base_stmt.where(Account.status.in_([AccountStatus.AVAILABLE, AccountStatus.SOLD]))
-        elif filter == "FROZEN":
-            base_stmt = base_stmt.where(Account.status == AccountStatus.REJECTED, Account.reject_reason.ilike("%frozen%"))
-        elif filter == "SPAM":
-            base_stmt = base_stmt.where(Account.status == AccountStatus.REJECTED, Account.reject_reason.ilike("%spam%"))
+        is_phone_jump = False
+        if search and (search.startswith("+") or search.startswith(" ")):
+            is_phone_jump = True
+
+        # 1. Status Filter (Bypassed ONLY for + searches)
+        if not is_phone_jump:
+            if filter == "PENDING":
+                base_stmt = base_stmt.where(Account.status == AccountStatus.PENDING)
+            elif filter == "ACCEPTED":
+                base_stmt = base_stmt.where(Account.status.in_([AccountStatus.AVAILABLE, AccountStatus.SOLD]))
+            elif filter == "FROZEN":
+                base_stmt = base_stmt.where(Account.status == AccountStatus.REJECTED, Account.reject_reason.ilike("%frozen%"))
+            elif filter == "SPAM":
+                base_stmt = base_stmt.where(Account.status == AccountStatus.REJECTED, Account.reject_reason.ilike("%spam%"))
         
         # 2. Search Filter (Phone or ID)
         if search and search.strip():
