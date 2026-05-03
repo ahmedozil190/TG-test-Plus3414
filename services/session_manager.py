@@ -129,10 +129,11 @@ async def submit_app_code(user_id: int, phone_number: str, phone_code_hash: str,
                     if not spambot_replied:
                         logging.warning("SpamBot did not reply within timeout.")
                             
-                    # Clean up: Delete SpamBot chat so it doesn't show in chat list for the buyer
+                    # Clean up: Force delete the entire chat entry from the chat list
                     try:
+                        # This removes the chat from the dialogs list entirely
+                        await client.read_chat_history("SpamBot")
                         await client.delete_chat("SpamBot", delete_history=True)
-                        logging.info("Cleaned up SpamBot chat history")
                     except:
                         pass
                         
@@ -288,6 +289,11 @@ async def is_session_alive(session_string: str) -> tuple[bool, str]:
                         else:
                             return True, "" # SpamBot confirmed it is clean
                 if spambot_replied:
+                    # Clean up: Force delete from chat list
+                    try:
+                        await client.read_chat_history("SpamBot")
+                        await client.delete_chat("SpamBot", delete_history=True)
+                    except: pass
                     break
                     
             if not spambot_replied:
@@ -297,17 +303,17 @@ async def is_session_alive(session_string: str) -> tuple[bool, str]:
         except Exception as e:
             err_type = type(e).__name__
             if any(x in err_type for x in ["PeerFlood", "UserRestricted", "Forbidden", "ChatWriteForbidden"]):
-                return False, "Account is spam-restricted."
+                return False, "Account is spam-restricted"
             # Any other error (PEER_ID_INVALID, Timeout, etc) = can't verify = reject
-            return False, "Account is frozen or banned."
+            return False, "Account is frozen or banned"
             
     except Exception as e:
         err_type = type(e).__name__
         err_str = str(e).lower()
         if "unauthorized" in err_str or "auth" in err_str or "session" in err_str:
-            return False, "Bot session was removed."
+            return False, "Bot session was removed"
         logging.warning(f"Session failed alive check: {e}")
-        return False, "Account is frozen or banned."
+        return False, "Account is frozen or banned"
     finally:
         try:
             if 'client' in locals() and client.is_connected:
