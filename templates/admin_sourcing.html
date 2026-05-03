@@ -2387,12 +2387,7 @@
                                         style="width: 8px; height: 8px; border-radius: 50%; background: #3b82f6;"></span>
                                     FROZEN
                                 </div>
-                                <div class="dropdown-item" onclick="setHistoryFilter('SOLD', '#ec4899')"
-                                    style="padding: 10px 15px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
-                                    <span
-                                        style="width: 8px; height: 8px; border-radius: 50%; background: #ec4899;"></span>
-                                    SOLD
-                                </div>
+
                                 <div class="dropdown-item" onclick="setHistoryFilter('SPAM', '#ef4444')"
                                     style="padding: 10px 15px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
                                     <span
@@ -4078,7 +4073,6 @@
                     label.innerText = currentHistoryFilter;
                     let color = '#fbbf24';
                     if (currentHistoryFilter === 'ACCEPTED') color = '#10b981';
-                    else if (currentHistoryFilter === 'SOLD') color = '#ec4899';
                     else if (currentHistoryFilter === 'FROZEN') color = '#3b82f6';
                     else if (currentHistoryFilter === 'SPAM') color = '#ef4444';
 
