@@ -3324,10 +3324,6 @@
             `).join('');
         }
 
-        let currentSalesPage = 1;
-        let filteredSales = null;
-        const SALES_PER_PAGE = 10;
-
         function formatDateTime(isoStr) {
             if (!isoStr) return "N/A";
             try {
@@ -3346,28 +3342,7 @@
             } catch (e) { return isoStr; }
         }
 
-        function renderSalesList(list) {
-            const container = document.getElementById('sales-list');
-            if (!container) return;
-            const pagContainer = document.getElementById('sales-pagination');
-
-            // Calculate Stats
-            const totalCount = allTransactions.length;
-            const totalAmount = allTransactions.reduce((acc, curr) => acc + Number(curr.price), 0);
-
-            document.getElementById('stat-sales-total-count').innerText = totalCount;
-            document.getElementById('stat-sales-total-amount').innerText = formatMoney(totalAmount);
-
-            if (!list || !list.length) {
-                container.innerHTML = `
-                <div style="text-align: center; padding: 40px 20px; background: var(--card-glass); border-radius: 16px; border: 1px dashed var(--border); margin-top: 0; backdrop-filter: blur(10px);">
-                    <i class="fas fa-receipt" style="font-size: 2.5rem; color: var(--text-secondary); opacity: 0.3; margin-bottom: 12px;"></i>
-                    <p style="color: var(--text-secondary); font-weight: 600; font-size: 0.95rem;">${translations[currentLang].no_sales}</p>
-                </div>`;
-                pagContainer.style.display = 'none';
-                return;
-            }
-
+        // ===== Sales History Logic =====
         async function fetchSalesHistory(page = 1) {
             try {
                 const tg = window.Telegram?.WebApp;
@@ -3387,10 +3362,15 @@
 
         function renderSalesList(list) {
             const container = document.getElementById('sales-list');
+            if (!container) return;
             const pagContainer = document.getElementById('sales-pagination');
 
             if (!list || list.length === 0) {
-                container.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--text-s);">${currentLang === 'ar' ? 'لا توجد مبيعات' : 'No sales found'}</div>`;
+                container.innerHTML = `
+                <div style="text-align: center; padding: 40px 20px; background: var(--card-glass); border-radius: 16px; border: 1px dashed var(--border); margin-top: 0; backdrop-filter: blur(10px);">
+                    <i class="fas fa-receipt" style="font-size: 2.5rem; color: var(--text-secondary); opacity: 0.3; margin-bottom: 12px;"></i>
+                    <p style="color: var(--text-secondary); font-weight: 600; font-size: 0.95rem;">${currentLang === 'ar' ? 'لا توجد مبيعات' : 'No sales found'}</p>
+                </div>`;
                 pagContainer.style.display = 'none';
                 return;
             }
@@ -3464,17 +3444,6 @@
             if (currentSalesPage < totalSalesPages) {
                 fetchSalesHistory(currentSalesPage + 1);
                 document.getElementById('app-content-scroller').scrollTop = 0;
-            }
-        }
-
-        function setSalesFilter(filter, btn) {
-            document.querySelectorAll('#section-sales .tab-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            currentSalesPage = 1;
-            if (filter === 'recent') {
-                renderSalesList(allTransactions.slice(0, 5));
-            } else {
-                renderSalesList(allTransactions);
             }
         }
 
