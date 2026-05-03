@@ -92,6 +92,108 @@ class DepositSubmit(BaseModel):
     txid: str
     method: str = "Binance Pay"
 
+def normalize_provider_countries(srv_countries):
+    """Normalizes various API provider responses into a standard list of country dicts."""
+    countries_list = []
+    
+    # 1. Super Parser: Find the node that actually contains country data
+    def find_country_node(node):
+        if isinstance(node, dict):
+            # Case A: Dict with country keys (EG, PS, etc.)
+            if any(k in node for k in ["EG", "PS", "SA", "US", "20", "966", "970"]):
+                return node
+            # Case B: Dict that contains common keys like price/count
+            if any(k in node for k in ["price", "count", "rate", "cost", "stock"]):
+                return node
+            # Otherwise, drill down
+            for k, v in node.items():
+                res = find_country_node(v)
+                if res: return res
+        elif isinstance(node, list):
+            # Case C: List of objects - check first few items
+            for item in node[:3]:
+                if isinstance(item, dict):
+                    if any(k in item for k in ["price", "count", "rate", "cost", "stock"]):
+                        return node # Return the whole list
+                    res = find_country_node(item)
+                    if res: return node # Return the whole list if children are good
+        return None
+
+    # Special handling for Spider Service typo-prone and split structure
+    # result: { countries: {1: {ISO: price}}, cuantity: {1: {ISO: count}} }
+    spider_prices = {}
+    spider_counts = {}
+    
+    if isinstance(srv_countries, dict) and "result" in srv_countries:
+        res = srv_countries["result"]
+        if isinstance(res, dict):
+            # Try to find prices
+            p_node = res.get("countries")
+            if isinstance(p_node, dict) and "1" in p_node: p_node = p_node["1"]
+            if isinstance(p_node, dict): spider_prices = p_node
+            
+            # Try to find quantities (handling the 'cuantity' typo)
+            q_node = res.get("cuantity") or res.get("quantity")
+            if isinstance(q_node, dict) and "1" in q_node: q_node = q_node["1"]
+            if isinstance(q_node, dict): spider_counts = q_node
+
+    if spider_prices:
+        # If we found Spider-specific split data, merge it
+        for code, price in spider_prices.items():
+            try:
+                countries_list.append({
+                    "country": code,
+                    "price": float(price),
+                    "count": int(spider_counts.get(code, 999))
+                })
+            except: continue
+    else:
+        # Fallback to Super Parser for TG-Lion and others
+        data_node = find_country_node(srv_countries)
+        if not data_node:
+            data_node = srv_countries
+            for key in ["result", "data", "countries_info", "countries"]:
+                if isinstance(data_node, dict) and key in data_node:
+                    data_node = data_node[key]
+                    break
+        
+        if isinstance(data_node, dict):
+            for code, val in data_node.items():
+                if code.lower() in ["status", "message", "error", "ok", "msg", "currency", "success", "rate", "price", "count", "stock", "quantity", "qty", "server_time"]: continue
+                if isinstance(val, dict):
+                    entry = val.copy()
+                    entry["country"] = code
+                    countries_list.append(entry)
+                elif isinstance(val, (int, float, str)):
+                    try:
+                        # Use a helper to clean price string if it's not a direct float
+                        def clean_p(v):
+                            if isinstance(v, (int, float)): return float(v)
+                            try: return float(str(v).replace('$', '').replace('USD', '').strip().split()[0])
+                            except: return 0.0
+
+                        price_val = clean_p(val)
+                        countries_list.append({
+                            "country": code,
+                            "count": 999,
+                            "price": price_val
+                        })
+                    except: continue
+        elif isinstance(data_node, list):
+            # Normalize list items to have 'country' key
+            for item in data_node:
+                if not isinstance(item, dict): continue
+                normalized = item.copy()
+                if "country" not in normalized:
+                    # Try to find country code in common keys
+                    for k in ["id", "iso", "code", "name"]:
+                        if k in normalized:
+                            normalized["country"] = normalized[k]
+                            break
+                countries_list.append(normalized)
+    
+    return countries_list
+
 class StoreSettingsSubmit(BaseModel):
     binance_api_key: str
     binance_api_secret: str
@@ -786,104 +888,7 @@ async def get_store_data(user_id: int = None):
                         continue
 
                     # Normalize srv_countries to a list of dicts
-                    countries_list = []
-                    
-                    # 1. Super Parser: Find the node that actually contains country data
-                    def find_country_node(node):
-                        if isinstance(node, dict):
-                            # Case A: Dict with country keys (EG, PS, etc.)
-                            if any(k in node for k in ["EG", "PS", "SA", "US", "20", "966", "970"]):
-                                return node
-                            # Case B: Dict that contains common keys like price/count
-                            if any(k in node for k in ["price", "count", "rate", "cost", "stock"]):
-                                return node
-                            
-                            # Otherwise, drill down
-                            for k, v in node.items():
-                                res = find_country_node(v)
-                                if res: return res
-                        elif isinstance(node, list):
-                            # Case C: List of objects - check first few items
-                            for item in node[:3]:
-                                if isinstance(item, dict):
-                                    if any(k in item for k in ["price", "count", "rate", "cost", "stock"]):
-                                        return node # Return the whole list
-                                    res = find_country_node(item)
-                                    if res: return node # Return the whole list if children are good
-                        return None
-
-                    # Special handling for Spider Service typo-prone and split structure
-                    # result: { countries: {1: {ISO: price}}, cuantity: {1: {ISO: count}} }
-                    spider_prices = {}
-                    spider_counts = {}
-                    
-                    if isinstance(srv_countries, dict) and "result" in srv_countries:
-                        res = srv_countries["result"]
-                        if isinstance(res, dict):
-                            # Try to find prices
-                            p_node = res.get("countries")
-                            if isinstance(p_node, dict) and "1" in p_node: p_node = p_node["1"]
-                            if isinstance(p_node, dict): spider_prices = p_node
-                            
-                            # Try to find quantities (handling the 'cuantity' typo)
-                            q_node = res.get("cuantity") or res.get("quantity")
-                            if isinstance(q_node, dict) and "1" in q_node: q_node = q_node["1"]
-                            if isinstance(q_node, dict): spider_counts = q_node
-
-                    if spider_prices:
-                        # If we found Spider-specific split data, merge it
-                        for code, price in spider_prices.items():
-                            try:
-                                countries_list.append({
-                                    "country": code,
-                                    "price": float(price),
-                                    "count": int(spider_counts.get(code, 999))
-                                })
-                            except: continue
-                    else:
-                        # Fallback to Super Parser for TG-Lion and others
-                        data_node = find_country_node(srv_countries)
-                        if not data_node:
-                            data_node = srv_countries
-                            for key in ["result", "data", "countries_info", "countries"]:
-                                if isinstance(data_node, dict) and key in data_node:
-                                    data_node = data_node[key]
-                                    break
-                        
-                        if isinstance(data_node, dict):
-                            for code, val in data_node.items():
-                                if code.lower() in ["status", "message", "error", "ok", "msg", "currency", "success", "rate", "price", "count", "stock", "quantity", "qty", "server_time"]: continue
-                                if isinstance(val, dict):
-                                    entry = val.copy()
-                                    entry["country"] = code
-                                    countries_list.append(entry)
-                                elif isinstance(val, (int, float, str)):
-                                    try:
-                                        # Use a helper to clean price string if it's not a direct float
-                                        def clean_p(v):
-                                            if isinstance(v, (int, float)): return float(v)
-                                            try: return float(str(v).replace('$', '').replace('USD', '').strip().split()[0])
-                                            except: return 0.0
-
-                                        price_val = clean_p(val)
-                                        countries_list.append({
-                                            "country": code,
-                                            "count": 999,
-                                            "price": price_val
-                                        })
-                                    except: continue
-                        elif isinstance(data_node, list):
-                            # Normalize list items to have 'country' key
-                            for item in data_node:
-                                if not isinstance(item, dict): continue
-                                normalized = item.copy()
-                                if "country" not in normalized:
-                                    # Try to find country code in common keys
-                                    for k in ["id", "iso", "code", "name"]:
-                                        if k in normalized:
-                                            normalized["country"] = normalized[k]
-                                            break
-                                countries_list.append(normalized)
+                    countries_list = normalize_provider_countries(srv_countries)
                     
                     for c in countries_list:
                         raw_name = c.get("name") or c.get("country") or c.get("country_name") or c.get("country_code")
@@ -1204,20 +1209,32 @@ async def store_buy(data: StoreBuy):
                         extra_id=getattr(srv, 'extra_id', None)
                     )
                     srv_countries = await provider.get_countries()
-                    if isinstance(srv_countries, list):
-                        def get_c(item):
-                            rc = item.get("count", item.get("qty", item.get("stock", item.get("quantity"))))
-                            try: return int(rc) if rc is not None else 999
-                            except: return 999
+                    if not srv_countries: continue
+                    
+                    # Use helper for normalization
+                    countries_list = normalize_provider_countries(srv_countries)
 
-                        match = next((c for c in srv_countries if (c.get("name") == data.country or c.get("country") == data.country) and get_c(c) > 0), None)
-                        if match:
+                    def get_c(item):
+                        rc = item.get("count", item.get("qty", item.get("stock", item.get("quantity"))))
+                        try: return int(rc) if rc is not None else 999
+                        except: return 999
+
+                    for c in countries_list:
+                        if get_c(c) <= 0: continue
+                        
+                        raw_c = c.get("name") or c.get("country") or c.get("country_name") or c.get("country_code")
+                        iso_hint = c.get("code") or c.get("iso") or c.get("country_code")
+                        
+                        # Resolve name for comparison
+                        res_name, _, _ = resolve_country_info(str(iso_hint if (iso_hint and len(str(iso_hint))==2) else raw_c))
+                        
+                        if res_name == data.country or raw_c == data.country:
                             target_srv = srv
-                            external_country_code = match.get("country")
-                            # For External, we ALWAYS use calculated price (Cost + Profit)
-                            # We ignore cp.price here as per user request.
-                            final_price = provider.calculate_price(match.get("price", 0))
+                            external_country_code = c.get("country")
+                            final_price = provider.calculate_price(c.get("price", 0))
                             break
+                    
+                    if target_srv: break
                 
                 if not target_srv:
                     raise HTTPException(status_code=400, detail="Out of stock")
@@ -1303,7 +1320,7 @@ async def store_buy(data: StoreBuy):
                     raw_msg = str(buy_res.get("message", "API provider error"))
                     msg_lower = raw_msg.lower()
                     if any(word in msg_lower for word in ["balance", "رصيد", "money", "fund", "credit"]):
-                        raise HTTPException(status_code=400, detail="Out of stock or API balance issue")
+                        raise HTTPException(status_code=400, detail="No numbers available")
                     else:
                         raise HTTPException(status_code=400, detail=raw_msg)
     except HTTPException as e: raise e
