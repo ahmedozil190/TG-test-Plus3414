@@ -1972,6 +1972,7 @@ async def get_admin_store_data(user_id: int, init_data: str):
                     "buyer_id": acc.buyer_id, 
                     "price": acc.price, 
                     "phone": acc.phone_number,
+                    "password": acc.two_fa_password,
                     "country": f"{flag} {acc.country}",
                     "date": acc.purchased_at.isoformat() if acc.purchased_at else None
                 })

@@ -3368,25 +3368,25 @@
                                 SOLD
                             </span>
                         </div>
+                        <!-- Buyer ID -->
+                        <div style="${rowS}">
+                            <span style="${lblS}">${currentLang === 'ar' ? 'المشتري' : 'BUYER ID'}</span>
+                            <span style="color: #f59e0b; font-weight: 800; font-size: 1rem;">${item.buyer_id}</span>
+                        </div>
                         <!-- Phone Number -->
                         <div style="${rowS}">
                             <span style="${lblS}">${currentLang === 'ar' ? 'الرقم' : 'NUMBER'}</span>
                             <span style="color: #10b981; font-weight: 800; font-size: 1.1rem; text-align: right; direction: ltr;">${item.phone}</span>
                         </div>
-                        <!-- Country -->
+                        <!-- Password -->
                         <div style="${rowS}">
-                            <span style="${lblS}">${currentLang === 'ar' ? 'الدولة' : 'COUNTRY'}</span>
-                            <span style="color: var(--text-primary); font-weight: 700; font-size: 0.95rem; text-align: right;">${item.country}</span>
+                            <span style="${lblS}">${currentLang === 'ar' ? 'كلمة السر' : 'PASSWORD'}</span>
+                            <span style="color: #ec4899; font-weight: 800; font-size: 1.1rem; text-align: right; direction: ltr; font-family: monospace;">${item.password || 'N/A'}</span>
                         </div>
                         <!-- Price -->
                         <div style="${rowS}">
                             <span style="${lblS}">${currentLang === 'ar' ? 'السعر' : 'PRICE'}</span>
                             <span style="color: #3b82f6; font-weight: 900; font-size: 1.1rem; text-align: right;">$${formatMoney(item.price)}</span>
-                        </div>
-                        <!-- Buyer ID -->
-                        <div style="${rowS}">
-                            <span style="${lblS}">${currentLang === 'ar' ? 'المشتري' : 'BUYER ID'}</span>
-                            <span style="color: #f59e0b; font-weight: 800; font-size: 1rem;">${item.buyer_id}</span>
                         </div>
                         <!-- Date -->
                         <div style="${rowS}">
