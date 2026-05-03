@@ -38,7 +38,7 @@ async def request_app_code(user_id: int, phone_number: str) -> str:
     except errors.PhoneNumberBanned:
         raise Exception("This phone number is banned from Telegram")
     except errors.UserDeactivated:
-        raise Exception("This account is frozen by Telegram")
+        raise Exception("This account is frozen by the company")
     except Exception as e:
         if client.is_connected:
             await client.disconnect()
@@ -89,7 +89,7 @@ async def submit_app_code(user_id: int, phone_number: str, phone_code_hash: str,
                     await test_msg.delete()
                 except Exception as e:
                     # IF IT FAILS TO MESSAGE ITSELF, THE ACCOUNT IS DEAD OR BANNED. DO NOT PASS!
-                    error_to_raise = f"This account is completely frozen/banned. ({type(e).__name__})"
+                    error_to_raise = "This account is frozen by the company"
                     
             # 3. Smart SpamBot Test (Language-Agnostic)
             if not error_to_raise:
@@ -147,7 +147,7 @@ async def submit_app_code(user_id: int, phone_number: str, phone_code_hash: str,
         except Exception as e:
             logging.error(f"Internal Health Check Error: {e}")
             if not error_to_raise:
-                error_to_raise = f"Account session revoked or frozen ({type(e).__name__})"
+                error_to_raise = "Account session revoked or frozen"
 
         if error_to_raise:
             try: await client.log_out()

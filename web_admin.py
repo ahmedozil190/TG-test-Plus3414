@@ -2939,7 +2939,7 @@ async def seller_submit_otp(data: SellerOTPSubmit):
         submit_result = await submit_app_code(data.user_id, data.phone, data.hash, data.code)
         
         if not submit_result:
-            raise HTTPException(status_code=400, detail="Verification failed. The code is incorrect or has expired")
+            raise HTTPException(status_code=400, detail="The verification code you entered is incorrect")
             
         session_string = submit_result["session_string"]
         two_fa_password = submit_result["two_fa_password"]
