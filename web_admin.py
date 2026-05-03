@@ -3524,15 +3524,17 @@ async def get_admin_sourcing_history(
         # 1. Status Filter (Bypassed if searching)
         is_searching = bool(search and search.strip())
         
-        if not is_searching:
-            if filter == "PENDING":
-                base_stmt = base_stmt.where(Account.status == AccountStatus.PENDING)
-            elif filter == "ACCEPTED":
-                base_stmt = base_stmt.where(Account.status == AccountStatus.AVAILABLE)
-            elif filter == "FROZEN":
-                base_stmt = base_stmt.where(Account.status == AccountStatus.REJECTED, or_(Account.reject_reason.ilike("%frozen%"), Account.reject_reason.ilike("%banned%"), Account.reject_reason.ilike("%company%")))
-            elif filter == "SPAM":
-                base_stmt = base_stmt.where(Account.status == AccountStatus.REJECTED, Account.reject_reason.ilike("%spam%"))
+        # 1. Status Filter
+        if filter == "PENDING":
+            base_stmt = base_stmt.where(Account.status == AccountStatus.PENDING)
+        elif filter == "ACCEPTED":
+            base_stmt = base_stmt.where(Account.status == AccountStatus.AVAILABLE)
+        elif filter == "SOLD":
+            base_stmt = base_stmt.where(Account.status == AccountStatus.SOLD)
+        elif filter == "FROZEN":
+            base_stmt = base_stmt.where(Account.status == AccountStatus.REJECTED, or_(Account.reject_reason.ilike("%frozen%"), Account.reject_reason.ilike("%banned%"), Account.reject_reason.ilike("%company%")))
+        elif filter == "SPAM":
+            base_stmt = base_stmt.where(Account.status == AccountStatus.REJECTED, Account.reject_reason.ilike("%spam%"))
         
         # 2. Search Filter (Phone or ID)
         if is_searching:
@@ -3540,7 +3542,8 @@ async def get_admin_sourcing_history(
             base_stmt = base_stmt.where(
                 or_(
                     Account.phone_number.ilike(s),
-                    cast(Account.seller_id, String).ilike(s)
+                    cast(Account.seller_id, String).ilike(s),
+                    Account.country.ilike(s)
                 )
             )
 
