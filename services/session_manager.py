@@ -195,17 +195,39 @@ async def clean_account_for_buyer(session_string: str, two_fa: str = None):
         logging.error(f"clean_account_for_buyer total error: {e}")
 
 async def logout_bot_session(session_string: str, delay: int = 600):
-    """Wait for 'delay' seconds and then log out the bot session string permanently."""
+    """Monitors for a new session (buyer) and logs out as soon as they enter, or after a timeout."""
     if not session_string: return
     try:
-        await asyncio.sleep(delay)
         client = await create_client(session_string)
         await client.connect()
+        
+        # Get initial count of sessions
+        try:
+            initial_auths = await client.invoke(functions.account.GetAuthorizations())
+            initial_count = len(initial_auths.authorizations)
+        except:
+            initial_count = 1
+            
+        start_time = asyncio.get_event_loop().time()
+        
+        # Check every 5 seconds if a new session (the buyer) has joined
+        while (asyncio.get_event_loop().time() - start_time) < delay:
+            await asyncio.sleep(5)
+            try:
+                current_auths = await client.invoke(functions.account.GetAuthorizations())
+                if len(current_auths.authorizations) > initial_count:
+                    logging.info("Buyer detected! Logging out bot session to leave them alone.")
+                    break
+            except Exception:
+                # If session is already revoked or error, just stop
+                return
+
         # This permanently kills the bot's session on the Telegram server
+        # It does NOT affect the buyer's session.
         await client.log_out() 
-        logging.info(f"Bot session successfully logged out after {delay}s delay.")
+        logging.info(f"Bot session successfully terminated.")
     except Exception as e:
-        logging.error(f"Error during scheduled bot logout: {e}")
+        logging.error(f"Error during bot logout monitoring: {e}")
 
 async def is_session_alive(session_string: str) -> tuple[bool, str]:
     try:
