@@ -2226,9 +2226,9 @@
                     const errorMsg = document.getElementById('errorMsg');
 
                     if (detail.startsWith('INVALID_PHONE|')) {
-                        errorMsg.textContent = "This number is invalid";
+                        errorMsg.textContent = "The phone number you entered is invalid";
                     } else if (detail.startsWith('BANNED_PHONE|')) {
-                        errorMsg.textContent = "This number is banned";
+                        errorMsg.textContent = "This phone number is banned from Telegram";
                     } else if (res.status === 429 && detail.startsWith('FLOOD|')) {
                         const waitTime = detail.split('|')[1] || '?';
                         errorMsg.textContent = `Number Temporarily Banned — ${waitTime}`;
