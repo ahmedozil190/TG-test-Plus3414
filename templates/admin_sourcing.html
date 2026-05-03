@@ -1849,6 +1849,16 @@
                     </div>
                     <div class="info-card">
                         <div class="info-card-l">
+                            <span class="info-card-lbl" data-i18n="stat_sold_ops">SOLD ACCOUNTS</span>
+                            <div class="info-card-val"><span id="home-stat-sold">0</span> <span
+                                    data-i18n="unit_accs">ACCOUNTS</span></div>
+                        </div>
+                        <div class="info-card-icon" style="background: rgba(236, 72, 153, 0.1); color: #ec4899;">
+                            <i class="fas fa-cart-shopping"></i>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-l">
                             <span class="info-card-lbl" data-i18n="stat_rejected_ops">REJECTED ACCOUNTS</span>
                             <div class="info-card-val"><span id="home-stat-rejected">0</span> <span
                                     data-i18n="unit_accs">ACCOUNTS</span></div>
@@ -3566,14 +3576,12 @@
                 const hsp = document.getElementById('home-stat-pending');
                 const hsa = document.getElementById('home-stat-accepted');
                 const hsr = document.getElementById('home-stat-rejected');
-                const hsacc = document.getElementById('stat-ready-count');
-                const hssold = document.getElementById('stat-sold-count');
+                const hssold = document.getElementById('home-stat-sold');
                 if (hsrdy) hsrdy.innerText = data.stats.available_count || 0;
-                if (hsp) hsp.innerText = data.stats.pending_count || 0;
+                if (hsp) hsp.innerText = data.stats.pending_count;
                 if (hsa) hsa.innerText = data.stats.available_count || 0;
-                if (hsacc) hsacc.innerText = data.stats.available_count || 0;
                 if (hssold) hssold.innerText = data.stats.sold_count || 0;
-                if (hsr) hsr.innerText = data.stats.rejected_sourced || 0;
+                if (hsr) hsr.innerText = data.stats.rejected_sourced;
 
                 // Withdrawals (Home)
                 const hwp = document.getElementById('home-stat-withdraw-pending');
@@ -4068,7 +4076,6 @@
                     dot.style.background = 'var(--accent)';
                 } else {
                     label.innerText = currentHistoryFilter;
-                    // Restore original colors based on filter
                     let color = '#fbbf24';
                     if (currentHistoryFilter === 'ACCEPTED') color = '#10b981';
                     else if (currentHistoryFilter === 'SOLD') color = '#ec4899';
