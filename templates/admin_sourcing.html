@@ -4067,20 +4067,15 @@
                 const label = document.getElementById('current-filter-label');
                 const dot = document.getElementById('filter-status-dot');
 
-                if (historySearchQuery) {
-                    label.innerText = currentLang === 'ar' ? 'البحث' : 'SEARCH';
-                    label.style.color = 'var(--accent)';
-                    dot.style.background = 'var(--accent)';
-                } else {
-                    label.innerText = currentHistoryFilter;
-                    let color = '#fbbf24';
-                    if (currentHistoryFilter === 'ACCEPTED') color = '#10b981';
-                    else if (currentHistoryFilter === 'FROZEN') color = '#3b82f6';
-                    else if (currentHistoryFilter === 'SPAM') color = '#ef4444';
+                label.innerText = currentHistoryFilter;
+                let color = '#fbbf24';
+                if (currentHistoryFilter === 'ACCEPTED') color = '#10b981';
+                else if (currentHistoryFilter === 'SOLD') color = '#ec4899';
+                else if (currentHistoryFilter === 'FROZEN') color = '#3b82f6';
+                else if (currentHistoryFilter === 'SPAM' || currentHistoryFilter === 'REJECTED') color = '#ef4444';
 
-                    label.style.color = color;
-                    dot.style.background = color;
-                }
+                label.style.color = color;
+                dot.style.background = color;
 
                 const query = encodeURIComponent(historySearchQuery);
                 const res = await fetch(`/api/admin/sourcing/history?page=${page}&limit=${ADMIN_HISTORY_LIMIT}&filter=${currentHistoryFilter}&search=${query}`);
