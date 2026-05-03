@@ -1448,7 +1448,8 @@ async def get_store_history(user_id: int, page: int = 1, limit: int = 10):
                     "flag": flag,
                     "price": a.price,
                     "date": a.purchased_at.isoformat() if a.purchased_at else (a.created_at.isoformat() if a.created_at else None),
-                    "otp_code": a.otp_code
+                    "otp_code": a.otp_code,
+                    "password": a.two_fa_password
                 })
             return {
                 "orders": history,

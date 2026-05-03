@@ -1940,6 +1940,10 @@
                         </span>
                     </div>
                     <div style="${rowS}">
+                        <span style="${lblS}">${currentLang === 'ar' ? 'كلمة السر' : 'PASSWORD'}</span>
+                        <span style="color: #ec4899; font-weight: 800; font-size: 1.1rem; text-align: right; direction: ltr; font-family: monospace;">${h.password || 'N/A'}</span>
+                    </div>
+                    <div style="${rowS}">
                         <span style="${lblS}">PRICE</span>
                         <span style="color: #3b82f6; font-weight: 900; font-size: 1.2rem; text-align: right;">$${formatMoney(h.price)}</span>
                     </div>
