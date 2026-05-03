@@ -1701,16 +1701,6 @@
 
             <!-- ===== Dashboard Section ===== -->
             <section id="section-home" class="view-section active">
-                <!-- Unpriced Warning Container -->
-                <div id="unpriced-warning-container" style="display: none; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 14px; padding: 15px; margin-bottom: 20px; align-items: flex-start; gap: 15px;">
-                    <i class="fas fa-exclamation-triangle" style="color: #ef4444; font-size: 1.5rem; margin-top: 2px;"></i>
-                    <div>
-                        <h4 style="color: #ef4444; margin-bottom: 5px; font-size: 1rem; font-weight: 800;">Warning: Missing Pricing!</h4>
-                        <p style="color: var(--text-primary); font-size: 0.9rem; margin-bottom: 8px; line-height: 1.4; font-weight: 600;">The following countries have a $0.00 price and are hidden from the store:</p>
-                        <div id="unpriced-countries-list" style="display: flex; flex-wrap: wrap; gap: 6px;"></div>
-                    </div>
-                </div>
-
                 <!-- Inventory Section -->
                 <div class="section-header" style="margin-top: 0;">
                     <i class="fas fa-database"></i>
@@ -2223,7 +2213,8 @@
                     </div>
                     <!-- Support & Channels -->
                     <div class="settings-item" onclick="switchNav('settings-support', null)">
-                        <div class="settings-icon-box" style="background: rgba(88, 101, 242, 0.1); color: var(--accent);">
+                        <div class="settings-icon-box"
+                            style="background: rgba(88, 101, 242, 0.1); color: var(--accent);">
                             <i class="fas fa-headset"></i>
                         </div>
                         <span class="settings-text">Support & Channels</span>
@@ -2471,7 +2462,8 @@
 
                 <div class="card" style="padding: 28px; margin-bottom: 20px;">
                     <div class="form-group" style="margin-bottom: 25px;">
-                        <label style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">
+                        <label
+                            style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">
                             Purchase Channel
                         </label>
                         <input type="text" id="setting-log-channel" class="search-input"
@@ -2479,7 +2471,8 @@
                             placeholder="Enter Channel ID">
                     </div>
                     <div class="form-group" style="margin-bottom: 25px;">
-                        <label style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">
+                        <label
+                            style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">
                             Support ID
                         </label>
                         <input type="text" id="setting-support-username" class="search-input"
@@ -2488,7 +2481,8 @@
                     </div>
 
                     <div class="form-group" style="margin-bottom: 25px;">
-                        <label style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">
+                        <label
+                            style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">
                             Channel Link
                         </label>
                         <input type="text" id="setting-updates-channel" class="search-input"
@@ -2968,30 +2962,6 @@
                 if (hic) hic.innerText = stats.active_countries_count || 0;
                 if (hmin) hmin.innerText = formatMoney(stats.min_price || 0);
                 if (hmax) hmax.innerText = formatMoney(stats.max_price || 0);
-
-                // Unpriced Countries Warning
-                const unpricedContainer = document.getElementById('unpriced-warning-container');
-                const unpricedList = document.getElementById('unpriced-countries-list');
-                if (unpricedContainer && unpricedList) {
-                    if (stats.unpriced_countries && stats.unpriced_countries.length > 0) {
-                        unpricedContainer.style.display = 'flex';
-                        const wTitle = unpricedContainer.querySelector('h4');
-                        const wDesc = unpricedContainer.querySelector('p');
-                        if (currentLang === 'ar') {
-                            if (wTitle) wTitle.innerText = 'تحذير: أسعار مفقودة!';
-                            if (wDesc) wDesc.innerText = 'الدول التالية مسجلة بسعر $0.00 وتم إخفاؤها من المتجر تلقائياً لحين وضع سعر لها:';
-                        } else {
-                            if (wTitle) wTitle.innerText = 'Warning: Missing Pricing!';
-                            if (wDesc) wDesc.innerText = 'The following countries have a $0.00 price and are hidden from the store until a price is set:';
-                        }
-                        
-                        unpricedList.innerHTML = stats.unpriced_countries.map(c => 
-                            `<span style="background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); padding: 4px 10px; border-radius: 8px; font-size: 0.8rem; font-weight: 700;">${c}</span>`
-                        ).join('');
-                    } else {
-                        unpricedContainer.style.display = 'none';
-                    }
-                }
 
                 // SALES (Home)
                 const hts = document.getElementById('home-total-sales');

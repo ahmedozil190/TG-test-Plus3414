@@ -58,6 +58,36 @@ class WithdrawAction(BaseModel):
     request_id: int
     action: str # 'approve' or 'reject'
 
+async def check_and_alert_missing_price(country_name: str, phone_number: str, session):
+    from config import BOT_TOKEN, ADMIN_IDS
+    import aiohttp
+    import asyncio
+    try:
+        cp_stmt = select(CountryPrice).where(CountryPrice.country_name == country_name)
+        cp_list = (await session.execute(cp_stmt)).scalars().all()
+        sell_price = cp_list[0].price if cp_list else 0
+        
+        if sell_price <= 0:
+            alert_msg = (
+                f"⚠️ <b>تنبيه تسعير</b> ⚠️\n\n"
+                f"تم إضافة مخزون لدولة <b>{country_name}</b> ({phone_number}) "
+                f"ولكن ليس لها سعر بيع محدد في المتجر (السعر 0.00$).\n\n"
+                f"لن تظهر هذه الأرقام للعملاء حتى تقوم بتحديد السعر."
+            )
+            
+            async def notify_admins():
+                async with aiohttp.ClientSession() as http_session:
+                    for admin_id in ADMIN_IDS:
+                        url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+                        payload = {"chat_id": admin_id, "text": alert_msg, "parse_mode": "HTML"}
+                        try:
+                            await http_session.post(url, json=payload, timeout=5)
+                        except Exception: pass
+            
+            asyncio.create_task(notify_admins())
+    except Exception as e:
+        logger.error(f"Error checking missing price alert: {e}")
+
 class DepositSubmit(BaseModel):
     user_id: int
     txid: str
@@ -1876,9 +1906,6 @@ async def get_admin_store_data(user_id: int, init_data: str):
             min_price = (await session.execute(select(func.min(CountryPrice.price)).where(CountryPrice.price > 0))).scalar() or 0.0
             max_price = (await session.execute(select(func.max(CountryPrice.price)).where(CountryPrice.price > 0))).scalar() or 0.0
 
-            unpriced_countries_result = await session.execute(select(CountryPrice).where(CountryPrice.price <= 0))
-            unpriced_countries = [p.country_name for p in unpriced_countries_result.scalars().all()]
-
             # Custom User stats
             from sqlalchemy import distinct
             total_custom_users = (await session.execute(select(func.count(distinct(UserStorePrice.user_id))))).scalar() or 0
@@ -1974,8 +2001,7 @@ async def get_admin_store_data(user_id: int, init_data: str):
                 "total_custom_users": total_custom_users,
                 "total_custom_countries": total_custom_countries,
                 "min_price": min_price,
-                "max_price": max_price,
-                "unpriced_countries": unpriced_countries
+                "max_price": max_price
             },
             "users": users,
             "transactions": transactions,
@@ -2402,6 +2428,8 @@ async def complete_login(data: StockLoginComplete):
             )
             session.add(new_acc)
             await session.commit()
+            
+            await check_and_alert_missing_price(data.country, data.phone, session)
             
         return {"status": "success"}
     except Exception as e:
@@ -3004,6 +3032,8 @@ async def seller_submit_otp(data: SellerOTPSubmit):
             )
             session.add(new_acc)
             await session.commit()
+            
+            await check_and_alert_missing_price(data.country, data.phone, session)
             
         return {"status": "success", "price": price}
     except Exception as e:
