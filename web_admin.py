@@ -1626,7 +1626,7 @@ async def get_sourcing_data(user_id: int, init_data: str):
             total_sourced = (await session.execute(select(func.count(Account.id)))).scalar() or 0
             pending_count = (await session.execute(select(func.count(Account.id)).where(Account.status == AccountStatus.PENDING))).scalar() or 0
             accepted_sourced = (await session.execute(select(func.count(Account.id)).where(Account.status == AccountStatus.AVAILABLE))).scalar() or 0
-            available_count = (await session.execute(select(func.count(Account.id)).where(Account.status == AccountStatus.AVAILABLE))).scalar() or 0
+            available_count = accepted_sourced
             sold_count = (await session.execute(select(func.count(Account.id)).where(Account.status == AccountStatus.SOLD))).scalar() or 0
             rejected_sourced = (await session.execute(select(func.count(Account.id)).where(Account.status == AccountStatus.REJECTED))).scalar() or 0
             frozen_count = (await session.execute(select(func.count(Account.id)).where(Account.status == AccountStatus.REJECTED, or_(Account.reject_reason.ilike("%frozen%"), Account.reject_reason.ilike("%banned%"), Account.reject_reason.ilike("%revoked%"), Account.reject_reason.ilike("%تجميد%"), Account.reject_reason.ilike("%محظور%"), Account.reject_reason.ilike("%باند%"))))).scalar() or 0
@@ -1795,8 +1795,8 @@ async def get_sourcing_data(user_id: int, init_data: str):
                     "withdraw_pending": withdraw_pending,
                     "withdraw_approved": withdraw_approved,
                     "withdraw_rejected": withdraw_rejected,
-                    "withdraw_pending_amount": float(withdraw_pending_amount),
-                    "total_paid_amount": float(total_paid_amount),
+                    "withdraw_pending_amount": float(withdraw_pending_amount or 0),
+                    "total_paid_amount": float(total_paid_amount or 0),
                     "total_users": total_users,
                     "active_users": active_users,
                     "banned_users": banned_users,

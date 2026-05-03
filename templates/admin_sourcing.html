@@ -3562,14 +3562,18 @@
                 await fetchSubscriptionChannels();
 
                 // Inventory (Home)
+                const hsrdy = document.getElementById('home-stat-ready');
+                const hsp = document.getElementById('home-stat-pending');
+                const hsa = document.getElementById('home-stat-accepted');
+                const hsr = document.getElementById('home-stat-rejected');
                 const hsacc = document.getElementById('stat-ready-count');
                 const hssold = document.getElementById('stat-sold-count');
+                if (hsrdy) hsrdy.innerText = data.stats.available_count || 0;
+                if (hsp) hsp.innerText = data.stats.pending_count || 0;
+                if (hsa) hsa.innerText = data.stats.available_count || 0;
                 if (hsacc) hsacc.innerText = data.stats.available_count || 0;
                 if (hssold) hssold.innerText = data.stats.sold_count || 0;
-                if (hsrdy) hsrdy.innerText = data.stats.available_count || 0;
-                if (hsp) hsp.innerText = data.stats.pending_count;
-                if (hsa) hsa.innerText = data.stats.available_count || 0;
-                if (hsr) hsr.innerText = data.stats.rejected_sourced;
+                if (hsr) hsr.innerText = data.stats.rejected_sourced || 0;
 
                 // Withdrawals (Home)
                 const hwp = document.getElementById('home-stat-withdraw-pending');
