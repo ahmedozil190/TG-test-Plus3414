@@ -3414,14 +3414,10 @@
                 </div>
             `).join('');
 
-            if (totalSalesPages > 1) {
-                pagContainer.style.display = 'flex';
-                document.getElementById('pgInfoSales').innerText = `Page ${currentSalesPage} of ${totalSalesPages}`;
-                document.getElementById('pgPrevSales').disabled = (currentSalesPage === 1);
-                document.getElementById('pgNextSales').disabled = (currentSalesPage === totalSalesPages);
-            } else {
-                pagContainer.style.display = 'none';
-            }
+            pagContainer.style.display = 'flex';
+            document.getElementById('pgInfoSales').innerText = `Page ${currentSalesPage} of ${totalSalesPages}`;
+            document.getElementById('pgPrevSales').disabled = (currentSalesPage === 1);
+            document.getElementById('pgNextSales').disabled = (currentSalesPage === totalSalesPages);
         }
 
         function searchSales() {
