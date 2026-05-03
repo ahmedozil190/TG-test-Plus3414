@@ -154,12 +154,55 @@ class ExternalProvider:
                 if self.server_type == "lion":
                     params["country_code"] = country_code
                 else:
+                    # Standard panels (Spider, Max-TG, SMS-Hub clones)
                     params["country"] = country_code
+                    # Generic panels usually require a service code (ot is common for Telegram)
+                    params["service"] = "ot"
                 
+                logger.info(f"Buying number from {self.name}: {self.url} with {params}")
                 resp = await client.get(self.url, params=params, timeout=20.0)
                 if resp.status_code == 200:
-                    data = resp.json()
-                    return data
+                    text = resp.text.strip()
+                    logger.info(f"Buy response from {self.name}: {text}")
+                    
+                    # 1. Try parsing as JSON first
+                    try:
+                        data = resp.json()
+                        if isinstance(data, dict):
+                            if data.get("status") == "success" or data.get("ok") is True:
+                                # Ensure number and id exist
+                                res = {
+                                    "status": "success",
+                                    "number": data.get("number") or data.get("phone"),
+                                    "id": data.get("id") or data.get("id_activation") or data.get("hash_code"),
+                                    "hash_code": data.get("hash_code") or data.get("id") or data.get("id_activation")
+                                }
+                                if res["number"] and res["id"]:
+                                    return res
+                    except:
+                        pass
+                    
+                    # 2. Fallback to Raw Text parsing (SMS-Hub Style: ACCESS_NUMBER:ID:NUMBER)
+                    if "ACCESS_NUMBER" in text:
+                        parts = text.split(':')
+                        if len(parts) >= 3:
+                            return {
+                                "status": "success",
+                                "id": parts[1],
+                                "hash_code": parts[1],
+                                "number": parts[2]
+                            }
+                    
+                    # 3. Handle common text errors
+                    msg_lower = text.lower()
+                    if any(err in msg_lower for err in ["no_numbers", "no_number", "out_of_stock", "no_numbers_available"]):
+                        return {"status": "error", "message": "No numbers available"}
+                    if any(err in msg_lower for err in ["no_balance", "no_money", "not_enough_funds", "access_balance", "insufficient_funds"]):
+                        return {"status": "error", "message": "No balance in API provider"}
+                    if "bad_key" in msg_lower or "error_key" in msg_lower:
+                        return {"status": "error", "message": "Invalid API Key"}
+                        
+                    return {"status": "error", "message": text}
                 return {"status": "error", "message": f"HTTP {resp.status_code}"}
         except Exception as e:
             logger.error(f"Error buying number from {self.name}: {e}")
@@ -169,16 +212,62 @@ class ExternalProvider:
         """Fetch the activation code for a purchased number."""
         try:
             async with httpx.AsyncClient() as client:
-                params = self.get_base_params("getCode")
+                # Some panels use 'getStatus' instead of 'getCode'
+                action = "getCode"
+                params = self.get_base_params(action)
+                
                 if self.server_type == "lion":
                     params["number"] = number
                 else:
+                    # Try both hash_code and id for compatibility
                     params["hash_code"] = hash_code
+                    params["id"] = hash_code
                 
+                logger.info(f"Fetching code from {self.name}: {self.url} with {params}")
                 resp = await client.get(self.url, params=params, timeout=15.0)
                 if resp.status_code == 200:
-                    data = resp.json()
-                    return data
+                    text = resp.text.strip()
+                    logger.info(f"GetCode response from {self.name}: {text}")
+                    
+                    # 1. Try JSON
+                    try:
+                        data = resp.json()
+                        if isinstance(data, dict):
+                            # Spider/Max-TG format
+                            if data.get("status") == "success" and data.get("code"):
+                                return data
+                            # Other JSON formats
+                            code = data.get("code") or data.get("otp") or data.get("sms")
+                            if code:
+                                return {"status": "success", "code": code}
+                    except:
+                        pass
+                    
+                    # 2. Raw Text (SMS-Hub Style: STATUS_OK:CODE or STATUS_WAIT_CODE)
+                    if "STATUS_OK" in text:
+                        parts = text.split(':')
+                        if len(parts) >= 2:
+                            return {"status": "success", "code": parts[1]}
+                    
+                    if "STATUS_WAIT" in text:
+                        return {"status": "error", "message": "Code not arrived yet"}
+                        
+                    # 3. Fallback for Spider/Max if they return just the code (unlikely but safe)
+                    if text and len(text) <= 10 and text.isdigit():
+                        return {"status": "success", "code": text}
+
+                    # If first action failed, try getStatus for standard panels
+                    if action == "getCode" and self.server_type != "lion":
+                        params["action"] = "getStatus"
+                        resp2 = await client.get(self.url, params=params, timeout=15.0)
+                        if resp2.status_code == 200:
+                            t2 = resp2.text.strip()
+                            if "STATUS_OK" in t2:
+                                return {"status": "success", "code": t2.split(':')[1]}
+                            if "STATUS_WAIT" in t2:
+                                return {"status": "error", "message": "Code not arrived yet"}
+
+                    return {"status": "error", "message": text}
                 return {"status": "error", "message": f"HTTP {resp.status_code}"}
         except Exception as e:
             logger.error(f"Error getting code from {self.name}: {e}")

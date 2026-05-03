@@ -1303,7 +1303,7 @@ async def store_buy(data: StoreBuy):
                     raw_msg = str(buy_res.get("message", "API provider error"))
                     msg_lower = raw_msg.lower()
                     if any(word in msg_lower for word in ["balance", "رصيد", "money", "fund", "credit"]):
-                        raise HTTPException(status_code=400, detail="No numbers available")
+                        raise HTTPException(status_code=400, detail="Out of stock or API balance issue")
                     else:
                         raise HTTPException(status_code=400, detail=raw_msg)
     except HTTPException as e: raise e
