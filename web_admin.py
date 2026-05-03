@@ -778,6 +778,7 @@ class UserStorePriceCreate(BaseModel):
 class StoreBuy(BaseModel):
     user_id: int
     country: str
+    server_id: int = None
     init_data: str # Added for security verification
 
 class UserSync(BaseModel):
@@ -1201,7 +1202,12 @@ async def store_buy(data: StoreBuy):
                 final_price = cp.price if cp else 1.0
             else:
                 # 2. Try External Servers
-                active_servers = (await session.execute(select(ApiServer).where(ApiServer.is_active == True))).scalars().all()
+                # If server_id is provided, only look at that server. Otherwise, check all active.
+                if data.server_id:
+                    active_servers = (await session.execute(select(ApiServer).where(ApiServer.id == data.server_id, ApiServer.is_active == True))).scalars().all()
+                else:
+                    active_servers = (await session.execute(select(ApiServer).where(ApiServer.is_active == True))).scalars().all()
+                
                 last_error = "Out of stock"
                 
                 for srv in active_servers:

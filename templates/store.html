@@ -1827,7 +1827,12 @@
                 const res = await fetch('/api/store/buy', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ user_id: userId, country: selectedCountry.name, init_data: tg.initData })
+                    body: JSON.stringify({ 
+                        user_id: userId, 
+                        country: selectedCountry.name, 
+                        server_id: selectedCountry.server_id,
+                        init_data: tg.initData 
+                    })
                 });
                 const data = await res.json();
                 if (res.ok && data.status === 'success') {
