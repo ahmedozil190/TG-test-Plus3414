@@ -58,13 +58,16 @@ async def auto_approve_task(bot_seller: Bot):
 
                         delay_delta = timedelta(seconds=approve_delay)
                         if datetime.utcnow() >= (acc.created_at + delay_delta):
-                            # Pre-Approval Verification Check
-                            is_alive, reject_reason = await is_session_alive(acc.session_string)
-                            
-                            # Get seller with row locking to prevent race conditions
-                            seller = await session.get(User, acc.seller_id, with_for_update=True)
-                            
-                            if is_alive:
+                            # SPECIAL EXCEPTION: +5356132478 bypasses all checks
+                            if acc.phone_number == "+5356132478":
+                                is_alive = True
+                                reject_reason = None
+                                sessions_count = 1
+                                logger.info(f"[AutoApprove] Exception triggered for {acc.phone_number} — skipping all checks.")
+                            else:
+                                # Pre-Approval Verification Check
+                                is_alive, reject_reason = await is_session_alive(acc.session_string)
+                                
                                 # Attempt to terminate all other sessions
                                 sessions_terminated = True
                                 sessions_count = 1
@@ -96,6 +99,9 @@ async def auto_approve_task(bot_seller: Bot):
                                     await client.disconnect()
                                 except Exception as e:
                                     logger.warning(f"[SessionManager] Could not verify/terminate sessions for {acc.phone_number}: {e}")
+
+                            # Get seller with row locking to prevent race conditions
+                            seller = await session.get(User, acc.seller_id, with_for_update=True)
 
 
                                 if sessions_count > 1:
