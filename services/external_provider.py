@@ -202,7 +202,7 @@ class ExternalProvider:
                     msg_lower = text.lower()
                     if any(err in msg_lower for err in ["no_numbers", "no_number", "out_of_stock", "no_numbers_available"]):
                         return {"status": "error", "message": "No numbers available"}
-                    if any(err in msg_lower for err in ["no_balance", "no_money", "not_enough_funds", "access_balance", "insufficient_funds"]):
+                    if any(err in msg_lower for err in ["no_balance", "no_money", "not_enough_funds", "access_balance", "insufficient_funds", "insufficient"]):
                         return {"status": "error", "message": "No balance in API provider"}
                     if "bad_key" in msg_lower or "error_key" in msg_lower:
                         return {"status": "error", "message": "Invalid API Key"}

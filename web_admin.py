@@ -1202,6 +1202,8 @@ async def store_buy(data: StoreBuy):
             else:
                 # 2. Try External Servers
                 active_servers = (await session.execute(select(ApiServer).where(ApiServer.is_active == True))).scalars().all()
+                last_error = "Out of stock"
+                
                 for srv in active_servers:
                     provider = ExternalProvider(
                         srv.name, srv.url, srv.api_key, srv.profit_margin,
@@ -1219,6 +1221,7 @@ async def store_buy(data: StoreBuy):
                         try: return int(rc) if rc is not None else 999
                         except: return 999
 
+                    server_matched = False
                     for c in countries_list:
                         if get_c(c) <= 0: continue
                         
@@ -1229,53 +1232,74 @@ async def store_buy(data: StoreBuy):
                         res_name, _, _ = resolve_country_info(str(iso_hint if (iso_hint and len(str(iso_hint))==2) else raw_c))
                         
                         if res_name == data.country or raw_c == data.country:
-                            target_srv = srv
+                            # Match found! Attempt to buy from THIS server
                             external_country_code = c.get("country")
                             final_price = provider.calculate_price(c.get("price", 0))
-                            break
-                    
-                    if target_srv: break
-                
-                if not target_srv:
-                    raise HTTPException(status_code=400, detail="Out of stock")
+                            
+                            # Check user balance before attempting
+                            if user.balance_store < final_price:
+                                raise HTTPException(status_code=400, detail="Insufficient balance")
 
-            # 3. Handle Personalized Pricing (ONLY applies to local stock)
-            if is_local:
-                from database.models import UserStorePrice
+                            buy_res = await provider.buy_number(external_country_code)
+                            if buy_res.get("status") == "success":
+                                # SUCCESS! Record and return
+                                user.balance_store -= final_price
+                                new_acc = Account(
+                                    phone_number=buy_res.get("number"),
+                                    country=data.country,
+                                    status=AccountStatus.SOLD,
+                                    price=final_price,
+                                    buyer_id=user.id,
+                                    purchased_at=datetime.utcnow(),
+                                    server_id=srv.id,
+                                    hash_code=buy_res.get("hash_code")
+                                )
+                                session.add(new_acc)
+                                txn = Transaction(user_id=user.id, type=TransactionType.BUY, amount=-final_price)
+                                session.add(txn)
+                                await session.commit()
+                                return {"status": "success", "phone": new_acc.phone_number, "id": new_acc.id}
+                            else:
+                                last_error = str(buy_res.get("message", "API provider error"))
+                                logger.warning(f"Purchase failed on {srv.name}: {last_error}. Trying next server...")
+                                server_matched = True # We matched the country but purchase failed
+                                break # Try next server
+                    # End of country loop
                 
-                # Resolve info to get ISO for matching if possible
+                # If we reach here, all active servers failed to provide the number
+                msg_lower = last_error.lower()
+                if any(word in msg_lower for word in ["balance", "رصيد", "money", "fund", "credit", "insufficient"]):
+                    raise HTTPException(status_code=400, detail="API balance insufficient")
+                else:
+                    raise HTTPException(status_code=400, detail=last_error)
+
+            # 3. Handle Local Purchase Execution
+            if is_local and account:
+                # Resolve Personalized Pricing
+                from database.models import UserStorePrice
                 _, _, res_iso = resolve_country_info(data.country)
                 
                 async with async_session() as inner_session:
-                    # Use a separate query to be sure
                     stmt = select(UserStorePrice).where(UserStorePrice.user_id == data.user_id)
                     user_prices = (await inner_session.execute(stmt)).scalars().all()
-                    
                     usp = None
-                    # Match by ISO
                     if res_iso and res_iso != 'XX':
                         usp = next((u for u in user_prices if u.iso_code == res_iso), None)
-                    
-                    # Match by Name
                     if not usp:
                         usp = next((u for u in user_prices if u.country_code == data.country), None)
-                    
-                    # Match by Phone Code (if cp exists)
                     if not usp and cp:
                         cc_clean = cp.country_code.strip().replace('+', '')
                         usp = next((u for u in user_prices if u.country_code == cc_clean or u.country_code == f"+{cc_clean}"), None)
-                    
                     if usp:
                         final_price = usp.sell_price
-            
-            if final_price <= 0:
-                raise HTTPException(status_code=400, detail="This country is currently unavailable (Price not set)")
-            
-            if user.balance_store < final_price:
-                raise HTTPException(status_code=400, detail="Insufficient balance")
+                
+                if final_price <= 0:
+                    raise HTTPException(status_code=400, detail="This country is currently unavailable (Price not set)")
+                
+                if user.balance_store < final_price:
+                    raise HTTPException(status_code=400, detail="Insufficient balance")
 
-            if account:
-                # Local Purchase Execution
+                # Execute Local Purchase
                 user.balance_store -= final_price
                 account.status = AccountStatus.SOLD
                 account.buyer_id = user.id
@@ -1291,38 +1315,13 @@ async def store_buy(data: StoreBuy):
                 asyncio.create_task(clean_account_for_buyer(account.session_string, account.two_fa_password))
                 
                 return {"status": "success", "phone": account.phone_number, "id": account.id}
-            else:
-                # External Purchase Execution
-                provider = ExternalProvider(
-                    target_srv.name, target_srv.url, target_srv.api_key, target_srv.profit_margin,
-                    server_type=getattr(target_srv, 'server_type', 'standard'),
-                    extra_id=getattr(target_srv, 'extra_id', None)
-                )
-                buy_res = await provider.buy_number(external_country_code)
-                if buy_res.get("status") == "success":
-                    user.balance_store -= final_price
-                    new_acc = Account(
-                        phone_number=buy_res.get("number"),
-                        country=data.country,
-                        status=AccountStatus.SOLD,
-                        price=final_price,
-                        buyer_id=user.id,
-                        purchased_at=datetime.utcnow(),
-                        server_id=target_srv.id,
-                        hash_code=buy_res.get("hash_code")
-                    )
-                    session.add(new_acc)
-                    txn = Transaction(user_id=user.id, type=TransactionType.BUY, amount=-final_price)
-                    session.add(txn)
-                    await session.commit()
-                    return {"status": "success", "phone": new_acc.phone_number, "id": new_acc.id}
-                else:
-                    raw_msg = str(buy_res.get("message", "API provider error"))
-                    msg_lower = raw_msg.lower()
-                    if any(word in msg_lower for word in ["balance", "رصيد", "money", "fund", "credit"]):
-                        raise HTTPException(status_code=400, detail="No numbers available")
-                    else:
-                        raise HTTPException(status_code=400, detail=raw_msg)
+            
+            # If we are here and not returned, it means nothing was found or bought
+            raise HTTPException(status_code=400, detail="Out of stock")
+    except HTTPException as e: raise e
+    except Exception as e:
+        logger.error(f"Store Buy Error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
     except HTTPException as e: raise e
     except Exception as e:
         logger.error(f"Store Buy Error: {e}")
