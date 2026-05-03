@@ -1277,7 +1277,7 @@ async def store_buy(data: StoreBuy):
                 # If we reach here, all active servers failed to provide the number
                 msg_lower = last_error.lower()
                 if any(word in msg_lower for word in ["balance", "رصيد", "money", "fund", "credit", "insufficient"]):
-                    raise HTTPException(status_code=400, detail="API balance insufficient")
+                    raise HTTPException(status_code=400, detail="Out of stock")
                 else:
                     raise HTTPException(status_code=400, detail=last_error)
 
