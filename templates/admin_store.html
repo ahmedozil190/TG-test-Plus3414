@@ -2980,11 +2980,16 @@
                 if (hmin) hmin.innerText = formatMoney(stats.min_price || 0);
                 if (hmax) hmax.innerText = formatMoney(stats.max_price || 0);
 
-                // SALES (Home)
+                // SALES (Home & Section)
                 const hts = document.getElementById('home-total-sales');
                 const htr = document.getElementById('home-total-revenue');
+                const stc = document.getElementById('stat-sales-total-count');
+                const sta = document.getElementById('stat-sales-total-amount');
+
                 if (hts) hts.innerText = stats.total_sales_count || 0;
                 if (htr) htr.innerText = formatMoney(stats.total_revenue || 0);
+                if (stc) stc.innerText = stats.total_sales_count || 0;
+                if (sta) sta.innerText = formatMoney(stats.total_revenue || 0);
 
                 // Customers (Home)
                 const htu = document.getElementById('home-total-users');
