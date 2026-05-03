@@ -1625,8 +1625,8 @@ async def get_sourcing_data(user_id: int, init_data: str):
         async with async_session() as session:
             total_sourced = (await session.execute(select(func.count(Account.id)))).scalar() or 0
             pending_count = (await session.execute(select(func.count(Account.id)).where(Account.status == AccountStatus.PENDING))).scalar() or 0
-            accepted_sourced = (await session.execute(select(func.count(Account.id)).where(Account.status.in_([AccountStatus.AVAILABLE, AccountStatus.SOLD])))).scalar() or 0
-            available_count = (await session.execute(select(func.count(Account.id)).where(Account.status == AccountStatus.AVAILABLE))).scalar() or 0
+            accepted_sourced = (await session.execute(select(func.count(Account.id)).where(Account.status == AccountStatus.AVAILABLE))).scalar() or 0
+            available_count = accepted_sourced
             sold_count = (await session.execute(select(func.count(Account.id)).where(Account.status == AccountStatus.SOLD))).scalar() or 0
             rejected_sourced = (await session.execute(select(func.count(Account.id)).where(Account.status == AccountStatus.REJECTED))).scalar() or 0
             frozen_count = (await session.execute(select(func.count(Account.id)).where(Account.status == AccountStatus.REJECTED, or_(Account.reject_reason.ilike("%frozen%"), Account.reject_reason.ilike("%banned%"), Account.reject_reason.ilike("%revoked%"), Account.reject_reason.ilike("%تجميد%"), Account.reject_reason.ilike("%محظور%"), Account.reject_reason.ilike("%باند%"))))).scalar() or 0
