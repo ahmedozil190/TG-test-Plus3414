@@ -3528,6 +3528,8 @@ async def get_admin_sourcing_history(
                 base_stmt = base_stmt.where(Account.status == AccountStatus.PENDING)
             elif filter == "ACCEPTED":
                 base_stmt = base_stmt.where(Account.status == AccountStatus.AVAILABLE)
+            elif filter == "REJECTED":
+                base_stmt = base_stmt.where(Account.status == AccountStatus.REJECTED)
             elif filter == "FROZEN":
                 base_stmt = base_stmt.where(Account.status == AccountStatus.REJECTED, or_(Account.reject_reason.ilike("%frozen%"), Account.reject_reason.ilike("%banned%"), Account.reject_reason.ilike("%company%")))
             elif filter == "SPAM":
@@ -3639,6 +3641,14 @@ async def delete_sourcing_account(phone: str):
                 os.remove(session_file)
         except: pass
         
+        return {"success": True}
+
+@app.post("/api/admin/sourcing/account/{phone}/restore")
+async def restore_account_endpoint(phone: str):
+    async with async_session() as session:
+        stmt = update(Account).where(Account.phone_number == phone).values(status=AccountStatus.AVAILABLE, reject_reason=None)
+        await session.execute(stmt)
+        await session.commit()
         return {"success": True}
 
 @app.post("/api/admin/user/sync")

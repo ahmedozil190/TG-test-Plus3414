@@ -2388,6 +2388,13 @@
                                     FROZEN
                                 </div>
 
+                                <div class="dropdown-item" onclick="setHistoryFilter('REJECTED', '#f43f5e')"
+                                    style="padding: 10px 15px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
+                                    <span
+                                        style="width: 8px; height: 8px; border-radius: 50%; background: #f43f5e;"></span>
+                                    REJECTED
+                                </div>
+
                                 <div class="dropdown-item" onclick="setHistoryFilter('SPAM', '#ef4444')"
                                     style="padding: 10px 15px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
                                     <span
@@ -4557,6 +4564,13 @@
                             onclick="removeAccount('${item.phone}')">
                             <i class="fas fa-trash" style="margin-right: 5px;"></i> ${currentLang === 'ar' ? 'إزالة' : 'Remove'}
                         </button>
+                        ${item.status === 'REJECTED' ? `
+                        <button class="primary-btn" 
+                            style="flex: 1; background: rgba(16, 185, 129, 0.1); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.2); box-shadow: none; padding: 12px; font-size: 0.85rem; font-weight: 700; border-radius: 10px;" 
+                            onclick="restoreAccount('${item.phone}')">
+                            <i class="fas fa-undo" style="margin-right: 5px;"></i> ${currentLang === 'ar' ? 'استرجاع' : 'Restore'}
+                        </button>
+                        ` : ''}
                     </div>
                 </div>
                 `;
@@ -5128,6 +5142,31 @@
             } catch (e) {
                 console.error(e);
                 showToast(currentLang === 'ar' ? 'خطأ' : 'Error', 'Failed to remove account', 'error');
+            }
+        }
+
+        async function restoreAccount(phone) {
+            const confirmed = await showConfirm(
+                currentLang === 'ar' ? 'استرجاع الحساب؟' : 'Restore Account?',
+                currentLang === 'ar' ? `هل أنت متأكد من إعادة هذا الحساب إلى قائمة الحسابات المتوفرة؟` : `Are you sure you want to restore this account to the available inventory?`,
+                currentLang === 'ar' ? 'استرجاع' : 'Restore',
+                'fas fa-undo', 'rgba(16, 185, 129, 0.1)', '#10b981', 'success'
+            );
+
+            if (!confirmed) return;
+
+            try {
+                const res = await fetch(`/api/admin/sourcing/account/${phone}/restore`, { method: 'POST' });
+                const data = await res.json();
+                if (data.success) {
+                    showToast(currentLang === 'ar' ? 'تم الاسترجاع' : 'Restored',
+                        currentLang === 'ar' ? 'تم إعادة الحساب للبيع بنجاح' : 'Account restored to available inventory',
+                        'success');
+                    fetchAdminHistory(currentAdminHistoryPage);
+                }
+            } catch (e) {
+                console.error(e);
+                showToast('Error', 'Failed to restore account', 'error');
             }
         }
 
