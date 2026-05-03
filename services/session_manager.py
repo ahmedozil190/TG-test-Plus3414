@@ -193,7 +193,8 @@ async def is_session_alive(session_string: str) -> tuple[bool, str]:
                         negatives = ["unfortunately", "limited", "restrictions", "restricted",
                                      "can't message", "cannot message", "banned",
                                      "was blocked for violations", "terms of service",
-                                     "للاسف", "للأسف", "قيود", "مقيد", "محظور", "محدود"]
+                                     "للاسف", "للأسف", "قيود", "مقيد", "محظور", "محدود",
+                                     "لانتهاك شروط", "شروط الخدمة", "تم حظر حسابك", "تقارير المستخدمين"]
                         if any(word in text for word in negatives):
                             return False, "Account is Spam"
                         else:
