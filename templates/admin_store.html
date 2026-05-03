@@ -2047,6 +2047,17 @@
                 </div>
 
 
+                <!-- Sales Search -->
+                <div class="card" style="padding: 18px; margin-bottom: 25px;">
+                    <input class="search-input" type="text" id="sales-search"
+                        placeholder="Search Phone, Buyer ID or Country..." onkeyup="if(event.key==='Enter') searchSales()">
+                    <button class="btn-find" onclick="searchSales()">
+                        <i class="fas fa-search"></i> <span data-i18n="btn_find">Find</span>
+                    </button>
+                    <div id="reset-sales-search-container" style="display: none; margin-top: 4px;">
+                        <button class="cancel-btn" onclick="resetSalesSearch()" data-i18n="btn_reset">Reset</button>
+                    </div>
+                </div>
 
                 <div id="sales-mgmt-section" class="card" style="padding: 22px;">
                     <div class="section-header" style="margin-top: 0; margin-bottom: 35px;">
@@ -2825,6 +2836,11 @@
         let currentPricePage = 1;
         let currentPriceTab = 'active';
 
+        const SALES_PER_PAGE = 10;
+        let currentSalesPage = 1;
+        let totalSalesPages = 1;
+        let salesSearchQuery = '';
+
         function updateUI() {
             document.documentElement.lang = currentLang;
             document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
@@ -2860,6 +2876,7 @@
             currentPage = 1;
             currentPricePage = 1;
             currentSalesPage = 1;
+            salesSearchQuery = '';
 
             // 2. Reset Search & Filters to ensure clean state
             filteredUsers = null;
@@ -2882,7 +2899,7 @@
             // 4. Render page 1 data WHILE section is still hidden
             if (id === 'users') renderUsers(allUsers);
             if (id === 'prices') renderPrices(allPrices);
-            if (id === 'sales') renderSalesList(allTransactions);
+            if (id === 'sales') fetchSalesHistory(1);
             if (id === 'home') renderSales(allTransactions);
             if (id.startsWith('settings')) fetchStoreSettings();
             if (id === 'settings-servers') fetchServers();
@@ -3351,44 +3368,59 @@
                 return;
             }
 
-            const totalPages = Math.ceil(list.length / SALES_PER_PAGE);
-            const start = (currentSalesPage - 1) * SALES_PER_PAGE;
-            const paged = list.slice(start, start + SALES_PER_PAGE);
+        async function fetchSalesHistory(page = 1) {
+            try {
+                const tg = window.Telegram?.WebApp;
+                const userId = tg?.initDataUnsafe?.user?.id || 0;
+                const initData = tg?.initData || '';
+                const query = encodeURIComponent(salesSearchQuery);
+
+                const res = await fetch(`/api/admin/store/sales?user_id=${userId}&init_data=${encodeURIComponent(initData)}&page=${page}&limit=${SALES_PER_PAGE}&search=${query}`);
+                const data = await res.json();
+
+                totalSalesPages = data.total_pages;
+                currentSalesPage = data.current_page;
+
+                renderSalesList(data.sales);
+            } catch (e) { console.error("Sales History error:", e); }
+        }
+
+        function renderSalesList(list) {
+            const container = document.getElementById('sales-list');
+            const pagContainer = document.getElementById('sales-pagination');
+
+            if (!list || list.length === 0) {
+                container.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--text-s);">${currentLang === 'ar' ? 'لا توجد مبيعات' : 'No sales found'}</div>`;
+                pagContainer.style.display = 'none';
+                return;
+            }
 
             const rowS = "background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;";
             const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;";
 
-            container.innerHTML = paged.map(item => `
+            container.innerHTML = list.map(item => `
                 <div class="user-card" style="padding: 20px; margin-bottom: 15px; cursor: default;">
                     <div style="display: flex; flex-direction: column; gap: 10px;">
-                        <!-- Status -->
                         <div style="${rowS}">
                             <span style="${lblS}">${currentLang === 'ar' ? 'الحالة' : 'STATUS'}</span>
-                            <span style="color: #ec4899; font-weight: 900; font-size: 0.9rem; letter-spacing: 0.5px;">
-                                SOLD
-                            </span>
+                            <span style="color: #ec4899; font-weight: 900; font-size: 0.9rem; letter-spacing: 0.5px;">SOLD</span>
                         </div>
-                        <!-- Buyer ID -->
                         <div style="${rowS}">
                             <span style="${lblS}">${currentLang === 'ar' ? 'المشتري' : 'BUYER ID'}</span>
                             <span style="color: #f59e0b; font-weight: 800; font-size: 1rem;">${item.buyer_id}</span>
                         </div>
-                        <!-- Phone Number -->
                         <div style="${rowS}">
                             <span style="${lblS}">${currentLang === 'ar' ? 'الرقم' : 'NUMBER'}</span>
                             <span style="color: #10b981; font-weight: 800; font-size: 1.1rem; text-align: right; direction: ltr;">${item.phone}</span>
                         </div>
-                        <!-- Password -->
                         <div style="${rowS}">
                             <span style="${lblS}">${currentLang === 'ar' ? 'كلمة السر' : 'PASSWORD'}</span>
                             <span style="color: #ec4899; font-weight: 800; font-size: 1.1rem; text-align: right; direction: ltr; font-family: monospace;">${item.password || 'N/A'}</span>
                         </div>
-                        <!-- Price -->
                         <div style="${rowS}">
                             <span style="${lblS}">${currentLang === 'ar' ? 'السعر' : 'PRICE'}</span>
                             <span style="color: #3b82f6; font-weight: 900; font-size: 1.1rem; text-align: right;">$${formatMoney(item.price)}</span>
                         </div>
-                        <!-- Date -->
                         <div style="${rowS}">
                             <span style="${lblS}">${currentLang === 'ar' ? 'التاريخ' : 'DATE'}</span>
                             <span style="color: #fdd835; font-weight: 600; font-size: 0.85rem; direction: ltr;">${formatDateTime(item.date)}</span>
@@ -3397,52 +3429,41 @@
                 </div>
             `).join('');
 
-            if (totalPages > 1) {
+            if (totalSalesPages > 1) {
                 pagContainer.style.display = 'flex';
-                document.getElementById('pgInfoSales').innerText = `Page ${currentSalesPage} of ${totalPages}`;
+                document.getElementById('pgInfoSales').innerText = `Page ${currentSalesPage} of ${totalSalesPages}`;
                 document.getElementById('pgPrevSales').disabled = (currentSalesPage === 1);
-                document.getElementById('pgNextSales').disabled = (currentSalesPage === totalPages);
+                document.getElementById('pgNextSales').disabled = (currentSalesPage === totalSalesPages);
             } else {
                 pagContainer.style.display = 'none';
             }
         }
 
         function searchSales() {
-            const q = document.getElementById('sales-search').value.trim().toLowerCase();
-            if (!q) { filteredSales = null; currentSalesPage = 1; renderSalesList(allTransactions); return; }
-            filteredSales = allTransactions.filter(item =>
-                String(item.phone).includes(q) ||
-                String(item.buyer_id).includes(q) ||
-                (item.country && item.country.toLowerCase().includes(q))
-            );
-            currentSalesPage = 1;
-            document.getElementById('reset-sales-search-container').style.display = 'block';
-            renderSalesList(filteredSales);
+            const input = document.getElementById('sales-search');
+            salesSearchQuery = input.value.trim();
+            document.getElementById('reset-sales-search-container').style.display = salesSearchQuery ? 'block' : 'none';
+            fetchSalesHistory(1);
         }
 
         function resetSalesSearch() {
+            salesSearchQuery = '';
             document.getElementById('sales-search').value = '';
-            filteredSales = null;
-            currentSalesPage = 1;
             document.getElementById('reset-sales-search-container').style.display = 'none';
-            renderSalesList(allTransactions);
+            fetchSalesHistory(1);
         }
 
         function prevSalesPage() {
             if (currentSalesPage > 1) {
-                currentSalesPage--;
-                renderSalesList(filteredSales || allTransactions);
-                document.getElementById('sales-mgmt-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                fetchSalesHistory(currentSalesPage - 1);
+                document.getElementById('app-content-scroller').scrollTop = 0;
             }
         }
 
         function nextSalesPage() {
-            const list = filteredSales || allTransactions;
-            const totalPages = Math.ceil(list.length / SALES_PER_PAGE);
-            if (currentSalesPage < totalPages) {
-                currentSalesPage++;
-                renderSalesList(list);
-                document.getElementById('sales-mgmt-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            if (currentSalesPage < totalSalesPages) {
+                fetchSalesHistory(currentSalesPage + 1);
+                document.getElementById('app-content-scroller').scrollTop = 0;
             }
         }
 

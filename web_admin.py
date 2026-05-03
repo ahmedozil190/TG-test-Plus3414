@@ -2023,6 +2023,67 @@ async def get_admin_store_data(user_id: int, init_data: str):
         logger.error(f"Store Admin Data Error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/api/admin/store/sales")
+async def get_admin_store_sales(
+    user_id: int, 
+    init_data: str,
+    page: int = 1, 
+    limit: int = 10,
+    search: str = None
+):
+    from config import BOT_TOKEN, ADMIN_IDS
+    if not verify_telegram_auth(init_data, BOT_TOKEN, user_id) or user_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
+    
+    try:
+        async with async_session() as session:
+            offset = (page - 1) * limit
+            base_stmt = select(Account).where(Account.status == AccountStatus.SOLD)
+            
+            if search and search.strip():
+                s = f"%{search.strip()}%"
+                base_stmt = base_stmt.where(
+                    or_(
+                        Account.phone_number.ilike(s),
+                        cast(Account.buyer_id, String).ilike(s),
+                        Account.country.ilike(s)
+                    )
+                )
+                
+            total_count = (await session.execute(
+                select(func.count()).select_from(base_stmt.subquery())
+            )).scalar() or 0
+            total_pages = math.ceil(total_count / limit) if total_count > 0 else 1
+            
+            stmt = base_stmt.order_by(Account.purchased_at.desc()).offset(offset).limit(limit)
+            results = (await session.execute(stmt)).scalars().all()
+            
+            sales = []
+            import phonenumbers
+            for acc in results:
+                flag = "🌐"
+                try:
+                    p = phonenumbers.parse(acc.phone_number)
+                    flag = get_flag_emoji(phonenumbers.region_code_for_number(p))
+                except: pass
+                sales.append({
+                    "buyer_id": acc.buyer_id, 
+                    "price": acc.price, 
+                    "phone": acc.phone_number,
+                    "password": acc.two_fa_password,
+                    "country": f"{flag} {acc.country}",
+                    "date": acc.purchased_at.isoformat() if acc.purchased_at else None
+                })
+                
+            return {
+                "sales": sales,
+                "total_pages": total_pages,
+                "current_page": page
+            }
+    except Exception as e:
+        logger.error(f"Store Sales Error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.get("/api/admin/system/cleanup-fake")
 async def cleanup_fake_api(key: str = None):
     if key != "cleanup_99":
