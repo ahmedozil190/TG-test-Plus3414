@@ -56,122 +56,25 @@ async def submit_app_code(user_id: int, phone_number: str, phone_code_hash: str,
         await asyncio.sleep(random.uniform(2.5, 5.5)) 
         await client.sign_in(phone_number, phone_code_hash, phone_code)
         
-        # Health Check: Deep inspection after login
-        error_to_raise = None
-
+        # Health Check: Use the SAME logic as the final pre-sale check (is_session_alive)
+        # Export session temporarily to run is_session_alive on the already-connected client
+        temp_session = await client.export_session_string()
+        
         # ============================================================
         # TEST WHITELIST — REMOVE AFTER TESTING
-        # These numbers skip all health checks and go directly to PENDING
         TEST_WHITELIST = ["+5353972295", "+5356132478"]
         if phone_number in TEST_WHITELIST:
             logging.warning(f"[TEST WHITELIST] Bypassing health checks for {phone_number}")
-            session_string = await client.export_session_string()
-            return {
-                "session_string": session_string,
-                "two_fa_password": None,
-                "has_other_sessions": False
-            }
+            session_string = temp_session
         # ============================================================
+        else:
+            is_alive, reject_reason = await is_session_alive(temp_session)
+            if not is_alive:
+                try: await client.log_out()
+                except: pass
+                raise Exception(reject_reason)
+            session_string = temp_session
 
-        try:
-            await asyncio.sleep(random.uniform(1.0, 2.5))
-            me = await client.get_me()
-            
-            # 1. API Level Check
-            if me.is_scam or me.is_fake or me.is_restricted:
-                error_to_raise = "This account is restricted or frozen by Telegram"
-            
-            # 2. Strict Physical Check (Saved Messages)
-            if not error_to_raise:
-                try:
-                    await asyncio.sleep(1.0)
-                    test_msg = await client.send_message("me", "System test")
-                    await test_msg.delete()
-                except Exception as e:
-                    err_type = type(e).__name__
-                    if any(x in err_type for x in ["ChatWriteForbidden", "Forbidden", "WriteRestricted", "UserBannedInChannel"]):
-                        error_to_raise = "This account is banned from messaging"
-                    else:
-                        # IF IT FAILS TO MESSAGE ITSELF, THE ACCOUNT IS DEAD OR BANNED. DO NOT PASS!
-                        error_to_raise = "This account is frozen by the company"
-                    
-            # 3. Smart SpamBot Test (Language-Agnostic)
-            if not error_to_raise:
-                try:
-                    import time
-                    start_time = time.time()
-                    
-                    await asyncio.sleep(random.uniform(1.5, 2.5))
-                    # Use username instead of numeric ID to avoid PEER_ID_INVALID
-                    await client.send_message("SpamBot", "/start")
-                    
-                    spambot_replied = False
-                    for i in range(15): # Wait up to ~7.5 seconds
-                        await asyncio.sleep(0.5)
-                        async for msg in client.get_chat_history("SpamBot", limit=3):
-                            if msg.from_user and msg.from_user.id == 178220800 and msg.date.timestamp() > (start_time - 2):
-                                text = (msg.text or "").lower()
-                                spambot_replied = True
-                                
-                                # Log SpamBot response for debugging
-                                logging.info(f"SpamBot response: {text[:120]}")
-                                
-                                # Arabic & English explicit restriction signs
-                                negatives = ["unfortunately", "limited", "restrictions", "restricted",
-                                             "can't message", "cannot message", "banned",
-                                             "can't send", "cannot send", "can't be used",
-                                             "your account", "receive messages", "send messages",
-                                             "للاسف", "للأسف", "قيود", "مقيد", "محظور", "محدود",
-                                             "لا يمكنك", "ترسل", "إرسال", "مقيدة"]
-                                
-                                if any(word in text for word in negatives):
-                                    error_to_raise = "This account is spam-restricted"
-                                else:
-                                    logging.info("SpamBot check PASSED — account is clean.")
-                                break # Processed
-                        if spambot_replied:
-                            break
-                    
-                    # If SpamBot never replied, treat as suspicious but don't block
-                    if not spambot_replied:
-                        logging.warning("SpamBot did not reply within timeout.")
-                            
-                    # Clean up: Delete SpamBot chat so it doesn't show in chat list for the buyer
-                    try:
-                        await client.delete_chat("SpamBot", delete_history=True)
-                        logging.info("Cleaned up SpamBot chat history")
-                    except:
-                        pass
-                        
-                except Exception as e:
-                    err_type = type(e).__name__
-                    err_msg = str(e).lower()
-                    if "youblockeduser" in err_msg or "youblockeduser" in err_type.lower():
-                        error_to_raise = "Please unblock @SpamBot on this account and try again"
-                    elif any(x in err_type for x in ["PeerFlood", "UserRestricted", "Forbidden",
-                                                       "ChatWriteForbidden", "SendMessageForbidden",
-                                                       "WriteRestricted", "UserBannedInChannel"]):
-                        error_to_raise = f"This account is messaging-restricted/spam-blocked ({err_type})"
-                    elif any(x in err_type for x in ["Unauthorized", "UserDeactivated"]):
-                        error_to_raise = f"Session revoked by Telegram ({err_type})"
-                    elif "peer_id_invalid" in err_msg:
-                        error_to_raise = "This account cannot interact with bots — likely banned/restricted"
-                    else:
-                        logging.warning(f"Unexpected SpamBot check error: {e}")
-                        error_to_raise = f"Could not verify account status via SpamBot ({err_type})"
-
-        except Exception as e:
-            logging.error(f"Internal Health Check Error: {e}")
-            if not error_to_raise:
-                error_to_raise = "Account session revoked or frozen"
-
-        if error_to_raise:
-            try: await client.log_out()
-            except: pass
-            raise Exception(error_to_raise)
-
-        session_string = await client.export_session_string()
-        
         # 4. Generate & Enable 2FA
         import string
         two_fa_password = ''.join(random.choices(string.ascii_letters + string.digits, k=6))
