@@ -2923,6 +2923,13 @@ async def seller_request_otp(data: SellerOTPRequest):
             raise HTTPException(status_code=429, detail=f"FLOOD|{wait_str}")
         if any(x in err_lower for x in ["banned", "frozen", "security"]):
             raise HTTPException(status_code=400, detail=err_msg)
+        # Handle common Telegram number errors cleanly
+        if "phone_number_invalid" in err_lower:
+            raise HTTPException(status_code=400, detail="INVALID_PHONE|This phone number is not valid or not registered on Telegram.")
+        if "phone_number_banned" in err_lower:
+            raise HTTPException(status_code=400, detail="BANNED_PHONE|This number is permanently banned by Telegram.")
+        if "phone_number_unoccupied" in err_lower:
+            raise HTTPException(status_code=400, detail="INVALID_PHONE|This phone number has no Telegram account.")
         raise HTTPException(status_code=500, detail=f"Request error: {str(e)}")
 
 @app.post("/api/seller/submit-otp")

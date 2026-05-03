@@ -2179,6 +2179,12 @@
                         );
                     } else if (res.status === 429) {
                         showInlineError('⏳ Please Wait', detail);
+                    } else if (detail.startsWith('INVALID_PHONE|')) {
+                        tg.HapticFeedback.notificationOccurred('error');
+                        showInlineError('❌ Invalid Number', detail.split('|')[1]);
+                    } else if (detail.startsWith('BANNED_PHONE|')) {
+                        tg.HapticFeedback.notificationOccurred('error');
+                        showInlineError('🚫 Number Banned', detail.split('|')[1]);
                     } else {
                         showToast("Error", detail || "Request failed", "error");
                     }
