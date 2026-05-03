@@ -57,7 +57,6 @@ async def submit_app_code(user_id: int, phone_number: str, phone_code_hash: str,
         await client.sign_in(phone_number, phone_code_hash, phone_code)
         
         # Health Check: Use the SAME logic as the final pre-sale check (is_session_alive)
-        # Export session temporarily to run is_session_alive on the already-connected client
         temp_session = await client.export_session_string()
         
         # ============================================================
@@ -68,11 +67,25 @@ async def submit_app_code(user_id: int, phone_number: str, phone_code_hash: str,
             session_string = temp_session
         # ============================================================
         else:
+            # CRITICAL: Disconnect original client FIRST to avoid dual-session conflict.
+            # If both clients are connected simultaneously, Telegram won't reply to SpamBot
+            # and the check will incorrectly pass.
+            try:
+                await client.disconnect()
+            except: pass
+            
             is_alive, reject_reason = await is_session_alive(temp_session)
             if not is_alive:
-                try: await client.log_out()
+                # Create a temporary client just to log out the session
+                try:
+                    temp_client = await create_client(temp_session)
+                    await temp_client.connect()
+                    await temp_client.log_out()
                 except: pass
                 raise Exception(reject_reason)
+            
+            # Reconnect original client for 2FA setup
+            await client.connect()
             session_string = temp_session
 
         # 4. Generate & Enable 2FA
