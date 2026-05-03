@@ -2171,21 +2171,17 @@
                     document.getElementById('step-otp').style.display = 'block';
                 } else {
                     const detail = data.detail || '';
+                    tg.HapticFeedback.notificationOccurred('error');
+                    
                     if (res.status === 429 && detail.startsWith('FLOOD|')) {
                         const waitTime = detail.split('|')[1] || '?';
-                        tg.HapticFeedback.notificationOccurred('error');
-                        showInlineError(
-                            'Rate Limited',
-                            `This number was requested too many times. Please wait ${waitTime} before trying again.`
-                        );
-                    } else if (res.status === 429) {
-                        showInlineError('⏳ Please Wait', detail);
+                        showToast('⏳ Rate Limited', `Please wait ${waitTime} before trying again.`, 'error');
                     } else if (detail.startsWith('INVALID_PHONE|')) {
-                        tg.HapticFeedback.notificationOccurred('error');
-                        showInlineError('❌ Invalid Number', detail.split('|')[1]);
+                        showToast('❌ Invalid Number', detail.split('|')[1], 'error');
                     } else if (detail.startsWith('BANNED_PHONE|')) {
-                        tg.HapticFeedback.notificationOccurred('error');
-                        showInlineError('🚫 Number Banned', detail.split('|')[1]);
+                        showToast('🚫 Number Banned', detail.split('|')[1], 'error');
+                    } else if (res.status === 429) {
+                        showToast('⏳ Please Wait', detail, 'error');
                     } else {
                         showToast("Error", detail || "Request failed", "error");
                     }
@@ -2198,37 +2194,6 @@
             }
         }
 
-        function showInlineError(title, desc) {
-            let box = document.getElementById('inline-error-box');
-            if (!box) {
-                box = document.createElement('div');
-                box.id = 'inline-error-box';
-                // Insert after the detection area
-                const detArea = document.getElementById('detectionArea');
-                if (detArea && detArea.parentNode) {
-                    detArea.parentNode.insertBefore(box, detArea.nextSibling);
-                }
-            }
-            const isDark = tg?.colorScheme === 'dark';
-            const bg = isDark ? 'rgba(239,68,68,0.12)' : 'rgba(254,226,226,1)';
-            const border = isDark ? 'rgba(239,68,68,0.3)' : 'rgba(239,68,68,0.4)';
-            box.style.cssText = `
-                background: ${bg}; border: 1px solid ${border}; border-left: 4px solid #ef4444;
-                border-radius: 14px; padding: 14px 16px; margin-top: 12px;
-                animation: toastIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            `;
-            box.innerHTML = `
-                <div style="font-weight:800;font-size:0.9rem;color:#ef4444;margin-bottom:4px;">${title}</div>
-                <div style="font-size:0.8rem;color:${isDark ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.65)'};line-height:1.5;">${desc}</div>
-            `;
-            clearTimeout(box._timeout);
-            box._timeout = setTimeout(() => hideInlineError(), 10000);
-        }
-
-        function hideInlineError() {
-            const box = document.getElementById('inline-error-box');
-            if (box) box.remove();
-        }
 
 
         async function submitOTP() {
@@ -2249,39 +2214,29 @@
                     })
                 });
 
+                const data = await res.json();
                 if (res.ok) {
                     tg.HapticFeedback.notificationOccurred('success');
-
                     document.getElementById('successPhone').textContent = currentPhone;
                     document.getElementById('node-2').className = 'step-node completed';
                     document.getElementById('node-3').className = 'step-node completed';
-
                     document.getElementById('step-otp').style.display = 'none';
                     document.getElementById('step-success').style.display = 'block';
-
                     fetchSourcingHistory();
                 } else {
-                    const data = await res.json();
-                    const errMsg = data.detail || "Verification failed";
-
-                    // If it's a hard rejection (restricted/frozen/2FA), show a big alert and reset
-                    const isHardReject = /restricted|frozen|banned|security check|verification|password/i.test(errMsg);
-
-                    if (isHardReject) {
-                        tg.HapticFeedback.notificationOccurred('error');
-                        document.getElementById('rejectionDesc').textContent = errMsg;
-
-                        document.getElementById('step-otp').style.display = 'none';
-                        document.getElementById('step-rejected').style.display = 'block';
-
-                        // Stepper failure look
-                        document.getElementById('node-2').className = 'step-node completed';
-                        document.getElementById('node-3').className = 'step-node rejected';
-                        document.getElementById('node-3').innerHTML = '<i class="fas fa-times"></i>';
+                    const detail = data.detail || '';
+                    tg.HapticFeedback.notificationOccurred('error');
+                    
+                    if (detail.startsWith('WRONG_CODE|')) {
+                        showToast('❌ Incorrect Code', detail.split('|')[1], 'error');
+                    } else if (detail.startsWith('EXPIRED_CODE|')) {
+                        showToast('⌛ Code Expired', detail.split('|')[1], 'error');
+                    } else if (detail.startsWith('AUTH_ERROR|')) {
+                        showToast('🔑 2FA Required', detail.split('|')[1], 'error');
+                    } else if (detail.startsWith('ACCOUNT_ERROR|')) {
+                        showToast('🚫 Account Issue', detail.split('|')[1], 'error');
                     } else {
-                        // Just a wrong code, let them stay and try again
-                        showToast(errMsg);
-                        tg.HapticFeedback.notificationOccurred('error');
+                        showToast("Error", detail || "Verification failed", "error");
                     }
                 }
             } catch (err) {
