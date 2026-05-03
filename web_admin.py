@@ -1034,6 +1034,7 @@ async def get_store_data(user_id: int = None):
                         "flag": flag,
                         "buy_price": price,
                         "count": c_data["count"],
+                        "server_id": c_data.get("server_id"),
                         "server_name": c_data.get("server_name", "Server 1"),
                         "is_selling_price": is_sp
                     })
@@ -1162,6 +1163,7 @@ async def get_store_data(user_id: int = None):
 
 @app.post("/api/store/buy")
 async def store_buy(data: StoreBuy):
+    logger.info(f"Store Buy Request: user_id={data.user_id}, country={data.country}, server_id={data.server_id}")
     try:
         async with async_session() as session:
             # 1. AUTH VERIFICATION
