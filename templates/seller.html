@@ -2171,7 +2171,6 @@
                     currentPhone = data.phone;
                     document.getElementById('displayPhone').textContent = currentPhone;
                     tg.HapticFeedback.notificationOccurred('success');
-                    hideInlineError();
 
                     // Update Stepper
                     document.getElementById('node-1').className = 'step-node completed';
@@ -2379,7 +2378,7 @@
             if (!container) {
                 container = document.createElement('div');
                 container.id = 'toast-container';
-                container.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);width:100%;max-width:400px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none;padding:0 20px;';
+                container.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none;max-width:320px;';
                 document.body.appendChild(container);
             }
 
