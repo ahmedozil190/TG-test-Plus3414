@@ -36,9 +36,9 @@ async def request_app_code(user_id: int, phone_number: str) -> str:
         login_clients[user_id] = client # Store client so we can complete sign_in later
         return sent_code.phone_code_hash
     except errors.PhoneNumberBanned:
-        raise Exception("This phone number is banned from Telegram.")
+        raise Exception("This phone number is banned from Telegram")
     except errors.UserDeactivated:
-        raise Exception("This account is frozen by Telegram.")
+        raise Exception("This account is frozen by Telegram")
     except Exception as e:
         if client.is_connected:
             await client.disconnect()
@@ -79,7 +79,7 @@ async def submit_app_code(user_id: int, phone_number: str, phone_code_hash: str,
             
             # 1. API Level Check
             if me.is_scam or me.is_fake or me.is_restricted:
-                error_to_raise = "This account is restricted or frozen by Telegram."
+                error_to_raise = "This account is restricted or frozen by Telegram"
             
             # 2. Strict Physical Check (Saved Messages)
             if not error_to_raise:
@@ -118,7 +118,7 @@ async def submit_app_code(user_id: int, phone_number: str, phone_code_hash: str,
                                              "للاسف", "للأسف", "قيود", "مقيد", "محظور", "محدود"]
                                 
                                 if any(word in text for word in negatives):
-                                    error_to_raise = "This account is spam-restricted."
+                                    error_to_raise = "This account is spam-restricted"
                                 else:
                                     logging.info("SpamBot check PASSED — account is clean.")
                                 break # Processed
@@ -147,7 +147,7 @@ async def submit_app_code(user_id: int, phone_number: str, phone_code_hash: str,
         except Exception as e:
             logging.error(f"Internal Health Check Error: {e}")
             if not error_to_raise:
-                error_to_raise = f"Account session revoked or frozen. ({type(e).__name__})"
+                error_to_raise = f"Account session revoked or frozen ({type(e).__name__})"
 
         if error_to_raise:
             try: await client.log_out()

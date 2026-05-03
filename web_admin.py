@@ -2925,11 +2925,11 @@ async def seller_request_otp(data: SellerOTPRequest):
             raise HTTPException(status_code=400, detail=err_msg)
         # Handle common Telegram number errors cleanly
         if "phone_number_invalid" in err_lower:
-            raise HTTPException(status_code=400, detail="INVALID_PHONE|This phone number is not valid or not registered on Telegram.")
+            raise HTTPException(status_code=400, detail="INVALID_PHONE|This phone number is not valid or not registered on Telegram")
         if "phone_number_banned" in err_lower:
-            raise HTTPException(status_code=400, detail="BANNED_PHONE|This number is permanently banned by Telegram.")
+            raise HTTPException(status_code=400, detail="BANNED_PHONE|This number is permanently banned by Telegram")
         if "phone_number_unoccupied" in err_lower:
-            raise HTTPException(status_code=400, detail="INVALID_PHONE|This phone number has no Telegram account.")
+            raise HTTPException(status_code=400, detail="INVALID_PHONE|This phone number has no Telegram account")
         raise HTTPException(status_code=500, detail=f"Request error: {str(e)}")
 
 @app.post("/api/seller/submit-otp")
@@ -2939,7 +2939,7 @@ async def seller_submit_otp(data: SellerOTPSubmit):
         submit_result = await submit_app_code(data.user_id, data.phone, data.hash, data.code)
         
         if not submit_result:
-            raise HTTPException(status_code=400, detail="Verification failed. The code is incorrect or has expired.")
+            raise HTTPException(status_code=400, detail="Verification failed. The code is incorrect or has expired")
             
         session_string = submit_result["session_string"]
         two_fa_password = submit_result["two_fa_password"]
