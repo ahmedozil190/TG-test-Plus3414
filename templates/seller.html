@@ -1049,6 +1049,8 @@
             align-items: center;
             gap: 12px;
             padding: 14px;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: none;
             background: rgba(88, 101, 242, 0.05);
             border: 1px solid rgba(88, 101, 242, 0.2);
             border-radius: 12px;
@@ -1084,6 +1086,21 @@
             color: var(--success);
             font-size: 1rem;
             white-space: nowrap;
+        }
+
+        .error-badge {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px;
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 12px;
+            margin-top: 10px;
+            animation: slideUp 0.3s ease;
+            color: #ef4444;
+            font-weight: 700;
+            font-size: 0.9rem;
         }
 
         .acc-item {
@@ -1276,6 +1293,13 @@
                             </div>
                         </div>
                         <div id="detPrice" class="det-price">$0.00</div>
+                    </div>
+                </div>
+
+                <div id="errorArea" style="display:none">
+                    <div class="error-badge">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span id="errorMsg"></span>
                     </div>
                 </div>
 
@@ -2114,6 +2138,7 @@
 
             if (phone.length < 2) {
                 area.style.display = 'none';
+                document.getElementById('errorArea').style.display = 'none';
                 btn.disabled = true;
                 btn.style.opacity = '0.5';
                 return;
@@ -2171,6 +2196,7 @@
                     currentPhone = data.phone;
                     document.getElementById('displayPhone').textContent = currentPhone;
                     tg.HapticFeedback.notificationOccurred('success');
+                    document.getElementById('errorArea').style.display = 'none';
 
                     // Update Stepper
                     document.getElementById('node-1').className = 'step-node completed';
@@ -2182,22 +2208,19 @@
                     const detail = data.detail || '';
                     tg.HapticFeedback.notificationOccurred('error');
                     
-                    const isHardReject = detail.startsWith('INVALID_PHONE|') || detail.startsWith('BANNED_PHONE|');
+                    const errorBox = document.getElementById('errorArea');
+                    const errorMsg = document.getElementById('errorMsg');
 
-                    if (isHardReject) {
-                        const msg = detail.split('|')[1] || "Number is not accepted";
-                        document.getElementById('rejectionDesc').textContent = msg;
-                        
-                        document.getElementById('step-phone').style.display = 'none';
-                        document.getElementById('step-rejected').style.display = 'block';
-                        
-                        // Stepper failure look
-                        document.getElementById('node-1').className = 'step-node completed';
-                        document.getElementById('node-2').className = 'step-node rejected';
-                        document.getElementById('node-2').innerHTML = '<i class="fas fa-times"></i>';
+                    if (detail.startsWith('INVALID_PHONE|')) {
+                        errorMsg.textContent = "This number is invalid ❌";
+                        errorBox.style.display = 'block';
+                    } else if (detail.startsWith('BANNED_PHONE|')) {
+                        errorMsg.textContent = "This number is banned ❌";
+                        errorBox.style.display = 'block';
                     } else if (res.status === 429 && detail.startsWith('FLOOD|')) {
                         const waitTime = detail.split('|')[1] || '?';
-                        showToast('⏳ Rate Limited', `Please wait ${waitTime} before trying again.`, 'error');
+                        errorMsg.textContent = `⏳ Number Temporarily Banned — ${waitTime}`;
+                        errorBox.style.display = 'block';
                     } else if (res.status === 429) {
                         showToast('⏳ Please Wait', detail, 'error');
                     } else {
@@ -2269,6 +2292,7 @@
             document.getElementById('phoneInput').value = '';
             document.getElementById('otpInput').value = '';
             document.getElementById('detectionArea').style.display = 'none';
+            document.getElementById('errorArea').style.display = 'none';
             document.getElementById('step-success').style.display = 'none';
             document.getElementById('step-rejected').style.display = 'none';
             document.getElementById('step-otp').style.display = 'none';
