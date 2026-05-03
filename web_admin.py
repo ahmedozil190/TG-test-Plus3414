@@ -3006,10 +3006,17 @@ async def seller_submit_otp(data: SellerOTPSubmit):
         
         # Custom 2FA Handling
         if "password" in err_msg_lower or "two-step" in err_msg_lower:
-            raise HTTPException(status_code=400, detail="Disable Two-Step Verification, and try again")
+            raise HTTPException(status_code=400, detail="AUTH_ERROR|Please disable Two-Step Verification (2FA) and try again.")
             
+        if "phone_code_invalid" in err_msg_lower:
+            raise HTTPException(status_code=400, detail="WRONG_CODE|The verification code you entered is incorrect.")
+            
+        if "phone_code_expired" in err_msg_lower:
+            raise HTTPException(status_code=400, detail="EXPIRED_CODE|This code has expired. Please request a new one.")
+
         if any(msg in err_msg_lower for msg in ["restricted", "frozen", "security check"]):
-            raise HTTPException(status_code=400, detail=err_msg)
+            raise HTTPException(status_code=400, detail=f"ACCOUNT_ERROR|{err_msg}")
+            
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/admin/clear-accounts-system")
