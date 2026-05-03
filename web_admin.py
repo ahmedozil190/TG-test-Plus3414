@@ -2825,7 +2825,7 @@ async def seller_request_otp(data: SellerOTPRequest):
         
         if now - last_phone_req < OTP_COOLDOWN_SECONDS:
             wait_time = int(OTP_COOLDOWN_SECONDS - (now - last_phone_req))
-            raise HTTPException(status_code=429, detail=f"Wait {wait_time}s before requesting a code for this number.")
+            raise HTTPException(status_code=429, detail=f"Wait {wait_time}s before requesting a code for this number")
             
         if now - last_user_req < OTP_COOLDOWN_SECONDS:
             wait_time = int(OTP_COOLDOWN_SECONDS - (now - last_user_req))
