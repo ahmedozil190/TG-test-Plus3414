@@ -57,11 +57,20 @@ async def submit_app_code(user_id: int, phone_number: str, phone_code_hash: str,
         await client.sign_in(phone_number, phone_code_hash, phone_code)
         
         temp_session = await client.export_session_string()
+        try: await client.disconnect()
+        except: pass
+
         is_alive, reject_reason = await is_session_alive(temp_session)
+        
         if not is_alive:
-            try: await client.log_out()
+            try:
+                temp_client = await create_client(temp_session)
+                await temp_client.connect()
+                await temp_client.log_out()
             except: pass
             raise Exception(reject_reason)
+            
+        await client.connect()
         session_string = temp_session
 
         # 4. Generate & Enable 2FA
@@ -156,7 +165,7 @@ async def is_session_alive(session_string: str) -> tuple[bool, str]:
         
         logging.info(f"[AliveCheck] API check passed for {getattr(me, 'phone_number', '?')}")
 
-        # STRICT PHYSICAL CHECK: Temporarily disabled for testing
+        # STRICT PHYSICAL CHECK: Disabled based on new SpamBot message handling
         # try:
         #     test_msg = await client.send_message("me", "✅")
         #     await test_msg.delete()
@@ -183,6 +192,7 @@ async def is_session_alive(session_string: str) -> tuple[bool, str]:
                         
                         negatives = ["unfortunately", "limited", "restrictions", "restricted",
                                      "can't message", "cannot message", "banned",
+                                     "was blocked for violations", "terms of service",
                                      "للاسف", "للأسف", "قيود", "مقيد", "محظور", "محدود"]
                         if any(word in text for word in negatives):
                             return False, "Account is Spam"
