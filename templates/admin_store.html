@@ -3400,9 +3400,9 @@
             }
 
             container.innerHTML = stats.map(s => `
-                <div class="user-card" style="padding: 20px; cursor: default; border: 1px solid rgba(139, 92, 246, 0.2); border-radius: 20px;">
+                <div class="user-card" style="padding: 20px; cursor: default; border: 1px solid var(--border); border-radius: 20px;">
                     <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
-                        <h3 style="margin: 0; font-size: 1.15rem; font-weight: 800; color: var(--text-primary);"><i class="fas fa-server" style="color: var(--accent); margin-right: 8px;"></i>${s.server_name}</h3>
+                        <h3 style="margin: 0; font-size: 1.15rem; font-weight: 800; color: var(--text-secondary);"><i class="fas fa-server" style="color: var(--text-secondary); margin-right: 8px;"></i>${s.server_name}</h3>
                         <span class="badge" style="background: rgba(139, 92, 246, 0.1); color: var(--accent-purple); font-size: 0.8rem; padding: 6px 14px;">${s.total_sales} Sales</span>
                     </div>
                     <div style="width: 100%; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; text-align: center;">
