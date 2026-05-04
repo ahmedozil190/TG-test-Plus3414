@@ -3916,7 +3916,6 @@
             if (!q) { filteredPrices = null; currentPricePage = 1; renderPrices(allPrices); return; }
             filteredPrices = allPrices.filter(p => (p.name && p.name.toLowerCase().includes(q)) || String(p.code).includes(q));
             currentPricePage = 1;
-            document.getElementById('reset-price-search-container').style.display = 'block';
             renderPrices(filteredPrices);
         }
 
@@ -4743,11 +4742,9 @@
             filteredDeposits = allDeposits.filter(d => String(d.user_id).includes(q) || String(d.txid).toLowerCase().includes(q));
             currentDepositsPage = 1;
             renderDepositsList(filteredDeposits);
-            document.getElementById('reset-deposits-search-container').style.display = 'block';
         }
         function resetDepositsSearch() {
             document.getElementById('deposits-search').value = '';
-            document.getElementById('reset-deposits-search-container').style.display = 'none';
             filteredDeposits = null;
             currentDepositsPage = 1;
             renderDepositsList(allDeposits);

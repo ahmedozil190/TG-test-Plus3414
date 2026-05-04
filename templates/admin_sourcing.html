@@ -3067,7 +3067,9 @@
         function searchUserPrices() {
             const q = document.getElementById('up-search').value.toLowerCase().trim();
             if (!q) {
-                resetUpSearch();
+                filteredUserPrices = null;
+                currentUserPricePage = 1;
+                renderUserPrices(allUserPrices);
                 return;
             }
             filteredUserPrices = allUserPrices.filter(p =>
@@ -3077,13 +3079,11 @@
                 (p.user_name || '').toLowerCase().includes(q)
             );
             currentUserPricePage = 1;
-            document.getElementById('reset-up-search-container').style.display = 'block';
             renderUserPrices(filteredUserPrices);
         }
 
         function resetUpSearch() {
             document.getElementById('up-search').value = '';
-            document.getElementById('reset-up-search-container').style.display = 'none';
             filteredUserPrices = null;
             currentUserPricePage = 1;
             renderUserPrices(allUserPrices);
@@ -3506,11 +3506,6 @@
                 const el = document.getElementById(sId);
                 if (el) el.value = '';
             });
-            const resetContainers = ['reset-search-container', 'reset-price-search-container', 'reset-withdraw-search-container', 'reset-price-search-container-hist'];
-            resetContainers.forEach(cId => {
-                const el = document.getElementById(cId);
-                if (el) el.style.display = 'none';
-            });
 
             // 3. Hide ALL sections first
             document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
@@ -3730,57 +3725,19 @@
 
         async function searchWithdrawals() {
             const q = document.getElementById('withdraw-search').value.trim().toLowerCase();
-            const resetBtn = document.getElementById('reset-withdraw-search-container');
-
-            if (!q) return;
-
-            // Search in current tab first
-            let filtered = allWithdrawals.filter(w =>
+            if (!q) {
+                renderAdminWithdrawals(allWithdrawals);
+                return;
+            }
+            const filtered = allWithdrawals.filter(w =>
                 String(w.user_id).includes(q) ||
                 (w.transaction_id && w.transaction_id.toLowerCase().includes(q))
             );
-
-            if (filtered.length > 0) {
-                resetBtn.style.display = 'block';
-                document.getElementById('withdraw-pagination').style.display = 'none';
-                renderAdminWithdrawals(filtered);
-                return;
-            }
-
-            // Not found in current tab, try the other tab
-            const otherStatus = currentAdminWithdrawStatus === 'pending' ? 'approved' : 'pending';
-            try {
-                const res = await fetch(`/api/admin/withdrawals/all?page=1&status=${otherStatus}`);
-                const data = await res.json();
-                const otherList = data.history || [];
-                filtered = otherList.filter(w =>
-                    String(w.user_id).includes(q) ||
-                    (w.transaction_id && w.transaction_id.toLowerCase().includes(q))
-                );
-
-                if (filtered.length > 0) {
-                    // Switch to the other tab visually
-                    currentAdminWithdrawStatus = otherStatus;
-                    allWithdrawals = otherList;
-                    document.querySelectorAll('#section-withdrawals .tab-btn').forEach(b => b.classList.remove('active'));
-                    document.getElementById(`withdraw-tab-${otherStatus}`).classList.add('active');
-                    resetBtn.style.display = 'block';
-                    document.getElementById('withdraw-pagination').style.display = 'none';
-                    renderAdminWithdrawals(filtered);
-                } else {
-                    resetBtn.style.display = 'block';
-                    renderAdminWithdrawals([]);
-                }
-            } catch (e) {
-                console.error(e);
-                resetBtn.style.display = 'block';
-                renderAdminWithdrawals([]);
-            }
+            renderAdminWithdrawals(filtered);
         }
 
         function resetWithdrawSearch() {
             document.getElementById('withdraw-search').value = '';
-            document.getElementById('reset-withdraw-search-container').style.display = 'none';
             fetchAdminWithdrawals(1, currentAdminWithdrawStatus);
         }
 
@@ -3815,7 +3772,6 @@
             document.getElementById('user-search').value = '';
             filteredUsers = null;
             currentPage = 1;
-            document.getElementById('reset-search-container').style.display = 'none';
             renderUsers(allUsers);
         }
 
@@ -4142,14 +4098,12 @@
         function searchHistory() {
             const input = document.getElementById('history-search');
             historySearchQuery = input.value.trim();
-            document.getElementById('reset-history-search-container').style.display = historySearchQuery ? 'block' : 'none';
             fetchAdminHistory(1);
         }
 
         function resetHistorySearch() {
             historySearchQuery = '';
             document.getElementById('history-search').value = '';
-            document.getElementById('reset-history-search-container').style.display = 'none';
             fetchAdminHistory(1);
         }
 
@@ -4196,7 +4150,6 @@
             if (!q) { filteredPrices = null; currentPricePage = 1; renderPrices(allPrices); return; }
             filteredPrices = allPrices.filter(p => (p.name && p.name.toLowerCase().includes(q)) || String(p.code).includes(q));
             currentPricePage = 1;
-            document.getElementById('reset-price-search-container').style.display = 'block';
             renderPrices(filteredPrices);
         }
 
