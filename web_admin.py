@@ -2163,10 +2163,21 @@ async def get_admin_store_sales(
                     "total_cost": round(cost, 2),
                     "net_profit": round(revenue - cost, 2)
                 })
-                
+
+            # --- Top Countries ---
+            top_countries_stmt = select(
+                Account.country,
+                func.count(Account.id).label('count')
+            ).where(
+                Account.status == AccountStatus.SOLD
+            ).group_by(Account.country).order_by(func.count(Account.id).desc()).limit(10)
+            top_countries_result = (await session.execute(top_countries_stmt)).all()
+            top_countries = [{"country": row[0], "count": row[1]} for row in top_countries_result]
+
             return {
                 "sales": sales,
                 "stats": stats_list,
+                "top_countries": top_countries,
                 "total_pages": total_pages,
                 "current_page": page
             }

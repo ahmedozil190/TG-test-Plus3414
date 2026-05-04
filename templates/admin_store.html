@@ -1689,6 +1689,9 @@
             <div class="nav-item" id="menu-sales" onclick="switchNav('sales', this)">
                 <i class="fas fa-receipt"></i> <span data-i18n="nav_sales">Sales History</span>
             </div>
+            <div class="nav-item" id="menu-analytics" onclick="switchNav('analytics', this)">
+                <i class="fas fa-chart-line"></i> <span>Analytics</span>
+            </div>
             <div class="nav-item" id="menu-settings" onclick="switchNav('settings', this)">
                 <i class="fas fa-cog"></i> <span data-i18n="nav_settings">Settings</span>
             </div>
@@ -2013,6 +2016,32 @@
                 </div>
             </section>
 
+            <!-- ===== Analytics Section ===== -->
+            <section id="section-analytics" class="view-section">
+                <div class="section-header">
+                    <i class="fas fa-chart-line"></i>
+                    <h2>Analytics</h2>
+                </div>
+
+                <!-- Server Profitability -->
+                <div class="section-header" style="margin-top: 10px;">
+                    <i class="fas fa-server"></i>
+                    <h2>Server Profitability</h2>
+                </div>
+                <div id="analytics-server-stats" style="display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 30px;">
+                    <p style="text-align:center; color: var(--text-secondary);">Loading...</p>
+                </div>
+
+                <!-- Top Countries -->
+                <div class="section-header">
+                    <i class="fas fa-globe"></i>
+                    <h2>Top Countries</h2>
+                </div>
+                <div id="analytics-top-countries" style="display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 30px;">
+                    <p style="text-align:center; color: var(--text-secondary);">Loading...</p>
+                </div>
+            </section>
+
             <!-- ===== Sales History Section ===== -->
             <section id="section-sales" class="view-section">
                 <!-- Sales Stats -->
@@ -2044,16 +2073,6 @@
                             <i class="fas fa-sack-dollar"></i>
                         </div>
                     </div>
-                </div>
-
-                <!-- Server Stats Grid -->
-                <div class="section-header" style="margin-top: 30px;">
-                    <i class="fas fa-server"></i>
-                    <h2>Server Profitability</h2>
-                </div>
-                <div id="sales-server-stats"
-                    style="display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 30px;">
-                    <!-- Inserted by JS -->
                 </div>
 
                 <!-- Sales Search -->
@@ -2919,6 +2938,7 @@
             if (id === 'users') renderUsers(allUsers);
             if (id === 'prices') renderPrices(allPrices);
             if (id === 'sales') fetchSalesHistory(1);
+            if (id === 'analytics') fetchAnalytics();
             if (id === 'home') renderSales(allTransactions);
             if (id.startsWith('settings')) fetchStoreSettings();
             if (id === 'settings-servers') fetchServers();
@@ -2955,6 +2975,7 @@
                 'settings-servers': 'API Servers',
                 'settings-referral': 'Referral Program',
                 'settings-support': 'Support & Channels',
+                analytics: 'Analytics',
                 deposits: 'nav_deposits',
                 'store-user-prices': 'nav_store_user_prices'
             };
@@ -3367,6 +3388,75 @@
         }
 
         // ===== Sales History Logic =====
+        async function fetchAnalytics() {
+            const userId = tg?.initDataUnsafe?.user?.id || '';
+            const initData = tg?.initData || '';
+            try {
+                const res = await fetch(`/api/admin/store/sales?user_id=${userId}&init_data=${encodeURIComponent(initData)}&page=1&limit=1&search=`);
+                const data = await res.json();
+                if (data.stats) renderAnalyticsServerStats(data.stats);
+                if (data.top_countries) renderTopCountries(data.top_countries);
+            } catch(e) { console.error('Analytics error:', e); }
+        }
+
+        function renderAnalyticsServerStats(stats) {
+            const container = document.getElementById('analytics-server-stats');
+            if (!container) return;
+            if (!stats || stats.length === 0) {
+                container.innerHTML = `<p style="text-align:center; color:var(--text-secondary);">No data yet</p>`;
+                return;
+            }
+            container.innerHTML = stats.map(s => `
+                <div class="user-card" style="padding: 20px; cursor: default; border: 1px solid var(--border); border-radius: 20px; box-shadow: var(--shadow);">
+                    <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+                        <h3 style="margin: 0; font-size: 1rem; font-weight: 700; color: var(--text-secondary);"><i class="fas fa-server" style="color: var(--accent); margin-right: 8px;"></i>${s.server_name}</h3>
+                    </div>
+                    <div style="width: 100%; display: grid; grid-template-columns: 1fr; gap: 10px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(139, 92, 246, 0.05); border: 1px solid rgba(139, 92, 246, 0.2); padding: 14px 18px; border-radius: 16px;">
+                            <div style="font-size: 0.75rem; color: #8b5cf6; font-weight: 800; letter-spacing: 1px;">SALES</div>
+                            <div style="font-size: 1.15rem; font-weight: 800; color: #8b5cf6;">${s.total_sales}</div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2); padding: 14px 18px; border-radius: 16px;">
+                            <div style="font-size: 0.75rem; color: #3b82f6; font-weight: 800; letter-spacing: 1px;">REVENUE</div>
+                            <div style="font-size: 1.15rem; font-weight: 800; color: #3b82f6;">$${formatMoney(s.total_revenue)}</div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.2); padding: 14px 18px; border-radius: 16px;">
+                            <div style="font-size: 0.75rem; color: #f59e0b; font-weight: 800; letter-spacing: 1px;">COST</div>
+                            <div style="font-size: 1.15rem; font-weight: 800; color: #f59e0b;">$${formatMoney(s.total_cost)}</div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); padding: 14px 18px; border-radius: 16px;">
+                            <div style="font-size: 0.75rem; color: #10b981; font-weight: 800; letter-spacing: 1px;">NET</div>
+                            <div style="font-size: 1.25rem; font-weight: 900; color: #10b981;">$${formatMoney(s.net_profit)}</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderTopCountries(countries) {
+            const container = document.getElementById('analytics-top-countries');
+            if (!container) return;
+            if (!countries || countries.length === 0) {
+                container.innerHTML = `<p style="text-align:center; color:var(--text-secondary);">No data yet</p>`;
+                return;
+            }
+            const maxSales = countries[0]?.count || 1;
+            container.innerHTML = countries.map((c, i) => `
+                <div class="user-card" style="padding: 16px 20px; cursor: default; border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="font-size: 0.75rem; font-weight: 900; color: var(--accent); background: rgba(139,92,246,0.1); padding: 4px 10px; border-radius: 20px;">#${i+1}</span>
+                            <span style="font-size: 0.95rem; font-weight: 700; color: var(--text-primary);">${c.country}</span>
+                        </div>
+                        <span style="font-size: 1rem; font-weight: 800; color: var(--text-primary);">${c.count} <span style="font-size: 0.7rem; color: var(--text-secondary); font-weight: 600;">sales</span></span>
+                    </div>
+                    <div style="width: 100%; height: 6px; background: var(--border); border-radius: 99px; overflow: hidden;">
+                        <div style="height: 100%; width: ${Math.round((c.count / maxSales) * 100)}%; background: linear-gradient(90deg, var(--accent), #6366f1); border-radius: 99px; transition: width 0.6s ease;"></div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
         async function fetchSalesHistory(page = 1) {
             try {
                 const tg = window.Telegram?.WebApp;
