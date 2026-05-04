@@ -3178,13 +3178,11 @@
                     }
 
                     if (selectedIso && typeof selectedIso === 'string') {
-                        setTimeout(() => {
-                            const opt = container.querySelector(`.up-country-option-btn[data-iso="${selectedIso}"]`);
-                            if (opt) {
-                                selectUpCountryOption(opt);
-                                opt.scrollIntoView({ behavior: 'auto', block: 'nearest' });
-                            }
-                        }, 50);
+                        const opt = container.querySelector(`.up-country-option-btn[data-iso="${selectedIso}"]`);
+                        if (opt) {
+                            selectUpCountryOption(opt);
+                            opt.scrollIntoView({ behavior: 'auto', block: 'nearest' });
+                        }
                     }
                 } else {
                     container.innerHTML = waitHtml;
@@ -4317,9 +4315,7 @@
                     if (opt.getAttribute('data-iso') === iso) {
                         selectCountryOption(opt);
                         // Scroll to the selected option immediately
-                        setTimeout(() => {
-                            opt.scrollIntoView({ behavior: 'auto', block: 'nearest' });
-                        }, 10);
+                        opt.scrollIntoView({ behavior: 'auto', block: 'nearest' });
                     }
                 });
             }
