@@ -586,6 +586,22 @@
             background-clip: padding-box;
         }
 
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 7px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: var(--accent-purple);
+            border-radius: 10px;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+        }
+
         .container {
             padding: 25px 20px;
             max-width: 500px !important;
@@ -4345,7 +4361,7 @@
                     } else {
                         // Multiple countries
                         container.innerHTML = `
-                            <div style="max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 5px;">
+                            <div class="custom-scrollbar" style="max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 5px;">
                                 ${data.map(c => {
                             const displayName = c.name || "Unknown Country";
                             return `
