@@ -1994,7 +1994,8 @@
                 </div>
 
                 <!-- Search Countries -->
-                <div style="background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 16px; padding: 0 18px; display: flex; align-items: center; gap: 12px; height: 54px; box-shadow: var(--shadow); margin-bottom: 25px;">
+                <div
+                    style="background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 16px; padding: 0 18px; display: flex; align-items: center; gap: 12px; height: 54px; box-shadow: var(--shadow); margin-bottom: 25px;">
                     <i class="fas fa-search" style="color: var(--text-secondary); font-size: 1rem;"></i>
                     <input type="text" id="price-search"
                         style="flex: 1; background: transparent; border: none; outline: none; color: var(--text-primary); font-size: 0.95rem;"
@@ -2158,7 +2159,8 @@
 
                 <!-- Search Card -->
                 <!-- Deposits Search -->
-                <div style="background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 16px; padding: 0 18px; display: flex; align-items: center; gap: 12px; height: 54px; box-shadow: var(--shadow); margin-bottom: 25px;">
+                <div
+                    style="background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 16px; padding: 0 18px; display: flex; align-items: center; gap: 12px; height: 54px; box-shadow: var(--shadow); margin-bottom: 25px;">
                     <i class="fas fa-search" style="color: var(--text-secondary); font-size: 1rem;"></i>
                     <input type="text" id="deposits-search"
                         style="flex: 1; background: transparent; border: none; outline: none; color: var(--text-primary); font-size: 0.95rem;"
@@ -2212,12 +2214,12 @@
 
                 <!-- Search Box Card (Matched with Buying Prices) -->
                 <!-- Custom Prices Search -->
-                <div style="background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 16px; padding: 0 18px; display: flex; align-items: center; gap: 12px; height: 54px; box-shadow: var(--shadow); margin-bottom: 25px;">
+                <div
+                    style="background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 16px; padding: 0 18px; display: flex; align-items: center; gap: 12px; height: 54px; box-shadow: var(--shadow); margin-bottom: 25px;">
                     <i class="fas fa-search" style="color: var(--text-secondary); font-size: 1rem;"></i>
                     <input type="text" id="sup-search"
                         style="flex: 1; background: transparent; border: none; outline: none; color: var(--text-primary); font-size: 0.95rem;"
-                        data-i18n-placeholder="search_custom_users_ph"
-                        oninput="searchStoreUserPrices()">
+                        data-i18n-placeholder="search_custom_users_ph" oninput="searchStoreUserPrices()">
                 </div>
 
                 <div id="store-user-prices-mgmt-section" class="card" style="padding: 22px;">
@@ -2607,12 +2609,12 @@
                 <label data-i18n="lbl_sell">Selling Price ($)</label>
                 <input type="number" id="m-price" class="input-field" step="0.1" placeholder="1.0">
             </div>
-            <button class="primary-btn" onclick="savePriceChanges()" 
-                style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6; border: 1px solid rgba(139, 92, 246, 0.2); width: 100%; height: 54px; border-radius: 16px; font-weight: 700; margin-bottom: 12px; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;"
-                data-i18n="btn_save">Save Changes</button>
-            <button class="cancel-btn" onclick="closePriceModal(null)" 
-                style="background: rgba(59, 130, 246, 0.1); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.2); width: 100%; height: 54px; border-radius: 16px; font-weight: 700; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;"
-                data-i18n="nav_close">Close</button>
+            <button class="primary-btn" onclick="saveStorePrice()" 
+                style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6; border: 1px solid rgba(139, 92, 246, 0.2); box-shadow: none;"
+                data-i18n="btn_save">Save</button>
+            <button class="cancel-btn" onclick="closePriceModal()" 
+                style="background: rgba(59, 130, 246, 0.1); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.2); margin-top: 10px;"
+                data-i18n="nav_close">Cancel</button>
         </div>
     </div>
 
@@ -2717,7 +2719,8 @@
                 want to permanently delete this provider?</p>
 
             <div style="display: flex; flex-direction: row; gap: 10px; width: 100%;">
-                <button class="cancel-btn" style="flex: 1; margin: 0; padding: 14px 0; background: rgba(96, 165, 250, 0.1); color: var(--accent); border: 1px solid rgba(96, 165, 250, 0.2); border-radius: 12px; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center;"
+                <button class="cancel-btn"
+                    style="flex: 1; margin: 0; padding: 14px 0; background: rgba(96, 165, 250, 0.1); color: var(--accent); border: 1px solid rgba(96, 165, 250, 0.2); border-radius: 12px; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center;"
                     onclick="closeDeleteConfirmModal()">
                     <i class="fas fa-times" style="color: var(--accent); margin-inline-end: 8px;"></i>
                     <span data-i18n="btn_cancel">Cancel</span>
@@ -4043,11 +4046,11 @@
             document.getElementById('m-price').value = price;
 
             await onCountryCodeInput();
-            
+
             // Handle selection after options are rendered
             const container = document.getElementById('m-country-container');
             const options = container.querySelectorAll('.country-option-btn');
-            
+
             if (options.length > 0) {
                 // Multiple countries case
                 let found = false;
@@ -4108,14 +4111,14 @@
                         container.innerHTML = `
                             <div style="max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 5px;">
                                 ${data.map(c => {
-                                    const displayName = c.name || "Unknown Country";
-                                    return `
+                            const displayName = c.name || "Unknown Country";
+                            return `
                                     <div class="country-option-btn" data-iso="${c.iso}" data-name="${displayName}" onclick="selectCountryOption(this)" style="padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.2s; background: var(--bg);">
                                         <span style="font-size: 1.4rem;">${c.flag}</span>
                                         <span style="font-weight: 600; font-size: 0.95rem; color: var(--text-p);">${displayName}</span>
                                     </div>
                                     `;
-                                }).join('')}
+                        }).join('')}
                             </div>
                             <input type="hidden" id="m-iso-box" data-iso="" data-name="">
                         `;
@@ -5197,13 +5200,13 @@
             <div id="confirm-msg" class="confirm-msg" data-i18n="confirm_delete_msg">Are you sure you want to proceed?
             </div>
             <div class="confirm-btns" style="display: flex; gap: 10px; width: 100%;">
-                <button class="confirm-btn confirm-no" 
+                <button class="confirm-btn confirm-no"
                     style="flex: 1; margin: 0; padding: 14px 0; background: rgba(96, 165, 250, 0.1); color: var(--accent); border: 1px solid rgba(96, 165, 250, 0.2); border-radius: 12px; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; height: auto !important; box-shadow: none;"
                     onclick="closeConfirm(false)">
                     <i class="fas fa-times" style="color: var(--accent); margin-inline-end: 8px;"></i>
                     <span data-i18n="btn_cancel">Cancel</span>
                 </button>
-                <button class="confirm-btn confirm-yes" 
+                <button class="confirm-btn confirm-yes"
                     style="flex: 1; margin: 0; padding: 14px 0; background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 12px; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; height: auto !important; box-shadow: none;"
                     onclick="closeConfirm(true)">
                     <i class="fas fa-check" style="color: var(--danger); margin-inline-end: 8px;"></i>
