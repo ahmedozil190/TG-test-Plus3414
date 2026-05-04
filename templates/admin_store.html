@@ -3404,9 +3404,12 @@
                 <div class="user-card" style="padding: 20px; cursor: default; border: 1px solid var(--border); border-radius: 20px;">
                     <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
                         <h3 style="margin: 0; font-size: 1rem; font-weight: 700; color: var(--text-secondary);"><i class="fas fa-server" style="color: var(--accent); margin-right: 8px;"></i>${s.server_name}</h3>
-                        <span class="badge" style="background: rgba(139, 92, 246, 0.1); color: var(--accent-purple); font-size: 0.8rem; padding: 6px 14px;">${s.total_sales} Sales</span>
                     </div>
                     <div style="width: 100%; display: grid; grid-template-columns: 1fr; gap: 10px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(139, 92, 246, 0.05); border: 1px solid rgba(139, 92, 246, 0.2); padding: 14px 18px; border-radius: 16px;">
+                            <div style="font-size: 0.75rem; color: #8b5cf6; font-weight: 800; letter-spacing: 1px;">SALES</div>
+                            <div style="font-size: 1.15rem; font-weight: 800; color: #8b5cf6;">${s.total_sales}</div>
+                        </div>
                         <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2); padding: 14px 18px; border-radius: 16px;">
                             <div style="font-size: 0.75rem; color: #3b82f6; font-weight: 800; letter-spacing: 1px;">REVENUE</div>
                             <div style="font-size: 1.15rem; font-weight: 800; color: #3b82f6;">$${formatMoney(s.total_revenue)}</div>
