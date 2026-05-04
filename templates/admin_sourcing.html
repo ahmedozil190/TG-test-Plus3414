@@ -4295,10 +4295,10 @@
                 options.forEach(opt => {
                     if (opt.getAttribute('data-iso') === iso) {
                         selectCountryOption(opt);
-                        // Scroll to the selected option
+                        // Scroll to the selected option immediately
                         setTimeout(() => {
-                            opt.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                        }, 50);
+                            opt.scrollIntoView({ behavior: 'auto', block: 'nearest' });
+                        }, 10);
                     }
                 });
             }
