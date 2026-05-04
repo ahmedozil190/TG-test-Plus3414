@@ -4962,6 +4962,9 @@
             document.getElementById('m-sup-user-id').value = '';
             document.getElementById('m-sup-code').value = '';
 
+            const titleEl = document.getElementById('store-user-price-modal-title');
+            titleEl.innerText = currentLang === 'ar' ? 'إضافة مستخدم مخصص' : 'Add Custom User';
+
             document.getElementById('m-sup-country-container').innerHTML = `<input type="text" class="input-field" value="${currentLang === 'ar' ? 'بانتظار الكود...' : 'Waiting...'}" readonly style="cursor: not-allowed;">`;
 
             document.getElementById('m-sup-sell-price').value = '';

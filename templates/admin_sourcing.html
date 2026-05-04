@@ -3109,17 +3109,33 @@
 
         async function openUserPriceModal(up = null) {
             const modal = document.getElementById('user-price-modal');
-            modal.classList.add('active');
-            modal.scrollTop = 0;
+            const titleEl = document.getElementById('user-price-modal-title');
 
             if (up) {
-                document.getElementById('user-price-modal-title').setAttribute('data-i18n', 'modal_edit_custom');
+                titleEl.setAttribute('data-i18n', 'modal_edit_custom');
+                titleEl.innerText = translations[currentLang].modal_edit_custom;
                 document.getElementById('up-id').value = up.id;
                 document.getElementById('up-user-id').value = up.user_id;
                 document.getElementById('up-country-code').value = up.country_code;
                 document.getElementById('up-buy-price').value = up.buy_price;
                 document.getElementById('up-delay').value = up.approve_delay;
-                
+            } else {
+                titleEl.setAttribute('data-i18n', 'modal_add_custom');
+                titleEl.innerText = translations[currentLang].modal_add_custom;
+                document.getElementById('up-id').value = '';
+                document.getElementById('up-user-id').value = '';
+                document.getElementById('up-country-code').value = '';
+                document.getElementById('up-buy-price').value = '';
+                document.getElementById('up-delay').value = '';
+                document.getElementById('up-delay').placeholder = '0';
+                document.getElementById('up-country-container').innerHTML = `<input type="text" class="input-field" value="${currentLang === 'ar' ? 'بانتظار الكود...' : 'Waiting...'}" readonly style="cursor: not-allowed;">`;
+            }
+
+            modal.classList.add('active');
+            modal.scrollTop = 0;
+            updateUI();
+
+            if (up) {
                 await onUpCountryCodeInput();
                 
                 const container = document.getElementById('up-country-container');
@@ -3139,17 +3155,7 @@
                         // Already correct
                     }
                 }
-            } else {
-                document.getElementById('user-price-modal-title').setAttribute('data-i18n', 'modal_add_custom');
-                document.getElementById('up-id').value = '';
-                document.getElementById('up-user-id').value = '';
-                document.getElementById('up-country-code').value = '';
-                document.getElementById('up-buy-price').value = '';
-                document.getElementById('up-delay').value = '';
-                document.getElementById('up-delay').placeholder = '0';
-                document.getElementById('up-country-container').innerHTML = `<input type="text" class="input-field" value="${currentLang === 'ar' ? 'بانتظار الكود...' : 'Waiting...'}" readonly style="cursor: not-allowed;">`;
             }
-            updateUI();
         }
 
         function closeUserPriceModal(e) {
