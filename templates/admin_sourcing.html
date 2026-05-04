@@ -3847,6 +3847,13 @@
                 return `
                 <div class="user-card" onclick='openManageModal(${JSON.stringify(u)})'>
                     <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <!-- User Identity Row (New Styled Title) -->
+                        <div style="background: ${hexToRgba('#8b5cf6', 0.1)}; border: 1px solid ${hexToRgba('#8b5cf6', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                            <span style="color: #8b5cf6; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">${currentLang === 'ar' ? 'المستخدم' : 'USER'}</span>
+                            <span style="color: #8b5cf6; font-weight: 900; font-size: 0.95rem;">
+                                ${u.full_name || 'N/A'} (@${u.username || 'N/A'})
+                            </span>
+                        </div>
                         <!-- Account Status -->
                         <div style="background: ${statusRgba}; border: 1px solid ${statusBorder}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
                             <span style="color: ${statusColor}; font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'الحالة' : 'Status'}</span>
