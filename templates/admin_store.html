@@ -2057,12 +2057,12 @@
                 </div>
 
                 <!-- Sales Search -->
-                <div style="background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 16px; padding: 0 18px; display: flex; align-items: center; gap: 12px; height: 54px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); margin-bottom: 25px; position: sticky; top: 10px; z-index: 11;">
+                <div style="background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 16px; padding: 0 18px; display: flex; align-items: center; gap: 12px; height: 54px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); margin-bottom: 25px;">
                     <i class="fas fa-search" style="color: var(--text-secondary); font-size: 1rem;"></i>
                     <input type="text" id="sales-search"
                         style="flex: 1; background: transparent; border: none; outline: none; color: var(--text-primary); font-size: 0.95rem;"
                         placeholder="Search Phone, Buyer ID or Country..."
-                        onkeyup="if(event.key==='Enter') searchSales()" oninput="searchSales()">
+                        oninput="searchSales()">
                 </div>
 
                 <div id="sales-mgmt-section" class="card" style="padding: 22px;">
@@ -3484,15 +3484,14 @@
 
         function searchSales() {
             const input = document.getElementById('sales-search');
-            salesSearchQuery = input.value.trim();
-            document.getElementById('reset-sales-search-container').style.display = salesSearchQuery ? 'block' : 'none';
+            salesSearchQuery = input ? input.value.trim() : '';
             fetchSalesHistory(1);
         }
 
         function resetSalesSearch() {
             salesSearchQuery = '';
-            document.getElementById('sales-search').value = '';
-            document.getElementById('reset-sales-search-container').style.display = 'none';
+            const input = document.getElementById('sales-search');
+            if (input) input.value = '';
             fetchSalesHistory(1);
         }
 
