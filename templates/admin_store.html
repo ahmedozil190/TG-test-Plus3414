@@ -4049,6 +4049,10 @@
                     if (opt.getAttribute('data-iso') === iso) {
                         selectCountryOption(opt);
                         found = true;
+                        // Scroll to the selected option
+                        setTimeout(() => {
+                            opt.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        }, 50);
                     }
                 });
             } else {
