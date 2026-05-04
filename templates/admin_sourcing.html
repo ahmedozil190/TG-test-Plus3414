@@ -3955,7 +3955,7 @@
             currentUser = u;
             document.getElementById('manage-name').innerText = (u.full_name || u.id).toUpperCase();
             const displayId = (u.username || 'N/A').toString();
-            document.getElementById('manage-id').innerText = displayId.startsWith('@') ? displayId.substring(1) : displayId;
+            document.getElementById('manage-id').innerText = displayId.startsWith('@') ? displayId : '@' + displayId;
             document.getElementById('manage-balance').innerText = `$${formatMoney(u.balance_sourcing)}`;
             document.getElementById('adjust-amount').value = '';
 
@@ -3989,7 +3989,7 @@
                     document.getElementById('manage-name').innerText = data.full_name.toUpperCase();
 
                     const dispId = (data.username || currentUser.id).toString();
-                    document.getElementById('manage-id').innerText = dispId.startsWith('@') ? dispId.substring(1) : dispId;
+                    document.getElementById('manage-id').innerText = dispId.startsWith('@') ? dispId : '@' + dispId;
                     init();
                 }
             } catch (e) { console.error(e); }
