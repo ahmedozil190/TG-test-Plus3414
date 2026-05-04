@@ -3846,38 +3846,40 @@
                 const statusText = u.banned
                     ? (currentLang === 'ar' ? 'محظور' : 'BANNED')
                     : (currentLang === 'ar' ? 'نشط' : 'ACTIVE');
+                const statusRgba = u.banned ? 'rgba(239, 68, 68, 0.05)' : 'rgba(16, 185, 129, 0.05)';
+                const statusBorder = u.banned ? 'rgba(239, 68, 68, 0.2)' : 'rgba(16, 185, 129, 0.2)';
                 return `
                 <div class="user-card" onclick='openManageModal(${JSON.stringify(u)})'>
                     <div style="display: flex; flex-direction: column; gap: 10px;">
                         <!-- Account Status -->
-                        <div style="background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
+                        <div style="background: ${statusRgba}; border: 1px solid ${statusBorder}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
                             <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'الحالة' : 'Status'}</span>
                             <span style="color: ${statusColor}; font-weight: 900; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; letter-spacing: 0.5px;">
                                 ${statusIcon} ${statusText}
                             </span>
                         </div>
                         <!-- Name -->
-                        <div style="background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
+                        <div style="background: rgba(0, 210, 255, 0.05); border: 1px solid rgba(0, 210, 255, 0.2); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
                             <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'الاسم' : 'Name'}</span>
                             <span style="color: #00d2ff; font-weight: 700; font-size: 1rem; text-align: right; word-break: break-word;">${u.full_name || 'N/A'}</span>
                         </div>
                         <!-- Username -->
-                        <div style="background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
+                        <div style="background: rgba(191, 90, 242, 0.05); border: 1px solid rgba(191, 90, 242, 0.2); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
                             <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'المعرف' : 'Username'}</span>
                             <span style="color: #bf5af2; font-weight: 700; font-size: 1rem; text-align: right; word-break: break-all;">${u.username ? (u.username.startsWith('@') ? u.username : '@' + u.username) : 'N/A'}</span>
                         </div>
                         <!-- User ID -->
-                        <div style="background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
+                        <div style="background: rgba(255, 159, 10, 0.05); border: 1px solid rgba(255, 159, 10, 0.2); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
                             <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'رقم المعرف' : 'User ID'}</span>
                             <span style="color: #ff9f0a; font-weight: 800; font-size: 1rem;">${u.id}</span>
                         </div>
                         <!-- Balance -->
-                        <div style="background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
+                        <div style="background: rgba(48, 209, 88, 0.05); border: 1px solid rgba(48, 209, 88, 0.2); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
                             <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'الرصيد' : 'Balance'}</span>
                             <span style="color: #30d158; font-weight: 900; font-size: 1.1rem;">$${formatMoney(u.balance_sourcing)}</span>
                         </div>
                         <!-- Pending Balance -->
-                        <div style="background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
+                        <div style="background: rgba(255, 159, 10, 0.05); border: 1px solid rgba(255, 159, 10, 0.2); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
                             <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'الرصيد المعلق' : 'Pending Balance'}</span>
                             <span style="color: #ff9f0a; font-weight: 800; font-size: 1rem;">$${formatMoney(u.pending_balance || 0)}</span>
                         </div>
