@@ -3883,13 +3883,13 @@
                             <span style="color: #ff9f0a; font-weight: 800; font-size: 1rem;">$${formatMoney(u.pending_balance || 0)}</span>
                         </div>
                         <!-- Sold Count -->
-                        <div style="background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
-                            <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'أرقام باعها' : 'Numbers Sold'}</span>
+                        <div style="background: ${hexToRgba('#ffcc00', 0.05)}; border: 1px solid ${hexToRgba('#ffcc00', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="color: #ffcc00; font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'أرقام باعها' : 'Numbers Sold'}</span>
                             <span style="color: #ffcc00; font-weight: 800; font-size: 1rem;">${u.sold_count}</span>
                         </div>
                         <!-- Accepted Count -->
-                        <div style="background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
-                            <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'أرقام مقبولة' : 'Accepted'}</span>
+                        <div style="background: ${hexToRgba('#5eeb8b', 0.05)}; border: 1px solid ${hexToRgba('#5eeb8b', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="color: #5eeb8b; font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'أرقام مقبولة' : 'Accepted'}</span>
                             <span style="color: #5eeb8b; font-weight: 800; font-size: 1rem;">${u.accepted_count}</span>
                         </div>
                     </div>
