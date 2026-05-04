@@ -3955,7 +3955,7 @@
             currentUser = u;
             document.getElementById('manage-name').innerText = (u.full_name || u.id).toUpperCase();
             const displayId = (u.username || 'N/A').toString();
-            document.getElementById('manage-id').innerText = displayId.startsWith('@') ? displayId : '@' + displayId;
+            document.getElementById('manage-id').innerText = displayId.startsWith('@') ? displayId.substring(1) : displayId;
             document.getElementById('manage-balance').innerText = `$${formatMoney(u.balance_sourcing)}`;
             document.getElementById('adjust-amount').value = '';
 
@@ -3989,7 +3989,7 @@
                     document.getElementById('manage-name').innerText = data.full_name.toUpperCase();
 
                     const dispId = (data.username || currentUser.id).toString();
-                    document.getElementById('manage-id').innerText = dispId.startsWith('@') ? dispId : '@' + dispId;
+                    document.getElementById('manage-id').innerText = dispId.startsWith('@') ? dispId.substring(1) : dispId;
                     init();
                 }
             } catch (e) { console.error(e); }
@@ -4882,7 +4882,7 @@
 
             <!-- ID Box -->
             <div class="manage-data-box" style="background: rgba(100, 181, 246, 0.05); border: 1px solid rgba(100, 181, 246, 0.2); height: auto; padding: 10px; border-radius: 14px;">
-                <div id="manage-id" style="color: #64b5f6; font-weight: 500; font-size: 1.1rem; font-family: monospace; text-transform: uppercase;">@username</div>
+                <div id="manage-id" style="color: #64b5f6; font-weight: 500; font-size: 1.1rem; text-transform: uppercase;">username</div>
             </div>
 
             <!-- Balance Box -->
