@@ -685,9 +685,31 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: var(--shadow);
+            box-shadow: none !important;
             transition: transform 0.3s var(--ease), background 0.4s var(--ease);
+            margin-bottom: 15px;
         }
+
+        /* Server Profitability Color Cycle */
+        .info-card:nth-child(4n+1) { background: rgba(139, 92, 246, 0.05); border-color: rgba(139, 92, 246, 0.2); }
+        .info-card:nth-child(4n+1) .info-card-lbl, .info-card:nth-child(4n+1) .info-card-val, .info-card:nth-child(4n+1) .info-card-icon { color: #8b5cf6 !important; }
+        .info-card:nth-child(4n+1) .info-card-val span { color: rgba(139, 92, 246, 0.7) !important; }
+        .info-card:nth-child(4n+1) .info-card-icon { background: transparent !important; }
+
+        .info-card:nth-child(4n+2) { background: rgba(59, 130, 246, 0.05); border-color: rgba(59, 130, 246, 0.2); }
+        .info-card:nth-child(4n+2) .info-card-lbl, .info-card:nth-child(4n+2) .info-card-val, .info-card:nth-child(4n+2) .info-card-icon { color: #3b82f6 !important; }
+        .info-card:nth-child(4n+2) .info-card-val span { color: rgba(59, 130, 246, 0.7) !important; }
+        .info-card:nth-child(4n+2) .info-card-icon { background: transparent !important; }
+
+        .info-card:nth-child(4n+3) { background: rgba(245, 158, 11, 0.05); border-color: rgba(245, 158, 11, 0.2); }
+        .info-card:nth-child(4n+3) .info-card-lbl, .info-card:nth-child(4n+3) .info-card-val, .info-card:nth-child(4n+3) .info-card-icon { color: #f59e0b !important; }
+        .info-card:nth-child(4n+3) .info-card-val span { color: rgba(245, 158, 11, 0.7) !important; }
+        .info-card:nth-child(4n+3) .info-card-icon { background: transparent !important; }
+
+        .info-card:nth-child(4n+4) { background: rgba(16, 185, 129, 0.05); border-color: rgba(16, 185, 129, 0.2); }
+        .info-card:nth-child(4n+4) .info-card-lbl, .info-card:nth-child(4n+4) .info-card-val, .info-card:nth-child(4n+4) .info-card-icon { color: #10b981 !important; }
+        .info-card:nth-child(4n+4) .info-card-val span { color: rgba(16, 185, 129, 0.7) !important; }
+        .info-card:nth-child(4n+4) .info-card-icon { background: transparent !important; }
 
         .info-card-l {
             display: flex;
