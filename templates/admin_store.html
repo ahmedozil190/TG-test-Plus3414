@@ -2682,19 +2682,6 @@
     </div>
 
     <script>
-        // Global Fetch Override for Cache Busting
-        const originalFetch = window.fetch;
-        window.fetch = function() {
-            let [resource, config] = arguments;
-            if (typeof resource === 'string' && resource.startsWith('/api/')) {
-                if (!config || !config.method || config.method.toUpperCase() === 'GET') {
-                    const sep = resource.includes('?') ? '&' : '?';
-                    resource = `${resource}${sep}_cb=${Date.now()}`;
-                }
-            }
-            return originalFetch(resource, config);
-        };
-
         const tg = window.Telegram.WebApp;
         tg.expand();
 

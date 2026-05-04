@@ -2345,7 +2345,8 @@
                 <!-- History Search -->
                 <div class="card" style="padding: 18px; margin-bottom: 25px;">
                     <input class="search-input" type="text" id="history-search"
-                        placeholder="Search Phone, Seller ID or Country..." data-i18n-placeholder="search_history_placeholder">
+                        placeholder="Search Phone, Seller ID or Country..."
+                        data-i18n-placeholder="search_history_placeholder">
                     <button class="btn-find" onclick="searchHistory()">
                         <i class="fas fa-search"></i> <span data-i18n="btn_find">Find</span>
                     </button>
@@ -2669,19 +2670,6 @@
     </div>
 
     <script>
-        // Global Fetch Override for Cache Busting
-        const originalFetch = window.fetch;
-        window.fetch = function() {
-            let [resource, config] = arguments;
-            if (typeof resource === 'string' && resource.startsWith('/api/')) {
-                if (!config || !config.method || config.method.toUpperCase() === 'GET') {
-                    const sep = resource.includes('?') ? '&' : '?';
-                    resource = `${resource}${sep}_cb=${Date.now()}`;
-                }
-            }
-            return originalFetch(resource, config);
-        };
-
         const tg = window.Telegram.WebApp;
         tg.expand();
 
