@@ -1152,8 +1152,7 @@
                     <p style="color: var(--text-s); font-size: 0.95rem; line-height: 1.6;">Our dedicated support team is
                         available to help you with any questions or issues you may have.</p>
                 </div>
-                <button class="primary-btn" id="btn-message-support"
-                    style="width: auto; padding: 16px 40px; border-radius: 50px;"
+                <button class="primary-btn" id="btn-message-support" style="width: auto; padding: 16px 40px; border-radius: 50px;"
                     onclick="tg.openTelegramLink('https://t.me/')">
                     <i class="fab fa-telegram"></i> Message Support
                 </button>
@@ -1326,6 +1325,19 @@
     </div>
 
     <script>
+        // Global Fetch Override for Cache Busting
+        const originalFetch = window.fetch;
+        window.fetch = function() {
+            let [resource, config] = arguments;
+            if (typeof resource === 'string' && resource.startsWith('/api/')) {
+                if (!config || !config.method || config.method.toUpperCase() === 'GET') {
+                    const sep = resource.includes('?') ? '&' : '?';
+                    resource = `${resource}${sep}_cb=${Date.now()}`;
+                }
+            }
+            return originalFetch(resource, config);
+        };
+
         const tg = window.Telegram.WebApp;
         tg.expand();
 
@@ -1585,7 +1597,7 @@
                 if (data.support_username) {
                     const msgBtn = document.getElementById('btn-message-support');
                     if (msgBtn) {
-                        msgBtn.onclick = function () {
+                        msgBtn.onclick = function() {
                             window.Telegram.WebApp.openTelegramLink(`https://t.me/${data.support_username}`);
                         };
                     }
@@ -1724,29 +1736,9 @@
         }
 
         async function fetchCountries() {
-            try {
-                const resData = await fetch(`/api/store/data?user_id=${userId}&_t=${new Date().getTime()}`);
-                if (resData.ok) {
-                    const data = await resData.json();
-                    allCountries = data.countries || [];
-                    countries = allCountries;
-                    serversList = data.servers || [];
-                    
-                    // Update user balance if possible
-                    if (data.user && data.user.balance !== undefined) {
-                        updateBalanceUI(data.user.balance);
-                    }
-                    
-                    // Reset to default server view
-                    activeServerFilter = serversList && serversList.length === 1 ? serversList[0] : 'all';
-                    renderServerFilters();
-                }
-            } catch (e) { console.error("Error refreshing store data:", e); }
-            
             filterStore();
             updateStatsForFilter();
         }
-
         function renderCountries(list) {
             const grid = document.getElementById('countries-grid');
             if (!list || !list.length) { grid.innerHTML = '<p style="text-align:center; padding: 40px; opacity: 0.5;">No numbers available</p>'; return; }
@@ -1848,11 +1840,11 @@
                 const res = await fetch('/api/store/buy', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        user_id: userId,
-                        country: selectedCountry.name,
+                    body: JSON.stringify({ 
+                        user_id: userId, 
+                        country: selectedCountry.name, 
                         server_id: selectedCountry.server_id,
-                        init_data: tg.initData
+                        init_data: tg.initData 
                     })
                 });
                 const data = await res.json();
