@@ -1105,7 +1105,7 @@
 
         .adjust-btn.plus {
             background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-            box-shadow: 0 8px 16px rgba(124, 58, 237, 0.3);
+            box-shadow: none !important;
         }
 
         .adjust-btn.minus {
@@ -2170,8 +2170,8 @@
                 <!-- User Management -->
                 <div id="user-mgmt-section" class="card" style="padding: 22px;">
                     <div
-                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-                        <h3 style="color: var(--text-secondary); font-size: 1rem; font-weight: 700;"
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 12px;">
+                        <h3 style="color: var(--text-secondary); font-size: 1rem; font-weight: 700; white-space: nowrap;"
                             data-i18n="user_mgmt">User Management</h3>
                         <div class="custom-dropdown" style="position: relative;">
                             <button class="dropdown-trigger" onclick="toggleUserDropdown()"
@@ -2183,7 +2183,7 @@
                                     style="font-size: 0.7rem; opacity: 0.5; margin-left: 4px;"></i>
                             </button>
                             <div class="dropdown-menu" id="user-filter-menu"
-                                style="display: none; position: absolute; top: calc(100% + 8px); right: 0; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 14px; min-width: 160px; z-index: 100; box-shadow: var(--shadow); overflow: hidden; backdrop-filter: blur(10px);">
+                                style="display: none; position: absolute; top: calc(100% + 8px); right: 0; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 14px; min-width: 160px; z-index: 100; box-shadow: none; overflow: hidden; backdrop-filter: blur(10px);">
                                 <div class="dropdown-item" onclick="switchUserTab('active', '#10b981', 'ACTIVE')"
                                     style="padding: 12px 16px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
                                     <span
@@ -3955,7 +3955,7 @@
             currentUser = u;
             document.getElementById('manage-name').innerText = (u.full_name || u.id).toUpperCase();
             const displayId = (u.username || 'N/A').toString();
-            document.getElementById('manage-id').innerText = displayId.startsWith('@') ? displayId.substring(1) : displayId;
+            document.getElementById('manage-id').innerText = displayId.startsWith('@') ? displayId : '@' + displayId;
             document.getElementById('manage-balance').innerText = `$${formatMoney(u.balance_sourcing)}`;
             document.getElementById('adjust-amount').value = '';
 
@@ -3989,7 +3989,7 @@
                     document.getElementById('manage-name').innerText = data.full_name.toUpperCase();
 
                     const dispId = (data.username || currentUser.id).toString();
-                    document.getElementById('manage-id').innerText = dispId.startsWith('@') ? dispId.substring(1) : dispId;
+                    document.getElementById('manage-id').innerText = dispId.startsWith('@') ? dispId : '@' + dispId;
                     init();
                 }
             } catch (e) { console.error(e); }
@@ -4882,7 +4882,7 @@
 
             <!-- ID Box -->
             <div class="manage-data-box" style="background: rgba(100, 181, 246, 0.05); border: 1px solid rgba(100, 181, 246, 0.2); height: auto; padding: 10px; border-radius: 14px;">
-                <div id="manage-id" style="color: #64b5f6; font-weight: 500; font-size: 1.1rem; font-family: monospace; text-transform: uppercase;">username</div>
+                <div id="manage-id" style="color: #64b5f6; font-weight: 500; font-size: 1.1rem; font-family: monospace; text-transform: uppercase;">@username</div>
             </div>
 
             <!-- Balance Box -->
