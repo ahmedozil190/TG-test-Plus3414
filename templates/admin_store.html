@@ -473,31 +473,15 @@
             scroll-behavior: smooth;
         }
 
-        #app-content-scroller::-webkit-scrollbar {
+        ::-webkit-scrollbar {
             width: 7px;
         }
 
-        #app-content-scroller::-webkit-scrollbar-track {
+        ::-webkit-scrollbar-track {
             background: rgba(0, 0, 0, 0.05);
         }
 
-        #app-content-scroller::-webkit-scrollbar-thumb {
-            background: var(--accent-purple);
-            border-radius: 10px;
-            border: 2px solid transparent;
-            background-clip: padding-box;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 7px;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.05);
-            border-radius: 10px;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar-thumb {
+        ::-webkit-scrollbar-thumb {
             background: var(--accent-purple);
             border-radius: 10px;
             border: 2px solid transparent;
@@ -2625,10 +2609,10 @@
                 <label data-i18n="lbl_sell">Selling Price ($)</label>
                 <input type="number" id="m-price" class="input-field" step="0.1" placeholder="1.0">
             </div>
-            <button class="primary-btn" onclick="saveStorePrice()" 
+            <button class="primary-btn" onclick="saveStorePrice()"
                 style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6; border: 1px solid rgba(139, 92, 246, 0.2); box-shadow: none;"
                 data-i18n="btn_save">Save</button>
-            <button class="cancel-btn" onclick="closePriceModal()" 
+            <button class="cancel-btn" onclick="closePriceModal()"
                 style="background: rgba(59, 130, 246, 0.1); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.2); margin-top: 10px;"
                 data-i18n="nav_close">Cancel</button>
         </div>
@@ -4125,7 +4109,7 @@
                     } else {
                         // Multiple countries
                         container.innerHTML = `
-                            <div class="custom-scrollbar" style="max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 5px;">
+                            <div style="max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 5px;">
                                 ${data.map(c => {
                             const displayName = c.name || "Unknown Country";
                             return `
