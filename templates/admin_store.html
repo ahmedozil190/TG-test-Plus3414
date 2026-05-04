@@ -41,7 +41,7 @@
             --sidebar-bg: var(--bg-elevated);
             --modal-bg: #09090b;
             --input-bg: #09090b;
-            --shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            --shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
             --tab-bg: rgba(255, 255, 255, 0.05);
             --switch-bg: rgba(255, 255, 255, 0.15);
         }
@@ -58,7 +58,7 @@
             --sidebar-bg: var(--bg-elevated);
             --modal-bg: #ffffff;
             --input-bg: #f1f2f6;
-            --shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+            --shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
             --tab-bg: rgba(0, 0, 0, 0.05);
             --switch-bg: rgba(0, 0, 0, 0.15);
         }
@@ -3419,7 +3419,7 @@
                 return;
             }
             container.innerHTML = stats.map(s => `
-                <div class="user-card" style="padding: 20px; cursor: default; border: 1px solid var(--border); border-radius: 20px; box-shadow: var(--shadow);">
+                <div class="user-card" style="padding: 20px; cursor: default; border: 1px solid var(--border); border-radius: 20px;">
                     <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
                         <h3 style="margin: 0; font-size: 1rem; font-weight: 700; color: var(--text-secondary);"><i class="fas fa-server" style="color: var(--accent); margin-right: 8px;"></i>${s.server_name}</h3>
                     </div>
@@ -3454,7 +3454,7 @@
             }
             const maxSales = countries[0]?.count || 1;
             container.innerHTML = countries.map((c, i) => `
-                <div class="user-card" style="padding: 16px 20px; cursor: default; border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow);">
+                <div class="user-card" style="padding: 16px 20px; cursor: default; border: 1px solid var(--border); border-radius: 16px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                         <div style="display: flex; align-items: center; gap: 10px;">
                             <span style="font-size: 0.75rem; font-weight: 900; color: var(--accent); background: rgba(139,92,246,0.1); padding: 4px 10px; border-radius: 20px;">#${i + 1}</span>
