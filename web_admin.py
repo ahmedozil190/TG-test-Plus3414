@@ -2184,7 +2184,7 @@ async def get_admin_store_sales(
                 sname = server_names.get(sid, "Local App") if sid is not None else "Local App"
                 if sname not in grouped_countries:
                     grouped_countries[sname] = []
-                if len(grouped_countries[sname]) < 5:
+                if len(grouped_countries[sname]) < 4:
                     grouped_countries[sname].append({"country": country, "count": count})
             
             top_countries = [{"server_name": k, "countries": v} for k, v in grouped_countries.items()]
