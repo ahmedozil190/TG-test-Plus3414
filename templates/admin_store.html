@@ -4029,7 +4029,9 @@
             document.getElementById('m-code').value = '';
             document.getElementById('m-price').value = '';
             document.getElementById('m-country-container').innerHTML = `<input type="text" class="input-field" value="${currentLang === 'ar' ? 'بانتظار الكود...' : 'Waiting...'}" readonly style="cursor: not-allowed;">`;
-            document.getElementById('price-modal').classList.add('active');
+            const modal = document.getElementById('price-modal');
+            modal.classList.add('active');
+            modal.scrollTop = 0;
         }
 
         async function editPrice(code, iso, price) {
@@ -4063,7 +4065,9 @@
                 }
             }
 
-            document.getElementById('price-modal').classList.add('active');
+            const modal = document.getElementById('price-modal');
+            modal.classList.add('active');
+            modal.scrollTop = 0;
         }
 
         function closePriceModal(e) {
