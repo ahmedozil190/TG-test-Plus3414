@@ -3119,6 +3119,21 @@
                 document.getElementById('up-country-code').value = up.country_code;
                 document.getElementById('up-buy-price').value = up.buy_price;
                 document.getElementById('up-delay').value = up.approve_delay;
+                
+                await onUpCountryCodeInput();
+                
+                const container = document.getElementById('up-country-container');
+                const options = container.querySelectorAll('.up-country-option-btn');
+                if (options.length > 0) {
+                    options.forEach(opt => {
+                        if (opt.getAttribute('data-iso') === up.iso_code) {
+                            selectUpCountryOption(opt);
+                            setTimeout(() => {
+                                opt.scrollIntoView({ behavior: 'auto', block: 'nearest' });
+                            }, 10);
+                        }
+                    });
+                }
             } else {
                 titleEl.setAttribute('data-i18n', 'modal_add_custom');
                 titleEl.innerText = translations[currentLang].modal_add_custom;
@@ -3134,28 +3149,6 @@
             modal.classList.add('active');
             modal.scrollTop = 0;
             updateUI();
-
-            if (up) {
-                await onUpCountryCodeInput();
-                
-                const container = document.getElementById('up-country-container');
-                const options = container.querySelectorAll('.up-country-option-btn');
-                if (options.length > 0) {
-                    options.forEach(opt => {
-                        if (opt.getAttribute('data-iso') === up.iso_code) {
-                            selectUpCountryOption(opt);
-                            setTimeout(() => {
-                                opt.scrollIntoView({ behavior: 'auto', block: 'nearest' });
-                            }, 10);
-                        }
-                    });
-                } else {
-                    const isoBox = document.getElementById('up-iso-box');
-                    if (isoBox && isoBox.tagName === 'INPUT' && isoBox.getAttribute('data-iso') === up.iso_code) {
-                        // Already correct
-                    }
-                }
-            }
         }
 
         function closeUserPriceModal(e) {

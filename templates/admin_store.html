@@ -5048,10 +5048,6 @@
             document.getElementById('m-sup-sell-price').value = item.sell_price;
 
             document.getElementById('store-user-price-modal-title').innerText = currentLang === 'ar' ? 'تعديل سعر المستخدم' : 'Edit Custom User';
-            const modal = document.getElementById('store-user-price-modal');
-            modal.classList.add('active');
-            modal.scrollTop = 0;
-
             await onSupCountryCodeInput();
 
             // Handle selection after options are rendered
@@ -5076,6 +5072,10 @@
                     // Already correct
                 }
             }
+
+            const modal = document.getElementById('store-user-price-modal');
+            modal.classList.add('active');
+            modal.scrollTop = 0;
         }
         async function saveStoreUserPrice() {
             const btn = document.querySelector('#store-user-price-modal .primary-btn');
