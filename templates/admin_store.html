@@ -3729,10 +3729,9 @@
                             <span style="color: #00d2ff; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'الاسم' : 'Name'}</span>
                             <span style="color: #00d2ff; font-weight: 700; font-size: 1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${u.full_name || 'N/A'}</span>
                         </div>
-                        <!-- Username -->
                         <div style="background: ${hexToRgba('#bf5af2', 0.05)}; border: 1px solid ${hexToRgba('#bf5af2', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
                             <span style="color: #bf5af2; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'المعرف' : 'Username'}</span>
-                            <span style="color: #bf5af2; font-weight: 700; font-size: 1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${u.username ? (u.username.startsWith('@') ? u.username : '@' + u.username) : 'N/A'}</span>
+                            <span style="color: #bf5af2; font-weight: 700; font-size: 1rem; text-align: right; word-break: break-all;">${u.username ? (u.username.startsWith('@') ? u.username : '@' + u.username) : 'N/A'}</span>
                         </div>
                         <div style="background: ${hexToRgba('#ff9f0a', 0.05)}; border: 1px solid ${hexToRgba('#ff9f0a', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
                             <span style="color: #ff9f0a; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'رقم المعرف' : 'User ID'}</span>

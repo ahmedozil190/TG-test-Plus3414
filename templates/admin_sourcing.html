@@ -3873,9 +3873,9 @@
                 <div class="user-card" onclick='openManageModal(${JSON.stringify(u)})'>
                     <div style="display: flex; flex-direction: column; gap: 10px;">
                         <!-- Account Status -->
-                        <div style="background: ${statusRgba}; border: 1px solid ${statusBorder}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
-                            <span style="color: ${statusColor}; font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'الحالة' : 'Status'}</span>
-                            <span style="color: ${statusColor}; font-weight: 900; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; letter-spacing: 0.5px;">
+                        <div style="background: ${statusRgba}; border: 1px solid ${statusBorder}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
+                            <span style="color: ${statusColor}; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'الحالة' : 'Status'}</span>
+                            <span style="color: ${statusColor}; font-weight: 900; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; letter-spacing: 0.5px; text-align: right; word-break: break-all; flex: 1; min-width: 0; justify-content: flex-end;">
                                 ${statusIcon} ${statusText}
                             </span>
                         </div>
@@ -3890,27 +3890,29 @@
                             <span style="color: #bf5af2; font-weight: 700; font-size: 1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${u.username ? (u.username.startsWith('@') ? u.username : '@' + u.username) : 'N/A'}</span>
                         </div>
                         <!-- User ID -->
-                            <span style="color: #ff9f0a; font-weight: 800; font-size: 1rem;">${u.id}</span>
+                        <div style="background: ${hexToRgba('#ff9f0a', 0.05)}; border: 1px solid ${hexToRgba('#ff9f0a', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
+                            <span style="color: #ff9f0a; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'رقم المعرف' : 'User ID'}</span>
+                            <span style="color: #ff9f0a; font-weight: 800; font-size: 1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${u.id}</span>
                         </div>
                         <!-- Balance -->
-                        <div style="background: ${hexToRgba('#30d158', 0.05)}; border: 1px solid ${hexToRgba('#30d158', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
-                            <span style="color: #30d158; font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'الرصيد' : 'Balance'}</span>
-                            <span style="color: #30d158; font-weight: 900; font-size: 1.1rem;">$${formatMoney(u.balance_sourcing)}</span>
+                        <div style="background: ${hexToRgba('#30d158', 0.05)}; border: 1px solid ${hexToRgba('#30d158', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
+                            <span style="color: #30d158; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'الرصيد' : 'Balance'}</span>
+                            <span style="color: #30d158; font-weight: 900; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(u.balance_sourcing)}</span>
                         </div>
                         <!-- Pending Balance -->
-                        <div style="background: ${hexToRgba('#ff9f0a', 0.05)}; border: 1px solid ${hexToRgba('#ff9f0a', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
-                            <span style="color: #ff9f0a; font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'الرصيد المعلق' : 'Pending Balance'}</span>
-                            <span style="color: #ff9f0a; font-weight: 800; font-size: 1rem;">$${formatMoney(u.pending_balance || 0)}</span>
+                        <div style="background: ${hexToRgba('#ff9f0a', 0.05)}; border: 1px solid ${hexToRgba('#ff9f0a', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
+                            <span style="color: #ff9f0a; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'الرصيد المعلق' : 'Pending Balance'}</span>
+                            <span style="color: #ff9f0a; font-weight: 800; font-size: 1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(u.pending_balance || 0)}</span>
                         </div>
                         <!-- Sold Count -->
-                        <div style="background: ${hexToRgba('#ffcc00', 0.05)}; border: 1px solid ${hexToRgba('#ffcc00', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
-                            <span style="color: #ffcc00; font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'أرقام باعها' : 'Numbers Sold'}</span>
-                            <span style="color: #ffcc00; font-weight: 800; font-size: 1rem;">${u.sold_count}</span>
+                        <div style="background: ${hexToRgba('#ffcc00', 0.05)}; border: 1px solid ${hexToRgba('#ffcc00', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
+                            <span style="color: #ffcc00; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'أرقام باعها' : 'Numbers Sold'}</span>
+                            <span style="color: #ffcc00; font-weight: 800; font-size: 1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${u.sold_count}</span>
                         </div>
                         <!-- Accepted Count -->
-                        <div style="background: ${hexToRgba('#5eeb8b', 0.05)}; border: 1px solid ${hexToRgba('#5eeb8b', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
-                            <span style="color: #5eeb8b; font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">${currentLang === 'ar' ? 'أرقام مقبولة' : 'Accepted'}</span>
-                            <span style="color: #5eeb8b; font-weight: 800; font-size: 1rem;">${u.accepted_count}</span>
+                        <div style="background: ${hexToRgba('#5eeb8b', 0.05)}; border: 1px solid ${hexToRgba('#5eeb8b', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
+                            <span style="color: #5eeb8b; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'أرقام مقبولة' : 'Accepted'}</span>
+                            <span style="color: #5eeb8b; font-weight: 800; font-size: 1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${u.accepted_count}</span>
                         </div>
                     </div>
                 </div>`;
