@@ -5010,11 +5010,14 @@
                         `;
 
                         // Auto-select if selectedIso provided
-                        if (selectedIso) {
+                        if (selectedIso && typeof selectedIso === 'string') {
                             setTimeout(() => {
                                 const btn = container.querySelector(`.sup-country-option-btn[data-iso="${selectedIso}"]`);
-                                if (btn) selectSupCountryOption(btn);
-                            }, 50);
+                                if (btn) {
+                                    selectSupCountryOption(btn);
+                                    btn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                                }
+                            }, 200);
                         }
                     }
                 } else {

@@ -3177,11 +3177,14 @@
                         `;
                     }
 
-                    if (selectedIso) {
+                    if (selectedIso && typeof selectedIso === 'string') {
                         setTimeout(() => {
                             const opt = container.querySelector(`.up-country-option-btn[data-iso="${selectedIso}"]`);
-                            if (opt) selectUpCountryOption(opt);
-                        }, 100);
+                            if (opt) {
+                                selectUpCountryOption(opt);
+                                opt.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                            }
+                        }, 200);
                     }
                 } else {
                     container.innerHTML = waitHtml;
