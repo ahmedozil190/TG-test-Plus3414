@@ -788,7 +788,7 @@ class UserStorePriceCreate(BaseModel):
 class StoreBuy(BaseModel):
     user_id: int
     country: str
-    server_id: int = None
+    server_id: int | None = None
     init_data: str # Added for security verification
 
 class UserSync(BaseModel):

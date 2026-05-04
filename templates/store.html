@@ -1858,7 +1858,8 @@
                     switchNav('history', histBtn);
                     tg.HapticFeedback.notificationOccurred('success');
                 } else {
-                    const msg = data.detail || data.message || 'Error';
+                    const msgRaw = data.detail || data.message || 'Error';
+                    const msg = typeof msgRaw === 'string' ? msgRaw : JSON.stringify(msgRaw);
                     if (msg.includes('رصيدك') || msg.toLowerCase().includes('balance')) {
                         showToast(currentLang === 'ar' ? 'فشل الشراء' : 'Purchase Failed', translations[currentLang].insufficient_bal, 'error');
                     } else if (msg === 'No numbers available' || msg === 'Out of stock or API balance issue') {
