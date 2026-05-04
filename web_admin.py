@@ -1252,7 +1252,8 @@ async def store_buy(data: StoreBuy):
                         if res_name == data.country or raw_c == data.country:
                             # Match found! Attempt to buy from THIS server
                             external_country_code = c.get("country")
-                            final_price = provider.calculate_price(c.get("price", 0))
+                            cost_price = float(c.get("price", 0))
+                            final_price = provider.calculate_price(cost_price)
                             
                             # Check user balance before attempting
                             if user.balance_store < final_price:
@@ -1267,6 +1268,7 @@ async def store_buy(data: StoreBuy):
                                     country=data.country,
                                     status=AccountStatus.SOLD,
                                     price=final_price,
+                                    locked_buy_price=cost_price,
                                     buyer_id=user.id,
                                     purchased_at=datetime.utcnow(),
                                     server_id=srv.id,
@@ -2104,14 +2106,67 @@ async def get_admin_store_sales(
                 sales.append({
                     "buyer_id": acc.buyer_id, 
                     "price": acc.price, 
+                    "cost": acc.locked_buy_price or 0,
                     "phone": acc.phone_number,
                     "password": acc.two_fa_password,
                     "country": f"{flag} {acc.country}",
-                    "date": acc.purchased_at.isoformat() if acc.purchased_at else None
+                    "date": acc.purchased_at.isoformat() if acc.purchased_at else None,
+                    "server_id": acc.server_id
+                })
+            
+            # --- Calculate Server Stats ---
+            from database.models import ApiServer
+            stats_list = []
+            
+            # External Servers Stats
+            server_stats_stmt = select(
+                ApiServer.name,
+                func.count(Account.id).label('total_sales'),
+                func.sum(Account.price).label('total_revenue'),
+                func.sum(Account.locked_buy_price).label('total_cost')
+            ).join(
+                ApiServer, Account.server_id == ApiServer.id
+            ).where(
+                Account.status == AccountStatus.SOLD,
+                Account.server_id.isnot(None)
+            ).group_by(ApiServer.name)
+            
+            stats_result = (await session.execute(server_stats_stmt)).all()
+            for row in stats_result:
+                revenue = row[2] or 0
+                cost = row[3] or 0
+                stats_list.append({
+                    "server_name": row[0],
+                    "total_sales": row[1],
+                    "total_revenue": round(revenue, 2),
+                    "total_cost": round(cost, 2),
+                    "net_profit": round(revenue - cost, 2)
+                })
+                
+            # Local App Stats
+            local_stats_stmt = select(
+                func.count(Account.id).label('total_sales'),
+                func.sum(Account.price).label('total_revenue'),
+                func.sum(Account.locked_buy_price).label('total_cost')
+            ).where(
+                Account.status == AccountStatus.SOLD,
+                Account.server_id.is_(None)
+            )
+            local_row = (await session.execute(local_stats_stmt)).first()
+            if local_row and local_row[0] > 0:
+                revenue = local_row[1] or 0
+                cost = local_row[2] or 0
+                stats_list.append({
+                    "server_name": "Local App",
+                    "total_sales": local_row[0],
+                    "total_revenue": round(revenue, 2),
+                    "total_cost": round(cost, 2),
+                    "net_profit": round(revenue - cost, 2)
                 })
                 
             return {
                 "sales": sales,
+                "stats": stats_list,
                 "total_pages": total_pages,
                 "current_page": page
             }
