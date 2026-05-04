@@ -5165,7 +5165,9 @@
     </div>
     <div id="confirm-overlay" class="confirm-overlay" onclick="closeConfirm(false)">
         <div class="confirm-modal" onclick="event.stopPropagation()">
-            <div class="confirm-icon"><i class="fas fa-exclamation-triangle"></i></div>
+            <div class="confirm-icon" style="background: rgba(239, 68, 68, 0.1); color: var(--danger);">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
             <div id="confirm-title" class="confirm-title" data-i18n="confirm_title">Confirm Action</div>
             <div id="confirm-msg" class="confirm-msg" data-i18n="confirm_delete_msg">Are you sure you want to proceed?
             </div>
