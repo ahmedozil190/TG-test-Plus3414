@@ -3107,27 +3107,47 @@
             renderUserPrices(allUserPrices);
         }
 
-        function openUserPriceModal(up = null) {
+        async function openUserPriceModal(up = null) {
             const modal = document.getElementById('user-price-modal');
             modal.classList.add('active');
             modal.scrollTop = 0;
 
             if (up) {
-                document.getElementById('user-price-modal-title').innerText = translations[currentLang].modal_edit_custom;
+                document.getElementById('user-price-modal-title').setAttribute('data-i18n', 'modal_edit_custom');
                 document.getElementById('up-id').value = up.id;
                 document.getElementById('up-user-id').value = up.user_id;
                 document.getElementById('up-country-code').value = up.country_code;
                 document.getElementById('up-buy-price').value = up.buy_price;
                 document.getElementById('up-delay').value = up.approve_delay;
-                onUpCountryCodeInput(up.iso_code);
+                
+                await onUpCountryCodeInput();
+                
+                const container = document.getElementById('up-country-container');
+                const options = container.querySelectorAll('.up-country-option-btn');
+                if (options.length > 0) {
+                    options.forEach(opt => {
+                        if (opt.getAttribute('data-iso') === up.iso_code) {
+                            selectUpCountryOption(opt);
+                            setTimeout(() => {
+                                opt.scrollIntoView({ behavior: 'auto', block: 'nearest' });
+                            }, 10);
+                        }
+                    });
+                } else {
+                    const isoBox = document.getElementById('up-iso-box');
+                    if (isoBox && isoBox.tagName === 'INPUT' && isoBox.getAttribute('data-iso') === up.iso_code) {
+                        // Already correct
+                    }
+                }
             } else {
-                document.getElementById('user-price-modal-title').innerText = translations[currentLang].modal_add_custom;
+                document.getElementById('user-price-modal-title').setAttribute('data-i18n', 'modal_add_custom');
                 document.getElementById('up-id').value = '';
                 document.getElementById('up-user-id').value = '';
                 document.getElementById('up-country-code').value = '';
                 document.getElementById('up-buy-price').value = '';
-                document.getElementById('up-delay').value = ''; // Empty value
-                document.getElementById('up-delay').placeholder = '0'; // Set placeholder
+                document.getElementById('up-delay').value = '';
+                document.getElementById('up-delay').placeholder = '0';
+                document.getElementById('up-country-container').innerHTML = `<input type="text" class="input-field" value="${currentLang === 'ar' ? 'بانتظار الكود...' : 'Waiting...'}" readonly style="cursor: not-allowed;">`;
             }
             updateUI();
         }
@@ -3142,7 +3162,7 @@
             if (up) openUserPriceModal(up);
         }
 
-        async function onUpCountryCodeInput(selectedIso = null) {
+        async function onUpCountryCodeInput() {
             const code = document.getElementById('up-country-code').value.trim().replace('+', '');
             const container = document.getElementById('up-country-container');
             const waitHtml = `<input type="text" class="input-field" value="${currentLang === 'ar' ? 'بانتظار الكود...' : 'Waiting...'}" readonly style="cursor: not-allowed;">`;
@@ -3175,14 +3195,6 @@
                             </div>
                             <input type="hidden" id="up-iso-box" data-iso="" data-name="">
                         `;
-                    }
-
-                    if (selectedIso && typeof selectedIso === 'string') {
-                        const opt = container.querySelector(`.up-country-option-btn[data-iso="${selectedIso}"]`);
-                        if (opt) {
-                            selectUpCountryOption(opt);
-                            opt.scrollIntoView({ behavior: 'auto', block: 'nearest' });
-                        }
                     }
                 } else {
                     container.innerHTML = waitHtml;
@@ -4315,7 +4327,9 @@
                     if (opt.getAttribute('data-iso') === iso) {
                         selectCountryOption(opt);
                         // Scroll to the selected option immediately
-                        opt.scrollIntoView({ behavior: 'auto', block: 'nearest' });
+                        setTimeout(() => {
+                            opt.scrollIntoView({ behavior: 'auto', block: 'nearest' });
+                        }, 10);
                     }
                 });
             }

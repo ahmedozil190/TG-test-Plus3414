@@ -4059,7 +4059,9 @@
                         selectCountryOption(opt);
                         found = true;
                         // Scroll to the selected option immediately
-                        opt.scrollIntoView({ behavior: 'auto', block: 'nearest' });
+                        setTimeout(() => {
+                            opt.scrollIntoView({ behavior: 'auto', block: 'nearest' });
+                        }, 10);
                     }
                 });
             } else {
@@ -4971,7 +4973,7 @@
             if (e && e.target !== e.currentTarget) return;
             document.getElementById('store-user-price-modal').classList.remove('active');
         }
-        async function onSupCountryCodeInput(selectedIso = null) {
+        async function onSupCountryCodeInput() {
             const code = document.getElementById('m-sup-code').value.trim().replace('+', '');
             const container = document.getElementById('m-sup-country-container');
             const waitHtml = `<input type="text" class="input-field" value="${currentLang === 'ar' ? 'بانتظار الكود...' : 'Waiting...'}" readonly style="cursor: not-allowed;">`;
@@ -5007,16 +5009,7 @@
                             <input type="hidden" id="m-sup-iso-box" data-iso="" data-name="">
                         `;
 
-                        // Auto-select if selectedIso provided
-                        if (selectedIso && typeof selectedIso === 'string') {
-                            setTimeout(() => {
-                                const btn = container.querySelector(`.sup-country-option-btn[data-iso="${selectedIso}"]`);
-                                if (btn) {
-                                    selectSupCountryOption(btn);
-                                    btn.scrollIntoView({ behavior: 'auto', block: 'nearest' });
-                                }
-                            }, 50);
-                        }
+
                     }
                 } else {
                     container.innerHTML = waitHtml;
@@ -5056,8 +5049,30 @@
             modal.classList.add('active');
             modal.scrollTop = 0;
 
-            // Trigger dynamic country field logic (non-blocking)
-            onSupCountryCodeInput(item.iso_code);
+            await onSupCountryCodeInput();
+
+            // Handle selection after options are rendered
+            const container = document.getElementById('m-sup-country-container');
+            const options = container.querySelectorAll('.sup-country-option-btn');
+
+            if (options.length > 0) {
+                // Multiple countries case
+                options.forEach(opt => {
+                    if (opt.getAttribute('data-iso') === item.iso_code) {
+                        selectSupCountryOption(opt);
+                        // Scroll to the selected option immediately
+                        setTimeout(() => {
+                            opt.scrollIntoView({ behavior: 'auto', block: 'nearest' });
+                        }, 10);
+                    }
+                });
+            } else {
+                // Single country case (input field)
+                const isoBox = document.getElementById('m-sup-iso-box');
+                if (isoBox && isoBox.tagName === 'INPUT' && isoBox.getAttribute('data-iso') === item.iso_code) {
+                    // Already correct
+                }
+            }
         }
         async function saveStoreUserPrice() {
             const btn = document.querySelector('#store-user-price-modal .primary-btn');
