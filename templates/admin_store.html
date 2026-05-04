@@ -2025,9 +2025,12 @@
                         <h2 style="margin: 0;">Top Countries</h2>
                     </div>
                     <div id="analytics-top-countries" style="display: grid; grid-template-columns: 1fr; gap: 10px;">
-                        <div style="text-align: center; padding: 40px 20px; background: var(--card-glass); border-radius: 16px; border: 1px dashed var(--border); backdrop-filter: blur(10px);">
-                            <i class="fas fa-globe" style="font-size: 2.5rem; color: var(--text-secondary); opacity: 0.3; margin-bottom: 12px;"></i>
-                            <p style="color: var(--text-secondary); font-weight: 600; font-size: 0.95rem;">Loading...</p>
+                        <div
+                            style="text-align: center; padding: 40px 20px; background: var(--card-glass); border-radius: 16px; border: 1px dashed var(--border); backdrop-filter: blur(10px);">
+                            <i class="fas fa-globe"
+                                style="font-size: 2.5rem; color: var(--text-secondary); opacity: 0.3; margin-bottom: 12px;"></i>
+                            <p style="color: var(--text-secondary); font-weight: 600; font-size: 0.95rem;">Loading...
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -2038,9 +2041,12 @@
                         <h2 style="margin: 0;">Server Profitability</h2>
                     </div>
                     <div id="analytics-server-stats" style="display: grid; grid-template-columns: 1fr; gap: 15px;">
-                        <div style="text-align: center; padding: 40px 20px; background: var(--card-glass); border-radius: 16px; border: 1px dashed var(--border); backdrop-filter: blur(10px);">
-                            <i class="fas fa-server" style="font-size: 2.5rem; color: var(--text-secondary); opacity: 0.3; margin-bottom: 12px;"></i>
-                            <p style="color: var(--text-secondary); font-weight: 600; font-size: 0.95rem;">Loading...</p>
+                        <div
+                            style="text-align: center; padding: 40px 20px; background: var(--card-glass); border-radius: 16px; border: 1px dashed var(--border); backdrop-filter: blur(10px);">
+                            <i class="fas fa-server"
+                                style="font-size: 2.5rem; color: var(--text-secondary); opacity: 0.3; margin-bottom: 12px;"></i>
+                            <p style="color: var(--text-secondary); font-weight: 600; font-size: 0.95rem;">Loading...
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -2082,12 +2088,12 @@
                 </div>
 
                 <!-- Sales Search -->
-                <div style="background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 16px; padding: 0 18px; display: flex; align-items: center; gap: 12px; height: 54px; box-shadow: var(--shadow); margin-bottom: 25px;">
+                <div
+                    style="background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 16px; padding: 0 18px; display: flex; align-items: center; gap: 12px; height: 54px; box-shadow: var(--shadow); margin-bottom: 25px;">
                     <i class="fas fa-search" style="color: var(--text-secondary); font-size: 1rem;"></i>
                     <input type="text" id="sales-search"
                         style="flex: 1; background: transparent; border: none; outline: none; color: var(--text-primary); font-size: 0.95rem;"
-                        placeholder="Search Phone, Buyer ID or Country..."
-                        oninput="searchSales()">
+                        placeholder="Search Phone, Buyer ID or Country..." oninput="searchSales()">
                 </div>
 
                 <div id="sales-mgmt-section" class="card" style="padding: 22px;">
@@ -3402,7 +3408,7 @@
                 const data = await res.json();
                 if (data.stats) renderAnalyticsServerStats(data.stats);
                 if (data.top_countries) renderTopCountries(data.top_countries);
-            } catch(e) { console.error('Analytics error:', e); }
+            } catch (e) { console.error('Analytics error:', e); }
         }
 
         function renderAnalyticsServerStats(stats) {
@@ -3413,7 +3419,7 @@
                 return;
             }
             container.innerHTML = stats.map(s => `
-                <div class="user-card" style="padding: 20px; cursor: default; border: 1px solid var(--border); border-radius: 20px;">
+                <div class="user-card" style="padding: 20px; cursor: default; border: 1px solid var(--border); border-radius: 20px; box-shadow: var(--shadow);">
                     <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
                         <h3 style="margin: 0; font-size: 1rem; font-weight: 700; color: var(--text-secondary);"><i class="fas fa-server" style="color: var(--accent); margin-right: 8px;"></i>${s.server_name}</h3>
                     </div>
@@ -3448,10 +3454,10 @@
             }
             const maxSales = countries[0]?.count || 1;
             container.innerHTML = countries.map((c, i) => `
-                <div class="user-card" style="padding: 16px 20px; cursor: default; border: 1px solid var(--border); border-radius: 16px;">
+                <div class="user-card" style="padding: 16px 20px; cursor: default; border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                         <div style="display: flex; align-items: center; gap: 10px;">
-                            <span style="font-size: 0.75rem; font-weight: 900; color: var(--accent); background: rgba(139,92,246,0.1); padding: 4px 10px; border-radius: 20px;">#${i+1}</span>
+                            <span style="font-size: 0.75rem; font-weight: 900; color: var(--accent); background: rgba(139,92,246,0.1); padding: 4px 10px; border-radius: 20px;">#${i + 1}</span>
                             <span style="font-size: 0.95rem; font-weight: 700; color: var(--text-primary);">${c.country}</span>
                         </div>
                         <span style="font-size: 1rem; font-weight: 800; color: var(--text-primary);">${c.count} <span style="font-size: 0.7rem; color: var(--text-secondary); font-weight: 600;">sales</span></span>
