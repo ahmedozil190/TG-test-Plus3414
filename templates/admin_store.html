@@ -3400,22 +3400,22 @@
             }
 
             container.innerHTML = stats.map(s => `
-                <div class="user-card" style="padding: 20px; cursor: default; border: 1px solid rgba(139, 92, 246, 0.2);">
+                <div class="user-card" style="padding: 20px; cursor: default; border: 1px solid rgba(139, 92, 246, 0.2); border-radius: 20px;">
                     <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
                         <h3 style="margin: 0; font-size: 1.15rem; font-weight: 800; color: var(--text-primary);"><i class="fas fa-server" style="color: var(--accent); margin-right: 8px;"></i>${s.server_name}</h3>
                         <span class="badge" style="background: rgba(139, 92, 246, 0.1); color: var(--accent-purple); font-size: 0.8rem; padding: 6px 14px;">${s.total_sales} Sales</span>
                     </div>
                     <div style="width: 100%; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; text-align: center;">
-                        <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 15px 10px; border-radius: 14px;">
-                            <div style="font-size: 0.65rem; color: var(--text-secondary); font-weight: 800; margin-bottom: 8px; letter-spacing: 0.5px;">REVENUE</div>
+                        <div style="background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2); padding: 15px 10px; border-radius: 16px;">
+                            <div style="font-size: 0.65rem; color: #3b82f6; font-weight: 800; margin-bottom: 8px; letter-spacing: 0.5px;">REVENUE</div>
                             <div style="font-size: 1.15rem; font-weight: 800; color: #3b82f6;">$${formatMoney(s.total_revenue)}</div>
                         </div>
-                        <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 15px 10px; border-radius: 14px;">
-                            <div style="font-size: 0.65rem; color: var(--text-secondary); font-weight: 800; margin-bottom: 8px; letter-spacing: 0.5px;">COST</div>
+                        <div style="background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.2); padding: 15px 10px; border-radius: 16px;">
+                            <div style="font-size: 0.65rem; color: #f59e0b; font-weight: 800; margin-bottom: 8px; letter-spacing: 0.5px;">COST</div>
                             <div style="font-size: 1.15rem; font-weight: 800; color: #f59e0b;">$${formatMoney(s.total_cost)}</div>
                         </div>
-                        <div style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); padding: 15px 10px; border-radius: 14px;">
-                            <div style="font-size: 0.65rem; color: #10b981; font-weight: 800; margin-bottom: 8px; letter-spacing: 0.5px;">NET PROFIT</div>
+                        <div style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); padding: 15px 10px; border-radius: 16px;">
+                            <div style="font-size: 0.65rem; color: #10b981; font-weight: 800; margin-bottom: 8px; letter-spacing: 0.5px;">NET</div>
                             <div style="font-size: 1.25rem; font-weight: 900; color: #10b981;">$${formatMoney(s.net_profit)}</div>
                         </div>
                     </div>
