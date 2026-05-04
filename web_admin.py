@@ -2164,15 +2164,30 @@ async def get_admin_store_sales(
                     "net_profit": round(revenue - cost, 2)
                 })
 
-            # --- Top Countries ---
-            top_countries_stmt = select(
+            # --- Top Countries Per Server ---
+            top_c_stmt = select(
+                Account.server_id,
                 Account.country,
                 func.count(Account.id).label('count')
             ).where(
                 Account.status == AccountStatus.SOLD
-            ).group_by(Account.country).order_by(func.count(Account.id).desc()).limit(10)
-            top_countries_result = (await session.execute(top_countries_stmt)).all()
-            top_countries = [{"country": row[0], "count": row[1]} for row in top_countries_result]
+            ).group_by(Account.server_id, Account.country).order_by(Account.server_id, func.count(Account.id).desc())
+            
+            c_res = (await session.execute(top_c_stmt)).all()
+            
+            server_names = {}
+            for row in (await session.execute(select(ApiServer.id, ApiServer.name))).all():
+                server_names[row[0]] = row[1]
+                
+            grouped_countries = {}
+            for sid, country, count in c_res:
+                sname = server_names.get(sid, "Local App") if sid is not None else "Local App"
+                if sname not in grouped_countries:
+                    grouped_countries[sname] = []
+                if len(grouped_countries[sname]) < 5:
+                    grouped_countries[sname].append({"country": country, "count": count})
+            
+            top_countries = [{"server_name": k, "countries": v} for k, v in grouped_countries.items()]
 
             return {
                 "sales": sales,
