@@ -2028,15 +2028,13 @@
                     </div>
                 </div>
 
-                <div class="card" style="padding: 18px; margin-bottom: 25px;">
-                    <input class="search-input" type="text" id="price-search" placeholder="Search countries..."
+                <!-- Search Countries -->
+                <div style="background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 16px; padding: 0 18px; display: flex; align-items: center; gap: 12px; height: 54px; box-shadow: var(--shadow); margin-bottom: 25px;">
+                    <i class="fas fa-search" style="color: var(--text-secondary); font-size: 1rem;"></i>
+                    <input type="text" id="price-search"
+                        style="flex: 1; background: transparent; border: none; outline: none; color: var(--text-primary); font-size: 0.95rem;"
+                        placeholder="Search countries..." oninput="searchPrices()"
                         data-i18n-placeholder="search_countries_ph">
-                    <button class="btn-find" onclick="searchPrices()">
-                        <i class="fas fa-search"></i> <span data-i18n="btn_find">Find</span>
-                    </button>
-                    <div id="reset-price-search-container" style="display: none; margin-top: 4px;">
-                        <button class="cancel-btn" onclick="resetPriceSearch()" data-i18n="btn_reset">Reset</button>
-                    </div>
                 </div>
 
                 <div id="price-mgmt-section" class="card" style="padding: 22px;">
@@ -2091,16 +2089,13 @@
                 </div>
 
                 <!-- Search Box Card (Matched with Buying Prices) -->
-                <div class="card" style="padding: 18px; margin-bottom: 25px;">
-                    <input class="search-input" type="text" id="up-search"
+                <!-- Custom Prices Search -->
+                <div style="background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 16px; padding: 0 18px; display: flex; align-items: center; gap: 12px; height: 54px; box-shadow: var(--shadow); margin-bottom: 25px;">
+                    <i class="fas fa-search" style="color: var(--text-secondary); font-size: 1rem;"></i>
+                    <input type="text" id="up-search"
+                        style="flex: 1; background: transparent; border: none; outline: none; color: var(--text-primary); font-size: 0.95rem;"
                         data-i18n-placeholder="search_custom_users_ph"
-                        onkeyup="if(event.key==='Enter') searchUserPrices()">
-                    <button class="btn-find" onclick="searchUserPrices()">
-                        <i class="fas fa-search"></i> <span data-i18n="btn_find">Find</span>
-                    </button>
-                    <div id="reset-up-search-container" style="display: none; margin-top: 4px;">
-                        <button class="cancel-btn" onclick="resetUpSearch()" data-i18n="btn_reset">Reset</button>
-                    </div>
+                        oninput="searchUserPrices()">
                 </div>
 
                 <div id="user-prices-mgmt-section" class="card" style="padding: 22px;">
@@ -2251,15 +2246,13 @@
                     </div>
                 </div>
 
-                <div class="card" style="padding: 18px; margin-bottom: 25px;">
-                    <input class="search-input" type="text" id="withdraw-search"
-                        placeholder="Search User ID or Transaction ID...">
-                    <button class="btn-find" onclick="searchWithdrawals()">
-                        <i class="fas fa-search"></i> <span data-i18n="btn_find">Find</span>
-                    </button>
-                    <div id="reset-withdraw-search-container" style="display: none; margin-top: 4px;">
-                        <button class="cancel-btn" onclick="resetWithdrawSearch()" data-i18n="btn_reset">Reset</button>
-                    </div>
+                <!-- Withdrawals Search -->
+                <div style="background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 16px; padding: 0 18px; display: flex; align-items: center; gap: 12px; height: 54px; box-shadow: var(--shadow); margin-bottom: 25px;">
+                    <i class="fas fa-search" style="color: var(--text-secondary); font-size: 1rem;"></i>
+                    <input type="text" id="withdraw-search"
+                        style="flex: 1; background: transparent; border: none; outline: none; color: var(--text-primary); font-size: 0.95rem;"
+                        placeholder="Search User ID or Transaction ID..."
+                        oninput="searchWithdrawals()">
                 </div>
 
                 <div id="withdrawals-history-card" class="card" style="padding: 22px;">
@@ -2355,16 +2348,14 @@
                 </div>
 
                 <!-- History Search -->
-                <div class="card" style="padding: 18px; margin-bottom: 25px;">
-                    <input class="search-input" type="text" id="history-search"
+                <!-- History Search -->
+                <div style="background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 16px; padding: 0 18px; display: flex; align-items: center; gap: 12px; height: 54px; box-shadow: var(--shadow); margin-bottom: 25px;">
+                    <i class="fas fa-search" style="color: var(--text-secondary); font-size: 1rem;"></i>
+                    <input type="text" id="history-search"
+                        style="flex: 1; background: transparent; border: none; outline: none; color: var(--text-primary); font-size: 0.95rem;"
                         placeholder="Search Phone, Seller ID or Country..."
-                        data-i18n-placeholder="search_history_placeholder">
-                    <button class="btn-find" onclick="searchHistory()">
-                        <i class="fas fa-search"></i> <span data-i18n="btn_find">Find</span>
-                    </button>
-                    <div id="reset-history-search-container" style="display: none; margin-top: 4px;">
-                        <button class="cancel-btn" onclick="resetHistorySearch()" data-i18n="btn_reset">Reset</button>
-                    </div>
+                        data-i18n-placeholder="search_history_placeholder"
+                        oninput="searchHistory()">
                 </div>
 
                 <div class="card" id="history-section-card" style="padding: 22px;">
