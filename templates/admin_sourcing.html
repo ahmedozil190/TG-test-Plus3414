@@ -2615,8 +2615,12 @@
                 <input type="number" id="up-delay" class="input-field" placeholder="0">
             </div>
 
-            <button class="primary-btn" onclick="saveUserPrice()" data-i18n="btn_save_custom">Save Custom User</button>
-            <button class="cancel-btn" onclick="closeUserPriceModal(null)" data-i18n="nav_close">Close</button>
+            <button class="primary-btn" onclick="saveUserPrice()"
+                style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6; border: 1px solid rgba(139, 92, 246, 0.2); box-shadow: none;"
+                data-i18n="btn_save_custom">Save Custom User</button>
+            <button class="cancel-btn" onclick="closeUserPriceModal(null)"
+                style="background: rgba(59, 130, 246, 0.1); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.2); margin-top: 10px;"
+                data-i18n="nav_close">Close</button>
         </div>
     </div>
 
@@ -3018,9 +3022,9 @@
                             <span style="color: #ffcc00; font-weight: 800; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${up.user_id}</span>
                         </div>
                         <!-- Delay -->
-                        <div style="background: ${hexToRgba('#ef4444', 0.05)}; border: 1px solid ${hexToRgba('#ef4444', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
-                            <span style="color: #ef4444; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'تأخير الموافقة' : 'Delay'}</span>
-                            <span style="color: #ef4444; font-weight: 800; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${up.approve_delay} ${currentLang === 'ar' ? 'ثانية' : 'sec'}</span>
+                        <div style="background: ${hexToRgba('#14b8a6', 0.05)}; border: 1px solid ${hexToRgba('#14b8a6', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
+                            <span style="color: #14b8a6; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'تأخير الموافقة' : 'Delay'}</span>
+                            <span style="color: #14b8a6; font-weight: 800; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${up.approve_delay} ${currentLang === 'ar' ? 'ثانية' : 'sec'}</span>
                         </div>
                     </div>
                     <!-- Action Buttons -->
