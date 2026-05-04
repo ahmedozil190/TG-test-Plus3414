@@ -4324,23 +4324,31 @@
                 const data = await res.json();
 
                 if (data && data.length > 0) {
-                    // Unified display for both single and multiple countries
-                    container.innerHTML = `
-                        <div style="max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 5px;">
-                            ${data.map(c => `
-                                <div class="country-option-btn" data-iso="${c.iso}" data-name="${c.name || 'Unknown'}" onclick="selectCountryOption(this)" style="padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.2s; background: var(--bg);">
-                                    <span style="font-size: 1.4rem;">${c.flag}</span>
-                                    <span style="font-weight: 600; font-size: 0.95rem; color: var(--text-primary);">${c.name || 'Unknown'}</span>
-                                </div>
-                            `).join('')}
-                        </div>
-                        <input type="hidden" id="m-iso-box" data-iso="" data-name="">
-                    `;
-
-                    // If only one country, auto-select it
                     if (data.length === 1) {
-                        const firstOption = container.querySelector('.country-option-btn');
-                        if (firstOption) selectCountryOption(firstOption);
+                        // Single country
+                        const c = data[0];
+                        const displayName = c.name || "Unknown Country";
+                        container.innerHTML = `
+                            <input type="text" id="m-iso-box" class="input-field" value="${c.flag} ${displayName}" readonly 
+                                   data-iso="${c.iso}" data-name="${displayName}"
+                                   style="cursor: not-allowed;">
+                        `;
+                    } else {
+                        // Multiple countries
+                        container.innerHTML = `
+                            <div style="max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 5px;">
+                                ${data.map(c => {
+                                    const displayName = c.name || "Unknown Country";
+                                    return `
+                                    <div class="country-option-btn" data-iso="${c.iso}" data-name="${displayName}" onclick="selectCountryOption(this)" style="padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.2s; background: var(--bg);">
+                                        <span style="font-size: 1.4rem;">${c.flag}</span>
+                                        <span style="font-weight: 600; font-size: 0.95rem; color: var(--text-primary);">${displayName}</span>
+                                    </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                            <input type="hidden" id="m-iso-box" data-iso="" data-name="">
+                        `;
                     }
                 } else {
                     container.innerHTML = waitHtml;
