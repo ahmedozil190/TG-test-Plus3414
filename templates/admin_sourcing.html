@@ -2162,15 +2162,9 @@
                 </div>
 
                 <!-- Search -->
-                <div class="card" style="padding: 18px; margin-bottom: 25px;">
-                    <input class="search-input" type="text" id="user-search" placeholder="Search users..."
-                        data-i18n-placeholder="search_placeholder">
-                    <button class="btn-find" onclick="searchUsers()">
-                        <i class="fas fa-search"></i> <span data-i18n="btn_find">Find</span>
-                    </button>
-                    <div id="reset-search-container" style="display: none; margin-top: 4px;">
-                        <button class="cancel-btn" onclick="resetSearch()" data-i18n="btn_reset">Reset</button>
-                    </div>
+                <div style="background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 16px; padding: 0 18px; display: flex; align-items: center; gap: 12px; height: 54px; box-shadow: var(--shadow); margin-bottom: 25px;">
+                    <i class="fas fa-search" style="color: var(--text-secondary); font-size: 1rem;"></i>
+                    <input type="text" id="user-search" style="flex: 1; background: transparent; border: none; outline: none; color: var(--text-primary); font-size: 0.95rem;" placeholder="Search users..." oninput="searchUsers()" data-i18n-placeholder="search_placeholder">
                 </div>
 
                 <!-- User Management -->
@@ -3849,6 +3843,17 @@
 
                 return `
                 <div class="user-card" onclick='openManageModal(${JSON.stringify(u)})'>
+                    <!-- User Profile Header -->
+                    <div style="background: rgba(139, 92, 246, 0.1); border-left: 4px solid #8b5cf6; padding: 12px 16px; border-radius: 10px; margin-bottom: 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+                        <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
+                            <i class="fas fa-user-circle" style="color: #8b5cf6; font-size: 1.1rem; flex-shrink: 0;"></i>
+                            <span style="font-weight: 800; color: #8b5cf6; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                ${u.full_name || 'N/A'} (@${u.username || 'N/A'})
+                            </span>
+                        </div>
+                        <i class="fas fa-chevron-right" style="color: #8b5cf6; font-size: 0.8rem; opacity: 0.5;"></i>
+                    </div>
+
                     <div style="display: flex; flex-direction: column; gap: 10px;">
                         <!-- Account Status -->
                         <div style="background: ${statusRgba}; border: 1px solid ${statusBorder}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
