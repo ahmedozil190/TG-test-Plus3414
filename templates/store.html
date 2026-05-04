@@ -41,7 +41,7 @@
             --sidebar-bg: var(--bg-elevated);
             --modal-bg: #111113;
             --input-bg: #111113;
-            --shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), 0 4px 10px -4px rgba(0, 0, 0, 0.3);
+            --shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
         }
 
         .light-mode {
@@ -54,7 +54,7 @@
             --sidebar-bg: var(--bg-elevated);
             --modal-bg: #ffffff;
             --input-bg: #f1f2f6;
-            --shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.08), 0 4px 10px -4px rgba(0, 0, 0, 0.04);
+            --shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
         }
 
         * {
@@ -1152,7 +1152,8 @@
                     <p style="color: var(--text-s); font-size: 0.95rem; line-height: 1.6;">Our dedicated support team is
                         available to help you with any questions or issues you may have.</p>
                 </div>
-                <button class="primary-btn" id="btn-message-support" style="width: auto; padding: 16px 40px; border-radius: 50px;"
+                <button class="primary-btn" id="btn-message-support"
+                    style="width: auto; padding: 16px 40px; border-radius: 50px;"
                     onclick="tg.openTelegramLink('https://t.me/')">
                     <i class="fab fa-telegram"></i> Message Support
                 </button>
@@ -1327,7 +1328,7 @@
     <script>
         // Global Fetch Override for Cache Busting
         const originalFetch = window.fetch;
-        window.fetch = function() {
+        window.fetch = function () {
             let [resource, config] = arguments;
             if (typeof resource === 'string' && resource.startsWith('/api/')) {
                 if (!config || !config.method || config.method.toUpperCase() === 'GET') {
@@ -1597,7 +1598,7 @@
                 if (data.support_username) {
                     const msgBtn = document.getElementById('btn-message-support');
                     if (msgBtn) {
-                        msgBtn.onclick = function() {
+                        msgBtn.onclick = function () {
                             window.Telegram.WebApp.openTelegramLink(`https://t.me/${data.support_username}`);
                         };
                     }
@@ -1840,11 +1841,11 @@
                 const res = await fetch('/api/store/buy', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        user_id: userId, 
-                        country: selectedCountry.name, 
+                    body: JSON.stringify({
+                        user_id: userId,
+                        country: selectedCountry.name,
                         server_id: selectedCountry.server_id,
-                        init_data: tg.initData 
+                        init_data: tg.initData
                     })
                 });
                 const data = await res.json();
