@@ -4037,8 +4037,27 @@
             document.getElementById('m-price').value = price;
 
             await onCountryCodeInput();
-            const box = document.getElementById('m-iso-box');
-            if (box) box.value = iso;
+            
+            // Handle selection after options are rendered
+            const container = document.getElementById('m-country-container');
+            const options = container.querySelectorAll('.country-option-btn');
+            
+            if (options.length > 0) {
+                // Multiple countries case
+                let found = false;
+                options.forEach(opt => {
+                    if (opt.getAttribute('data-iso') === iso) {
+                        selectCountryOption(opt);
+                        found = true;
+                    }
+                });
+            } else {
+                // Single country case (input field)
+                const isoBox = document.getElementById('m-iso-box');
+                if (isoBox && isoBox.tagName === 'INPUT' && isoBox.getAttribute('data-iso') === iso) {
+                    // Already correct or set
+                }
+            }
 
             document.getElementById('price-modal').classList.add('active');
         }
@@ -4065,21 +4084,26 @@
                 if (data && data.length > 0) {
                     if (data.length === 1) {
                         // Single country
+                        const c = data[0];
+                        const displayName = c.name || "Unknown Country";
                         container.innerHTML = `
-                            <input type="text" id="m-iso-box" class="input-field" value="${data[0].flag} ${data[0].name}" readonly 
-                                   data-iso="${data[0].iso}" data-name="${data[0].name}"
+                            <input type="text" id="m-iso-box" class="input-field" value="${c.flag} ${displayName}" readonly 
+                                   data-iso="${c.iso}" data-name="${displayName}"
                                    style="cursor: not-allowed;">
                         `;
                     } else {
                         // Multiple countries
                         container.innerHTML = `
                             <div style="max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 5px;">
-                                ${data.map(c => `
-                                    <div class="country-option-btn" data-iso="${c.iso}" data-name="${c.name}" onclick="selectCountryOption(this)" style="padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.2s; background: var(--bg);">
+                                ${data.map(c => {
+                                    const displayName = c.name || "Unknown Country";
+                                    return `
+                                    <div class="country-option-btn" data-iso="${c.iso}" data-name="${displayName}" onclick="selectCountryOption(this)" style="padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.2s; background: var(--bg);">
                                         <span style="font-size: 1.4rem;">${c.flag}</span>
-                                        <span style="font-weight: 600; font-size: 0.95rem; color: var(--text-p);">${c.name}</span>
+                                        <span style="font-weight: 600; font-size: 0.95rem; color: var(--text-p);">${displayName}</span>
                                     </div>
-                                `).join('')}
+                                    `;
+                                }).join('')}
                             </div>
                             <input type="hidden" id="m-iso-box" data-iso="" data-name="">
                         `;
