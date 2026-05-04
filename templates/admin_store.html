@@ -2018,10 +2018,6 @@
 
             <!-- ===== Analytics Section ===== -->
             <section id="section-analytics" class="view-section">
-                <div class="section-header">
-                    <i class="fas fa-chart-line"></i>
-                    <h2>Analytics</h2>
-                </div>
 
                 <!-- Server Profitability -->
                 <div class="section-header" style="margin-top: 10px;">
@@ -2982,7 +2978,7 @@
             const titleEl = document.getElementById('page-title');
             if (titleEl) {
                 const translationKey = titleMap[id] || 'nav_dashboard';
-                if (titleMap[id] && !id.includes('settings-')) {
+                if (titleMap[id] && !id.includes('settings-') && id !== 'analytics') {
                     titleEl.setAttribute('data-i18n', translationKey);
                     titleEl.innerText = translations[currentLang][translationKey] || id;
                 } else {
