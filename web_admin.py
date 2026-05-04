@@ -1191,7 +1191,7 @@ async def store_buy(data: StoreBuy):
 
             # 1. Local Stock Check
             account = None
-            if local_enabled:
+            if local_enabled and not data.server_id:
                 stmt = select(Account).where(
                     Account.country == data.country, 
                     Account.status == AccountStatus.AVAILABLE,
