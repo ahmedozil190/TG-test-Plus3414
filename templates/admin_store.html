@@ -5164,11 +5164,19 @@
             <div id="confirm-title" class="confirm-title" data-i18n="confirm_title">Confirm Action</div>
             <div id="confirm-msg" class="confirm-msg" data-i18n="confirm_delete_msg">Are you sure you want to proceed?
             </div>
-            <div class="confirm-btns">
-                <button class="confirm-btn confirm-no" onclick="closeConfirm(false)"
-                    data-i18n="btn_cancel">Cancel</button>
-                <button class="confirm-btn confirm-yes" onclick="closeConfirm(true)" data-i18n="btn_confirm">Delete
-                    Now</button>
+            <div class="confirm-btns" style="display: flex; gap: 10px; width: 100%;">
+                <button class="confirm-btn confirm-no" 
+                    style="flex: 1; margin: 0; padding: 14px 0; background: rgba(96, 165, 250, 0.1); color: var(--accent); border: 1px solid rgba(96, 165, 250, 0.2); border-radius: 12px; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; height: auto !important; box-shadow: none;"
+                    onclick="closeConfirm(false)">
+                    <i class="fas fa-times" style="color: var(--accent); ${currentLang === 'ar' ? 'margin-left: 8px;' : 'margin-right: 8px;'}"></i>
+                    ${currentLang === 'ar' ? 'إلغاء' : 'Cancel'}
+                </button>
+                <button class="confirm-btn confirm-yes" 
+                    style="flex: 1; margin: 0; padding: 14px 0; background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 12px; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; height: auto !important; box-shadow: none;"
+                    onclick="closeConfirm(true)">
+                    <i class="fas fa-check" style="color: var(--danger); ${currentLang === 'ar' ? 'margin-left: 8px;' : 'margin-right: 8px;'}"></i>
+                    ${currentLang === 'ar' ? 'تأكيد' : 'Confirm'}
+                </button>
             </div>
         </div>
     </div>
