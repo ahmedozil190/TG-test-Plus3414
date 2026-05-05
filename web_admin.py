@@ -2873,11 +2873,18 @@ async def fake_deposit(user_id: int, amount: float = 10.0, key: str = "deposit99
             return {"status": "error", "message": "User not found"}
         
         user.balance_store += amount
-        # Record as a transaction
+        # Record as a transaction (Global History)
         session.add(Transaction(
             user_id=user_id,
             type=TransactionType.DEPOSIT,
             amount=amount
+        ))
+        # Record in Deposits table (Admin Deposits List)
+        session.add(Deposit(
+            user_id=user_id,
+            amount=amount,
+            txid=f"FAKE_{int(time.time())}_{random.randint(1000, 9999)}",
+            method="Manual (Link)"
         ))
         await session.commit()
         return {
