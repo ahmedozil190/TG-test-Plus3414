@@ -4739,8 +4739,8 @@
             const start = (currentDepositsPage - 1) * DEPOSITS_PER_PAGE;
             const paged = list.slice(start, start + DEPOSITS_PER_PAGE);
 
-            const rowS = "background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;";
-            const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;";
+            const rowS = (c) => `background: ${hexToRgba(c, 0.02)}; border: 1px solid ${hexToRgba(c, 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;`;
+            const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 500; text-transform: uppercase; opacity: 0.7; flex-shrink: 0;";
 
             container.innerHTML = paged.map((item, idx) => {
                 const methodDisp = (item.method || 'Binance Pay').replace(' Pay', '');
@@ -4750,31 +4750,31 @@
                 <div class="user-card" style="padding: 20px; margin-bottom: ${isLast ? '0' : '15px'}; cursor: default;">
                     <div style="display: flex; flex-direction: column; gap: 10px;">
                         <!-- Status -->
-                        <div style="${rowS}">
+                        <div style="${rowS('#10b981')}">
                             <span style="${lblS}">${currentLang === 'ar' ? 'الحالة' : 'STATUS'}</span>
                             <span style="color: #10b981; font-weight: 900; font-size: 0.9rem; letter-spacing: 0.5px;">
                                 COMPLETED
                             </span>
                         </div>
                         <!-- Details -->
-                        <div style="${rowS}">
+                        <div style="${rowS('#10b981')}">
                             <span style="${lblS}">${currentLang === 'ar' ? 'التفاصيل' : 'DETAILS'}</span>
                             <span style="color: #10b981; font-weight: 800; font-size: 0.95rem; text-align: right; word-break: break-all; flex: 1; margin-left: 10px;">${details}</span>
                         </div>
                         <!-- TxID -->
-                        <div style="${rowS}">
+                        <div style="${rowS('#8b5cf6')}">
                             <span style="${lblS}">${currentLang === 'ar' ? 'رقم العملية' : 'TxID'}</span>
                             <span style="color: #8b5cf6; font-weight: 700; font-size: 0.85rem; text-align: right; word-break: break-all; flex: 1; margin-left: 10px;">${item.txid}</span>
                         </div>
                         <!-- User ID -->
-                        <div style="${rowS}">
+                        <div style="${rowS('#ff9f0a')}">
                             <span style="${lblS}">${currentLang === 'ar' ? 'رقم المعرف' : 'USER ID'}</span>
                             <span style="color: #ff9f0a; font-weight: 800; font-size: 1rem;">${item.user_id}</span>
                         </div>
                         <!-- Date -->
-                        <div style="${rowS}">
+                        <div style="${rowS('#fdd835')}">
                             <span style="${lblS}">${currentLang === 'ar' ? 'التاريخ' : 'Date'}</span>
-                            <span style="color: #fdd835; font-weight: 600; font-size: 0.85rem; direction: ltr;">${formatDateTime(item.date)}</span>
+                            <span style="color: var(--text-secondary); font-weight: 600; font-size: 0.85rem; direction: ltr;">${formatDateTime(item.date)}</span>
                         </div>
                     </div>
                 </div>
