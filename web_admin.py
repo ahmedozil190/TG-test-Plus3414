@@ -1454,11 +1454,20 @@ async def get_db_status(key: str):
                                 db_files.append({"path": full_p, "size_kb": round(size/1024, 2)})
                             except: pass
 
+            # Total Transactions
+            total_tx = (await session.execute(select(func.count(Transaction.id)))).scalar() or 0
+            
+            # Total Deposits
+            from database.models import TransactionType
+            total_deposits = (await session.execute(select(func.count(Transaction.id)).where(Transaction.type == TransactionType.DEPOSIT))).scalar() or 0
+
             return {
                 "status": "success",
                 "counts": counts,
                 "sold_with_buyer": sold_with_buyer,
                 "total_users": total_users,
+                "total_transactions": total_tx,
+                "total_deposits": total_deposits,
                 "active_engine_url": str(engine.url),
                 "found_db_files": db_files
             }
