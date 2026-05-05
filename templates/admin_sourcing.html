@@ -4547,18 +4547,18 @@
                 const isPending = item.status === 'PENDING' || item.status === 'pending';
 
                 const rowS = "background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;";
-                const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; text-transform: uppercase;";
+                const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 500; text-transform: uppercase;";
 
                 return `
                 <div class="user-card" style="position: relative; cursor: default;">
                     <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
-                        <h3 style="margin: 0; font-size: 1rem; font-weight: 600; color: var(--text-secondary);"><i class="fas fa-history" style="color: var(--accent); margin-right: 8px;"></i>${currentLang === 'ar' ? 'حساب جديد' : 'New Account'}</h3>
+                        <h3 style="margin: 0; font-size: 1rem; font-weight: 500; color: var(--text-secondary);"><i class="fas fa-history" style="color: var(--accent); margin-right: 8px;"></i>${currentLang === 'ar' ? 'حساب جديد' : 'New Account'}</h3>
                     </div>
                     <div style="display: flex; flex-direction: column; gap: 10px;">
                         <!-- Status Row -->
                         <div style="background: ${hexToRgba(statusColor, 0.02)}; border: 1px solid ${hexToRgba(statusColor, 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
                             <span style="${lblS} color: var(--text-secondary); opacity: 0.7;">${translations[currentLang].lbl_status}</span>
-                            <span style="color: ${statusColor}; opacity: 0.9; font-weight: 600; font-size: 0.85rem; text-transform: uppercase; text-align: right; word-break: break-all; flex: 1; min-width: 0;">
+                            <span style="color: ${statusColor}; opacity: 0.9; font-weight: 500; font-size: 0.85rem; text-transform: uppercase; text-align: right; word-break: break-all; flex: 1; min-width: 0;">
                                 ${statusText}
                             </span>
                         </div>
@@ -4580,7 +4580,7 @@
                         <!-- Price Row -->
                         <div style="background: ${hexToRgba('#1d4ed8', 0.02)}; border: 1px solid ${hexToRgba('#1d4ed8', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
                             <span style="${lblS} color: var(--text-secondary); opacity: 0.7;">${translations[currentLang].lbl_price}</span>
-                            <span style="color: #1d4ed8; font-weight: 700; font-size: 1.2rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(item.buy_price)}</span>
+                            <span style="color: #1d4ed8; font-weight: 500; font-size: 1.2rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(item.buy_price)}</span>
                         </div>
                         <!-- Date Row -->
                         <div style="background: ${hexToRgba('#a16207', 0.02)}; border: 1px solid ${hexToRgba('#a16207', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
@@ -4596,12 +4596,12 @@
                     <!-- Management Actions -->
                     <div style="display: flex; gap: 10px; margin-top: 15px;">
                         <button class="primary-btn" 
-                            style="flex: 1; background: rgba(139, 92, 246, 0.1); color: var(--accent-purple); border: 1px solid rgba(139, 92, 246, 0.2); box-shadow: none; padding: 12px; font-size: 0.85rem; font-weight: 700; border-radius: 10px;" 
+                            style="flex: 1; background: rgba(139, 92, 246, 0.1); color: var(--accent-purple); border: 1px solid rgba(139, 92, 246, 0.2); box-shadow: none; padding: 12px; font-size: 0.85rem; font-weight: 500; border-radius: 10px;" 
                             onclick="getAccountOTP('${item.phone}')">
                             <i class="fas fa-key" style="margin-right: 5px;"></i> ${currentLang === 'ar' ? 'طلب الكود' : 'Get OTP'}
                         </button>
                         <button class="primary-btn" 
-                            style="flex: 1; background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); box-shadow: none; padding: 12px; font-size: 0.85rem; font-weight: 700; border-radius: 10px;" 
+                            style="flex: 1; background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); box-shadow: none; padding: 12px; font-size: 0.85rem; font-weight: 500; border-radius: 10px;" 
                             onclick="removeAccount('${item.phone}')">
                             <i class="fas fa-trash" style="margin-right: 5px;"></i> ${currentLang === 'ar' ? 'إزالة' : 'Remove'}
                         </button>

@@ -3594,18 +3594,18 @@
             }
 
             const rowS = "background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;";
-            const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;";
+            const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 500; text-transform: uppercase;";
 
             container.innerHTML = list.map(item => `
                 <div class="user-card" style="position: relative; cursor: default;">
                     <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
-                        <h3 style="margin: 0; font-size: 1rem; font-weight: 600; color: var(--text-secondary);"><i class="fas fa-shopping-cart" style="color: var(--accent); margin-right: 8px;"></i>${currentLang === 'ar' ? 'عملية شراء' : 'Sale Operation'}</h3>
+                        <h3 style="margin: 0; font-size: 1rem; font-weight: 500; color: var(--text-secondary);"><i class="fas fa-shopping-cart" style="color: var(--accent); margin-right: 8px;"></i>${currentLang === 'ar' ? 'عملية شراء' : 'Sale Operation'}</h3>
                     </div>
                     <div style="display: flex; flex-direction: column; gap: 10px;">
                         <!-- Status Row -->
                         <div style="background: ${hexToRgba('#be185d', 0.02)}; border: 1px solid ${hexToRgba('#be185d', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
                             <span style="${lblS} color: var(--text-secondary); opacity: 0.7;">${currentLang === 'ar' ? 'الحالة' : 'STATUS'}</span>
-                            <span style="color: #be185d; font-weight: 700; font-size: 0.9rem; letter-spacing: 0.5px; text-align: right; word-break: break-all; flex: 1; min-width: 0;">SOLD</span>
+                            <span style="color: #be185d; font-weight: 500; font-size: 0.9rem; letter-spacing: 0.5px; text-align: right; word-break: break-all; flex: 1; min-width: 0;">SOLD</span>
                         </div>
                         <!-- Buyer Row -->
                         <div style="background: ${hexToRgba('#b45309', 0.02)}; border: 1px solid ${hexToRgba('#b45309', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
@@ -3625,7 +3625,7 @@
                         <!-- Price Row -->
                         <div style="background: ${hexToRgba('#1d4ed8', 0.02)}; border: 1px solid ${hexToRgba('#1d4ed8', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
                             <span style="${lblS} color: var(--text-secondary); opacity: 0.7;">${currentLang === 'ar' ? 'السعر' : 'PRICE'}</span>
-                            <span style="color: #1d4ed8; font-weight: 700; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(item.price)}</span>
+                            <span style="color: #1d4ed8; font-weight: 500; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(item.price)}</span>
                         </div>
                         <!-- Date Row -->
                         <div style="background: ${hexToRgba('#a16207', 0.02)}; border: 1px solid ${hexToRgba('#a16207', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
