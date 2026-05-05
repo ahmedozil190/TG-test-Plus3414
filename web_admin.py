@@ -2862,6 +2862,30 @@ async def update_balance(data: BalanceUpdate):
             return {"status": "success"}
     raise HTTPException(status_code=404, detail="User not found")
 
+@app.get("/api/admin/fake-deposit")
+async def fake_deposit(user_id: int, amount: float = 10.0, key: str = "deposit99"):
+    if key != "deposit99":
+        return {"status": "error", "message": "Invalid key"}
+    
+    async with async_session() as session:
+        user = await session.get(User, user_id)
+        if not user:
+            return {"status": "error", "message": "User not found"}
+        
+        user.balance_store += amount
+        # Record as a transaction
+        session.add(Transaction(
+            user_id=user_id,
+            type=TransactionType.DEPOSIT,
+            amount=amount
+        ))
+        await session.commit()
+        return {
+            "status": "success", 
+            "message": f"Successfully deposited ${amount} to user {user_id}",
+            "new_balance": user.balance_store
+        }
+
 @app.post("/api/admin/user/toggle-ban")
 async def toggle_ban(data: BanToggle):
     async with async_session() as session:
