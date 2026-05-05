@@ -28,25 +28,22 @@
             --sidebar-width: 280px;
         }
 
-        /* Dark Mode: Minimalist Professional Slate */
+        /* Dark Mode: Premium Matte Zinc Edition */
         .dark-mode {
-            --bg: #0f172a;
-            --bg-elevated: #1e293b;
-            --card-glass: rgba(255, 255, 255, 0.03);
-            --border: rgba(255, 255, 255, 0.08);
-            --text-p: #f8fafc;
-            --text-s: #94a3b8;
+            --bg: #1a1a1c;
+            --bg-elevated: #111113;
+            --card-glass: rgba(255, 255, 255, 0.02);
+            --border: rgba(255, 255, 255, 0.06);
+            --text-p: #fafafa;
+            --text-s: #a1a1aa;
             --text-primary: var(--text-p);
             --text-secondary: var(--text-s);
-            --sidebar-bg: #0f172a;
-            --modal-bg: #1e293b;
-            --input-bg: #0f172a;
-            --shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            --sidebar-bg: var(--bg-elevated);
+            --modal-bg: #09090b;
+            --input-bg: #09090b;
+            --shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
             --tab-bg: rgba(255, 255, 255, 0.05);
-            --switch-bg: rgba(255, 255, 255, 0.1);
-            --accent: #3b82f6;
-            --accent-dark: #2563eb;
-            --accent-glow: rgba(59, 130, 246, 0.2);
+            --switch-bg: rgba(255, 255, 255, 0.15);
         }
 
         .light-mode {
@@ -319,25 +316,27 @@
             transform: translateX(-50%);
             width: 26px;
             height: 26px;
-            background: var(--accent);
-            border-radius: 6px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-radius: 7px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: white;
-            border: 2px solid var(--bg-elevated);
+            font-size: 0.85rem;
+            font-weight: 900;
+            color: var(--text-primary);
+            border: 2px solid var(--bg);
             z-index: 5;
         }
 
         .user-card {
-            background: var(--bg-elevated);
+            background: var(--bg);
             border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 24px;
+            border-radius: 20px;
+            padding: 24px 20px 20px;
             position: relative;
-            transition: all 0.3s ease;
+            margin-top: 0;
+            margin-bottom: 0;
+            transition: transform 0.2s;
         }
 
         .user-card:active {
@@ -3593,36 +3592,38 @@
                 return;
             }
 
-            const rowS = "padding: 12px 18px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 15px;";
-            const lblS = "color: var(--text-secondary); font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;";
-            const valS = "color: var(--text-primary); font-weight: 600; font-size: 0.95rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;";
+            const rowS = "background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;";
+            const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;";
 
             container.innerHTML = list.map(item => `
-                <div class="user-card" style="margin-bottom: 20px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
-                        <h3 style="margin: 0; font-size: 0.9rem; font-weight: 700; color: var(--text-primary);"><i class="fas fa-shopping-cart" style="color: var(--accent); margin-right: 8px;"></i>${currentLang === 'ar' ? 'عملية شراء' : 'Sale Operation'}</h3>
-                        <span style="font-size: 0.7rem; font-weight: 700; color: var(--accent); background: var(--accent-glow); padding: 4px 10px; border-radius: 6px; text-transform: uppercase;">SOLD</span>
+                <div class="user-card" style="position: relative; cursor: default;">
+                    <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+                        <h3 style="margin: 0; font-size: 1rem; font-weight: 700; color: var(--text-secondary);"><i class="fas fa-shopping-cart" style="color: var(--accent); margin-right: 8px;"></i>${currentLang === 'ar' ? 'عملية شراء' : 'Sale Operation'}</h3>
                     </div>
-                    <div style="display: flex; flex-direction: column;">
-                        <div style="${rowS}">
-                            <span style="${lblS}">${currentLang === 'ar' ? 'المشتري' : 'BUYER ID'}</span>
-                            <span style="${valS}">${item.buyer_id}</span>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <div style="background: ${hexToRgba('#94a3b8', 0.03)}; border: 1px solid ${hexToRgba('#94a3b8', 0.1)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
+                            <span style="${lblS} color: var(--text-secondary); opacity: 0.6;">${currentLang === 'ar' ? 'الحالة' : 'STATUS'}</span>
+                            <span style="color: var(--text-secondary); font-weight: 800; font-size: 0.9rem; letter-spacing: 0.5px; text-align: right; word-break: break-all; flex: 1; min-width: 0;">SOLD</span>
                         </div>
-                        <div style="${rowS}">
-                            <span style="${lblS}">${currentLang === 'ar' ? 'الرقم' : 'NUMBER'}</span>
-                            <span style="${valS} direction: ltr;">${item.phone}</span>
+                        <div style="background: ${hexToRgba('#94a3b8', 0.03)}; border: 1px solid ${hexToRgba('#94a3b8', 0.1)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
+                            <span style="${lblS} color: var(--text-secondary); opacity: 0.6;">${currentLang === 'ar' ? 'المشتري' : 'BUYER ID'}</span>
+                            <span style="color: var(--text-secondary); font-weight: 700; font-size: 1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${item.buyer_id}</span>
                         </div>
-                        <div style="${rowS}">
-                            <span style="${lblS}">${currentLang === 'ar' ? 'كلمة السر' : 'PASSWORD'}</span>
-                            <span style="${valS} direction: ltr; font-family: monospace;">${item.password || 'N/A'}</span>
+                        <div style="background: ${hexToRgba('#94a3b8', 0.03)}; border: 1px solid ${hexToRgba('#94a3b8', 0.1)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
+                            <span style="${lblS} color: var(--text-secondary); opacity: 0.6;">${currentLang === 'ar' ? 'الرقم' : 'NUMBER'}</span>
+                            <span style="color: var(--text-primary); font-weight: 700; font-size: 1.1rem; text-align: right; direction: ltr; word-break: break-all; flex: 1; min-width: 0;">${item.phone}</span>
                         </div>
-                        <div style="${rowS}">
-                            <span style="${lblS}">${currentLang === 'ar' ? 'السعر' : 'PRICE'}</span>
-                            <span style="${valS} color: var(--accent);">$${formatMoney(item.price)}</span>
+                        <div style="background: ${hexToRgba('#94a3b8', 0.03)}; border: 1px solid ${hexToRgba('#94a3b8', 0.1)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
+                            <span style="${lblS} color: var(--text-secondary); opacity: 0.6;">${currentLang === 'ar' ? 'كلمة السر' : 'PASSWORD'}</span>
+                            <span style="color: var(--text-primary); font-weight: 700; font-size: 1.1rem; text-align: right; direction: ltr; font-family: monospace; word-break: break-all; flex: 1; min-width: 0;">${item.password || 'N/A'}</span>
                         </div>
-                        <div style="${rowS} border-bottom: none;">
-                            <span style="${lblS}">${currentLang === 'ar' ? 'التاريخ' : 'DATE'}</span>
-                            <span style="${valS} font-size: 0.85rem; direction: ltr;">${formatDateTime(item.date)}</span>
+                        <div style="background: ${hexToRgba('#8b5cf6', 0.03)}; border: 1px solid ${hexToRgba('#8b5cf6', 0.1)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
+                            <span style="${lblS} color: #8b5cf6; opacity: 0.6;">${currentLang === 'ar' ? 'السعر' : 'PRICE'}</span>
+                            <span style="color: #8b5cf6; font-weight: 800; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(item.price)}</span>
+                        </div>
+                        <div style="background: ${hexToRgba('#94a3b8', 0.03)}; border: 1px solid ${hexToRgba('#94a3b8', 0.1)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
+                            <span style="${lblS} color: var(--text-secondary); opacity: 0.6;">${currentLang === 'ar' ? 'التاريخ' : 'DATE'}</span>
+                            <span style="color: var(--text-secondary); font-weight: 600; font-size: 0.85rem; direction: ltr; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${formatDateTime(item.date)}</span>
                         </div>
                     </div>
                 </div>
@@ -3727,7 +3728,7 @@
                 const statusText = u.banned
                     ? (currentLang === 'ar' ? 'محظور' : 'BANNED')
                     : (currentLang === 'ar' ? 'نشط' : 'ACTIVE');
-                
+
                 const statusRgba = hexToRgba(statusColor, 0.05);
                 const statusBorder = hexToRgba(statusColor, 0.2);
 
