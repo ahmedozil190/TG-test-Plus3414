@@ -3344,20 +3344,20 @@ async def seller_submit_otp(data: SellerOTPSubmit):
             
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/api/admin/clear-accounts-system")
-async def clear_accounts_admin(key: str):
-    # This is a temporary tool to help you clear test data from Railway
-    MASTER_KEY = "clear12399"
+@app.post("/api/admin/clear-accounts-system")
+async def clear_accounts_admin(data: dict):
+    key = data.get("key")
+    MASTER_KEY = "purge_secure_extreme_v3_8822"
     if key != MASTER_KEY:
-        return {"error": "Invalid master key"}
+        return {"status": "error", "message": "Invalid master key"}
         
     async with async_session() as session:
         try:
             await session.execute(text("DELETE FROM accounts"))
             await session.commit()
-            return {"status": "Success", "message": "All sourcing history has been cleared from the live server."}
+            return {"status": "success", "message": "All sourcing history has been cleared securely."}
         except Exception as e:
-            return {"status": "Error", "message": str(e)}
+            return {"status": "error", "message": str(e)}
 
 @app.post("/api/seller/withdraw")
 async def seller_withdraw(req: WithdrawSubmit):
