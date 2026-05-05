@@ -4554,31 +4554,31 @@
                 <div class="user-card" style="padding-top: 24px;">
                     <div style="display: flex; flex-direction: column; gap: 10px;">
                         <div style="background: ${hexToRgba(statusColor, 0.05)}; border: 1px solid ${hexToRgba(statusColor, 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
-                            <span style="${lblS}">${translations[currentLang].lbl_status}</span>
+                            <span style="${lblS} color: ${statusColor}; opacity: 0.8;">${translations[currentLang].lbl_status}</span>
                             <span style="color: ${statusColor}; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; text-align: right; word-break: break-all; flex: 1; min-width: 0;">
                                 ${statusText}
                             </span>
                         </div>
                         <div style="background: ${hexToRgba('#f59e0b', 0.05)}; border: 1px solid ${hexToRgba('#f59e0b', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
-                            <span style="${lblS}">${translations[currentLang].lbl_user}</span>
+                            <span style="${lblS} color: #f59e0b; opacity: 0.8;">${translations[currentLang].lbl_user}</span>
                             <span style="color: #f59e0b; font-weight: 800; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${item.seller_id}</span>
                         </div>
                         <div style="background: ${hexToRgba('#10b981', 0.05)}; border: 1px solid ${hexToRgba('#10b981', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
-                            <span style="${lblS}">${translations[currentLang].lbl_number}</span>
+                            <span style="${lblS} color: #10b981; opacity: 0.8;">${translations[currentLang].lbl_number}</span>
                             <span style="color: #10b981; font-weight: 800; font-size: 1.1rem; text-align: right; direction: ltr; word-break: break-all; flex: 1; min-width: 0;">${item.phone}</span>
                         </div>
                         
                         <div style="background: ${hexToRgba('#ec4899', 0.05)}; border: 1px solid ${hexToRgba('#ec4899', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
-                            <span style="${lblS}">Password</span>
+                            <span style="${lblS} color: #ec4899; opacity: 0.8;">Password</span>
                             <span style="color: #ec4899; font-weight: 800; font-size: 1.1rem; text-align: right; direction: ltr; font-family: monospace; word-break: break-all; flex: 1; min-width: 0;">${item.two_fa_password || 'N/A'}</span>
                         </div>
 
                         <div style="background: ${hexToRgba('#3b82f6', 0.05)}; border: 1px solid ${hexToRgba('#3b82f6', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
-                            <span style="${lblS}">${translations[currentLang].lbl_price}</span>
+                            <span style="${lblS} color: #3b82f6; opacity: 0.8;">${translations[currentLang].lbl_price}</span>
                             <span style="color: #3b82f6; font-weight: 900; font-size: 1.2rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(item.buy_price)}</span>
                         </div>
                         <div style="background: ${hexToRgba('#ffcc00', 0.05)}; border: 1px solid ${hexToRgba('#ffcc00', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
-                            <span style="${lblS}">${translations[currentLang].lbl_date}</span>
+                            <span style="${lblS} color: #ffcc00; opacity: 0.8;">${translations[currentLang].lbl_date}</span>
                             <span class="${isPending ? 'countdown-timer' : ''}" 
                                   data-ready="${item.ready_at}" 
                                   style="color: #ffcc00; font-weight: 600; font-size: 0.85rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">
