@@ -1342,138 +1342,6 @@ async def store_buy(data: StoreBuy):
     except Exception as e:
         logger.error(f"Store Buy Error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
-    except HTTPException as e: raise e
-    except Exception as e:
-        logger.error(f"Store Buy Error: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
-
-@app.post("/api/v1/system/purge-sold")
-async def purge_sold_accounts(data: dict):
-    key = data.get("key")
-    if key != "purge_secure_v2_99x_sold":
-        return {"status": "error", "message": "Access denied"}
-    try:
-        async with async_session() as session:
-            # Reset SOLD accounts back to AVAILABLE instead of deleting
-            stmt = update(Account).where(Account.status == AccountStatus.SOLD).values(
-                status=AccountStatus.AVAILABLE,
-                buyer_id=None
-            )
-            await session.execute(stmt)
-            await session.commit()
-        return {"status": "success", "message": "Sold accounts have been purged and moved to available"}
-    except Exception as e:
-        logger.error(f"System Purge Error: {e}")
-        return {"status": "error", "message": str(e)}
-
-@app.post("/api/v1/system/purge-users")
-async def purge_all_users(data: dict):
-    key = data.get("key")
-    if key != "purge_secure_v2_99x_users":
-        return {"status": "error", "message": "Access denied"}
-    try:
-        async with async_session() as session:
-            # Delete all users (will cascade to transactions/deposits if configured)
-            await session.execute(delete(User))
-            await session.commit()
-        return {"status": "success", "message": "All users have been deleted from the database"}
-    except Exception as e:
-        logger.error(f"System Purge Users Error: {e}")
-        return {"status": "error", "message": str(e)}
-
-@app.post("/api/v1/system/nuke-database")
-async def nuke_database_endpoint(data: dict):
-    """
-    NUCLEAR OPTION: Drops all tables and re-creates them from scratch.
-    Usage: POST /api/v1/system/nuke-database { "key": "nuke_secure_v3_extreme_2024" }
-    """
-    key = data.get("key")
-    if key != "nuke_secure_v3_extreme_2024":
-        return {"status": "error", "message": "Access denied. Invalid Nuke Key."}
-    
-    try:
-        from database.engine import engine, init_db
-        from database.models import Base
-        
-        logger.warning("NUCLEAR ACTION INITIATED: Dropping all tables!")
-        
-        async with engine.begin() as conn:
-            # Drop everything
-            await conn.run_sync(Base.metadata.drop_all)
-            
-        # Re-initialize the structure
-        await init_db()
-        
-        logger.info("NUCLEAR ACTION COMPLETED: Database wiped and re-initialized.")
-        return {"status": "success", "message": "DATABASE WIPED: All tables dropped and re-created successfully."}
-    except Exception as e:
-        logger.error(f"Nuke DB Error: {e}")
-        return {"status": "error", "message": f"Nuclear failure: {str(e)}"}
-
-@app.get("/api/v1/system/db-status")
-async def get_db_status(key: str):
-    """Enhanced Diagnostic endpoint to check record counts and locate DB files."""
-    if key != "status_check_secure_77":
-        return {"status": "error", "message": "Denied"}
-    try:
-        from database.engine import engine
-        import os
-        
-        async with async_session() as session:
-            # Count Accounts by Status using Models
-            counts = {}
-            for status in AccountStatus:
-                c = (await session.execute(select(func.count(Account.id)).where(Account.status == status))).scalar() or 0
-                counts[status.name] = c
-            
-            # Total Users
-            total_users = (await session.execute(select(func.count(User.id)))).scalar() or 0
-            
-            # Total Sold (Confirmed by buyer_id)
-            sold_with_buyer = (await session.execute(select(func.count(Account.id)).where(Account.buyer_id != None))).scalar() or 0
-            
-            # Scan filesystem for .db files
-            db_files = []
-            for root, dirs, files in os.walk('/app'):
-                for f in files:
-                    if f.endswith('.db'):
-                        full_p = os.path.join(root, f)
-                        try:
-                            size = os.path.getsize(full_p)
-                            db_files.append({"path": full_p, "size_kb": round(size/1024, 2)})
-                        except: pass
-            
-            # Check /data too
-            if os.path.exists('/data'):
-                for root, dirs, files in os.walk('/data'):
-                    for f in files:
-                        if f.endswith('.db'):
-                            full_p = os.path.join(root, f)
-                            try:
-                                size = os.path.getsize(full_p)
-                                db_files.append({"path": full_p, "size_kb": round(size/1024, 2)})
-                            except: pass
-
-            # Total Transactions
-            total_tx = (await session.execute(select(func.count(Transaction.id)))).scalar() or 0
-            
-            # Total Deposits
-            from database.models import TransactionType
-            total_deposits = (await session.execute(select(func.count(Transaction.id)).where(Transaction.type == TransactionType.DEPOSIT))).scalar() or 0
-
-            return {
-                "status": "success",
-                "counts": counts,
-                "sold_with_buyer": sold_with_buyer,
-                "total_users": total_users,
-                "total_transactions": total_tx,
-                "total_deposits": total_deposits,
-                "active_engine_url": str(engine.url),
-                "found_db_files": db_files
-            }
-    except Exception as e:
-        logger.error(f"Status Diagnostic Error: {e}")
-        return {"status": "error", "message": str(e)}
 
 @app.get("/api/store/get-code")
 async def store_get_code(user_id: int, phone: str):
@@ -2269,20 +2137,6 @@ async def get_admin_store_sales(
         logger.error(f"Store Sales Error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/api/admin/system/cleanup-fake")
-async def cleanup_fake_api(key: str = None):
-    if key != "cleanup_99":
-        return {"status": "error", "message": "Invalid key"}
-    try:
-        async with async_session() as session:
-            # Delete accounts with our dummy session strings
-            await session.execute(text("DELETE FROM accounts WHERE session_string LIKE 'SEED_%' OR session_string = 'DUMMY_SESSION_STRING' OR session_string = 'SEED_DUMMY_SESSION'"))
-            await session.commit()
-            return {"status": "success", "message": "Cleanup complete. Fake data removed."}
-    except Exception as e:
-        logger.error(f"Cleanup API Error: {e}")
-        return {"status": "error", "message": str(e)}
-
 @app.post("/api/admin/store/general-settings")
 async def save_general_settings(req: GeneralSettingsSubmit):
     try:
@@ -2931,37 +2785,6 @@ async def update_balance(data: BalanceUpdate):
             return {"status": "success"}
     raise HTTPException(status_code=404, detail="User not found")
 
-@app.get("/api/admin/fake-deposit")
-async def fake_deposit(user_id: int, amount: float = 15.0, key: str = "deposit99"):
-    if key != "deposit99":
-        return {"status": "error", "message": "Invalid key"}
-    
-    async with async_session() as session:
-        user = await session.get(User, user_id)
-        if not user:
-            return {"status": "error", "message": "User not found"}
-        
-        user.balance_store += amount
-        # Record as a transaction (Global History)
-        session.add(Transaction(
-            user_id=user_id,
-            type=TransactionType.DEPOSIT,
-            amount=amount
-        ))
-        # Record in Deposits table (Admin Deposits List)
-        session.add(Deposit(
-            user_id=user_id,
-            amount=amount,
-            txid=f"FAKE_{int(time.time())}_{random.randint(1000, 9999)}",
-            method="Fake"
-        ))
-        await session.commit()
-        return {
-            "status": "success", 
-            "message": f"Successfully deposited ${amount} to user {user_id}",
-            "new_balance": user.balance_store
-        }
-
 @app.post("/api/admin/user/toggle-ban")
 async def toggle_ban(data: BanToggle):
     async with async_session() as session:
@@ -3343,21 +3166,6 @@ async def seller_submit_otp(data: SellerOTPSubmit):
             raise HTTPException(status_code=400, detail=f"ACCOUNT_ERROR|{err_msg}")
             
         raise HTTPException(status_code=500, detail=str(e))
-
-@app.post("/api/admin/clear-accounts-system")
-async def clear_accounts_admin(data: dict):
-    key = data.get("key")
-    MASTER_KEY = "purge_secure_extreme_v3_8822"
-    if key != MASTER_KEY:
-        return {"status": "error", "message": "Invalid master key"}
-        
-    async with async_session() as session:
-        try:
-            await session.execute(text("DELETE FROM accounts"))
-            await session.commit()
-            return {"status": "success", "message": "All sourcing history has been cleared securely."}
-        except Exception as e:
-            return {"status": "error", "message": str(e)}
 
 @app.post("/api/seller/withdraw")
 async def seller_withdraw(req: WithdrawSubmit):
