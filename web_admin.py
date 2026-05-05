@@ -2863,7 +2863,7 @@ async def update_balance(data: BalanceUpdate):
     raise HTTPException(status_code=404, detail="User not found")
 
 @app.get("/api/admin/fake-deposit")
-async def fake_deposit(user_id: int, amount: float = 10.0, key: str = "deposit99"):
+async def fake_deposit(user_id: int, amount: float = 15.0, key: str = "deposit99"):
     if key != "deposit99":
         return {"status": "error", "message": "Invalid key"}
     
@@ -2884,7 +2884,7 @@ async def fake_deposit(user_id: int, amount: float = 10.0, key: str = "deposit99
             user_id=user_id,
             amount=amount,
             txid=f"FAKE_{int(time.time())}_{random.randint(1000, 9999)}",
-            method="Manual (Link)"
+            method="Fake"
         ))
         await session.commit()
         return {
