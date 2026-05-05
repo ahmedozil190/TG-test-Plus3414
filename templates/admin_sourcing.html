@@ -2257,10 +2257,10 @@
                 </div>
 
                 <div id="withdrawals-history-card" class="card" style="padding: 22px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px;">
                         <h2 data-i18n="nav_withdrawals" style="margin: 0; font-size: 1rem; color: var(--text-secondary);">Withdrawals History</h2>
                         <div class="custom-dropdown" style="position: relative;">
-                            <button class="dropdown-trigger" onclick="toggleWithdrawDropdown()"
+                            <button class="dropdown-trigger" onclick="toggleWithdrawDropdown(event)"
                                 style="display: flex; align-items: center; gap: 8px; background: var(--card-glass); border: 1px solid var(--border); padding: 8px 14px; border-radius: 12px; color: var(--text-primary); cursor: pointer; font-size: 0.85rem; font-weight: 700; transition: all 0.2s;">
                                 <span id="withdraw-status-dot"
                                     style="width: 8px; height: 8px; border-radius: 50%; background: #f59e0b;"></span>
@@ -3338,10 +3338,20 @@
             } catch (e) { console.error(e); }
         }
 
-        function toggleWithdrawDropdown() {
+        function toggleWithdrawDropdown(event) {
+            if (event) event.stopPropagation();
             const menu = document.getElementById('withdraw-filter-menu');
             menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
         }
+
+        window.addEventListener('click', function(e) {
+            const withdrawMenu = document.getElementById('withdraw-filter-menu');
+            if (withdrawMenu && withdrawMenu.style.display === 'block') {
+                if (!e.target.closest('.custom-dropdown')) {
+                    withdrawMenu.style.display = 'none';
+                }
+            }
+        });
 
         function switchWithdrawTab(status, color, label) {
             document.getElementById('withdraw-filter-menu').style.display = 'none';
