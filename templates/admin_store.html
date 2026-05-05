@@ -2844,10 +2844,6 @@
                 ph_amount: "Amount...",
                 nav_store_user_prices: "Custom Users",
                 search_custom_users_ph: "Search for ID, Name, or Country...",
-                lbl_status: "Status",
-                lbl_user: "User ID",
-                lbl_number: "Number",
-                lbl_price: "Price",
                 lbl_date: "Date"
             },
             ar: {
@@ -2909,10 +2905,6 @@
                 ph_amount: "المبلغ...",
                 nav_store_user_prices: "مستخدمين مخصصين",
                 search_custom_users_ph: "ابحث عن المعرف أو الاسم أو الدولة...",
-                lbl_status: "الحالة",
-                lbl_user: "معرّف المستخدم",
-                lbl_number: "الرقم",
-                lbl_price: "السعر",
                 lbl_date: "التاريخ"
             }
         };
@@ -3613,32 +3605,32 @@
                     </div>
                     <div style="display: flex; flex-direction: column; gap: 10px;">
                         <!-- Status Row -->
-                        <div style="background: ${hexToRgba('#be185d', 0.02)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
+                        <div style="background: ${hexToRgba('#be185d', 0.02)}; border: 1px solid ${hexToRgba('#be185d', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
                             <span style="${lblS} color: var(--text-secondary); opacity: 0.7;">${currentLang === 'ar' ? 'الحالة' : 'STATUS'}</span>
                             <span style="color: #be185d; font-weight: 500; font-size: 0.9rem; letter-spacing: 0.5px; text-align: right; word-break: break-all; flex: 1; min-width: 0;">SOLD</span>
                         </div>
                         <!-- Buyer Row -->
-                        <div style="background: ${hexToRgba('#b45309', 0.02)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
+                        <div style="background: ${hexToRgba('#b45309', 0.02)}; border: 1px solid ${hexToRgba('#b45309', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
                             <span style="${lblS} color: var(--text-secondary); opacity: 0.7;">${currentLang === 'ar' ? 'المشتري' : 'BUYER ID'}</span>
                             <span style="color: var(--text-secondary); font-weight: 500; font-size: 1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${item.buyer_id}</span>
                         </div>
                         <!-- Number Row -->
-                        <div style="background: ${hexToRgba('#047857', 0.02)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
+                        <div style="background: ${hexToRgba('#047857', 0.02)}; border: 1px solid ${hexToRgba('#047857', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
                             <span style="${lblS} color: var(--text-secondary); opacity: 0.7;">${currentLang === 'ar' ? 'الرقم' : 'NUMBER'}</span>
                             <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; text-align: right; direction: ltr; word-break: break-all; flex: 1; min-width: 0;">${item.phone}</span>
                         </div>
                         <!-- Password Row -->
-                        <div style="background: ${hexToRgba('#be185d', 0.02)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
+                        <div style="background: ${hexToRgba('#be185d', 0.02)}; border: 1px solid ${hexToRgba('#be185d', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
                             <span style="${lblS} color: var(--text-secondary); opacity: 0.7;">${currentLang === 'ar' ? 'كلمة السر' : 'PASSWORD'}</span>
                             <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; text-align: right; direction: ltr; font-family: monospace; word-break: break-all; flex: 1; min-width: 0;">${item.password || 'N/A'}</span>
                         </div>
                         <!-- Price Row -->
-                        <div style="background: ${hexToRgba('#1d4ed8', 0.02)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
+                        <div style="background: ${hexToRgba('#1d4ed8', 0.02)}; border: 1px solid ${hexToRgba('#1d4ed8', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
                             <span style="${lblS} color: var(--text-secondary); opacity: 0.7;">${currentLang === 'ar' ? 'السعر' : 'PRICE'}</span>
                             <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(item.price)}</span>
                         </div>
                         <!-- Date Row -->
-                        <div style="background: ${hexToRgba('#a16207', 0.02)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
+                        <div style="background: ${hexToRgba('#a16207', 0.02)}; border: 1px solid ${hexToRgba('#a16207', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
                             <span style="${lblS} color: var(--text-secondary); opacity: 0.7;">${translations[currentLang].lbl_date}</span>
                             <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.85rem; direction: ltr; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${formatDateTime(item.date)}</span>
                         </div>
