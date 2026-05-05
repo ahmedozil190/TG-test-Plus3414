@@ -2846,7 +2846,7 @@
                 modal_title: "إضافة دولة جديدة",
                 lbl_code: "كود",
                 lbl_buy: "السعر",
-                lbl_delay: "تأخير الموافقة (ثانية)",
+                lbl_delay: "تأخير الموافقة",
                 no_ops: "لا توجد عمليات",
                 st_pending: "قيد المراجعة",
                 st_accepted: "تم القبول",
@@ -3024,7 +3024,7 @@
                         <!-- Delay -->
                         <div style="background: ${hexToRgba('#14b8a6', 0.05)}; border: 1px solid ${hexToRgba('#14b8a6', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
                             <span style="color: #14b8a6; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'تأخير الموافقة' : 'Delay'}</span>
-                            <span style="color: #14b8a6; font-weight: 800; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${up.approve_delay} ${currentLang === 'ar' ? 'ثانية' : 'sec'}</span>
+                            <span style="color: #14b8a6; font-weight: 800; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${up.approve_delay} ${currentLang === 'ar' ? 'ثانية' : 'SEC'}</span>
                         </div>
                     </div>
                     <!-- Action Buttons -->
@@ -4260,7 +4260,7 @@
                         <!-- Delay -->
                         <div style="background: ${hexToRgba('#f59e0b', 0.05)}; border: 1px solid ${hexToRgba('#f59e0b', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
                             <span style="color: #f59e0b; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'التأخير' : 'Delay'}</span>
-                            <span style="color: #f59e0b; font-weight: 800; font-size: 1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${p.approve_delay} ${currentLang === 'ar' ? 'ثانية' : 'sec'}</span>
+                            <span style="color: #f59e0b; font-weight: 800; font-size: 1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${p.approve_delay} ${currentLang === 'ar' ? 'ثانية' : 'SEC'}</span>
                         </div>
                     </div>
                     <!-- Action Buttons -->
@@ -4567,33 +4567,33 @@
                     <div style="display: flex; flex-direction: column; gap: 10px;">
                         <div style="${rowS}">
                             <span style="${lblS}">${translations[currentLang].lbl_status}</span>
-                            <span style="color: ${statusColor}; font-weight: 800; font-size: 0.85rem; text-transform: uppercase;">
+                            <span style="color: ${statusColor}; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; text-align: right; word-break: break-all; flex: 1; min-width: 0;">
                                 ${statusText}
                             </span>
                         </div>
                         <div style="${rowS}">
                             <span style="${lblS}">${translations[currentLang].lbl_user}</span>
-                            <span style="color: #f59e0b; font-weight: 800; font-size: 1.1rem; text-align: right;">${item.seller_id}</span>
+                            <span style="color: #f59e0b; font-weight: 800; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${item.seller_id}</span>
                         </div>
                         <div style="${rowS}">
                             <span style="${lblS}">${translations[currentLang].lbl_number}</span>
-                            <span style="color: #10b981; font-weight: 800; font-size: 1.1rem; text-align: right; direction: ltr;">${item.phone}</span>
+                            <span style="color: #10b981; font-weight: 800; font-size: 1.1rem; text-align: right; direction: ltr; word-break: break-all; flex: 1; min-width: 0;">${item.phone}</span>
                         </div>
                         
                         <div style="${rowS}">
                             <span style="${lblS}">Password</span>
-                            <span style="color: #ec4899; font-weight: 800; font-size: 1.1rem; text-align: right; direction: ltr; font-family: monospace;">${item.two_fa_password || 'N/A'}</span>
+                            <span style="color: #ec4899; font-weight: 800; font-size: 1.1rem; text-align: right; direction: ltr; font-family: monospace; word-break: break-all; flex: 1; min-width: 0;">${item.two_fa_password || 'N/A'}</span>
                         </div>
 
                         <div style="${rowS}">
                             <span style="${lblS}">${translations[currentLang].lbl_price}</span>
-                            <span style="color: #3b82f6; font-weight: 900; font-size: 1.2rem; text-align: right;">$${formatMoney(item.buy_price)}</span>
+                            <span style="color: #3b82f6; font-weight: 900; font-size: 1.2rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(item.buy_price)}</span>
                         </div>
                         <div style="${rowS}">
                             <span style="${lblS}">${translations[currentLang].lbl_date}</span>
                             <span class="${isPending ? 'countdown-timer' : ''}" 
                                   data-ready="${item.ready_at}" 
-                                  style="color: #fdd835; font-weight: 600; font-size: 0.85rem; text-align: right;">
+                                  style="color: #fdd835; font-weight: 600; font-size: 0.85rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">
                                 ${isPending ? '...' : formatDateTime(item.date)}
                             </span>
                         </div>

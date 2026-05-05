@@ -4458,7 +4458,7 @@
                         <!-- Profit Margin -->
                         <div style="${rowS}">
                             <span style="${lblS}">${currentLang === 'ar' ? 'الربح' : 'PROFIT'}</span>
-                            <span style="color: #ff9f0a; font-weight: 800; font-size: 0.95rem;">
+                            <span style="color: #ff9f0a; font-weight: 800; font-size: 0.95rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">
                                 ${s.profit_margin}%
                             </span>
                         </div>
@@ -4466,7 +4466,7 @@
                         <!-- Balance -->
                         <div style="${rowS}; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.1);">
                             <span style="${lblS}; color: #10b981;">${currentLang === 'ar' ? 'الرصيد' : 'BALANCE'}</span>
-                            <span style="color: #10b981; font-weight: 900; font-size: 1.1rem; letter-spacing: 0.5px;">
+                            <span style="color: #10b981; font-weight: 900; font-size: 1.1rem; letter-spacing: 0.5px; text-align: right; word-break: break-all; flex: 1; min-width: 0;">
                                 ${s.balance ? (typeof s.balance === 'number' ? '$' + formatMoney(s.balance) : s.balance) : '$0'}
                             </span>
                         </div>
