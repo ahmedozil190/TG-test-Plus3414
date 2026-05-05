@@ -3471,21 +3471,21 @@
                         <h3 style="margin: 0; font-size: 1rem; font-weight: 700; color: var(--text-secondary);"><i class="fas fa-server" style="color: var(--accent); margin-right: 8px;"></i>${s.server_name}</h3>
                     </div>
                     <div style="width: 100%; display: grid; grid-template-columns: 1fr; gap: 10px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; background: ${hexToRgba('#8b5cf6', 0.02)}; border: 1px solid ${hexToRgba('#8b5cf6', 0.08)}; padding: 14px 18px; border-radius: 16px;">
-                            <div style="font-size: 0.75rem; color: var(--text-secondary); opacity: 0.7; font-weight: 500; letter-spacing: 1px;">SALES</div>
-                            <div style="font-size: 1.15rem; font-weight: 500; color: var(--text-secondary);">${s.total_sales}</div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: ${hexToRgba('#8b5cf6', 0.02)}; border: 1px solid ${hexToRgba('#8b5cf6', 0.08)}; padding: 14px 18px; border-radius: 12px; gap: 20px;">
+                            <div style="font-size: 0.75rem; color: var(--text-secondary); opacity: 0.7; font-weight: 500; letter-spacing: 1px; flex-shrink: 0;">SALES</div>
+                            <div style="font-size: 1.15rem; font-weight: 500; color: var(--text-secondary); text-align: right; word-break: break-all; flex: 1; min-width: 0;">${s.total_sales}</div>
                         </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; background: ${hexToRgba('#3b82f6', 0.02)}; border: 1px solid ${hexToRgba('#3b82f6', 0.08)}; padding: 14px 18px; border-radius: 16px;">
-                            <div style="font-size: 0.75rem; color: var(--text-secondary); opacity: 0.7; font-weight: 500; letter-spacing: 1px;">REVENUE</div>
-                            <div style="font-size: 1.15rem; font-weight: 500; color: var(--text-secondary);">$${formatMoney(s.total_revenue)}</div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: ${hexToRgba('#3b82f6', 0.02)}; border: 1px solid ${hexToRgba('#3b82f6', 0.08)}; padding: 14px 18px; border-radius: 12px; gap: 20px;">
+                            <div style="font-size: 0.75rem; color: var(--text-secondary); opacity: 0.7; font-weight: 500; letter-spacing: 1px; flex-shrink: 0;">REVENUE</div>
+                            <div style="font-size: 1.15rem; font-weight: 500; color: var(--text-secondary); text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(s.total_revenue)}</div>
                         </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; background: ${hexToRgba('#f59e0b', 0.02)}; border: 1px solid ${hexToRgba('#f59e0b', 0.08)}; padding: 14px 18px; border-radius: 16px;">
-                            <div style="font-size: 0.75rem; color: var(--text-secondary); opacity: 0.7; font-weight: 500; letter-spacing: 1px;">COST</div>
-                            <div style="font-size: 1.15rem; font-weight: 500; color: var(--text-secondary);">$${formatMoney(s.total_cost)}</div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: ${hexToRgba('#f59e0b', 0.02)}; border: 1px solid ${hexToRgba('#f59e0b', 0.08)}; padding: 14px 18px; border-radius: 12px; gap: 20px;">
+                            <div style="font-size: 0.75rem; color: var(--text-secondary); opacity: 0.7; font-weight: 500; letter-spacing: 1px; flex-shrink: 0;">COST</div>
+                            <div style="font-size: 1.15rem; font-weight: 500; color: var(--text-secondary); text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(s.total_cost)}</div>
                         </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; background: ${hexToRgba('#10b981', 0.02)}; border: 1px solid ${hexToRgba('#10b981', 0.08)}; padding: 14px 18px; border-radius: 16px;">
-                            <div style="font-size: 0.75rem; color: var(--text-secondary); opacity: 0.7; font-weight: 500; letter-spacing: 1px;">NET</div>
-                            <div style="font-size: 1.25rem; font-weight: 500; color: var(--text-secondary);">$${formatMoney(s.net_profit)}</div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: ${hexToRgba('#10b981', 0.02)}; border: 1px solid ${hexToRgba('#10b981', 0.08)}; padding: 14px 18px; border-radius: 12px; gap: 20px;">
+                            <div style="font-size: 0.75rem; color: var(--text-secondary); opacity: 0.7; font-weight: 500; letter-spacing: 1px; flex-shrink: 0;">NET</div>
+                            <div style="font-size: 1.25rem; font-weight: 500; color: var(--text-secondary); text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(s.net_profit)}</div>
                         </div>
                     </div>
                 </div>
@@ -3512,11 +3512,11 @@
                 let countriesHtml = serverGroup.countries.map((c, i) => {
                     const colHex = colors[i % colors.length].hex;
                     return `
-                        <div style="display: flex; justify-content: space-between; align-items: center; background: ${hexToRgba(colHex, 0.02)}; border: 1px solid ${hexToRgba(colHex, 0.08)}; padding: 14px 18px; border-radius: 16px;">
-                            <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: ${hexToRgba(colHex, 0.02)}; border: 1px solid ${hexToRgba(colHex, 0.08)}; padding: 14px 18px; border-radius: 16px; gap: 20px;">
+                            <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
                                 <div style="font-size: 0.85rem; color: var(--text-secondary); opacity: 0.7; font-weight: 500; letter-spacing: 1px; text-transform: uppercase;">${c.country}</div>
                             </div>
-                            <div style="font-size: 1.15rem; font-weight: 500; color: var(--text-secondary);">${c.count}</div>
+                            <div style="font-size: 1.15rem; font-weight: 500; color: var(--text-secondary); text-align: right; word-break: break-all; flex: 1; min-width: 0;">${c.count}</div>
                         </div>
                     `;
                 }).join('');
