@@ -1585,21 +1585,8 @@
             <div class="modal-title">Confirm Withdrawal</div>
             <div class="modal-body">Please review your payout details carefully before proceeding.</div>
 
-            <div class="confirm-details">
-                <div class="cd-item"><span class="cd-lbl">Withdraw Amount:</span> <span class="cd-val"
-                        id="confAmt">$0.00</span></div>
-                <div class="cd-item"><span class="cd-lbl">Service Fee:</span> <span class="cd-val"
-                        style="color:var(--error)">-$0.20</span></div>
-                <div class="cd-item" style="border-top:1px solid var(--border); margin-top:8px; padding-top:8px">
-                    <span class="cd-lbl">Amount to Receive:</span> <span class="cd-val" id="confTotal"
-                        style="color:var(--success)">$0.00</span>
-                </div>
-                <div class="cd-item"><span class="cd-lbl">Method:</span> <span class="cd-val" id="confMethod">-</span>
-                </div>
-                <div class="cd-item" style="flex-direction:column; gap:4px; margin-top:8px">
-                    <span class="cd-lbl">Wallet address:</span>
-                    <span class="cd-val" id="confAddr" style="word-break:break-all; font-size:0.75rem">-</span>
-                </div>
+            <div id="confirm-rows-container" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 25px;">
+                <!-- Rows will be injected here -->
             </div>
 
             <div class="modal-actions">
@@ -2116,15 +2103,32 @@
             const amt = parseFloat(document.getElementById('withdrawAmount').value) || 0;
             const addr = document.getElementById('paymentDetails').value.trim();
 
-            if (amt < currentMin) return showToast(`Min withdrawal is $${currentMin}`);
+            if (amt < currentMin) return; // Button should be disabled anyway
             if (!addr) return showToast("Address required");
 
-            // Open Confirm Modal
             const net = amt - 0.20;
-            document.getElementById('confAmt').textContent = `$${formatMoney(amt)}`;
-            document.getElementById('confTotal').textContent = `$${formatMoney(net)}`;
-            document.getElementById('confMethod').textContent = currentMethod;
-            document.getElementById('confAddr').textContent = addr;
+            const simpleMethod = currentMethod.split(' - ')[0];
+            
+            // Build Rows
+            const rowS = (c) => `background: ${hexToRgba(c, 0.02)}; border: 1px solid ${hexToRgba(c, 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;`;
+            const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 500; text-transform: uppercase; opacity: 0.7; flex-shrink: 0;";
+
+            const container = document.getElementById('confirm-rows-container');
+            container.innerHTML = `
+                <div style="${rowS('#10b981')}">
+                    <span style="${lblS}">DETAILS</span>
+                    <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.95rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(amt)} - ${simpleMethod}</span>
+                </div>
+                <div style="${rowS('#8b5cf6')}">
+                    <span style="${lblS}">Amount to Receive</span>
+                    <span style="color: #10b981; font-weight: 700; font-size: 1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(net)}</span>
+                </div>
+                <div style="${rowS('#3b82f6')}">
+                    <span style="${lblS}">Wallet address</span>
+                    <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.85rem; text-align: right; direction: ltr; word-break: break-all; flex: 1; min-width: 0;">${addr}</span>
+                </div>
+            `;
+
             document.getElementById('confirmModal').classList.add('show');
         }
 
