@@ -2130,9 +2130,8 @@
                     }
 
                     const rowS = (c) => `background: ${hexToRgba(c, 0.02)}; border: 1px solid ${hexToRgba(c, 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;`;
-                    const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 500; text-transform: uppercase; opacity: 0.7;";
+                    const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 500; text-transform: uppercase; opacity: 0.7; flex-shrink: 0;";
 
-                    const shortAddr = h.address.length > 16 ? (h.address.substring(0, 8) + '...' + h.address.slice(-6)) : h.address;
                     const simpleMethod = h.method.split(' - ')[0];
 
                     item.innerHTML = `
@@ -2142,21 +2141,21 @@
                         <div style="display: flex; flex-direction: column; gap: 10px;">
                             <div style="${rowS(statusColor)}">
                                 <span style="${lblS}">STATUS</span>
-                                <span style="color: ${statusColor}; font-weight: 500; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">
+                                <span style="color: ${statusColor}; font-weight: 500; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; word-break: break-all; flex: 1; min-width: 0; text-align: right;">
                                     ${statusText}
                                 </span>
                             </div>
                             <div style="${rowS('#10b981')}">
                                 <span style="${lblS}">DETAILS</span>
-                                <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.95rem; text-align: right;">$${formatMoney(h.amount)} - ${simpleMethod}</span>
+                                <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.95rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(h.amount)} - ${simpleMethod}</span>
                             </div>
                             <div style="${rowS('#8b5cf6')}">
                                 <span style="${lblS}">ID</span>
-                                <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.9rem; text-align: right;">${h.transaction_id}</span>
+                                <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.9rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${h.transaction_id}</span>
                             </div>
                             <div style="${rowS('#3b82f6')}">
                                 <span style="${lblS}">ADDRESS</span>
-                                <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.85rem; text-align: right; direction: ltr;">${shortAddr}</span>
+                                <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.85rem; text-align: right; direction: ltr; word-break: break-all; flex: 1; min-width: 0;">${h.address}</span>
                             </div>
                             <div style="${rowS('#fdd835')}">
                                 <span style="${lblS}">DATE</span>
