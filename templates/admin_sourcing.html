@@ -4551,7 +4551,10 @@
                 const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;";
 
                 return `
-                <div class="user-card" style="padding-top: 24px;">
+                <div class="user-card" style="padding-top: 24px; position: relative;">
+                    <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+                        <h3 style="margin: 0; font-size: 1rem; font-weight: 700; color: var(--text-secondary);"><i class="fas fa-history" style="color: var(--accent); margin-right: 8px;"></i>${currentLang === 'ar' ? 'سجل الحسابات' : 'Accounts History'}</h3>
+                    </div>
                     <div style="display: flex; flex-direction: column; gap: 10px;">
                         <div style="background: ${hexToRgba(statusColor, 0.05)}; border: 1px solid ${hexToRgba(statusColor, 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
                             <span style="${lblS} color: ${statusColor}; opacity: 0.8;">${translations[currentLang].lbl_status}</span>
