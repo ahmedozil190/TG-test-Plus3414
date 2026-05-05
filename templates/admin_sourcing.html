@@ -3391,6 +3391,9 @@
                 return `
                     <div class="user-card" style="margin-bottom: 25px; padding: 22px; border: 1px solid var(--border); background: var(--bg-elevated); border-radius: 20px; cursor: default;">
                         <div style="display: flex; flex-direction: column;">
+                            <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+                                <h3 style="margin: 0; font-size: 1rem; font-weight: 700; color: var(--text-secondary);"><i class="fas fa-hand-holding-usd" style="color: var(--accent); margin-right: 8px;"></i>Withdrawal</h3>
+                            </div>
                             <div style="${rowS(statusColor)}">
                                 <span style="${lblS}">STATUS</span>
                                 <span style="color: ${statusColor}; font-weight: 800; font-size: 0.85rem; text-transform: uppercase;">${statusUpper}</span>
@@ -3418,15 +3421,15 @@
 
                             ${isPending ? `
                             <div style="display: flex; gap: 8px; margin-top: 15px; flex-wrap: wrap;">
-                                <button class="primary-btn" style="flex: 1; min-width: 120px; height: 42px; background: rgba(99, 102, 241, 0.1); color: #6366f1 !important; font-size: 0.85rem; font-weight: 800; border-radius: 12px; cursor: pointer; border: none; box-shadow: none;" 
+                                <button class="primary-btn" style="flex: 1; min-width: 120px; height: 42px; background: rgba(99, 102, 241, 0.1); color: #6366f1 !important; font-size: 0.85rem; font-weight: 700; border-radius: 12px; cursor: pointer; border: none; box-shadow: none;" 
                                     onclick="openAuditModal('${item.id}')">
                                     Numbers
                                 </button>
-                                <button class="primary-btn" style="flex: 1; min-width: 90px; height: 42px; background: rgba(16, 185, 129, 0.1); color: #10b981 !important; font-size: 0.85rem; font-weight: 800; border-radius: 12px; cursor: pointer; border: none; box-shadow: none;" 
+                                <button class="primary-btn" style="flex: 1; min-width: 90px; height: 42px; background: rgba(16, 185, 129, 0.1); color: #10b981 !important; font-size: 0.85rem; font-weight: 700; border-radius: 12px; cursor: pointer; border: none; box-shadow: none;" 
                                     onclick="confirmWithdrawAction('${item.id}', 'approve')">
                                     Approve
                                 </button>
-                                <button class="primary-btn" style="flex: 1; min-width: 90px; height: 42px; background: rgba(239, 68, 68, 0.1); color: #ef4444 !important; font-size: 0.85rem; font-weight: 800; border-radius: 12px; cursor: pointer; border: none; box-shadow: none;"
+                                <button class="primary-btn" style="flex: 1; min-width: 90px; height: 42px; background: rgba(239, 68, 68, 0.1); color: #ef4444 !important; font-size: 0.85rem; font-weight: 700; border-radius: 12px; cursor: pointer; border: none; box-shadow: none;"
                                     onclick="confirmWithdrawAction('${item.id}', 'reject')">
                                     Reject
                                 </button>
