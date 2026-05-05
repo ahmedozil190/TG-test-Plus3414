@@ -1948,7 +1948,7 @@
             empty.style.display = 'none';
 
             const rowS = (c) => `background: ${hexToRgba(c, 0.02)}; border: 1px solid ${hexToRgba(c, 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;`;
-            const lblS = "color: var(--text-s); font-size: 0.8rem; font-weight: 500; text-transform: uppercase; opacity: 0.7;";
+            const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 500; text-transform: uppercase; opacity: 0.7; flex-shrink: 0;";
 
             list.innerHTML = orders.map(h => {
                 const phoneClean = h.phone.replace(/\D/g, '');
@@ -1966,29 +1966,29 @@
                     <div style="display: flex; flex-direction: column; gap: 10px;">
                         <div style="${rowS('#10b981')}">
                             <span style="${lblS}">STATUS</span>
-                            <span style="color: #10b981; font-weight: 500; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">PAID</span>
+                            <span style="color: #10b981; font-weight: 500; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; text-align: right; word-break: break-all; flex: 1; min-width: 0;">PAID</span>
                         </div>
                         <div style="${rowS('#8b5cf6')}">
                             <span style="${lblS}">NUMBER</span>
-                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; text-align: right; direction: ltr;">${h.phone}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; text-align: right; direction: ltr; word-break: break-all; flex: 1; min-width: 0;">${h.phone}</span>
                         </div>
                         <div style="${rowS('#f59e0b')}">
                             <span style="${lblS}">CODE</span>
-                            <span id="otp-status-${phoneClean}" style="${h.otp_code ? 'color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; letter-spacing: 2px;' : 'color: #f59e0b; font-weight: 500; font-size: 0.85rem; display: flex; align-items: center; gap: 6px;'}">
+                            <span id="otp-status-${phoneClean}" style="${h.otp_code ? 'color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; letter-spacing: 2px;' : 'color: #f59e0b; font-weight: 500; font-size: 0.85rem; display: flex; align-items: center; gap: 6px;'} text-align: right; word-break: break-all; flex: 1; min-width: 0;">
                                 ${h.otp_code ? h.otp_code : '<i class="fas fa-clock"></i> WAITING'}
                             </span>
                         </div>
                         <div style="${rowS('#ec4899')}">
                             <span style="${lblS}">${currentLang === 'ar' ? 'كلمة السر' : 'PASSWORD'}</span>
-                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; text-align: right; direction: ltr; font-family: monospace;">${h.password || 'N/A'}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; text-align: right; direction: ltr; font-family: monospace; word-break: break-all; flex: 1; min-width: 0;">${h.password || 'N/A'}</span>
                         </div>
                         <div style="${rowS('#3b82f6')}">
                             <span style="${lblS}">PRICE</span>
-                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.2rem; text-align: right;">$${formatMoney(h.price)}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.2rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(h.price)}</span>
                         </div>
                         <div style="${rowS('#fdd835')}">
                             <span style="${lblS}">DATE</span>
-                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.85rem; text-align: right;">${formatDateTime(h.date)}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.85rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${formatDateTime(h.date)}</span>
                         </div>
                     </div>
 
@@ -2194,7 +2194,7 @@
 
             list.innerHTML = '';
             const rowS = (c) => `background: ${hexToRgba(c, 0.02)}; border: 1px solid ${hexToRgba(c, 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;`;
-            const lblS = "color: var(--text-s); font-size: 0.8rem; font-weight: 500; text-transform: uppercase; opacity: 0.7;";
+            const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 500; text-transform: uppercase; opacity: 0.7; flex-shrink: 0;";
 
             items.forEach(d => {
                 const shortTxid = d.txid.length > 16 ? (d.txid.substring(0, 8) + '...' + d.txid.slice(-6)) : d.txid;
@@ -2209,23 +2209,23 @@
                     <div style="display: flex; flex-direction: column; gap: 10px;">
                         <div style="${rowS('#10b981')}">
                             <span style="${lblS}">STATUS</span>
-                            <span style="color: #10b981; font-weight: 500; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">COMPLETED</span>
+                            <span style="color: #10b981; font-weight: 500; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; text-align: right; word-break: break-all; flex: 1; min-width: 0;">COMPLETED</span>
                         </div>
                         <div style="${rowS('#10b981')}">
                             <span style="${lblS}">AMOUNT</span>
-                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.95rem; text-align: right;">$${formatMoney(d.amount)}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.95rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(d.amount)}</span>
                         </div>
                         <div style="${rowS('#8b5cf6')}">
                             <span style="${lblS}">METHOD</span>
-                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.85rem; text-align: right; text-transform: uppercase;">${d.method || 'Binance Pay'}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.85rem; text-align: right; text-transform: uppercase; word-break: break-all; flex: 1; min-width: 0;">${d.method || 'Binance Pay'}</span>
                         </div>
                         <div style="${rowS('#3b82f6')}">
                             <span style="${lblS}">TXID</span>
-                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.85rem; text-align: right; direction: ltr; font-family: monospace;">${shortTxid}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.85rem; text-align: right; direction: ltr; font-family: monospace; word-break: break-all; flex: 1; min-width: 0;">${shortTxid}</span>
                         </div>
                         <div style="${rowS('#fdd835')}">
                             <span style="${lblS}">DATE</span>
-                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.85rem; text-align: right;">${formatDateTime(d.date)}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.85rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${formatDateTime(d.date)}</span>
                         </div>
                     </div>
                 `;
