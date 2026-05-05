@@ -12,13 +12,13 @@
         :root {
             --bg-color: #050505;
             --glass-bg: rgba(20, 20, 20, 0.7);
-            --gold: #bda04d;
-            --gold-bright: #d4af37;
-            --gold-gradient: linear-gradient(135deg, #8a6d3b, #bda04d);
+            --gold: #d4af37;
+            --gold-bright: #ffdf00;
+            --gold-gradient: linear-gradient(45deg, #8a6d3b, #d4af37, #f7ef8a, #d4af37, #8a6d3b);
             --text-color: #ffffff;
-            --text-dim: #94a3b8;
-            --border-color: rgba(189, 160, 77, 0.15);
-            --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --text-dim: #b0b0b0;
+            --border-color: rgba(212, 175, 55, 0.2);
+            --accent-glow: 0 0 15px rgba(212, 175, 55, 0.3);
         }
 
         * {
@@ -86,13 +86,14 @@
         }
 
         .header-logo {
-            font-size: 2.2rem;
+            font-size: 2.5rem;
             background: var(--gold-gradient);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
             font-weight: 800;
             margin-bottom: 5px;
+            text-shadow: var(--accent-glow);
         }
 
         .header-subtitle {
@@ -116,8 +117,8 @@
             border-radius: 20px;
             padding: 20px;
             text-align: center;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
 
         .stat-card:active {
@@ -259,7 +260,8 @@
             color: #000;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: transform 0.2s ease, filter 0.2s ease;
+            box-shadow: var(--accent-glow);
         }
 
         .btn:active {
@@ -382,12 +384,12 @@
 
         .modal-content {
             background: var(--bg-color);
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--gold);
             border-radius: 20px;
             width: 100%;
             max-width: 400px;
             padding: 25px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            box-shadow: var(--accent-glow);
         }
     </style>
 </head>
