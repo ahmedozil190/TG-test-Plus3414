@@ -2179,7 +2179,7 @@
                                     style="font-size: 0.7rem; opacity: 0.5; margin-left: 4px;"></i>
                             </button>
                             <div class="dropdown-menu" id="user-filter-menu"
-                                style="display: none; position: absolute; top: calc(100% + 8px); right: 0; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 14px; min-width: 160px; z-index: 100; box-shadow: none; overflow: hidden; backdrop-filter: blur(10px);">
+                                style="display: none; position: absolute; top: calc(100% + 8px); right: 0; background: var(--card-glass); border: 1px solid var(--border); border-radius: 14px; min-width: 160px; z-index: 100; box-shadow: none; overflow: hidden; backdrop-filter: blur(10px);">
                                 <div class="dropdown-item" onclick="switchUserTab('active', '#10b981', 'ACTIVE')"
                                     style="padding: 12px 16px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
                                     <span
@@ -2364,7 +2364,7 @@
                         style="margin-top: 0; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between;">
                         <h2 data-i18n="nav_history" style="margin: 0; font-size: 1rem;">Accounts History</h2>
                         <div class="custom-dropdown" id="history-filter-dropdown">
-                            <button class="dropdown-trigger" onclick="toggleFilterDropdown()"
+                            <button class="dropdown-trigger" onclick="toggleFilterDropdown(event)"
                                 style="display: flex; align-items: center; gap: 8px; background: var(--card-glass); border: 1px solid var(--border); padding: 6px 12px; border-radius: 10px; color: var(--text-primary); cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.2s;">
                                 <span id="filter-status-dot"
                                     style="width: 8px; height: 8px; border-radius: 50%; background: #fbbf24;"></span>
@@ -2373,7 +2373,7 @@
                                     style="font-size: 0.7rem; opacity: 0.5; margin-left: 4px;"></i>
                             </button>
                             <div class="dropdown-menu" id="filter-menu"
-                                style="display: none; position: absolute; top: calc(100% + 8px); right: 0; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 12px; min-width: 150px; z-index: 100; box-shadow: none; overflow: hidden; backdrop-filter: blur(10px);">
+                                style="display: none; position: absolute; top: calc(100% + 8px); right: 0; background: var(--card-glass); border: 1px solid var(--border); border-radius: 12px; min-width: 150px; z-index: 100; box-shadow: none; overflow: hidden; backdrop-filter: blur(10px);">
                                 <div class="dropdown-item" onclick="setHistoryFilter('PENDING', '#fbbf24')"
                                     style="padding: 10px 15px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
                                     <span
@@ -3779,6 +3779,7 @@
         }
 
         function toggleUserDropdown() {
+            if (window.event) window.event.stopPropagation();
             const menu = document.getElementById('user-filter-menu');
             menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
         }
@@ -4017,6 +4018,12 @@
             }
         }
 
+        function toggleFilterDropdown() {
+            if (window.event) window.event.stopPropagation();
+            const menu = document.getElementById('filter-menu');
+            menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+        }
+
         async function promptBalance(userId, currentBalance, type) {
             const amount = prompt(currentLang === 'ar' ? `أدخل الرصيد الجديد للمستخدم ${userId}:` : `Enter new balance for user ${userId}:`, currentBalance);
             if (amount === null) return;
@@ -4054,23 +4061,7 @@
         const ADMIN_HISTORY_LIMIT = 10;
         window.serverTimeOffset = 0;
 
-        function toggleFilterDropdown() {
-            const menu = document.getElementById('filter-menu');
-            const isVisible = menu.style.display === 'block';
-            menu.style.display = isVisible ? 'none' : 'block';
 
-            // Close on click outside
-            if (!isVisible) {
-                setTimeout(() => {
-                    window.addEventListener('click', function closeMenu(e) {
-                        if (!document.getElementById('history-filter-dropdown').contains(e.target)) {
-                            menu.style.display = 'none';
-                            window.removeEventListener('click', closeMenu);
-                        }
-                    });
-                }, 0);
-            }
-        }
 
         function setHistoryFilter(f, color) {
             currentHistoryFilter = f;
