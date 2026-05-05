@@ -3748,35 +3748,35 @@
                     </div>
                     <div style="display: flex; flex-direction: column; gap: 10px;">
                         <!-- Account Status -->
-                        <div style="background: ${statusRgba}; border: 1px solid ${statusBorder}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
-                            <span style="color: ${statusColor}; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'الحالة' : 'Status'}</span>
-                            <span style="color: ${statusColor}; font-weight: 900; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; letter-spacing: 0.5px; text-align: right; word-break: break-all; flex: 1; min-width: 0; justify-content: flex-end;">
+                        <div style="background: ${hexToRgba(statusColor, 0.02)}; border: 1px solid ${hexToRgba(statusColor, 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
+                            <span style="color: var(--text-secondary); opacity: 0.7; font-size: 0.8rem; font-weight: 500; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'الحالة' : 'Status'}</span>
+                            <span style="color: ${statusColor}; font-weight: 500; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; letter-spacing: 0.5px; text-align: right; word-break: break-all; flex: 1; min-width: 0; justify-content: flex-end;">
                                 ${statusIcon} ${statusText}
                             </span>
                         </div>
-                        <div style="background: ${hexToRgba('#00d2ff', 0.05)}; border: 1px solid ${hexToRgba('#00d2ff', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
-                            <span style="color: #00d2ff; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'الاسم' : 'Name'}</span>
-                            <span style="color: #00d2ff; font-weight: 700; font-size: 1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${u.full_name || 'N/A'}</span>
+                        <div style="background: ${hexToRgba('#00d2ff', 0.02)}; border: 1px solid ${hexToRgba('#00d2ff', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
+                            <span style="color: var(--text-secondary); opacity: 0.7; font-size: 0.8rem; font-weight: 500; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'الاسم' : 'Name'}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${u.full_name || 'N/A'}</span>
                         </div>
-                        <div style="background: ${hexToRgba('#bf5af2', 0.05)}; border: 1px solid ${hexToRgba('#bf5af2', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
-                            <span style="color: #bf5af2; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'المعرف' : 'Username'}</span>
-                            <span style="color: #bf5af2; font-weight: 700; font-size: 1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${u.username ? (u.username.startsWith('@') ? u.username : '@' + u.username) : 'N/A'}</span>
+                        <div style="background: ${hexToRgba('#bf5af2', 0.02)}; border: 1px solid ${hexToRgba('#bf5af2', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
+                            <span style="color: var(--text-secondary); opacity: 0.7; font-size: 0.8rem; font-weight: 500; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'المعرف' : 'Username'}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${u.username ? (u.username.startsWith('@') ? u.username : '@' + u.username) : 'N/A'}</span>
                         </div>
-                        <div style="background: ${hexToRgba('#ff9f0a', 0.05)}; border: 1px solid ${hexToRgba('#ff9f0a', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
-                            <span style="color: #ff9f0a; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'رقم المعرف' : 'User ID'}</span>
-                            <span style="color: #ff9f0a; font-weight: 800; font-size: 1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${u.id}</span>
+                        <div style="background: ${hexToRgba('#ff9f0a', 0.02)}; border: 1px solid ${hexToRgba('#ff9f0a', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
+                            <span style="color: var(--text-secondary); opacity: 0.7; font-size: 0.8rem; font-weight: 500; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'رقم المعرف' : 'User ID'}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${u.id}</span>
                         </div>
-                        <div style="background: ${hexToRgba('#30d158', 0.05)}; border: 1px solid ${hexToRgba('#30d158', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
-                            <span style="color: #30d158; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'الرصيد' : 'Balance'}</span>
-                            <span style="color: #30d158; font-weight: 900; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(u.balance_store)}</span>
+                        <div style="background: ${hexToRgba('#30d158', 0.02)}; border: 1px solid ${hexToRgba('#30d158', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
+                            <span style="color: var(--text-secondary); opacity: 0.7; font-size: 0.8rem; font-weight: 500; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'الرصيد' : 'Balance'}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(u.balance_store)}</span>
                         </div>
-                        <div style="background: ${hexToRgba('#5856d6', 0.05)}; border: 1px solid ${hexToRgba('#5856d6', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
-                            <span style="color: #5856d6; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'إجمالي المنفق' : 'Total Spent'}</span>
-                            <span style="color: #5856d6; font-weight: 900; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(u.total_spent || 0)}</span>
+                        <div style="background: ${hexToRgba('#5856d6', 0.02)}; border: 1px solid ${hexToRgba('#5856d6', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
+                            <span style="color: var(--text-secondary); opacity: 0.7; font-size: 0.8rem; font-weight: 500; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'إجمالي المنفق' : 'Total Spent'}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(u.total_spent || 0)}</span>
                         </div>
-                        <div style="background: ${hexToRgba('#ffcc00', 0.05)}; border: 1px solid ${hexToRgba('#ffcc00', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
-                            <span style="color: #ffcc00; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'أرقام اشتراها' : 'Purchased'}</span>
-                            <span style="color: #ffcc00; font-weight: 800; font-size: 1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${u.purchased_count || 0}</span>
+                        <div style="background: ${hexToRgba('#ffcc00', 0.02)}; border: 1px solid ${hexToRgba('#ffcc00', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
+                            <span style="color: var(--text-secondary); opacity: 0.7; font-size: 0.8rem; font-weight: 500; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'أرقام اشتراها' : 'Purchased'}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${u.purchased_count || 0}</span>
                         </div>
                     </div>
                 </div>`;
