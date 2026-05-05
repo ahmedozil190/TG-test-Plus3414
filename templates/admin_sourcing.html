@@ -2257,15 +2257,36 @@
                 </div>
 
                 <div id="withdrawals-history-card" class="card" style="padding: 22px;">
-                    <div class="section-header" style="margin-top: 0; margin-bottom: 20px;">
-                        <h2 data-i18n="nav_withdrawals" style="margin: 0; font-size: 1rem;">Withdrawal Requests</h2>
-                    </div>
-
-                    <div class="tabs-row" style="margin-bottom: 25px;">
-                        <button class="tab-btn active" id="withdraw-tab-pending"
-                            onclick="switchWithdrawTab('pending', this)">PENDING</button>
-                        <button class="tab-btn" id="withdraw-tab-approved"
-                            onclick="switchWithdrawTab('approved', this)">APPROVED</button>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                        <h2 data-i18n="nav_withdrawals" style="margin: 0; font-size: 1rem; color: var(--text-secondary);">Withdrawals History</h2>
+                        <div class="custom-dropdown" style="position: relative;">
+                            <button class="dropdown-trigger" onclick="toggleWithdrawDropdown()"
+                                style="display: flex; align-items: center; gap: 8px; background: var(--card-glass); border: 1px solid var(--border); padding: 8px 14px; border-radius: 12px; color: var(--text-primary); cursor: pointer; font-size: 0.85rem; font-weight: 700; transition: all 0.2s;">
+                                <span id="withdraw-status-dot"
+                                    style="width: 8px; height: 8px; border-radius: 50%; background: #f59e0b;"></span>
+                                <span id="current-withdraw-filter-label" style="color: #f59e0b; text-transform: uppercase;">PENDING</span>
+                                <i class="fas fa-chevron-down"
+                                    style="font-size: 0.7rem; opacity: 0.5; margin-left: 4px;"></i>
+                            </button>
+                            <div class="dropdown-menu" id="withdraw-filter-menu"
+                                style="display: none; position: absolute; top: calc(100% + 8px); right: 0; background: var(--card-glass); border: 1px solid var(--border); border-radius: 14px; min-width: 160px; z-index: 100; box-shadow: none; overflow: hidden; backdrop-filter: blur(10px);">
+                                <div class="dropdown-item" onclick="switchWithdrawTab('pending', '#f59e0b', 'PENDING')"
+                                    style="padding: 12px 16px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
+                                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #f59e0b;"></span>
+                                    PENDING
+                                </div>
+                                <div class="dropdown-item" onclick="switchWithdrawTab('approved', '#10b981', 'APPROVED')"
+                                    style="padding: 12px 16px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
+                                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #10b981;"></span>
+                                    APPROVED
+                                </div>
+                                <div class="dropdown-item" onclick="switchWithdrawTab('rejected', '#ef4444', 'REJECTED')"
+                                    style="padding: 12px 16px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
+                                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #ef4444;"></span>
+                                    REJECTED
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="list-container" id="withdrawals-list"></div>
                     <!-- Pagination -->
@@ -3317,9 +3338,20 @@
             } catch (e) { console.error(e); }
         }
 
-        function switchWithdrawTab(status, btn) {
-            document.querySelectorAll('#section-withdrawals .tab-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+        function toggleWithdrawDropdown() {
+            const menu = document.getElementById('withdraw-filter-menu');
+            menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function switchWithdrawTab(status, color, label) {
+            document.getElementById('withdraw-filter-menu').style.display = 'none';
+            const dot = document.getElementById('withdraw-status-dot');
+            const lbl = document.getElementById('current-withdraw-filter-label');
+            if (dot) dot.style.background = color;
+            if (lbl) {
+                lbl.innerText = label;
+                lbl.style.color = color;
+            }
             fetchAdminWithdrawals(1, status);
         }
 
@@ -3386,15 +3418,15 @@
 
                             ${isPending ? `
                             <div style="display: flex; gap: 8px; margin-top: 15px; flex-wrap: wrap;">
-                                <button class="primary-btn" style="flex: 1; min-width: 120px; height: 42px; background: #6366f1; color: #ffffff !important; font-size: 0.85rem; font-weight: 800; border-radius: 12px; cursor: pointer; border: none;" 
+                                <button class="primary-btn" style="flex: 1; min-width: 120px; height: 42px; background: rgba(99, 102, 241, 0.1); color: #6366f1 !important; font-size: 0.85rem; font-weight: 800; border-radius: 12px; cursor: pointer; border: none; box-shadow: none;" 
                                     onclick="openAuditModal('${item.id}')">
                                     Numbers
                                 </button>
-                                <button class="primary-btn" style="flex: 1; min-width: 90px; height: 42px; background: var(--success); color: #ffffff !important; font-size: 0.85rem; font-weight: 800; border-radius: 12px; cursor: pointer; border: none;" 
+                                <button class="primary-btn" style="flex: 1; min-width: 90px; height: 42px; background: rgba(16, 185, 129, 0.1); color: #10b981 !important; font-size: 0.85rem; font-weight: 800; border-radius: 12px; cursor: pointer; border: none; box-shadow: none;" 
                                     onclick="confirmWithdrawAction('${item.id}', 'approve')">
                                     Approve
                                 </button>
-                                <button class="primary-btn" style="flex: 1; min-width: 90px; height: 42px; background: var(--error); color: #ffffff !important; font-size: 0.85rem; font-weight: 800; border-radius: 12px; cursor: pointer; border: none;"
+                                <button class="primary-btn" style="flex: 1; min-width: 90px; height: 42px; background: rgba(239, 68, 68, 0.1); color: #ef4444 !important; font-size: 0.85rem; font-weight: 800; border-radius: 12px; cursor: pointer; border: none; box-shadow: none;"
                                     onclick="confirmWithdrawAction('${item.id}', 'reject')">
                                     Reject
                                 </button>
