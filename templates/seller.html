@@ -118,7 +118,7 @@
             z-index: 100;
             overflow: hidden;
             backdrop-filter: blur(10px);
-            box-shadow: var(--shadow);
+            box-shadow: none;
         }
 
         .dropdown-item {
@@ -1483,7 +1483,7 @@
             <div class="card" id="withdraw-history-section" style="padding: 22px; margin-top: 30px; margin-bottom: 0;">
                 <div
                     style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-                    <h2 style="font-weight: 600; margin: 0; font-size: 1rem; letter-spacing: 0.5px;">Withdrawal History</h2>
+                    <h3 style="color: var(--text-secondary); font-size: 1rem; font-weight: 700; margin: 0; max-width: 140px; line-height: 1.2;">Withdrawal History</h3>
                     <div class="custom-dropdown" style="position: relative;">
                         <button class="dropdown-trigger" onclick="toggleWithdrawDropdown()"
                             style="display: flex; align-items: center; gap: 8px; background: var(--card-glass); border: 1px solid var(--border); padding: 8px 14px; border-radius: 12px; color: var(--text-primary); cursor: pointer; font-size: 0.85rem; font-weight: 700; transition: all 0.2s;">
@@ -2070,12 +2070,16 @@
             currentWithdrawPage = 1;
             
             // UI Update
+            const trigger = document.querySelector('.dropdown-trigger');
+            if (trigger) trigger.style.opacity = '0.5';
+
             document.getElementById('withdraw-status-dot').style.background = color;
             document.getElementById('current-withdraw-filter-label').innerText = label;
             document.getElementById('current-withdraw-filter-label').style.color = color;
             document.getElementById('withdraw-filter-menu').style.display = 'none';
             
             await fetchWithdrawals();
+            if (trigger) trigger.style.opacity = '1';
         }
 
         window.addEventListener('click', function (e) {
