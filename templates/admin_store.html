@@ -3602,35 +3602,35 @@
                         <h3 style="margin: 0; font-size: 1rem; font-weight: 700; color: var(--text-secondary);"><i class="fas fa-shopping-cart" style="color: var(--accent); margin-right: 8px;"></i>${currentLang === 'ar' ? 'عملية شراء' : 'Sale Operation'}</h3>
                     </div>
                     <div style="display: flex; flex-direction: column; gap: 10px;">
-                        <!-- Status Row -->
-                        <div style="background: ${hexToRgba('#be185d', 0.02)}; border: 1px solid ${hexToRgba('#be185d', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
-                            <span style="${lblS} color: var(--text-secondary); opacity: 0.7;">${currentLang === 'ar' ? 'الحالة' : 'STATUS'}</span>
-                            <span style="color: #be185d; font-weight: 800; font-size: 0.9rem; letter-spacing: 0.5px; text-align: right; word-break: break-all; flex: 1; min-width: 0;">SOLD</span>
+                        <!-- Status Row (Neutral/Calm) -->
+                        <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
+                            <span style="${lblS} color: var(--text-secondary); opacity: 0.6;">${currentLang === 'ar' ? 'الحالة' : 'STATUS'}</span>
+                            <span style="color: var(--text-secondary); font-weight: 800; font-size: 0.9rem; letter-spacing: 0.5px; text-align: right; word-break: break-all; flex: 1; min-width: 0;">SOLD</span>
                         </div>
-                        <!-- Buyer Row -->
-                        <div style="background: ${hexToRgba('#b45309', 0.02)}; border: 1px solid ${hexToRgba('#b45309', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
-                            <span style="${lblS} color: var(--text-secondary); opacity: 0.7;">${currentLang === 'ar' ? 'المشتري' : 'BUYER ID'}</span>
-                            <span style="color: #b45309; font-weight: 600; font-size: 1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${item.buyer_id}</span>
+                        <!-- Buyer Row (Neutral) -->
+                        <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
+                            <span style="${lblS} color: var(--text-secondary); opacity: 0.6;">${currentLang === 'ar' ? 'المشتري' : 'BUYER ID'}</span>
+                            <span style="color: var(--text-primary); font-weight: 600; font-size: 1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${item.buyer_id}</span>
                         </div>
-                        <!-- Number Row -->
-                        <div style="background: ${hexToRgba('#047857', 0.02)}; border: 1px solid ${hexToRgba('#047857', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
-                            <span style="${lblS} color: var(--text-secondary); opacity: 0.7;">${currentLang === 'ar' ? 'الرقم' : 'NUMBER'}</span>
-                            <span style="color: #047857; font-weight: 600; font-size: 1.1rem; text-align: right; direction: ltr; word-break: break-all; flex: 1; min-width: 0;">${item.phone}</span>
+                        <!-- Number Row (Neutral) -->
+                        <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
+                            <span style="${lblS} color: var(--text-secondary); opacity: 0.6;">${currentLang === 'ar' ? 'الرقم' : 'NUMBER'}</span>
+                            <span style="color: var(--text-primary); font-weight: 600; font-size: 1.1rem; text-align: right; direction: ltr; word-break: break-all; flex: 1; min-width: 0;">${item.phone}</span>
                         </div>
-                        <!-- Password Row -->
-                        <div style="background: ${hexToRgba('#be185d', 0.02)}; border: 1px solid ${hexToRgba('#be185d', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
-                            <span style="${lblS} color: var(--text-secondary); opacity: 0.7;">${currentLang === 'ar' ? 'كلمة السر' : 'PASSWORD'}</span>
-                            <span style="color: #be185d; font-weight: 600; font-size: 1.1rem; text-align: right; direction: ltr; font-family: monospace; word-break: break-all; flex: 1; min-width: 0;">${item.password || 'N/A'}</span>
+                        <!-- Password Row (Neutral) -->
+                        <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
+                            <span style="${lblS} color: var(--text-secondary); opacity: 0.6;">${currentLang === 'ar' ? 'كلمة السر' : 'PASSWORD'}</span>
+                            <span style="color: var(--text-primary); font-weight: 600; font-size: 1.1rem; text-align: right; direction: ltr; font-family: monospace; word-break: break-all; flex: 1; min-width: 0;">${item.password || 'N/A'}</span>
                         </div>
-                        <!-- Price Row -->
-                        <div style="background: ${hexToRgba('#1d4ed8', 0.02)}; border: 1px solid ${hexToRgba('#1d4ed8', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
-                            <span style="${lblS} color: var(--text-secondary); opacity: 0.7;">${currentLang === 'ar' ? 'السعر' : 'PRICE'}</span>
-                            <span style="color: #1d4ed8; font-weight: 800; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(item.price)}</span>
+                        <!-- Price Row (Consistent Accent) -->
+                        <div style="background: rgba(59, 130, 246, 0.02); border: 1px solid rgba(59, 130, 246, 0.1); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
+                            <span style="${lblS} color: var(--text-secondary); opacity: 0.6;">${currentLang === 'ar' ? 'السعر' : 'PRICE'}</span>
+                            <span style="color: var(--accent); font-weight: 900; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(item.price)}</span>
                         </div>
-                        <!-- Date Row -->
-                        <div style="background: ${hexToRgba('#a16207', 0.02)}; border: 1px solid ${hexToRgba('#a16207', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
-                            <span style="${lblS} color: var(--text-secondary); opacity: 0.7;">${currentLang === 'ar' ? 'التاريخ' : 'DATE'}</span>
-                            <span style="color: #a16207; font-weight: 600; font-size: 0.85rem; direction: ltr; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${formatDateTime(item.date)}</span>
+                        <!-- Date Row (Neutral) -->
+                        <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
+                            <span style="${lblS} color: var(--text-secondary); opacity: 0.6;">${currentLang === 'ar' ? 'التاريخ' : 'DATE'}</span>
+                            <span style="color: var(--text-secondary); font-weight: 600; font-size: 0.85rem; direction: ltr; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${formatDateTime(item.date)}</span>
                         </div>
                     </div>
                 </div>
