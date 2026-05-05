@@ -111,7 +111,7 @@
             position: absolute;
             top: calc(100% + 8px);
             right: 0;
-            background: var(--bg-elevated);
+            background: var(--card-glass);
             border: 1px solid var(--border);
             border-radius: 14px;
             min-width: 160px;
@@ -133,12 +133,12 @@
         }
 
         .dropdown-item:hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text-primary);
+            background: var(--accent) !important;
+            color: #fff !important;
         }
 
-        .light-mode .dropdown-item:hover {
-            background: rgba(0, 0, 0, 0.03);
+        .dropdown-item:hover span {
+            background: #fff !important;
         }
 
         .nav-trigger {
@@ -2080,7 +2080,6 @@
             
             await fetchWithdrawals();
             if (trigger) trigger.style.opacity = '1';
-            document.getElementById('withdraw-history-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
         window.addEventListener('click', function (e) {

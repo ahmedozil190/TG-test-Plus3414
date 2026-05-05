@@ -3356,7 +3356,7 @@ async def get_withdrawals(user_id: int, page: int = 1, status: str = "all"):
         if status != "all":
             try:
                 # Convert string status to enum
-                enum_status = WithdrawalStatus(status.upper())
+                enum_status = WithdrawalStatus(status.lower())
                 base_filters.append(WithdrawalRequest.status == enum_status)
             except: pass
 
