@@ -4557,33 +4557,33 @@
                     <div style="display: flex; flex-direction: column; gap: 10px;">
                         <div style="background: var(--bg); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
                             <span style="${lblS}">${translations[currentLang].lbl_status}</span>
-                            <span style="color: ${statusColor}; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; text-align: right; word-break: break-all; flex: 1; min-width: 0;">
+                            <span style="color: var(--text-secondary); font-weight: 800; font-size: 0.85rem; text-transform: uppercase; text-align: right; word-break: break-all; flex: 1; min-width: 0;">
                                 ${statusText}
                             </span>
                         </div>
                         <div style="background: var(--bg); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
                             <span style="${lblS}">${translations[currentLang].lbl_user}</span>
-                            <span style="color: #f59e0b; font-weight: 800; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${item.seller_id}</span>
+                            <span style="color: var(--text-secondary); font-weight: 800; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${item.seller_id}</span>
                         </div>
                         <div style="background: var(--bg); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
                             <span style="${lblS}">${translations[currentLang].lbl_number}</span>
-                            <span style="color: #10b981; font-weight: 800; font-size: 1.1rem; text-align: right; direction: ltr; word-break: break-all; flex: 1; min-width: 0;">${item.phone}</span>
+                            <span style="color: var(--text-secondary); font-weight: 800; font-size: 1.1rem; text-align: right; direction: ltr; word-break: break-all; flex: 1; min-width: 0;">${item.phone}</span>
                         </div>
                         
                         <div style="background: var(--bg); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
                             <span style="${lblS}">Password</span>
-                            <span style="color: #ec4899; font-weight: 800; font-size: 1.1rem; text-align: right; direction: ltr; font-family: monospace; word-break: break-all; flex: 1; min-width: 0;">${item.two_fa_password || 'N/A'}</span>
+                            <span style="color: var(--text-secondary); font-weight: 800; font-size: 1.1rem; text-align: right; direction: ltr; font-family: monospace; word-break: break-all; flex: 1; min-width: 0;">${item.two_fa_password || 'N/A'}</span>
                         </div>
 
                         <div style="background: var(--bg); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
                             <span style="${lblS}">${translations[currentLang].lbl_price}</span>
-                            <span style="color: #3b82f6; font-weight: 900; font-size: 1.2rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(item.buy_price)}</span>
+                            <span style="color: var(--text-secondary); font-weight: 900; font-size: 1.2rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(item.buy_price)}</span>
                         </div>
                         <div style="background: var(--bg); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
                             <span style="${lblS}">${translations[currentLang].lbl_date}</span>
                             <span class="${isPending ? 'countdown-timer' : ''}" 
                                   data-ready="${item.ready_at}" 
-                                  style="color: #ffcc00; font-weight: 600; font-size: 0.85rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">
+                                  style="color: var(--text-secondary); font-weight: 600; font-size: 0.85rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">
                                 ${isPending ? '...' : formatDateTime(item.date)}
                             </span>
                         </div>
