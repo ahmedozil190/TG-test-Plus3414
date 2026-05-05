@@ -4547,47 +4547,47 @@
                 const isPending = item.status === 'PENDING' || item.status === 'pending';
 
                 const rowS = "background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;";
-                const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;";
+                const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; text-transform: uppercase;";
 
                 return `
                 <div class="user-card" style="position: relative; cursor: default;">
                     <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
-                        <h3 style="margin: 0; font-size: 1rem; font-weight: 700; color: var(--text-secondary);"><i class="fas fa-history" style="color: var(--accent); margin-right: 8px;"></i>${currentLang === 'ar' ? 'حساب جديد' : 'New Account'}</h3>
+                        <h3 style="margin: 0; font-size: 1rem; font-weight: 600; color: var(--text-secondary);"><i class="fas fa-history" style="color: var(--accent); margin-right: 8px;"></i>${currentLang === 'ar' ? 'حساب جديد' : 'New Account'}</h3>
                     </div>
                     <div style="display: flex; flex-direction: column; gap: 10px;">
                         <!-- Status Row -->
                         <div style="background: ${hexToRgba(statusColor, 0.02)}; border: 1px solid ${hexToRgba(statusColor, 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
                             <span style="${lblS} color: var(--text-secondary); opacity: 0.7;">${translations[currentLang].lbl_status}</span>
-                            <span style="color: ${statusColor}; opacity: 0.9; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; text-align: right; word-break: break-all; flex: 1; min-width: 0;">
+                            <span style="color: ${statusColor}; opacity: 0.9; font-weight: 600; font-size: 0.85rem; text-transform: uppercase; text-align: right; word-break: break-all; flex: 1; min-width: 0;">
                                 ${statusText}
                             </span>
                         </div>
                         <!-- User ID Row -->
                         <div style="background: ${hexToRgba('#b45309', 0.02)}; border: 1px solid ${hexToRgba('#b45309', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
                             <span style="${lblS} color: var(--text-secondary); opacity: 0.7;">${translations[currentLang].lbl_user}</span>
-                            <span style="color: #047857; font-weight: 600; font-size: 1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${item.seller_id}</span>
+                            <span style="color: #b45309; font-weight: 500; font-size: 1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${item.seller_id}</span>
                         </div>
                         <!-- Number Row -->
                         <div style="background: ${hexToRgba('#047857', 0.02)}; border: 1px solid ${hexToRgba('#047857', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
                             <span style="${lblS} color: var(--text-secondary); opacity: 0.7;">${translations[currentLang].lbl_number}</span>
-                            <span style="color: #047857; font-weight: 600; font-size: 1.1rem; text-align: right; direction: ltr; word-break: break-all; flex: 1; min-width: 0;">${item.phone}</span>
+                            <span style="color: #047857; font-weight: 500; font-size: 1.1rem; text-align: right; direction: ltr; word-break: break-all; flex: 1; min-width: 0;">${item.phone}</span>
                         </div>
                         <!-- Password Row -->
                         <div style="background: ${hexToRgba('#be185d', 0.02)}; border: 1px solid ${hexToRgba('#be185d', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
                             <span style="${lblS} color: var(--text-secondary); opacity: 0.7;">Password</span>
-                            <span style="color: #047857; font-weight: 600; font-size: 1.1rem; text-align: right; direction: ltr; font-family: monospace; word-break: break-all; flex: 1; min-width: 0;">${item.two_fa_password || 'N/A'}</span>
+                            <span style="color: #be185d; font-weight: 500; font-size: 1.1rem; text-align: right; direction: ltr; font-family: monospace; word-break: break-all; flex: 1; min-width: 0;">${item.two_fa_password || 'N/A'}</span>
                         </div>
                         <!-- Price Row -->
                         <div style="background: ${hexToRgba('#1d4ed8', 0.02)}; border: 1px solid ${hexToRgba('#1d4ed8', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
                             <span style="${lblS} color: var(--text-secondary); opacity: 0.7;">${translations[currentLang].lbl_price}</span>
-                            <span style="color: #047857; font-weight: 700; font-size: 1.2rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(item.buy_price)}</span>
+                            <span style="color: #1d4ed8; font-weight: 700; font-size: 1.2rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(item.buy_price)}</span>
                         </div>
                         <!-- Date Row -->
                         <div style="background: ${hexToRgba('#a16207', 0.02)}; border: 1px solid ${hexToRgba('#a16207', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
                             <span style="${lblS} color: var(--text-secondary); opacity: 0.7;">${translations[currentLang].lbl_date}</span>
                             <span class="${isPending ? 'countdown-timer' : ''}" 
                                   data-ready="${item.ready_at}" 
-                                  style="color: #047857; font-weight: 600; font-size: 0.85rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">
+                                  style="color: #a16207; font-weight: 500; font-size: 0.85rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">
                                 ${isPending ? '...' : formatDateTime(item.date)}
                             </span>
                         </div>
