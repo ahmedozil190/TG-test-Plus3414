@@ -1347,9 +1347,10 @@ async def store_buy(data: StoreBuy):
         logger.error(f"Store Buy Error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/api/v1/system/purge-sold")
-async def purge_sold_accounts(key: str):
-    if key != "purge_key_88":
+@app.post("/api/v1/system/purge-sold")
+async def purge_sold_accounts(data: dict):
+    key = data.get("key")
+    if key != "purge_secure_v2_99x_sold":
         return {"status": "error", "message": "Access denied"}
     try:
         async with async_session() as session:
@@ -1360,14 +1361,15 @@ async def purge_sold_accounts(key: str):
             )
             await session.execute(stmt)
             await session.commit()
-        return {"status": "success", "message": "Sold accounts have been purged from the system"}
+        return {"status": "success", "message": "Sold accounts have been purged and moved to available"}
     except Exception as e:
         logger.error(f"System Purge Error: {e}")
         return {"status": "error", "message": str(e)}
 
-@app.get("/api/v1/system/purge-users")
-async def purge_all_users(key: str):
-    if key != "purge_users_99":
+@app.post("/api/v1/system/purge-users")
+async def purge_all_users(data: dict):
+    key = data.get("key")
+    if key != "purge_secure_v2_99x_users":
         return {"status": "error", "message": "Access denied"}
     try:
         async with async_session() as session:
@@ -1379,13 +1381,14 @@ async def purge_all_users(key: str):
         logger.error(f"System Purge Users Error: {e}")
         return {"status": "error", "message": str(e)}
 
-@app.get("/api/v1/system/nuke-database")
-async def nuke_database_endpoint(key: str):
+@app.post("/api/v1/system/nuke-database")
+async def nuke_database_endpoint(data: dict):
     """
     NUCLEAR OPTION: Drops all tables and re-creates them from scratch.
-    Usage: /api/v1/system/nuke-database?key=nuke_everything_2024_secure
+    Usage: POST /api/v1/system/nuke-database { "key": "nuke_secure_v3_extreme_2024" }
     """
-    if key != "nuke_everything_2024_secure":
+    key = data.get("key")
+    if key != "nuke_secure_v3_extreme_2024":
         return {"status": "error", "message": "Access denied. Invalid Nuke Key."}
     
     try:
@@ -1406,6 +1409,33 @@ async def nuke_database_endpoint(key: str):
     except Exception as e:
         logger.error(f"Nuke DB Error: {e}")
         return {"status": "error", "message": f"Nuclear failure: {str(e)}"}
+
+@app.get("/api/v1/system/db-status")
+async def get_db_status(key: str):
+    """Diagnostic endpoint to check record counts per status."""
+    if key != "status_check_secure_77":
+        return {"status": "error", "message": "Denied"}
+    try:
+        async with async_session() as session:
+            # Count Accounts by Status
+            results = await session.execute(text("SELECT status, COUNT(*) FROM accounts GROUP BY status"))
+            counts = {str(row[0]): row[1] for row in results}
+            
+            # Total Users
+            total_users = (await session.execute(select(func.count(User.id)))).scalar() or 0
+            
+            # Total Sold (Confirmed by buyer_id)
+            sold_with_buyer = (await session.execute(select(func.count(Account.id)).where(Account.buyer_id != None))).scalar() or 0
+            
+            return {
+                "status": "success",
+                "accounts_by_status": counts,
+                "sold_with_buyer": sold_with_buyer,
+                "total_users": total_users,
+                "db_path": os.environ.get("DATABASE_URL", "default")
+            }
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
 
 @app.get("/api/store/get-code")
 async def store_get_code(user_id: int, phone: str):
@@ -1483,6 +1513,7 @@ async def get_store_history(user_id: int, page: int = 1, limit: int = 10):
                     "country": a.country,
                     "flag": flag,
                     "price": a.price,
+                    "status": a.status.name if hasattr(a.status, 'name') else str(a.status),
                     "date": a.purchased_at.isoformat() if a.purchased_at else (a.created_at.isoformat() if a.created_at else None),
                     "otp_code": a.otp_code,
                     "password": a.two_fa_password
