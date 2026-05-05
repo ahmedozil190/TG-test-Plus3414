@@ -1412,14 +1412,19 @@ async def nuke_database_endpoint(data: dict):
 
 @app.get("/api/v1/system/db-status")
 async def get_db_status(key: str):
-    """Diagnostic endpoint to check record counts per status."""
+    """Enhanced Diagnostic endpoint to check record counts and locate DB files."""
     if key != "status_check_secure_77":
         return {"status": "error", "message": "Denied"}
     try:
+        from database.engine import engine
+        import os
+        
         async with async_session() as session:
-            # Count Accounts by Status
-            results = await session.execute(text("SELECT status, COUNT(*) FROM accounts GROUP BY status"))
-            counts = {str(row[0]): row[1] for row in results}
+            # Count Accounts by Status using Models
+            counts = {}
+            for status in AccountStatus:
+                c = (await session.execute(select(func.count(Account.id)).where(Account.status == status))).scalar() or 0
+                counts[status.name] = c
             
             # Total Users
             total_users = (await session.execute(select(func.count(User.id)))).scalar() or 0
@@ -1427,14 +1432,38 @@ async def get_db_status(key: str):
             # Total Sold (Confirmed by buyer_id)
             sold_with_buyer = (await session.execute(select(func.count(Account.id)).where(Account.buyer_id != None))).scalar() or 0
             
+            # Scan filesystem for .db files
+            db_files = []
+            for root, dirs, files in os.walk('/app'):
+                for f in files:
+                    if f.endswith('.db'):
+                        full_p = os.path.join(root, f)
+                        try:
+                            size = os.path.getsize(full_p)
+                            db_files.append({"path": full_p, "size_kb": round(size/1024, 2)})
+                        except: pass
+            
+            # Check /data too
+            if os.path.exists('/data'):
+                for root, dirs, files in os.walk('/data'):
+                    for f in files:
+                        if f.endswith('.db'):
+                            full_p = os.path.join(root, f)
+                            try:
+                                size = os.path.getsize(full_p)
+                                db_files.append({"path": full_p, "size_kb": round(size/1024, 2)})
+                            except: pass
+
             return {
                 "status": "success",
-                "accounts_by_status": counts,
+                "counts": counts,
                 "sold_with_buyer": sold_with_buyer,
                 "total_users": total_users,
-                "db_path": os.environ.get("DATABASE_URL", "default")
+                "active_engine_url": str(engine.url),
+                "found_db_files": db_files
             }
     except Exception as e:
+        logger.error(f"Status Diagnostic Error: {e}")
         return {"status": "error", "message": str(e)}
 
 @app.get("/api/store/get-code")
