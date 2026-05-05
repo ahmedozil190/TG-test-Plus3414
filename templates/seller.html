@@ -650,7 +650,6 @@
             opacity: 1;
             border-color: var(--accent);
             background: rgba(88, 101, 242, 0.05);
-            box-shadow: 0 0 15px var(--accent-glow);
         }
 
         /* ─── Shared Components ─── */
@@ -661,6 +660,12 @@
             padding: 20px;
             transition: all 0.3s var(--ease);
             box-shadow: var(--shadow);
+        }
+
+        .btn-action:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
         }
 
         .section-header {
@@ -1466,8 +1471,6 @@
                     <label>Withdraw Amount (USD)</label>
                     <input type="number" id="withdrawAmount" class="w-input" placeholder="0.00" readonly
                         oninput="validateWithdraw()">
-                    <div id="minWarning" style="font-size:0.7rem; color:var(--error); margin-top:5px; display:none">
-                        Minimum amount not reached.</div>
                 </div>
 
                 <div class="input-group">
@@ -2101,12 +2104,11 @@
 
         function validateWithdraw() {
             const amt = parseFloat(document.getElementById('withdrawAmount').value) || 0;
-            const warning = document.getElementById('minWarning');
-            if (amt > 0 && amt < currentMin) {
-                warning.style.display = 'block';
-                warning.textContent = `Minimum for ${currentMethod} is $${formatMoney(currentMin)}`;
+            const btn = document.getElementById('submitWithdrawBtn');
+            if (amt < currentMin) {
+                btn.disabled = true;
             } else {
-                warning.style.display = 'none';
+                btn.disabled = false;
             }
         }
 
