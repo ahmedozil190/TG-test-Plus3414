@@ -1474,7 +1474,7 @@
                 </div>
 
                 <div class="input-group">
-                    <label>Wallet Address</label>
+                    <label>Wallet</label>
                     <input type="text" id="paymentDetails" class="w-input" placeholder="Enter address here...">
                 </div>
 
@@ -1590,8 +1590,8 @@
             </div>
 
             <div class="modal-actions">
-                <button class="btn-secondary" onclick="closeConfirmModal()">Cancel</button>
-                <button class="btn-action" id="finalConfirmBtn" style="padding:14px"
+                <button class="btn-secondary" onclick="closeConfirmModal()" style="background: #dbeafe; color: #1e40af; border: none; font-weight: 700;">Cancel</button>
+                <button class="btn-action" id="finalConfirmBtn" style="padding:14px; background: #dcfce7; color: #166534; border: none; box-shadow: none; font-weight: 700;"
                     onclick="confirmWithdraw()">Withdraw</button>
             </div>
         </div>
@@ -2124,7 +2124,7 @@
                     <span style="color: #10b981; font-weight: 700; font-size: 1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(net)}</span>
                 </div>
                 <div style="${rowS('#3b82f6')}">
-                    <span style="${lblS}">Wallet address</span>
+                    <span style="${lblS}">Wallet</span>
                     <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.85rem; text-align: right; direction: ltr; word-break: break-all; flex: 1; min-width: 0;">${addr}</span>
                 </div>
             `;
@@ -2251,7 +2251,7 @@
                                 <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.9rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${h.transaction_id}</span>
                             </div>
                             <div style="${rowS('#3b82f6')}">
-                                <span style="${lblS}">ADDRESS</span>
+                                <span style="${lblS}">WALLET</span>
                                 <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.85rem; text-align: right; direction: ltr; word-break: break-all; flex: 1; min-width: 0;">${h.address}</span>
                             </div>
                             <div style="${rowS('#fdd835')}">
