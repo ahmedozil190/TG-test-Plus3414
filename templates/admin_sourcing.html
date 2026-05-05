@@ -134,22 +134,25 @@
 
 
 
-        /* Dark Mode: Premium Matte Zinc Edition */
+        /* Dark Mode: Minimalist Professional Slate */
         .dark-mode {
-            --bg: #1a1a1c;
-            --bg-elevated: #111113;
-            --card-glass: rgba(255, 255, 255, 0.02);
-            --border: rgba(255, 255, 255, 0.06);
-            --text-p: #fafafa;
-            --text-s: #a1a1aa;
+            --bg: #0f172a;
+            --bg-elevated: #1e293b;
+            --card-glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
+            --text-p: #f8fafc;
+            --text-s: #94a3b8;
             --text-primary: var(--text-p);
             --text-secondary: var(--text-s);
-            --sidebar-bg: var(--bg-elevated);
-            --modal-bg: #09090b;
-            --input-bg: #09090b;
-            --shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            --sidebar-bg: #0f172a;
+            --modal-bg: #1e293b;
+            --input-bg: #0f172a;
+            --shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
             --tab-bg: rgba(255, 255, 255, 0.05);
-            --switch-bg: rgba(255, 255, 255, 0.15);
+            --switch-bg: rgba(255, 255, 255, 0.1);
+            --accent: #3b82f6;
+            --accent-dark: #2563eb;
+            --accent-glow: rgba(59, 130, 246, 0.2);
         }
 
         .light-mode {
@@ -339,11 +342,10 @@
         }
 
         .side-brand-dot {
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
             background: var(--accent);
-            box-shadow: 0 0 10px var(--accent);
         }
 
         .side-brand-name {
@@ -423,27 +425,25 @@
             transform: translateX(-50%);
             width: 26px;
             height: 26px;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            border-radius: 7px;
+            background: var(--accent);
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.85rem;
-            font-weight: 900;
-            color: var(--text-primary);
-            border: 2px solid var(--bg);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: white;
+            border: 2px solid var(--bg-elevated);
             z-index: 5;
         }
 
         .user-card {
             background: var(--bg-elevated);
             border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 24px 20px 20px;
+            border-radius: 16px;
+            padding: 24px;
             position: relative;
-            margin-top: 0;
-            margin-bottom: 0;
-            transition: transform 0.2s;
+            transition: all 0.3s ease;
         }
 
         .user-card:active {
@@ -2998,49 +2998,46 @@
             let html = '';
             paged.forEach(up => {
                 html += `
-                <div class="user-card" style="position: relative; cursor: default;">
-                    <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
-                        <h3 style="margin: 0; font-size: 1rem; font-weight: 700; color: var(--text-secondary);"><i class="fas fa-user-tag" style="color: var(--accent); margin-right: 8px;"></i>${currentLang === 'ar' ? 'سعر مخصص' : 'Custom Price'}</h3>
+                <div class="user-card" style="margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
+                        <h3 style="margin: 0; font-size: 0.9rem; font-weight: 700; color: var(--text-primary);"><i class="fas fa-user-tag" style="color: var(--accent); margin-right: 8px;"></i>${currentLang === 'ar' ? 'سعر مخصص' : 'Custom Price'}</h3>
                     </div>
-                    <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
-                        <!-- Country Name -->
-                        <div style="background: ${hexToRgba('#10b981', 0.05)}; border: 1px solid ${hexToRgba('#10b981', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
-                            <span style="color: #10b981; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'الدولة' : 'Country'}</span>
-                            <span style="color: #10b981; font-weight: 800; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${up.country_name}</span>
+                    <div style="display: flex; flex-direction: column;">
+                        <div style="${rowS}">
+                            <span style="${lblS}">${currentLang === 'ar' ? 'الدولة' : 'Country'}</span>
+                            <span style="${valS}">${up.country_name}</span>
                         </div>
-                        <!-- Country Code -->
-                        <div style="background: ${hexToRgba('#8b5cf6', 0.05)}; border: 1px solid ${hexToRgba('#8b5cf6', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
-                            <span style="color: #8b5cf6; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'كود' : 'Code'}</span>
-                            <span style="color: #8b5cf6; font-weight: 800; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">+${up.country_code}</span>
+                        <div style="${rowS}">
+                            <span style="${lblS}">${currentLang === 'ar' ? 'كود' : 'Code'}</span>
+                            <span style="${valS}">+${up.country_code}</span>
                         </div>
-                        <!-- Price -->
-                        <div style="background: ${hexToRgba('#3b82f6', 0.05)}; border: 1px solid ${hexToRgba('#3b82f6', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
-                            <span style="color: #3b82f6; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'السعر' : 'Price'}</span>
-                            <span style="color: #3b82f6; font-weight: 900; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(up.buy_price)}</span>
+                        <div style="${rowS}">
+                            <span style="${lblS}">${currentLang === 'ar' ? 'المستخدم' : 'User'}</span>
+                            <span style="${valS}">${up.user_name}</span>
                         </div>
-                        <!-- User Name -->
-                        <div style="background: ${hexToRgba('#f59e0b', 0.05)}; border: 1px solid ${hexToRgba('#f59e0b', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
-                            <span style="color: #f59e0b; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'المستخدم' : 'User'}</span>
-                            <span style="color: #f59e0b; font-weight: 800; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${up.user_name}</span>
+                        <div style="${rowS}">
+                            <span style="${lblS}">${currentLang === 'ar' ? 'معرف المستخدم' : 'User ID'}</span>
+                            <span style="${valS}">${up.user_id}</span>
                         </div>
-                        <!-- User ID -->
-                        <div style="background: ${hexToRgba('#ffcc00', 0.05)}; border: 1px solid ${hexToRgba('#ffcc00', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
-                            <span style="color: #ffcc00; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'معرف المستخدم' : 'User ID'}</span>
-                            <span style="color: #ffcc00; font-weight: 800; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${up.user_id}</span>
+                        <div style="${rowS}">
+                            <span style="${lblS}">${currentLang === 'ar' ? 'تأخير الموافقة' : 'Delay'}</span>
+                            <span style="${valS}">${up.approve_delay} ${currentLang === 'ar' ? 'ثانية' : 'SEC'}</span>
                         </div>
-                        <!-- Delay -->
-                        <div style="background: ${hexToRgba('#14b8a6', 0.05)}; border: 1px solid ${hexToRgba('#14b8a6', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
-                            <span style="color: #14b8a6; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'تأخير الموافقة' : 'Delay'}</span>
-                            <span style="color: #14b8a6; font-weight: 800; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${up.approve_delay} ${currentLang === 'ar' ? 'ثانية' : 'SEC'}</span>
+                        <div style="${rowS} border-bottom: none;">
+                            <span style="${lblS}">${currentLang === 'ar' ? 'السعر' : 'Price'}</span>
+                            <span style="${valS} color: var(--accent);">$${formatMoney(up.buy_price)}</span>
                         </div>
                     </div>
-                    <!-- Action Buttons -->
-                    <div style="display: flex; gap: 10px;">
-                        <button class="primary-btn" style="flex: 1; background: rgba(96, 165, 250, 0.1); color: var(--accent); border: 1px solid rgba(96, 165, 250, 0.2); box-shadow: none; padding: 14px; font-size: 0.95rem;" onclick="editUserPrice(${up.id})">
-                            <i class="fas fa-edit" style="${currentLang === 'ar' ? 'margin-left: 8px;' : 'margin-right: 8px;'}"></i> ${currentLang === 'ar' ? 'تعديل' : 'Edit'}
+                    <div style="display: flex; gap: 12px; margin-top: 24px;">
+                        <button class="primary-btn" 
+                            style="flex: 1; background: var(--bg); color: var(--text-primary); border: 1px solid var(--border); box-shadow: none; padding: 12px; font-size: 0.8rem; font-weight: 700; border-radius: 12px; transition: all 0.2s;" 
+                            onclick="editUserPrice(${up.id})">
+                            <i class="fas fa-edit" style="margin-right: 6px; color: var(--accent);"></i> ${currentLang === 'ar' ? 'تعديل' : 'Edit'}
                         </button>
-                        <button class="primary-btn" style="flex: 1; background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); box-shadow: none; padding: 14px; font-size: 0.95rem;" onclick="deleteUserPrice(${up.id})">
-                            <i class="fas fa-trash" style="${currentLang === 'ar' ? 'margin-left: 8px;' : 'margin-right: 8px;'}"></i> ${currentLang === 'ar' ? 'حذف' : 'Delete'}
+                        <button class="primary-btn" 
+                            style="flex: 1; background: var(--bg); color: #ef4444; border: 1px solid var(--border); box-shadow: none; padding: 12px; font-size: 0.8rem; font-weight: 700; border-radius: 12px; transition: all 0.2s;" 
+                            onclick="deleteUserPrice(${up.id})">
+                            <i class="fas fa-trash" style="margin-right: 6px;"></i> ${currentLang === 'ar' ? 'حذف' : 'Delete'}
                         </button>
                     </div>
                 </div>`;
@@ -4546,60 +4543,53 @@
 
                 const isPending = item.status === 'PENDING' || item.status === 'pending';
 
-                const rowS = "background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;";
-                const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;";
+                const rowS = "padding: 12px 18px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 15px;";
+                const lblS = "color: var(--text-secondary); font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;";
+                const valS = "color: var(--text-primary); font-weight: 600; font-size: 0.95rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;";
 
                 return `
-                <div class="user-card" style="position: relative; cursor: default;">
-                    <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
-                        <h3 style="margin: 0; font-size: 1rem; font-weight: 700; color: var(--text-secondary);"><i class="fas fa-history" style="color: var(--accent); margin-right: 8px;"></i>${currentLang === 'ar' ? 'حساب جديد' : 'New Account'}</h3>
+                <div class="user-card" style="margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
+                        <h3 style="margin: 0; font-size: 0.9rem; font-weight: 700; color: var(--text-primary);"><i class="fas fa-history" style="color: var(--accent); margin-right: 8px;"></i>${currentLang === 'ar' ? 'حساب جديد' : 'New Account'}</h3>
+                        <span style="font-size: 0.7rem; font-weight: 700; color: ${statusColor}; background: ${hexToRgba(statusColor, 0.1)}; padding: 4px 10px; border-radius: 6px; text-transform: uppercase;">${statusText}</span>
                     </div>
-                    <div style="display: flex; flex-direction: column; gap: 10px;">
-                        <div style="background: ${hexToRgba(statusColor, 0.05)}; border: 1px solid ${hexToRgba(statusColor, 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
-                            <span style="${lblS} color: ${statusColor}; opacity: 0.8;">${translations[currentLang].lbl_status}</span>
-                            <span style="color: ${statusColor}; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; text-align: right; word-break: break-all; flex: 1; min-width: 0;">
-                                ${statusText}
-                            </span>
+                    <div style="display: flex; flex-direction: column;">
+                        <div style="${rowS}">
+                            <span style="${lblS}">${translations[currentLang].lbl_user}</span>
+                            <span style="${valS}">${item.seller_id}</span>
                         </div>
-                        <div style="background: ${hexToRgba('#f59e0b', 0.05)}; border: 1px solid ${hexToRgba('#f59e0b', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
-                            <span style="${lblS} color: #f59e0b; opacity: 0.8;">${translations[currentLang].lbl_user}</span>
-                            <span style="color: #f59e0b; font-weight: 800; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${item.seller_id}</span>
+                        <div style="${rowS}">
+                            <span style="${lblS}">${translations[currentLang].lbl_number}</span>
+                            <span style="${valS} direction: ltr;">${item.phone}</span>
                         </div>
-                        <div style="background: ${hexToRgba('#10b981', 0.05)}; border: 1px solid ${hexToRgba('#10b981', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
-                            <span style="${lblS} color: #10b981; opacity: 0.8;">${translations[currentLang].lbl_number}</span>
-                            <span style="color: #10b981; font-weight: 800; font-size: 1.1rem; text-align: right; direction: ltr; word-break: break-all; flex: 1; min-width: 0;">${item.phone}</span>
+                        <div style="${rowS}">
+                            <span style="${lblS}">Password</span>
+                            <span style="${valS} direction: ltr; font-family: monospace;">${item.two_fa_password || 'N/A'}</span>
                         </div>
-                        
-                        <div style="background: ${hexToRgba('#ec4899', 0.05)}; border: 1px solid ${hexToRgba('#ec4899', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
-                            <span style="${lblS} color: #ec4899; opacity: 0.8;">Password</span>
-                            <span style="color: #ec4899; font-weight: 800; font-size: 1.1rem; text-align: right; direction: ltr; font-family: monospace; word-break: break-all; flex: 1; min-width: 0;">${item.two_fa_password || 'N/A'}</span>
+                        <div style="${rowS}">
+                            <span style="${lblS}">${translations[currentLang].lbl_price}</span>
+                            <span style="${valS} color: var(--accent);">$${formatMoney(item.buy_price)}</span>
                         </div>
-
-                        <div style="background: ${hexToRgba('#3b82f6', 0.05)}; border: 1px solid ${hexToRgba('#3b82f6', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
-                            <span style="${lblS} color: #3b82f6; opacity: 0.8;">${translations[currentLang].lbl_price}</span>
-                            <span style="color: #3b82f6; font-weight: 900; font-size: 1.2rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(item.buy_price)}</span>
-                        </div>
-                        <div style="background: ${hexToRgba('#ffcc00', 0.05)}; border: 1px solid ${hexToRgba('#ffcc00', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
-                            <span style="${lblS} color: #ffcc00; opacity: 0.8;">${translations[currentLang].lbl_date}</span>
+                        <div style="${rowS} border-bottom: none;">
+                            <span style="${lblS}">${translations[currentLang].lbl_date}</span>
                             <span class="${isPending ? 'countdown-timer' : ''}" 
                                   data-ready="${item.ready_at}" 
-                                  style="color: #ffcc00; font-weight: 600; font-size: 0.85rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">
+                                  style="${valS} font-size: 0.85rem;">
                                 ${isPending ? '...' : formatDateTime(item.date)}
                             </span>
                         </div>
                     </div>
                     
-                    <!-- Management Actions -->
-                    <div style="display: flex; gap: 10px; margin-top: 15px;">
+                    <div style="display: flex; gap: 12px; margin-top: 24px;">
                         <button class="primary-btn" 
-                            style="flex: 1; background: rgba(139, 92, 246, 0.1); color: var(--accent-purple); border: 1px solid rgba(139, 92, 246, 0.2); box-shadow: none; padding: 12px; font-size: 0.85rem; font-weight: 700; border-radius: 10px;" 
+                            style="flex: 1; background: var(--bg); color: var(--text-primary); border: 1px solid var(--border); box-shadow: none; padding: 12px; font-size: 0.8rem; font-weight: 700; border-radius: 12px; transition: all 0.2s;" 
                             onclick="getAccountOTP('${item.phone}')">
-                            <i class="fas fa-key" style="margin-right: 5px;"></i> ${currentLang === 'ar' ? 'طلب الكود' : 'Get OTP'}
+                            <i class="fas fa-key" style="margin-right: 6px; color: var(--accent);"></i> ${currentLang === 'ar' ? 'طلب الكود' : 'Get OTP'}
                         </button>
                         <button class="primary-btn" 
-                            style="flex: 1; background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); box-shadow: none; padding: 12px; font-size: 0.85rem; font-weight: 700; border-radius: 10px;" 
+                            style="flex: 1; background: var(--bg); color: #ef4444; border: 1px solid var(--border); box-shadow: none; padding: 12px; font-size: 0.8rem; font-weight: 700; border-radius: 12px; transition: all 0.2s;" 
                             onclick="removeAccount('${item.phone}')">
-                            <i class="fas fa-trash" style="margin-right: 5px;"></i> ${currentLang === 'ar' ? 'إزالة' : 'Remove'}
+                            <i class="fas fa-trash" style="margin-right: 6px;"></i> ${currentLang === 'ar' ? 'إزالة' : 'Remove'}
                         </button>
                     </div>
                 </div>

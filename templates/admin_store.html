@@ -28,22 +28,25 @@
             --sidebar-width: 280px;
         }
 
-        /* Dark Mode: Premium Matte Zinc Edition */
+        /* Dark Mode: Minimalist Professional Slate */
         .dark-mode {
-            --bg: #1a1a1c;
-            --bg-elevated: #111113;
-            --card-glass: rgba(255, 255, 255, 0.02);
-            --border: rgba(255, 255, 255, 0.06);
-            --text-p: #fafafa;
-            --text-s: #a1a1aa;
+            --bg: #0f172a;
+            --bg-elevated: #1e293b;
+            --card-glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
+            --text-p: #f8fafc;
+            --text-s: #94a3b8;
             --text-primary: var(--text-p);
             --text-secondary: var(--text-s);
-            --sidebar-bg: var(--bg-elevated);
-            --modal-bg: #09090b;
-            --input-bg: #09090b;
-            --shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            --sidebar-bg: #0f172a;
+            --modal-bg: #1e293b;
+            --input-bg: #0f172a;
+            --shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
             --tab-bg: rgba(255, 255, 255, 0.05);
-            --switch-bg: rgba(255, 255, 255, 0.15);
+            --switch-bg: rgba(255, 255, 255, 0.1);
+            --accent: #3b82f6;
+            --accent-dark: #2563eb;
+            --accent-glow: rgba(59, 130, 246, 0.2);
         }
 
         .light-mode {
@@ -233,11 +236,10 @@
         }
 
         .side-brand-dot {
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
             background: var(--accent);
-            box-shadow: 0 0 10px var(--accent);
         }
 
         .side-brand-name {
@@ -317,27 +319,25 @@
             transform: translateX(-50%);
             width: 26px;
             height: 26px;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            border-radius: 7px;
+            background: var(--accent);
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.85rem;
-            font-weight: 900;
-            color: var(--text-primary);
-            border: 2px solid var(--bg);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: white;
+            border: 2px solid var(--bg-elevated);
             z-index: 5;
         }
 
         .user-card {
-            background: var(--bg);
+            background: var(--bg-elevated);
             border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 24px 20px 20px;
+            border-radius: 16px;
+            padding: 24px;
             position: relative;
-            margin-top: 0;
-            margin-bottom: 0;
-            transition: transform 0.2s;
+            transition: all 0.3s ease;
         }
 
         .user-card:active {
@@ -3593,38 +3593,36 @@
                 return;
             }
 
-            const rowS = "background: var(--bg-elevated); border: 1px solid var(--border); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;";
-            const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;";
+            const rowS = "padding: 12px 18px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 15px;";
+            const lblS = "color: var(--text-secondary); font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;";
+            const valS = "color: var(--text-primary); font-weight: 600; font-size: 0.95rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;";
 
             container.innerHTML = list.map(item => `
-                <div class="user-card" style="position: relative; cursor: default;">
-                    <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
-                        <h3 style="margin: 0; font-size: 1rem; font-weight: 700; color: var(--text-secondary);"><i class="fas fa-shopping-cart" style="color: var(--accent); margin-right: 8px;"></i>${currentLang === 'ar' ? 'عملية شراء' : 'Sale Operation'}</h3>
+                <div class="user-card" style="margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
+                        <h3 style="margin: 0; font-size: 0.9rem; font-weight: 700; color: var(--text-primary);"><i class="fas fa-shopping-cart" style="color: var(--accent); margin-right: 8px;"></i>${currentLang === 'ar' ? 'عملية شراء' : 'Sale Operation'}</h3>
+                        <span style="font-size: 0.7rem; font-weight: 700; color: var(--accent); background: var(--accent-glow); padding: 4px 10px; border-radius: 6px; text-transform: uppercase;">SOLD</span>
                     </div>
-                    <div style="display: flex; flex-direction: column; gap: 10px;">
-                        <div style="background: ${hexToRgba('#ec4899', 0.05)}; border: 1px solid ${hexToRgba('#ec4899', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
-                            <span style="${lblS} color: #ec4899; opacity: 0.8;">${currentLang === 'ar' ? 'الحالة' : 'STATUS'}</span>
-                            <span style="color: #ec4899; font-weight: 900; font-size: 0.9rem; letter-spacing: 0.5px; text-align: right; word-break: break-all; flex: 1; min-width: 0;">SOLD</span>
+                    <div style="display: flex; flex-direction: column;">
+                        <div style="${rowS}">
+                            <span style="${lblS}">${currentLang === 'ar' ? 'المشتري' : 'BUYER ID'}</span>
+                            <span style="${valS}">${item.buyer_id}</span>
                         </div>
-                        <div style="background: ${hexToRgba('#f59e0b', 0.05)}; border: 1px solid ${hexToRgba('#f59e0b', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
-                            <span style="${lblS} color: #f59e0b; opacity: 0.8;">${currentLang === 'ar' ? 'المشتري' : 'BUYER ID'}</span>
-                            <span style="color: #f59e0b; font-weight: 800; font-size: 1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${item.buyer_id}</span>
+                        <div style="${rowS}">
+                            <span style="${lblS}">${currentLang === 'ar' ? 'الرقم' : 'NUMBER'}</span>
+                            <span style="${valS} direction: ltr;">${item.phone}</span>
                         </div>
-                        <div style="background: ${hexToRgba('#10b981', 0.05)}; border: 1px solid ${hexToRgba('#10b981', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
-                            <span style="${lblS} color: #10b981; opacity: 0.8;">${currentLang === 'ar' ? 'الرقم' : 'NUMBER'}</span>
-                            <span style="color: #10b981; font-weight: 800; font-size: 1.1rem; text-align: right; direction: ltr; word-break: break-all; flex: 1; min-width: 0;">${item.phone}</span>
+                        <div style="${rowS}">
+                            <span style="${lblS}">${currentLang === 'ar' ? 'كلمة السر' : 'PASSWORD'}</span>
+                            <span style="${valS} direction: ltr; font-family: monospace;">${item.password || 'N/A'}</span>
                         </div>
-                        <div style="background: ${hexToRgba('#ec4899', 0.05)}; border: 1px solid ${hexToRgba('#ec4899', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
-                            <span style="${lblS} color: #ec4899; opacity: 0.8;">${currentLang === 'ar' ? 'كلمة السر' : 'PASSWORD'}</span>
-                            <span style="color: #ec4899; font-weight: 800; font-size: 1.1rem; text-align: right; direction: ltr; font-family: monospace; word-break: break-all; flex: 1; min-width: 0;">${item.password || 'N/A'}</span>
+                        <div style="${rowS}">
+                            <span style="${lblS}">${currentLang === 'ar' ? 'السعر' : 'PRICE'}</span>
+                            <span style="${valS} color: var(--accent);">$${formatMoney(item.price)}</span>
                         </div>
-                        <div style="background: ${hexToRgba('#3b82f6', 0.05)}; border: 1px solid ${hexToRgba('#3b82f6', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
-                            <span style="${lblS} color: #3b82f6; opacity: 0.8;">${currentLang === 'ar' ? 'السعر' : 'PRICE'}</span>
-                            <span style="color: #3b82f6; font-weight: 900; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(item.price)}</span>
-                        </div>
-                        <div style="background: ${hexToRgba('#ffcc00', 0.05)}; border: 1px solid ${hexToRgba('#ffcc00', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
-                            <span style="${lblS} color: #ffcc00; opacity: 0.8;">${currentLang === 'ar' ? 'التاريخ' : 'DATE'}</span>
-                            <span style="color: #ffcc00; font-weight: 600; font-size: 0.85rem; direction: ltr; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${formatDateTime(item.date)}</span>
+                        <div style="${rowS} border-bottom: none;">
+                            <span style="${lblS}">${currentLang === 'ar' ? 'التاريخ' : 'DATE'}</span>
+                            <span style="${valS} font-size: 0.85rem; direction: ltr;">${formatDateTime(item.date)}</span>
                         </div>
                     </div>
                 </div>
