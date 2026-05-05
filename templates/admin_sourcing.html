@@ -5199,6 +5199,15 @@
             }
         }
 
+        // Outside Click Listener for Dropdowns
+        window.addEventListener('click', function (e) {
+            if (!e.target.closest('.custom-dropdown')) {
+                const userMenu = document.getElementById('user-filter-menu');
+                const historyMenu = document.getElementById('filter-menu');
+                if (userMenu) userMenu.style.display = 'none';
+                if (historyMenu) historyMenu.style.display = 'none';
+            }
+        });
     </script>
 
     <!-- OTP Display Modal -->

@@ -1407,6 +1407,17 @@
             border-color: var(--accent);
         }
 
+        .dropdown-item:hover {
+            background: var(--accent) !important;
+            color: #fff !important;
+        }
+
+        .dropdown-trigger:hover {
+            background: var(--card-glass) !important;
+            border-color: var(--accent) !important;
+            opacity: 1 !important;
+        }
+
         /* Server Action Buttons */
         .server-action-btn {
             flex: 1;
@@ -5176,6 +5187,14 @@
         const menuBtn = document.getElementById('menu-' + (savedView === 'home' ? 'dashboard' : savedView));
         if (menuBtn) switchNav(savedView, menuBtn, true);
         else switchNav(savedView, null, true);
+
+        // Outside Click Listener for Dropdowns
+        window.addEventListener('click', function (e) {
+            if (!e.target.closest('.custom-dropdown')) {
+                const userMenu = document.getElementById('user-filter-menu');
+                if (userMenu) userMenu.style.display = 'none';
+            }
+        });
     </script>
     <div id="user-manage-modal" class="manage-overlay" onclick="closeManageModal()">
         <div class="manage-card" onclick="event.stopPropagation()">
