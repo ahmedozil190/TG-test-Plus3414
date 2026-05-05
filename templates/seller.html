@@ -2080,6 +2080,7 @@
             
             await fetchWithdrawals();
             if (trigger) trigger.style.opacity = '1';
+            document.getElementById('withdraw-history-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
         window.addEventListener('click', function (e) {
