@@ -2210,10 +2210,10 @@
                 document.getElementById('pgPrevWithdraw').disabled = (data.current_page <= 1);
                 document.getElementById('pgNextWithdraw').disabled = (data.current_page >= totalWithdrawPages);
 
-                data.history.forEach(h => {
+                data.history.forEach((h, idx) => {
                     const item = document.createElement('div');
                     item.className = 'user-card';
-                    item.style.marginBottom = "15px";
+                    item.style.marginBottom = (idx === data.history.length - 1) ? "0" : "15px";
 
                     let statusColor = '#f59e0b'; // PENDING (Orange)
                     let statusText = 'PENDING';

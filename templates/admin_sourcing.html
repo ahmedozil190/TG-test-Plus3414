@@ -2774,7 +2774,7 @@
                 nav_prices: "Buying Prices",
                 nav_users: "Customers",
                 nav_user_prices: "Custom Users",
-                nav_withdrawals: "Withdrawals",
+                nav_withdrawals: "Withdrawals History",
                 nav_close: "Close",
                 modal_add_custom: "Add Custom User",
                 modal_edit_custom: "Edit Custom User",
@@ -2857,7 +2857,7 @@
                 nav_prices: "أسعار الشراء",
                 nav_users: "العملاء",
                 nav_user_prices: "مستخدمين مخصصين",
-                nav_withdrawals: "طلبات السحب",
+                nav_withdrawals: "سجل السحوبات",
                 nav_close: "إغلاق",
                 modal_add_custom: "إضافة مستخدم مخصص",
                 modal_edit_custom: "تعديل مستخدم مخصص",
@@ -3387,7 +3387,8 @@
                 return;
             }
 
-            list.innerHTML = data.map(item => {
+            list.innerHTML = data.map((item, idx) => {
+                const isLast = idx === data.length - 1;
                 const statusUpper = item.status.toUpperCase();
                 let statusColor = '#f59e0b'; // PENDING
                 if (statusUpper === 'APPROVED') statusColor = '#10b981'; // SUCCESS
@@ -3399,7 +3400,7 @@
                 const simpleMethod = item.method.split(' - ')[0];
 
                 return `
-                    <div class="user-card" style="margin-bottom: 25px; padding: 22px; border: 1px solid var(--border); background: var(--bg-elevated); border-radius: 20px; cursor: default;">
+                    <div class="user-card" style="margin-bottom: ${isLast ? '0' : '25px'}; padding: 22px; border: 1px solid var(--border); background: var(--bg-elevated); border-radius: 20px; cursor: default;">
                         <div style="display: flex; flex-direction: column;">
                             <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
                                 <h3 style="margin: 0; font-size: 1rem; font-weight: 700; color: var(--text-secondary);"><i class="fas fa-hand-holding-usd" style="color: var(--accent); margin-right: 8px;"></i>Withdrawal</h3>
