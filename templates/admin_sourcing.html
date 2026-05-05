@@ -4233,24 +4233,24 @@
                     </div>
                     <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
                         <!-- Name -->
-                        <div style="background: ${hexToRgba('#10b981', 0.05)}; border: 1px solid ${hexToRgba('#10b981', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
-                            <span style="color: #10b981; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'الاسم' : 'Name'}</span>
-                            <span style="color: #10b981; font-weight: 800; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${p.name.replace(/\s?\(?[A-Z]{2,3}\)?$/, '').trim()}</span>
+                        <div style="background: ${hexToRgba('#10b981', 0.02)}; border: 1px solid ${hexToRgba('#10b981', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
+                            <span style="color: var(--text-secondary); opacity: 0.7; font-size: 0.8rem; font-weight: 500; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'الاسم' : 'Name'}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${p.name.replace(/\s?\(?[A-Z]{2,3}\)?$/, '').trim()}</span>
                         </div>
                         <!-- Code -->
-                        <div style="background: ${hexToRgba('#8b5cf6', 0.05)}; border: 1px solid ${hexToRgba('#8b5cf6', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
-                            <span style="color: #8b5cf6; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'كود' : 'Code'}</span>
-                            <span style="color: #8b5cf6; font-weight: 800; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">+${p.code}</span>
+                        <div style="background: ${hexToRgba('#8b5cf6', 0.02)}; border: 1px solid ${hexToRgba('#8b5cf6', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
+                            <span style="color: var(--text-secondary); opacity: 0.7; font-size: 0.8rem; font-weight: 500; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'كود' : 'Code'}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">+${p.code}</span>
                         </div>
                         <!-- Price -->
-                        <div style="background: ${hexToRgba('#3b82f6', 0.05)}; border: 1px solid ${hexToRgba('#3b82f6', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
-                            <span style="color: #3b82f6; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'السعر' : 'Price'}</span>
-                            <span style="color: #3b82f6; font-weight: 900; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(p.buy_price)}</span>
+                        <div style="background: ${hexToRgba('#3b82f6', 0.02)}; border: 1px solid ${hexToRgba('#3b82f6', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
+                            <span style="color: var(--text-secondary); opacity: 0.7; font-size: 0.8rem; font-weight: 500; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'السعر' : 'Price'}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(p.buy_price)}</span>
                         </div>
                         <!-- Delay -->
-                        <div style="background: ${hexToRgba('#f59e0b', 0.05)}; border: 1px solid ${hexToRgba('#f59e0b', 0.2)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
-                            <span style="color: #f59e0b; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'التأخير' : 'Delay'}</span>
-                            <span style="color: #f59e0b; font-weight: 800; font-size: 1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${p.approve_delay} ${currentLang === 'ar' ? 'ثانية' : 'SEC'}</span>
+                        <div style="background: ${hexToRgba('#f59e0b', 0.02)}; border: 1px solid ${hexToRgba('#f59e0b', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
+                            <span style="color: var(--text-secondary); opacity: 0.7; font-size: 0.8rem; font-weight: 500; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'التأخير' : 'Delay'}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${p.approve_delay} ${currentLang === 'ar' ? 'ثانية' : 'SEC'}</span>
                         </div>
                     </div>
                     <!-- Action Buttons -->
