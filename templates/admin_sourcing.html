@@ -465,6 +465,7 @@
             font-weight: 700;
             border: 1px solid transparent;
             color: var(--text-primary);
+            opacity: 0.9;
         }
 
         .withdraw-action-btn:active {
@@ -3415,7 +3416,7 @@
                 const simpleMethod = item.method.split(' - ')[0];
 
                 return `
-                    <div class="user-card" style="margin-bottom: ${isLast ? '0' : '25px'}; padding: 22px; border: 1px solid var(--border); background: var(--bg-elevated); border-radius: 20px; cursor: default;">
+                    <div class="user-card" style="margin-bottom: ${isLast ? '0' : '25px'}; padding: 22px; border: 1px solid var(--border); background: var(--bg-elevated); border-radius: 20px; cursor: pointer;" onclick="openAuditModal('${item.id}')">
                         <div style="display: flex; flex-direction: column;">
                             <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
                                 <h3 style="margin: 0; font-size: 1rem; font-weight: 700; color: var(--text-secondary);"><i class="fas fa-hand-holding-usd" style="color: var(--accent); margin-right: 8px;"></i>Withdrawal</h3>
@@ -3447,18 +3448,13 @@
 
                             ${isPending ? `
                             <div style="display: flex; gap: 8px; margin-top: 15px; flex-wrap: wrap;">
-                                <button class="withdraw-action-btn numbers" 
-                                    onclick="openAuditModal('${item.id}')">
-                                    <i class="fas fa-list-ol"></i>
-                                    Numbers
-                                </button>
                                 <button class="withdraw-action-btn approve" 
-                                    onclick="confirmWithdrawAction('${item.id}', 'approve')">
+                                    onclick="event.stopPropagation(); confirmWithdrawAction('${item.id}', 'approve')">
                                     <i class="fas fa-check-circle"></i>
                                     Approve
                                 </button>
                                 <button class="withdraw-action-btn reject"
-                                    onclick="confirmWithdrawAction('${item.id}', 'reject')">
+                                    onclick="event.stopPropagation(); confirmWithdrawAction('${item.id}', 'reject')">
                                     <i class="fas fa-times-circle"></i>
                                     Reject
                                 </button>
