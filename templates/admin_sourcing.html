@@ -1944,16 +1944,7 @@
                     <h2 data-i18n="stat_section">Inventory</h2>
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px;">
-                    <div class="info-card">
-                        <div class="info-card-l">
-                            <span class="info-card-lbl" data-i18n="lbl_ready_accs">READY ACCOUNTS</span>
-                            <div class="info-card-val"><span id="home-stat-ready">0</span> <span
-                                    data-i18n="unit_accs">ACCOUNTS</span></div>
-                        </div>
-                        <div class="info-card-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">
-                            <i class="fas fa-check-to-slot"></i>
-                        </div>
-                    </div>
+                    
                     <div class="info-card">
                         <div class="info-card-l">
                             <span class="info-card-lbl" data-i18n="stat_pending_ops">PENDING ACCOUNTS</span>
@@ -1976,22 +1967,32 @@
                     </div>
                     <div class="info-card">
                         <div class="info-card-l">
-                            <span class="info-card-lbl" data-i18n="stat_sold_ops">SOLD ACCOUNTS</span>
-                            <div class="info-card-val"><span id="home-stat-sold">0</span> <span
-                                    data-i18n="unit_accs">ACCOUNTS</span></div>
-                        </div>
-                        <div class="info-card-icon" style="background: rgba(236, 72, 153, 0.1); color: #ec4899;">
-                            <i class="fas fa-cart-shopping"></i>
-                        </div>
-                    </div>
-                    <div class="info-card">
-                        <div class="info-card-l">
                             <span class="info-card-lbl" data-i18n="stat_rejected_ops">REJECTED ACCOUNTS</span>
                             <div class="info-card-val"><span id="home-stat-rejected">0</span> <span
                                     data-i18n="unit_accs">ACCOUNTS</span></div>
                         </div>
                         <div class="info-card-icon" style="background: rgba(239, 68, 68, 0.1); color: var(--error);">
                             <i class="fas fa-circle-xmark"></i>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-l">
+                            <span class="info-card-lbl">FROZEN ACCOUNTS</span>
+                            <div class="info-card-val"><span id="home-stat-frozen">0</span> <span
+                                    data-i18n="unit_accs">ACCOUNTS</span></div>
+                        </div>
+                        <div class="info-card-icon" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">
+                            <i class="fas fa-snowflake"></i>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-l">
+                            <span class="info-card-lbl">SPAM ACCOUNTS</span>
+                            <div class="info-card-val"><span id="home-stat-spam">0</span> <span
+                                    data-i18n="unit_accs">ACCOUNTS</span></div>
+                        </div>
+                        <div class="info-card-icon" style="background: rgba(248, 113, 113, 0.1); color: #f87171;">
+                            <i class="fas fa-bullhorn"></i>
                         </div>
                     </div>
                 </div>
@@ -2468,16 +2469,6 @@
                     </div>
                     <div class="info-card">
                         <div class="info-card-l">
-                            <span class="info-card-lbl" data-i18n="stat_sold_ops">SOLD ACCOUNTS</span>
-                            <div class="info-card-val"><span id="stat-history-sold">0</span> <span
-                                    data-i18n="unit_accs">ACCOUNTS</span></div>
-                        </div>
-                        <div class="info-card-icon" style="background: rgba(236, 72, 153, 0.1); color: #ec4899;">
-                            <i class="fas fa-cart-shopping"></i>
-                        </div>
-                    </div>
-                    <div class="info-card">
-                        <div class="info-card-l">
                             <span class="info-card-lbl" data-i18n="stat_rejected_ops">REJECTED ACCOUNTS</span>
                             <div class="info-card-val"><span id="stat-history-rejected">0</span> <span
                                     data-i18n="unit_accs">ACCOUNTS</span></div>
@@ -2546,6 +2537,12 @@
                                         style="width: 8px; height: 8px; border-radius: 50%; background: #10b981;"></span>
                                     ACCEPTED
                                 </div>
+                                <div class="dropdown-item" onclick="setHistoryFilter('REJECTED', '#ef4444')"
+                                    style="padding: 10px 15px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
+                                    <span
+                                        style="width: 8px; height: 8px; border-radius: 50%; background: #ef4444;"></span>
+                                    REJECTED
+                                </div>
                                 <div class="dropdown-item" onclick="setHistoryFilter('FROZEN', '#3b82f6')"
                                     style="padding: 10px 15px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
                                     <span
@@ -2553,10 +2550,10 @@
                                     FROZEN
                                 </div>
 
-                                <div class="dropdown-item" onclick="setHistoryFilter('SPAM', '#ef4444')"
+                                <div class="dropdown-item" onclick="setHistoryFilter('SPAM', '#f87171')"
                                     style="padding: 10px 15px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
                                     <span
-                                        style="width: 8px; height: 8px; border-radius: 50%; background: #ef4444;"></span>
+                                        style="width: 8px; height: 8px; border-radius: 50%; background: #f87171;"></span>
                                     SPAM
                                 </div>
                             </div>
@@ -2959,7 +2956,6 @@
                 lbl_ready_accs: "READY ACCOUNTS",
                 stat_total_ops: "TOTAL ACCOUNTS",
                 stat_accepted_ops: "ACCEPTED ACCOUNTS",
-                stat_sold_ops: "SOLD ACCOUNTS",
                 stat_rejected_ops: "REJECTED ACCOUNTS",
                 unit_ops: "ACCOUNTS",
                 unit_accs: "ACCOUNTS",
@@ -3800,16 +3796,17 @@
                 await fetchSubscriptionChannels();
 
                 // Inventory (Home)
-                const hsrdy = document.getElementById('home-stat-ready');
                 const hsp = document.getElementById('home-stat-pending');
                 const hsa = document.getElementById('home-stat-accepted');
                 const hsr = document.getElementById('home-stat-rejected');
-                const hssold = document.getElementById('home-stat-sold');
-                if (hsrdy) hsrdy.innerText = data.stats.available_count || 0;
-                if (hsp) hsp.innerText = data.stats.pending_count;
+                const hsf = document.getElementById('home-stat-frozen');
+                const hss = document.getElementById('home-stat-spam');
+                
+                if (hsp) hsp.innerText = data.stats.pending_count || 0;
                 if (hsa) hsa.innerText = data.stats.available_count || 0;
-                if (hssold) hssold.innerText = data.stats.sold_count || 0;
-                if (hsr) hsr.innerText = data.stats.rejected_sourced;
+                if (hsr) hsr.innerText = data.stats.rejected_sourced || 0;
+                if (hsf) hsf.innerText = data.stats.frozen_count || 0;
+                if (hss) hss.innerText = data.stats.spam_count || 0;
 
                 // Withdrawals (Home)
                 const hwp = document.getElementById('home-stat-withdraw-pending');
@@ -3848,13 +3845,12 @@
                 const hrEl = document.getElementById('stat-history-rejected');
                 const hfEl = document.getElementById('stat-history-frozen');
                 const hsEl = document.getElementById('stat-history-spam');
-                const hSoldEl = document.getElementById('stat-history-sold');
-                if (hpEl) hpEl.innerText = data.stats.pending_count;
+                
+                if (hpEl) hpEl.innerText = data.stats.pending_count || 0;
                 if (haEl) haEl.innerText = data.stats.available_count || 0;
-                if (hrEl) hrEl.innerText = data.stats.rejected_sourced;
+                if (hrEl) hrEl.innerText = data.stats.rejected_sourced || 0;
                 if (hfEl) hfEl.innerText = data.stats.frozen_count || 0;
                 if (hsEl) hsEl.innerText = data.stats.spam_count || 0;
-                if (hSoldEl) hSoldEl.innerText = data.stats.sold_count || 0;
 
                 // Customers Section (Home)
                 const huTotal = document.getElementById('home-total-users');
@@ -3940,12 +3936,23 @@
                 if (wa) wa.innerText = ws.withdraw_approved || 0;
                 if (wtp) wtp.innerText = formatMoney(ws.total_paid_amount || 0);
 
-                document.getElementById('stat-history-pending').innerText = ws.pending_count;
+                document.getElementById('stat-history-pending').innerText = ws.pending_count || 0;
                 document.getElementById('stat-history-accepted').innerText = ws.available_count || 0;
-                if (document.getElementById('stat-history-sold')) document.getElementById('stat-history-sold').innerText = ws.sold_count || 0;
-                document.getElementById('stat-history-rejected').innerText = ws.rejected_sourced;
+                document.getElementById('stat-history-rejected').innerText = ws.rejected_sourced || 0;
                 if (document.getElementById('stat-history-frozen')) document.getElementById('stat-history-frozen').innerText = ws.frozen_count || 0;
                 if (document.getElementById('stat-history-spam')) document.getElementById('stat-history-spam').innerText = ws.spam_count || 0;
+
+                // Also update Home stats if they exist
+                const hsp = document.getElementById('home-stat-pending');
+                const hsa = document.getElementById('home-stat-accepted');
+                const hsr = document.getElementById('home-stat-rejected');
+                const hsf = document.getElementById('home-stat-frozen');
+                const hss = document.getElementById('home-stat-spam');
+                if (hsp) hsp.innerText = ws.pending_count || 0;
+                if (hsa) hsa.innerText = ws.available_count || 0;
+                if (hsr) hsr.innerText = ws.rejected_sourced || 0;
+                if (hsf) hsf.innerText = ws.frozen_count || 0;
+                if (hss) hss.innerText = ws.spam_count || 0;
             } catch (e) { }
         }
 
@@ -4278,7 +4285,6 @@
                 label.innerText = currentHistoryFilter;
                 let color = '#fbbf24';
                 if (currentHistoryFilter === 'ACCEPTED') color = '#10b981';
-                else if (currentHistoryFilter === 'SOLD') color = '#ec4899';
                 else if (currentHistoryFilter === 'FROZEN') color = '#3b82f6';
                 else if (currentHistoryFilter === 'SPAM' || currentHistoryFilter === 'REJECTED') color = '#ef4444';
 
@@ -4701,9 +4707,6 @@
                 if (item.status === 'AVAILABLE') {
                     statusColor = '#10b981'; // ACCEPTED
                     statusText = translations[currentLang].st_accepted;
-                } else if (item.status === 'SOLD') {
-                    statusColor = '#ec4899'; // SOLD
-                    statusText = 'SOLD';
                 } else if (item.status === 'REJECTED') {
                     statusColor = '#ef4444'; // REJECTED
                     statusText = translations[currentLang].st_rejected;
