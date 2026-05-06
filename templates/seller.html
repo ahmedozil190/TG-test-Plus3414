@@ -560,6 +560,8 @@
             align-items: center;
             justify-content: space-between;
             box-shadow: var(--shadow);
+            overflow: hidden;
+            gap: 10px;
         }
 
         .empty-state {
@@ -1489,7 +1491,9 @@
             <div class="card" id="withdraw-history-section" style="padding: 22px; margin-top: 30px; margin-bottom: 0;">
                 <div
                     style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; gap: 15px;">
-                    <h3 data-i18n="nav_withdrawals" style="color: var(--text-secondary); font-size: 1rem; font-weight: 700; margin: 0; max-width: 140px; line-height: 1.2; flex-grow: 1;">Withdrawal History</h3>
+                    <h3 data-i18n="nav_withdrawals"
+                        style="color: var(--text-secondary); font-size: 1rem; font-weight: 700; margin: 0; max-width: 140px; line-height: 1.2; flex-grow: 1;">
+                        Withdrawal History</h3>
                     <div class="custom-dropdown" style="position: relative;">
                         <button class="dropdown-trigger" onclick="toggleWithdrawDropdown()"
                             style="display: flex; align-items: center; gap: 8px; background: var(--card-glass); border: 1px solid var(--border); padding: 8px 14px; border-radius: 12px; color: var(--text-primary); cursor: pointer; font-size: 0.85rem; font-weight: 700; transition: all 0.2s;">
@@ -1588,13 +1592,16 @@
             <div class="modal-title">Confirm Withdrawal</div>
             <div class="modal-body">Please review your payout details carefully before proceeding.</div>
 
-            <div id="confirm-rows-container" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 25px;">
+            <div id="confirm-rows-container"
+                style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 25px;">
                 <!-- Rows will be injected here -->
             </div>
 
             <div class="modal-actions">
-                <button class="btn-secondary" onclick="closeConfirmModal()" style="background: rgba(59, 130, 246, 0.12); color: #3b82f6; border: none; font-weight: 700; border-radius: 14px;">Cancel</button>
-                <button class="btn-action" id="finalConfirmBtn" style="padding:14px; background: rgba(16, 185, 129, 0.12); color: #10b981; border: none; box-shadow: none; font-weight: 700; border-radius: 14px;"
+                <button class="btn-secondary" onclick="closeConfirmModal()"
+                    style="background: rgba(59, 130, 246, 0.12); color: #3b82f6; border: none; font-weight: 700; border-radius: 14px;">Cancel</button>
+                <button class="btn-action" id="finalConfirmBtn"
+                    style="padding:14px; background: rgba(16, 185, 129, 0.12); color: #10b981; border: none; box-shadow: none; font-weight: 700; border-radius: 14px;"
                     onclick="confirmWithdraw()">Withdraw</button>
             </div>
         </div>
@@ -2025,7 +2032,7 @@
 
             list.innerHTML = priceArray.map(p => `
                 <div class="price-item">
-                    <div class="country-side">
+                    <div class="country-side" style="flex: 1; min-width: 0;">
                         <span class="c-flag">${p.flag}</span>
                         <div style="min-width: 0; flex: 1;">
                             <div class="c-name">${p.name}</div>
@@ -2061,7 +2068,7 @@
         async function filterWithdrawals(status, color, label) {
             currentWithdrawStatus = status;
             currentWithdrawPage = 1;
-            
+
             // UI Update
             const trigger = document.querySelector('.dropdown-trigger');
             if (trigger) trigger.style.opacity = '0.5';
@@ -2070,7 +2077,7 @@
             document.getElementById('current-withdraw-filter-label').innerText = label;
             document.getElementById('current-withdraw-filter-label').style.color = color;
             document.getElementById('withdraw-filter-menu').style.display = 'none';
-            
+
             await fetchWithdrawals();
             if (trigger) trigger.style.opacity = '1';
         }
@@ -2111,7 +2118,7 @@
 
             const net = amt - 0.20;
             const simpleMethod = currentMethod.split(' - ')[0];
-            
+
             // Build Rows
             const rowS = (c) => `background: ${hexToRgba(c, 0.02)}; border: 1px solid ${hexToRgba(c, 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;`;
             const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 500; text-transform: uppercase; opacity: 0.7; flex-shrink: 0;";

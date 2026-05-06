@@ -485,6 +485,8 @@
             cursor: pointer;
             transition: all 0.2s;
             box-shadow: var(--shadow);
+            overflow: hidden;
+            gap: 10px;
         }
 
         .country-card:active {
@@ -503,6 +505,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            max-width: 160px;
         }
 
         .c-stock {
@@ -1759,7 +1762,7 @@
             if (!list || !list.length) { grid.innerHTML = '<p style="text-align:center; padding: 40px; opacity: 0.5;">No numbers available</p>'; return; }
             grid.innerHTML = list.map(c => `
                 <div class="country-card" onclick="openBuyModal(${JSON.stringify(c).replace(/"/g, '&quot;')})">
-                    <div style="display: flex; align-items: center; gap: 15px;">
+                    <div style="display: flex; align-items: center; gap: 15px; flex: 1; min-width: 0;">
                         <span class="c-flag">${c.flag}</span>
                         <div style="min-width: 0; flex: 1;">
                             <div class="c-name">${c.name}</div>
