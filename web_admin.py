@@ -32,6 +32,10 @@ from datetime import datetime
 import random
 import string
 
+class AdminAuthRequest(BaseModel):
+    user_id: int
+    init_data: str
+
 class SellerDataRequest(BaseModel):
     user_id: int
 
@@ -196,9 +200,6 @@ def normalize_provider_countries(srv_countries):
     
     return countries_list
 
-class AdminAuthRequest(BaseModel):
-    user_id: int
-    init_data: str
 
 class StoreSettingsSubmit(AdminAuthRequest):
     binance_api_key: str
