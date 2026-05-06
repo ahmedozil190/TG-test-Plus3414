@@ -15,7 +15,6 @@
             if (!tg.initData || !adminIds.includes(userId)) {
                 document.write('<style>body { display: none !important; }</style>');
                 alert("Unauthorized Access");
-                window.location.href = "https://t.me/your_bot_username";
                 return;
             }
             try { tg.expand(); } catch(e) {}
@@ -814,7 +813,7 @@
             outline: none;
             height: auto;
         }
-
+        
         .pg-btn:hover:not(:disabled) {
             background: var(--border);
         }
