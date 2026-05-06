@@ -1358,10 +1358,23 @@
         const originalFetch = window.fetch;
         window.fetch = function () {
             let [resource, config] = arguments;
+            const initData = window.Telegram.WebApp.initData || '';
+
             if (typeof resource === 'string' && resource.startsWith('/api/')) {
+                // Handle GET requests (Query Params)
                 if (!config || !config.method || config.method.toUpperCase() === 'GET') {
                     const sep = resource.includes('?') ? '&' : '?';
-                    resource = `${resource}${sep}_cb=${Date.now()}`;
+                    resource = `${resource}${sep}init_data=${encodeURIComponent(initData)}&_cb=${Date.now()}`;
+                } 
+                // Handle POST/PUT/DELETE requests (Body)
+                else if (config.body && typeof config.body === 'string') {
+                    try {
+                        let bodyObj = JSON.parse(config.body);
+                        bodyObj.init_data = initData;
+                        config.body = JSON.stringify(bodyObj);
+                    } catch (e) {
+                        console.error("Failed to inject initData into request body:", e);
+                    }
                 }
             }
             return originalFetch(resource, config);

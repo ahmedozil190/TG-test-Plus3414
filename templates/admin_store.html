@@ -24,6 +24,61 @@
             const isDark = tg.colorScheme === 'dark';
             const bgColor = isDark ? '#111113' : '#ffffff';
             document.write('<style>#loader { background: ' + bgColor + ' !important; }</style>');
+
+            // --- GLOBAL FETCH INTERCEPTOR (Security Hardening) ---
+            const originalFetch = window.fetch;
+            window.fetch = async (resource, config = {}) => {
+                let url = typeof resource === 'string' ? resource : resource.url;
+                
+                // Only intercept internal API calls
+                if (url.startsWith('/api/')) {
+                    const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 0;
+                    const initData = window.Telegram?.WebApp?.initData || '';
+
+                    // 1. Handle GET requests (Query Parameters)
+                    if (!config.method || config.method.toUpperCase() === 'GET') {
+                        const urlObj = new URL(url, window.location.origin);
+                        urlObj.searchParams.set('user_id', userId);
+                        urlObj.searchParams.set('init_data', initData);
+                        url = urlObj.pathname + urlObj.search;
+                    } 
+                    // 2. Handle POST/PUT/DELETE requests (Body or Query for DELETE)
+                    else {
+                        const method = config.method.toUpperCase();
+                        if (method === 'POST' || method === 'PUT') {
+                            try {
+                                let body = {};
+                                if (config.body) {
+                                    body = JSON.parse(config.body);
+                                }
+                                body.user_id = userId;
+                                body.init_data = initData;
+                                config.body = JSON.stringify(body);
+                                
+                                // Ensure Content-Type is set
+                                if (!config.headers) config.headers = {};
+                                if (config.headers instanceof Headers) {
+                                    config.headers.set('Content-Type', 'application/json');
+                                } else {
+                                    config.headers['Content-Type'] = 'application/json';
+                                }
+                            } catch (e) {
+                                // If not JSON, append as query params just in case
+                                const urlObj = new URL(url, window.location.origin);
+                                urlObj.searchParams.set('user_id', userId);
+                                urlObj.searchParams.set('init_data', initData);
+                                url = urlObj.pathname + urlObj.search;
+                            }
+                        } else if (method === 'DELETE') {
+                            const urlObj = new URL(url, window.location.origin);
+                            urlObj.searchParams.set('user_id', userId);
+                            urlObj.searchParams.set('init_data', initData);
+                            url = urlObj.pathname + urlObj.search;
+                        }
+                    }
+                }
+                return originalFetch(url, config);
+            };
         })();
     </script>
     <link
@@ -3863,7 +3918,7 @@
                 const res = await fetch('/api/admin/user/balance', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ user_id: userId, amount: val, type: type })
+                    body: JSON.stringify({ user_id_target: userId, amount: val, type: type })
                 });
                 if (res.ok) init();
                 else alert('Failed to update balance');
@@ -3905,7 +3960,7 @@
                 const res = await fetch('/api/admin/user/sync', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ user_id: currentUser.id, bot_type: "store" })
+                    body: JSON.stringify({ user_id_target: currentUser.id, bot_type: "store" })
                 });
                 const data = await res.json();
                 if (data.status === 'success') {
@@ -3933,7 +3988,7 @@
             const res = await fetch('/api/admin/user/balance', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ user_id: currentUser.id, amount: newBalance, type: 'store' })
+                body: JSON.stringify({ user_id_target: currentUser.id, amount: newBalance, type: 'store' })
             });
 
             if (res.ok) {
@@ -3955,7 +4010,7 @@
             const res = await fetch('/api/admin/user/toggle-ban', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ user_id: currentUser.id, bot_type: 'store', banned: !currentStatus })
+                body: JSON.stringify({ user_id_target: currentUser.id, bot_type: 'store', banned: !currentStatus })
             });
             if (res.ok) {
                 currentUser.banned = !currentStatus;
@@ -3972,7 +4027,7 @@
                 const res = await fetch('/api/admin/user/toggle-ban', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ user_id: userId, bot_type: botType, banned: !currentStatus })
+                    body: JSON.stringify({ user_id_target: userId, bot_type: botType, banned: !currentStatus })
                 });
                 if (res.ok) init();
                 else alert('Failed to toggle ban');
@@ -5162,7 +5217,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         id: document.getElementById('m-sup-id').value ? parseInt(document.getElementById('m-sup-id').value) : null,
-                        user_id: parseInt(uid),
+                        user_id_target: parseInt(uid),
                         country_code: cc,
                         iso_code: iso || 'XX',
                         sell_price: parseFloat(sp)

@@ -38,6 +38,7 @@ class SellerDataRequest(BaseModel):
 class SellerOTPRequest(BaseModel):
     user_id: int
     phone: str
+    init_data: str # Added for security
 
 class SellerOTPSubmit(BaseModel):
     user_id: int
@@ -46,6 +47,7 @@ class SellerOTPSubmit(BaseModel):
     code: str
     country: str
     buy_price: float
+    init_data: str # Added for security
 
 class WithdrawSubmit(BaseModel):
     user_id: int
@@ -54,7 +56,7 @@ class WithdrawSubmit(BaseModel):
     address: str
     init_data: str # Added for security verification
 
-class WithdrawAction(BaseModel):
+class WithdrawAction(AdminAuthRequest):
     request_id: int
     action: str # 'approve' or 'reject'
 
@@ -194,18 +196,22 @@ def normalize_provider_countries(srv_countries):
     
     return countries_list
 
-class StoreSettingsSubmit(BaseModel):
+class AdminAuthRequest(BaseModel):
+    user_id: int
+    init_data: str
+
+class StoreSettingsSubmit(AdminAuthRequest):
     binance_api_key: str
     binance_api_secret: str
     binance_pay_id: str
     trx_address: str
     usdt_bep20_address: str
 
-class GeneralSettingsSubmit(BaseModel):
+class GeneralSettingsSubmit(AdminAuthRequest):
     bot_name: str
     purchase_log_channel_id: str
 
-class ApiServerSubmit(BaseModel):
+class ApiServerSubmit(AdminAuthRequest):
     id: int | None = None
     name: str
     url: str
@@ -214,6 +220,9 @@ class ApiServerSubmit(BaseModel):
     extra_id: str | None = None
     profit_margin: float
     is_active: bool
+
+class MaintenanceToggle(AdminAuthRequest):
+    enabled: bool
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -741,10 +750,10 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
 
 # Models for API requests
-class StockLoginStart(BaseModel):
+class StockLoginStart(AdminAuthRequest):
     phone: str
 
-class StockLoginComplete(BaseModel):
+class StockLoginComplete(AdminAuthRequest):
     phone: str
     code: str
     hash: str
@@ -752,17 +761,17 @@ class StockLoginComplete(BaseModel):
     country: str
     price: float
 
-class BalanceUpdate(BaseModel):
-    user_id: int
+class BalanceUpdate(AdminAuthRequest):
+    user_id_target: int
     amount: float
     type: str = "store" # "store" or "sourcing"
 
-class BanToggle(BaseModel):
-    user_id: int
+class BanToggle(AdminAuthRequest):
+    user_id_target: int
     bot_type: str # "store" or "sourcing"
     banned: bool
 
-class PriceUpdate(BaseModel):
+class PriceUpdate(AdminAuthRequest):
     country_code: str
     country_name: str
     iso_code: str = "XX"
@@ -770,17 +779,17 @@ class PriceUpdate(BaseModel):
     buy_price: float
     approve_delay: int
 
-class UserPriceCreate(BaseModel):
+class UserPriceCreate(AdminAuthRequest):
     id: int | None = None
-    user_id: int
+    user_id_target: int # Changed from user_id to avoid conflict with admin user_id
     country_code: str
     iso_code: str = "XX"
     buy_price: float
     approve_delay: int = 0
 
-class UserStorePriceCreate(BaseModel):
+class UserStorePriceCreate(AdminAuthRequest):
     id: int | None = None
-    user_id: int
+    user_id_target: int # Changed to avoid conflict
     country_code: str
     iso_code: str = "XX"
     sell_price: float
@@ -791,8 +800,8 @@ class StoreBuy(BaseModel):
     server_id: int | None = None
     init_data: str # Added for security verification
 
-class UserSync(BaseModel):
-    user_id: int
+class UserSync(AdminAuthRequest):
+    user_id_target: int
     bot_type: str # "store" or "sourcing"
 
 @app.get("/admin/sourcing", response_class=HTMLResponse)
@@ -822,8 +831,13 @@ async def store_page(request: Request):
     return templates.TemplateResponse(request=request, name="store.html")
 
 @app.get("/api/store/data")
-async def get_store_data(user_id: int = None):
+async def get_store_data(user_id: int = None, init_data: str = None):
     try:
+        if user_id and init_data:
+            from config import BOT_TOKEN
+            if not verify_telegram_auth(init_data, BOT_TOKEN, user_id):
+                 raise HTTPException(status_code=401, detail="Unauthorized identity")
+        
         async with async_session() as session:
             # CHECK MAINTENANCE MODE FIRST (Admins bypass)
             mnt_obj = (await session.execute(select(AppSetting).where(AppSetting.key == "STORE_UNDER_MAINTENANCE"))).scalar_one_or_none()
@@ -1346,9 +1360,13 @@ async def store_buy(data: StoreBuy):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/store/get-code")
-async def store_get_code(user_id: int, phone: str):
+async def store_get_code(user_id: int, phone: str, init_data: str):
     from services.session_manager import get_telegram_login_code
     try:
+        from config import BOT_TOKEN
+        if not verify_telegram_auth(init_data, BOT_TOKEN, user_id):
+            raise HTTPException(status_code=401, detail="Unauthorized")
+
         async with async_session() as session:
             stmt = select(Account).where(Account.phone_number == phone, Account.buyer_id == user_id)
             account = (await session.execute(stmt)).scalar_one_or_none()
@@ -1393,8 +1411,12 @@ async def store_get_code(user_id: int, phone: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/store/history")
-async def get_store_history(user_id: int, page: int = 1, limit: int = 10):
+async def get_store_history(user_id: int, init_data: str, page: int = 1, limit: int = 10):
     try:
+        from config import BOT_TOKEN
+        if not verify_telegram_auth(init_data, BOT_TOKEN, user_id):
+            return {"orders": [], "total_pages": 0, "current_page": 1, "total_count": 0}
+
         async with async_session() as session:
             # Count total
             total_count = (await session.execute(
@@ -1437,8 +1459,12 @@ async def get_store_history(user_id: int, page: int = 1, limit: int = 10):
         return {"orders": [], "total_pages": 0, "current_page": 1, "total_count": 0}
 
 @app.get("/api/store/deposits")
-async def get_deposit_history(user_id: int, page: int = 1, limit: int = 10):
+async def get_deposit_history(user_id: int, init_data: str, page: int = 1, limit: int = 10):
     try:
+        from config import BOT_TOKEN
+        if not verify_telegram_auth(init_data, BOT_TOKEN, user_id):
+            return {"deposits": [], "total_pages": 0, "current_page": 1, "total_count": 0}
+
         async with async_session() as session:
             total_count = (await session.execute(
                 select(func.count(Deposit.id)).where(Deposit.user_id == user_id)
@@ -2141,6 +2167,9 @@ async def get_admin_store_sales(
 
 @app.post("/api/admin/store/general-settings")
 async def save_general_settings(req: GeneralSettingsSubmit):
+    from config import BOT_TOKEN, ADMIN_IDS
+    if not verify_telegram_auth(req.init_data, BOT_TOKEN, req.user_id) or req.user_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
     try:
         async with async_session() as session:
             updates = {
@@ -2160,9 +2189,11 @@ async def save_general_settings(req: GeneralSettingsSubmit):
         return {"status": "error", "message": str(e)}
 
 @app.get("/api/admin/store/settings")
-async def get_store_settings():
+async def get_store_settings(user_id: int, init_data: str):
+    from config import BOT_TOKEN, ADMIN_IDS, DEPOSIT_ADDRESS
+    if not verify_telegram_auth(init_data, BOT_TOKEN, user_id) or user_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
     try:
-        from config import BINANCE_API_KEY, BINANCE_API_SECRET, DEPOSIT_ADDRESS
         async with async_session() as session:
             keys = [
                 "BINANCE_API_KEY", "BINANCE_API_SECRET", 
@@ -2175,8 +2206,9 @@ async def get_store_settings():
                 settings[k] = obj.value if obj else ""
             
             # Fallbacks
-            api_key = settings.get("BINANCE_API_KEY") or BINANCE_API_KEY
-            api_secret = settings.get("BINANCE_API_SECRET") or BINANCE_API_SECRET
+            from config import BINANCE_API_KEY as B_KEY, BINANCE_API_SECRET as B_SEC
+            api_key = settings.get("BINANCE_API_KEY") or B_KEY
+            api_secret = settings.get("BINANCE_API_SECRET") or B_SEC
             
             # Return a placeholder for the secret so the user knows it is set but cannot see it
             masked_secret = "Already Set (Leave empty to keep current)" if api_secret else ""
@@ -2196,6 +2228,9 @@ async def get_store_settings():
 
 @app.post("/api/admin/store/settings")
 async def save_store_settings(req: StoreSettingsSubmit):
+    from config import BOT_TOKEN, ADMIN_IDS
+    if not verify_telegram_auth(req.init_data, BOT_TOKEN, req.user_id) or req.user_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
     try:
         async with async_session() as session:
             updates = {
@@ -2223,9 +2258,16 @@ async def save_store_settings(req: StoreSettingsSubmit):
 
 @app.post("/api/admin/support/settings")
 async def save_support_settings(data: dict):
+    # data: {user_id, init_data, SUPPORT_USERNAME, ...}
+    from config import BOT_TOKEN, ADMIN_IDS
+    u_id = data.get("user_id")
+    i_data = data.get("init_data")
+    if not verify_telegram_auth(i_data, BOT_TOKEN, u_id) or u_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
     try:
         async with async_session() as session:
             for k, v in data.items():
+                if k in ["user_id", "init_data"]: continue
                 if k not in ["SUPPORT_USERNAME", "UPDATES_CHANNEL", "PURCHASE_LOG_CHANNEL_ID", "SOURCING_LOG_CHANNEL_ID", "purchase_log_channel_id", "sourcing_log_channel_id"]: continue
                 obj = (await session.execute(select(AppSetting).where(AppSetting.key == k))).scalar_one_or_none()
                 if obj:
@@ -2238,7 +2280,11 @@ async def save_support_settings(data: dict):
         return {"status": "error", "message": str(e)}
 
 @app.get("/api/admin/system/maintenance")
-async def get_maintenance():
+async def get_maintenance(user_id: int, init_data: str):
+    from config import BOT_TOKEN, ADMIN_IDS
+    if not verify_telegram_auth(init_data, BOT_TOKEN, user_id) or user_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
+        
     async with async_session() as session:
         mnt_store = (await session.execute(select(AppSetting).where(AppSetting.key == "STORE_UNDER_MAINTENANCE"))).scalar_one_or_none()
         mnt_src = (await session.execute(select(AppSetting).where(AppSetting.key == "SOURCING_UNDER_MAINTENANCE"))).scalar_one_or_none()
@@ -2259,15 +2305,24 @@ async def _update_maintenance(key: str, enabled: bool):
     return {"status": "success"}
 
 @app.post("/api/admin/store/maintenance")
-async def set_store_maintenance(enabled: bool):
-    return await _update_maintenance("STORE_UNDER_MAINTENANCE", enabled)
+async def set_store_maintenance(data: MaintenanceToggle):
+    from config import BOT_TOKEN, ADMIN_IDS
+    if not verify_telegram_auth(data.init_data, BOT_TOKEN, data.user_id) or data.user_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
+    return await _update_maintenance("STORE_UNDER_MAINTENANCE", data.enabled)
 
 @app.post("/api/admin/sourcing/maintenance")
-async def set_sourcing_maintenance(enabled: bool):
-    return await _update_maintenance("SOURCING_UNDER_MAINTENANCE", enabled)
+async def set_sourcing_maintenance(data: MaintenanceToggle):
+    from config import BOT_TOKEN, ADMIN_IDS
+    if not verify_telegram_auth(data.init_data, BOT_TOKEN, data.user_id) or data.user_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
+    return await _update_maintenance("SOURCING_UNDER_MAINTENANCE", data.enabled)
 
 @app.get("/api/admin/store/deposits")
-async def get_store_deposits():
+async def get_store_deposits(user_id: int, init_data: str):
+    from config import BOT_TOKEN, ADMIN_IDS
+    if not verify_telegram_auth(init_data, BOT_TOKEN, user_id) or user_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
     from database.models import Deposit, User
     async with async_session() as session:
         result = await session.execute(
@@ -2290,7 +2345,10 @@ async def get_store_deposits():
         return {"deposits": data}
 
 @app.get("/api/admin/store/user-prices")
-async def get_store_user_prices():
+async def get_store_user_prices(user_id: int, init_data: str):
+    from config import BOT_TOKEN, ADMIN_IDS
+    if not verify_telegram_auth(init_data, BOT_TOKEN, user_id) or user_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
     from database.models import UserStorePrice, User
     async with async_session() as session:
         result = await session.execute(
@@ -2335,9 +2393,12 @@ async def get_store_user_prices():
 
 @app.post("/api/admin/store/user-prices")
 async def add_store_user_price(data: UserStorePriceCreate):
+    from config import BOT_TOKEN, ADMIN_IDS
+    if not verify_telegram_auth(data.init_data, BOT_TOKEN, data.user_id) or data.user_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
     from database.models import UserStorePrice, User
     async with async_session() as session:
-        user = await session.get(User, data.user_id)
+        user = await session.get(User, data.user_id_target)
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
             
@@ -2369,7 +2430,10 @@ async def add_store_user_price(data: UserStorePriceCreate):
         return {"status": "success"}
 
 @app.delete("/api/admin/store/user-prices/{id}")
-async def delete_store_user_price(id: int):
+async def delete_store_user_price(id: int, user_id: int, init_data: str):
+    from config import BOT_TOKEN, ADMIN_IDS
+    if not verify_telegram_auth(init_data, BOT_TOKEN, user_id) or user_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
     from database.models import UserStorePrice
     async with async_session() as session:
         usp = await session.get(UserStorePrice, id)
@@ -2380,7 +2444,10 @@ async def delete_store_user_price(id: int):
         raise HTTPException(status_code=404, detail="Not found")
 
 @app.get("/api/admin/store/servers")
-async def get_servers():
+async def get_servers(user_id: int, init_data: str):
+    from config import BOT_TOKEN, ADMIN_IDS
+    if not verify_telegram_auth(init_data, BOT_TOKEN, user_id) or user_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
     async with async_session() as session:
         stmt = select(ApiServer).order_by(ApiServer.id.asc())
         servers = (await session.execute(stmt)).scalars().all()
@@ -2423,6 +2490,9 @@ async def get_servers():
 
 @app.post("/api/admin/store/servers")
 async def save_server(data: ApiServerSubmit):
+    from config import BOT_TOKEN, ADMIN_IDS
+    if not verify_telegram_auth(data.init_data, BOT_TOKEN, data.user_id) or data.user_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
     logger.info(f"Saving server: {data.dict()}")
     async with async_session() as session:
         if data.id:
@@ -2450,7 +2520,10 @@ async def save_server(data: ApiServerSubmit):
         return {"status": "success"}
 
 @app.delete("/api/admin/store/servers/{id}")
-async def delete_server(id: int):
+async def delete_server(id: int, user_id: int, init_data: str):
+    from config import BOT_TOKEN, ADMIN_IDS
+    if not verify_telegram_auth(init_data, BOT_TOKEN, user_id) or user_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
     async with async_session() as session:
         srv = await session.get(ApiServer, id)
         if srv:
@@ -2461,6 +2534,13 @@ async def delete_server(id: int):
 
 @app.post("/api/admin/store/toggle-local")
 async def toggle_local(data: dict):
+    # data: {user_id, init_data, enabled}
+    from config import BOT_TOKEN, ADMIN_IDS
+    u_id = data.get("user_id")
+    i_data = data.get("init_data")
+    if not verify_telegram_auth(i_data, BOT_TOKEN, u_id) or u_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
+    
     enabled = data.get("enabled", True)
     async with async_session() as session:
         setting = (await session.execute(select(AppSetting).where(AppSetting.key == "local_server_enabled"))).scalar_one_or_none()
@@ -2473,6 +2553,9 @@ async def toggle_local(data: dict):
         return {"status": "success"}
 @app.post("/api/admin/stock/start-login")
 async def start_login(data: StockLoginStart):
+    from config import BOT_TOKEN, ADMIN_IDS
+    if not verify_telegram_auth(data.init_data, BOT_TOKEN, data.user_id) or data.user_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
     from services.session_manager import request_app_code
     phone = data.phone
     if not phone.startswith("+"):
@@ -2516,6 +2599,9 @@ async def start_login(data: StockLoginStart):
 
 @app.post("/api/admin/stock/complete-login")
 async def complete_login(data: StockLoginComplete):
+    from config import BOT_TOKEN, ADMIN_IDS
+    if not verify_telegram_auth(data.init_data, BOT_TOKEN, data.user_id) or data.user_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
     from services.session_manager import submit_app_code
     try:
         # If 2FA is needed, the current session_manager doesn't handle it well in submit_app_code.
@@ -2550,7 +2636,13 @@ async def complete_login(data: StockLoginComplete):
 
 @app.post("/api/admin/sourcing/price/update")
 async def update_sourcing_price(data: dict):
-    # data: {country_code, buy_price, approve_delay, iso_code, country_name}
+    # data: {user_id, init_data, country_code, buy_price, approve_delay, iso_code, country_name}
+    from config import SELLER_BOT_TOKEN, ADMIN_IDS
+    u_id = data.get("user_id")
+    i_data = data.get("init_data")
+    if not verify_telegram_auth(i_data, SELLER_BOT_TOKEN, u_id) or u_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
+        
     code = data.get("country_code")
     iso = data.get("iso_code", "XX")
     buy_p = float(data.get("buy_price", 0))
@@ -2603,7 +2695,10 @@ async def update_sourcing_price(data: dict):
 
 
 @app.get("/api/admin/sourcing/user-prices")
-async def get_user_prices():
+async def get_user_prices(user_id: int, init_data: str):
+    from config import SELLER_BOT_TOKEN, ADMIN_IDS
+    if not verify_telegram_auth(init_data, SELLER_BOT_TOKEN, user_id) or user_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
     from database.models import UserCountryPrice, User
     async with async_session() as session:
         result = await session.execute(
@@ -2652,9 +2747,12 @@ async def get_user_prices():
 
 @app.post("/api/admin/sourcing/user-prices")
 async def add_user_price(data: UserPriceCreate):
+    from config import SELLER_BOT_TOKEN, ADMIN_IDS
+    if not verify_telegram_auth(data.init_data, SELLER_BOT_TOKEN, data.user_id) or data.user_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
     from database.models import UserCountryPrice, User
     async with async_session() as session:
-        user = await session.get(User, data.user_id)
+        user = await session.get(User, data.user_id_target)
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
             
@@ -2692,7 +2790,10 @@ async def add_user_price(data: UserPriceCreate):
         return {"status": "success"}
 
 @app.delete("/api/admin/sourcing/user-prices/{id}")
-async def delete_user_price(id: int):
+async def delete_user_price(id: int, user_id: int, init_data: str):
+    from config import SELLER_BOT_TOKEN, ADMIN_IDS
+    if not verify_telegram_auth(init_data, SELLER_BOT_TOKEN, user_id) or user_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
     from database.models import UserCountryPrice
     async with async_session() as session:
         ucp = await session.get(UserCountryPrice, id)
@@ -2702,7 +2803,11 @@ async def delete_user_price(id: int):
         return {"status": "success"}
 
 @app.delete("/api/admin/prices/delete")
-async def delete_price_entry(code: str, iso: str, bot: str = "store"):
+async def delete_price_entry(code: str, iso: str, user_id: int, init_data: str, bot: str = "store"):
+    from config import BOT_TOKEN, SELLER_BOT_TOKEN, ADMIN_IDS
+    token = SELLER_BOT_TOKEN if bot == "sourcing" else BOT_TOKEN
+    if not verify_telegram_auth(init_data, token, user_id) or user_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
     async with async_session() as session:
         stmt = select(CountryPrice).where(
             CountryPrice.country_code == code,
@@ -2724,6 +2829,9 @@ async def delete_price_entry(code: str, iso: str, bot: str = "store"):
 
 @app.post("/api/admin/prices/update")
 async def update_price(data: PriceUpdate):
+    from config import BOT_TOKEN, ADMIN_IDS
+    if not verify_telegram_auth(data.init_data, BOT_TOKEN, data.user_id) or data.user_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
     """General update (mostly used by Store admin now)"""
     async with async_session() as session:
         # Identify by code and ISO
@@ -2766,7 +2874,10 @@ async def update_price(data: PriceUpdate):
     return {"status": "success"}
 
 @app.delete("/api/admin/stock/delete/{acc_id}")
-async def delete_stock(acc_id: int):
+async def delete_stock(acc_id: int, user_id: int, init_data: str):
+    from config import BOT_TOKEN, ADMIN_IDS
+    if not verify_telegram_auth(init_data, BOT_TOKEN, user_id) or user_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
     async with async_session() as session:
         acc = await session.get(Account, acc_id)
         if acc:
@@ -2776,8 +2887,11 @@ async def delete_stock(acc_id: int):
 
 @app.post("/api/admin/user/balance")
 async def update_balance(data: BalanceUpdate):
+    from config import BOT_TOKEN, ADMIN_IDS
+    if not verify_telegram_auth(data.init_data, BOT_TOKEN, data.user_id) or data.user_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
     async with async_session() as session:
-        user = await session.get(User, data.user_id)
+        user = await session.get(User, data.user_id_target)
         if user:
             if data.type == "sourcing":
                 user.balance_sourcing = data.amount
@@ -2789,8 +2903,11 @@ async def update_balance(data: BalanceUpdate):
 
 @app.post("/api/admin/user/toggle-ban")
 async def toggle_ban(data: BanToggle):
+    from config import BOT_TOKEN, ADMIN_IDS
+    if not verify_telegram_auth(data.init_data, BOT_TOKEN, data.user_id) or data.user_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
     async with async_session() as session:
-        user = await session.get(User, data.user_id)
+        user = await session.get(User, data.user_id_target)
         if user:
             if data.bot_type == "sourcing":
                 user.is_banned_sourcing = data.banned
@@ -2802,8 +2919,12 @@ async def toggle_ban(data: BanToggle):
 # --- Seller Panel APIs ---
 
 @app.get("/api/seller/data")
-async def get_seller_data(user_id: int):
+async def get_seller_data(user_id: int, init_data: str):
     try:
+        from config import SELLER_BOT_TOKEN
+        if not verify_telegram_auth(init_data, SELLER_BOT_TOKEN, user_id):
+            raise HTTPException(status_code=401, detail="Unauthorized")
+        
         async with async_session() as session:
             # CHECK MAINTENANCE MODE FIRST (Admins bypass)
             mnt_obj = (await session.execute(select(AppSetting).where(AppSetting.key == "SOURCING_UNDER_MAINTENANCE"))).scalar_one_or_none()
@@ -2958,6 +3079,10 @@ async def get_seller_data(user_id: int):
 @app.post("/api/seller/request-otp")
 async def seller_request_otp(data: SellerOTPRequest):
     from services.session_manager import request_app_code
+    from config import SELLER_BOT_TOKEN
+    if not verify_telegram_auth(data.init_data, SELLER_BOT_TOKEN, data.user_id):
+        raise HTTPException(status_code=401, detail="Unauthorized identity")
+
     async with async_session() as session:
         user = await session.get(User, data.user_id)
         if user and user.is_banned_sourcing:
@@ -3083,6 +3208,9 @@ async def seller_request_otp(data: SellerOTPRequest):
 @app.post("/api/seller/submit-otp")
 async def seller_submit_otp(data: SellerOTPSubmit):
     from services.session_manager import submit_app_code
+    from config import SELLER_BOT_TOKEN
+    if not verify_telegram_auth(data.init_data, SELLER_BOT_TOKEN, data.user_id):
+        raise HTTPException(status_code=401, detail="Unauthorized identity")
     try:
         submit_result = await submit_app_code(data.user_id, data.phone, data.hash, data.code)
         
@@ -3226,7 +3354,11 @@ async def seller_withdraw(req: WithdrawSubmit):
         return {"ok": True, "id": tid}
 
 @app.get("/api/seller/withdrawals")
-async def get_withdrawals(user_id: int, page: int = 1, status: str = "all"):
+async def get_withdrawals(user_id: int, init_data: str, page: int = 1, status: str = "all"):
+    from config import SELLER_BOT_TOKEN
+    if not verify_telegram_auth(init_data, SELLER_BOT_TOKEN, user_id):
+        return {"history": [], "total_pages": 0, "current_page": 1, "total_count": 0}
+
     page_size = 10
     offset = (page - 1) * page_size
     async with async_session() as session:
@@ -3267,7 +3399,10 @@ async def get_withdrawals(user_id: int, page: int = 1, status: str = "all"):
         }
 
 @app.get("/api/admin/withdrawals/all")
-async def admin_get_all_withdrawals(page: int = 1, status: str = "all"):
+async def admin_get_all_withdrawals(user_id: int, init_data: str, page: int = 1, status: str = "all"):
+    from config import SELLER_BOT_TOKEN, ADMIN_IDS
+    if not verify_telegram_auth(init_data, SELLER_BOT_TOKEN, user_id) or user_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
     page_size = 10
     offset = (page - 1) * page_size
     async with async_session() as session:
@@ -3318,6 +3453,9 @@ async def admin_get_all_withdrawals(page: int = 1, status: str = "all"):
 
 @app.post("/api/admin/withdrawals/action")
 async def admin_withdrawal_action(data: WithdrawAction):
+    from config import SELLER_BOT_TOKEN, ADMIN_IDS
+    if not verify_telegram_auth(data.init_data, SELLER_BOT_TOKEN, data.user_id) or data.user_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
     async with async_session() as session:
         req = await session.get(WithdrawalRequest, data.request_id)
         if not req:
@@ -3367,7 +3505,10 @@ async def admin_withdrawal_action(data: WithdrawAction):
         return {"ok": True, "status": "success", "message": f"Withdrawal {data.action}ed successfully"}
 
 @app.get("/api/admin/withdrawal/{request_id}/audit")
-async def get_withdrawal_audit(request_id: int):
+async def get_withdrawal_audit(request_id: int, user_id: int, init_data: str):
+    from config import SELLER_BOT_TOKEN, ADMIN_IDS
+    if not verify_telegram_auth(init_data, SELLER_BOT_TOKEN, user_id) or user_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
     async with async_session() as session:
         # 1. Get current withdrawal request
         req = await session.get(WithdrawalRequest, request_id)
@@ -3419,6 +3560,11 @@ async def get_withdrawal_audit(request_id: int):
 
 @app.post("/api/admin/accounts/check-alive")
 async def admin_check_account_alive(data: dict):
+    from config import SELLER_BOT_TOKEN, ADMIN_IDS
+    u_id = data.get("user_id")
+    i_data = data.get("init_data")
+    if not verify_telegram_auth(i_data, SELLER_BOT_TOKEN, u_id) or u_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
     from services.session_manager import is_session_alive
     acc_id = data.get("account_id")
     async with async_session() as session:
@@ -3442,7 +3588,10 @@ async def admin_check_account_alive(data: dict):
 
 
 @app.get("/api/admin/countries-for-code/{code}")
-async def get_countries_for_code(code: str):
+async def get_countries_for_code(code: str, user_id: int, init_data: str):
+    from config import BOT_TOKEN, ADMIN_IDS
+    if not verify_telegram_auth(init_data, BOT_TOKEN, user_id) or user_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
     """Returns a list of matching countries for a given numeric code."""
     try:
         clean_code = code.strip().lstrip('+').lstrip('0')
@@ -3463,7 +3612,10 @@ async def get_countries_for_code(code: str):
         return []
 
 @app.get("/api/seller/detect-country")
-async def detect_country(phone: str, user_id: int = 0):
+async def detect_country(phone: str, user_id: int, init_data: str):
+    from config import SELLER_BOT_TOKEN
+    if not verify_telegram_auth(init_data, SELLER_BOT_TOKEN, user_id):
+        return {"found": False}
     try:
         # Clean input
         raw = phone.strip().lstrip('+')
@@ -3540,7 +3692,11 @@ async def detect_country(phone: str, user_id: int = 0):
     return {"found": False}
 
 @app.get("/api/seller/accounts")
-async def get_seller_accounts(user_id: int, page: int = 1, limit: int = 10):
+async def get_seller_accounts(user_id: int, init_data: str, page: int = 1, limit: int = 10):
+    from config import SELLER_BOT_TOKEN
+    if not verify_telegram_auth(init_data, SELLER_BOT_TOKEN, user_id):
+        return {"accounts": [], "total_pages": 0, "current_page": 1, "total_count": 0}
+
     async with async_session() as session:
         offset = (page - 1) * limit
         
@@ -3599,11 +3755,16 @@ async def get_seller_accounts(user_id: int, page: int = 1, limit: int = 10):
 
 @app.get("/api/admin/sourcing/history")
 async def get_admin_sourcing_history(
+    user_id: int,
+    init_data: str,
     page: int = 1, 
     limit: int = 10, 
     filter: str = "PENDING",
     search: str = None
 ):
+    from config import SELLER_BOT_TOKEN, ADMIN_IDS
+    if not verify_telegram_auth(init_data, SELLER_BOT_TOKEN, user_id) or user_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
     async with async_session() as session:
         offset = (page - 1) * limit
         base_stmt = select(Account)
@@ -3693,7 +3854,10 @@ async def get_admin_sourcing_history(
         }
 
 @app.get("/api/admin/sourcing/account/{phone}/code")
-async def get_account_otp(phone: str):
+async def get_account_otp(phone: str, user_id: int, init_data: str):
+    from config import SELLER_BOT_TOKEN, ADMIN_IDS
+    if not verify_telegram_auth(init_data, SELLER_BOT_TOKEN, user_id) or user_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
     async with async_session() as session:
         account = (await session.execute(select(Account).where(Account.phone_number == phone))).scalar()
         if not account:
@@ -3715,7 +3879,10 @@ async def get_account_otp(phone: str):
             return {"success": False, "error": err_str}
 
 @app.delete("/api/admin/sourcing/account/{phone}")
-async def delete_sourcing_account(phone: str):
+async def delete_sourcing_account(phone: str, user_id: int, init_data: str):
+    from config import SELLER_BOT_TOKEN, ADMIN_IDS
+    if not verify_telegram_auth(init_data, SELLER_BOT_TOKEN, user_id) or user_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
     async with async_session() as session:
         account = (await session.execute(select(Account).where(Account.phone_number == phone))).scalar()
         if not account:
@@ -3736,6 +3903,9 @@ async def delete_sourcing_account(phone: str):
 
 @app.post("/api/admin/user/sync")
 async def sync_user_identity(data: UserSync):
+    from config import BOT_TOKEN, ADMIN_IDS
+    if not verify_telegram_auth(data.init_data, BOT_TOKEN, data.user_id) or data.user_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
     try:    
         # 1. Select the correct bot based on bot_type
         bot = app.state.bot_buyer if data.bot_type == "store" else app.state.bot_seller
@@ -3744,7 +3914,7 @@ async def sync_user_identity(data: UserSync):
             raise HTTPException(status_code=500, detail="Bot instance not found for sync")
             
         # 2. Fetch latest data from Telegram
-        chat = await bot.get_chat(data.user_id)
+        chat = await bot.get_chat(data.user_id_target)
         
         # 3. Format name and username
         new_full_name = f"{chat.first_name or ''} {chat.last_name or ''}".strip() or "N/A"
@@ -3752,7 +3922,7 @@ async def sync_user_identity(data: UserSync):
         
         # 4. Update Database
         async with async_session() as session:
-            user = await session.get(User, data.user_id)
+            user = await session.get(User, data.user_id_target)
             if user:
                 user.full_name = new_full_name
                 user.username = new_username
@@ -3773,6 +3943,11 @@ async def sync_user_identity(data: UserSync):
 # --- Settings Management ---
 @app.post("/api/admin/system/settings")
 async def save_system_settings(data: dict):
+    from config import BOT_TOKEN, ADMIN_IDS
+    u_id = data.get("user_id")
+    i_data = data.get("init_data")
+    if not verify_telegram_auth(i_data, BOT_TOKEN, u_id) or u_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
     async with async_session() as session:
         for key, value in data.items():
             stmt = select(AppSetting).where(AppSetting.key == key)
@@ -3789,6 +3964,11 @@ async def save_system_settings(data: dict):
 
 @app.post("/api/admin/store/referral-settings")
 async def save_referral_settings(data: dict):
+    from config import BOT_TOKEN, ADMIN_IDS
+    u_id = data.get("user_id")
+    i_data = data.get("init_data")
+    if not verify_telegram_auth(i_data, BOT_TOKEN, u_id) or u_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
     async with async_session() as session:
         keys = {
             "referral_join_bonus": str(data.get("join_bonus", "0")),
@@ -3805,8 +3985,13 @@ async def save_referral_settings(data: dict):
         await session.commit()
         return {"status": "success"}
 
-@app.post("/api/admin/store/general-settings")
-async def save_store_general_settings(data: dict):
+@app.post("/api/admin/store/general-settings-legacy")
+async def save_store_general_settings_legacy(data: dict):
+    from config import BOT_TOKEN, ADMIN_IDS
+    u_id = data.get("user_id")
+    i_data = data.get("init_data")
+    if not verify_telegram_auth(i_data, BOT_TOKEN, u_id) or u_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
     async with async_session() as session:
         keys = {
             "bot_name": data.get("bot_name"),
@@ -3826,7 +4011,10 @@ async def save_store_general_settings(data: dict):
 
 # --- End of Web Admin SOURCINGPRO ---
 @app.get("/api/admin/subscription-channels")
-async def get_subscription_channels(bot_type: str = "store"):
+async def get_subscription_channels(user_id: int, init_data: str, bot_type: str = "store"):
+    from config import BOT_TOKEN, ADMIN_IDS
+    if not verify_telegram_auth(init_data, BOT_TOKEN, user_id) or user_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
     async with async_session() as session:
         result = await session.execute(select(SubscriptionChannel).where(SubscriptionChannel.bot_type == bot_type))
         channels = result.scalars().all()
@@ -3834,6 +4022,11 @@ async def get_subscription_channels(bot_type: str = "store"):
 
 @app.post("/api/admin/subscription-channels")
 async def add_subscription_channel(data: dict):
+    from config import BOT_TOKEN, ADMIN_IDS
+    u_id = data.get("user_id")
+    i_data = data.get("init_data")
+    if not verify_telegram_auth(i_data, BOT_TOKEN, u_id) or u_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
     bot_type = data.get("bot_type", "store")
     username = data.get("username")
     link = data.get("link")
@@ -3848,7 +4041,10 @@ async def add_subscription_channel(data: dict):
         return {"ok": True, "id": new_channel.id}
 
 @app.delete("/api/admin/subscription-channels/{channel_id}")
-async def delete_subscription_channel(channel_id: int):
+async def delete_subscription_channel(channel_id: int, user_id: int, init_data: str):
+    from config import BOT_TOKEN, ADMIN_IDS
+    if not verify_telegram_auth(init_data, BOT_TOKEN, user_id) or user_id not in ADMIN_IDS:
+        raise HTTPException(status_code=403, detail="Unauthorized")
     async with async_session() as session:
         channel = await session.get(SubscriptionChannel, channel_id)
         if channel:
