@@ -641,23 +641,28 @@
 
         .confirm-btn {
             flex: 1;
-            padding: 12px;
+            padding: 14px 0;
             border-radius: 12px;
-            font-weight: 600;
+            font-weight: 700;
+            font-size: 0.95rem;
             cursor: pointer;
             transition: 0.3s;
-            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid transparent;
         }
 
         .confirm-yes {
-            background: var(--danger);
-            color: #fff;
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border-color: rgba(239, 68, 68, 0.2);
         }
 
         .confirm-no {
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text-primary);
-            border: 1px solid var(--border);
+            background: rgba(96, 165, 250, 0.1);
+            color: var(--accent);
+            border-color: rgba(96, 165, 250, 0.2);
         }
 
         .confirm-yes:hover {
@@ -666,13 +671,15 @@
         }
 
         .confirm-btn.danger {
-            background: var(--danger);
-            color: #fff;
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border-color: rgba(239, 68, 68, 0.2);
         }
 
         .confirm-btn.approve {
-            background: var(--success);
-            color: #fff;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border-color: rgba(16, 185, 129, 0.2);
         }
 
         .confirm-btn.danger:hover,
@@ -682,7 +689,7 @@
         }
 
         .confirm-no:hover {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(96, 165, 250, 0.15);
         }
 
         /* ========== Main Scroller ========== */
