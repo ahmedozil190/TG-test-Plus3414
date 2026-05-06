@@ -2436,7 +2436,7 @@ async def add_store_user_price(data: UserStorePriceCreate):
             usp.iso_code = data.iso_code
         else:
             stmt = select(UserStorePrice).where(
-                UserStorePrice.user_id == data.user_id,
+                UserStorePrice.user_id == data.user_id_target,
                 UserStorePrice.country_code == data.country_code,
                 UserStorePrice.iso_code == data.iso_code
             )
@@ -2445,7 +2445,7 @@ async def add_store_user_price(data: UserStorePriceCreate):
                 raise HTTPException(status_code=400, detail="This country is already added for this user. Please edit the existing entry instead.")
             
             new_usp = UserStorePrice(
-                user_id=data.user_id,
+                user_id=data.user_id_target,
                 country_code=data.country_code,
                 iso_code=data.iso_code,
                 sell_price=data.sell_price
@@ -2794,7 +2794,7 @@ async def add_user_price(data: UserPriceCreate):
         else:
             # Check for Duplicate before adding new
             stmt = select(UserCountryPrice).where(
-                UserCountryPrice.user_id == data.user_id,
+                UserCountryPrice.user_id == data.user_id_target,
                 UserCountryPrice.country_code == data.country_code,
                 UserCountryPrice.iso_code == data.iso_code
             )
@@ -2803,7 +2803,7 @@ async def add_user_price(data: UserPriceCreate):
                 raise HTTPException(status_code=400, detail="This country is already added for this user. Please edit the existing entry instead.")
                 
             new_ucp = UserCountryPrice(
-                user_id=data.user_id,
+                user_id=data.user_id_target,
                 country_code=data.country_code,
                 iso_code=data.iso_code,
                 buy_price=data.buy_price,
