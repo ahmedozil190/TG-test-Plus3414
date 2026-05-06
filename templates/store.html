@@ -503,7 +503,6 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 160px;
         }
 
         .c-stock {
@@ -518,6 +517,8 @@
             padding: 8px 16px;
             border-radius: 50px;
             font-weight: 600;
+            flex-shrink: 0;
+            white-space: nowrap;
         }
 
         .primary-btn {
@@ -1760,7 +1761,7 @@
                 <div class="country-card" onclick="openBuyModal(${JSON.stringify(c).replace(/"/g, '&quot;')})">
                     <div style="display: flex; align-items: center; gap: 15px;">
                         <span class="c-flag">${c.flag}</span>
-                        <div style="min-width: 0;">
+                        <div style="min-width: 0; flex: 1;">
                             <div class="c-name">${c.name}</div>
                             <div class="c-stock">${c.count} ${translations[currentLang].available}</div>
                         </div>

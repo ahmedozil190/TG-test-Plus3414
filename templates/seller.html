@@ -602,7 +602,6 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 150px;
         }
 
         .c-code {
@@ -618,6 +617,8 @@
             border-radius: 50px;
             font-weight: 600;
             font-size: 1rem;
+            flex-shrink: 0;
+            white-space: nowrap;
         }
 
         /* ─── Withdrawal Form ─── */
@@ -2026,7 +2027,7 @@
                 <div class="price-item">
                     <div class="country-side">
                         <span class="c-flag">${p.flag}</span>
-                        <div style="min-width: 0;">
+                        <div style="min-width: 0; flex: 1;">
                             <div class="c-name">${p.name}</div>
                             <div class="c-code">+${p.code}</div>
                         </div>
