@@ -500,6 +500,10 @@
             font-size: 1rem;
             font-weight: 500;
             margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 160px;
         }
 
         .c-stock {
@@ -1756,7 +1760,10 @@
                 <div class="country-card" onclick="openBuyModal(${JSON.stringify(c).replace(/"/g, '&quot;')})">
                     <div style="display: flex; align-items: center; gap: 15px;">
                         <span class="c-flag">${c.flag}</span>
-                        <div><div class="c-name">${c.name}</div><div class="c-stock">${c.count} ${translations[currentLang].available}</div></div>
+                        <div style="min-width: 0;">
+                            <div class="c-name">${c.name}</div>
+                            <div class="c-stock">${c.count} ${translations[currentLang].available}</div>
+                        </div>
                     </div>
                     <div class="c-price">${formatMoney(c.buy_price)} USD</div>
                 </div>

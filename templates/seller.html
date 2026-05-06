@@ -599,6 +599,10 @@
             font-size: 0.95rem;
             font-weight: 500;
             margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 150px;
         }
 
         .c-code {
@@ -2022,7 +2026,7 @@
                 <div class="price-item">
                     <div class="country-side">
                         <span class="c-flag">${p.flag}</span>
-                        <div>
+                        <div style="min-width: 0;">
                             <div class="c-name">${p.name}</div>
                             <div class="c-code">+${p.code}</div>
                         </div>
