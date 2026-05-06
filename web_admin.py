@@ -798,7 +798,8 @@ class UserSync(BaseModel):
 @app.get("/admin/sourcing", response_class=HTMLResponse)
 async def admin_sourcing(request: Request):
     try:
-        return templates.TemplateResponse(request=request, name="admin_sourcing.html", context={})
+        from config import ADMIN_IDS
+        return templates.TemplateResponse(request=request, name="admin_sourcing.html", context={"ADMIN_IDS": ADMIN_IDS})
     except Exception as e:
         logger.error(f"Error rendering sourcing dashboard: {e}")
         return HTMLResponse(content=f"<h1>Error</h1><pre>{e}</pre>", status_code=500)
@@ -806,10 +807,11 @@ async def admin_sourcing(request: Request):
 @app.get("/admin/store", response_class=HTMLResponse)
 async def admin_store(request: Request):
     try:
-        return templates.TemplateResponse(request=request, name="admin_store.html", context={})
+        from config import ADMIN_IDS
+        return templates.TemplateResponse(request=request, name="admin_store.html", context={"ADMIN_IDS": ADMIN_IDS})
     except Exception as e:
         logger.error(f"Error rendering store dashboard: {e}")
-    return templates.TemplateResponse(request=request, name="admin_store.html")
+    return templates.TemplateResponse(request=request, name="admin_store.html", context={"ADMIN_IDS": []})
 
 @app.get("/", response_class=HTMLResponse)
 async def admin_dashboard(request: Request):

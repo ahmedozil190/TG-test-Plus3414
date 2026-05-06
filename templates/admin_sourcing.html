@@ -6,6 +6,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sourcing Dashboard</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script>
+        (function() {
+            const tg = window.Telegram.WebApp;
+            const adminIds = {{ ADMIN_IDS | tojson }};
+            const userId = tg.initDataUnsafe?.user?.id;
+            
+            if (!tg.initData || !adminIds.includes(userId)) {
+                document.write('<style>body { display: none !important; }</style>');
+                alert("Unauthorized Access");
+                window.location.href = "https://t.me/your_bot_username";
+                return;
+            }
+
+            try { tg.expand(); } catch(e) {}
+            const isLight = tg.colorScheme === 'light';
+            const bg = isLight ? '#f1f3f5' : '#1a1a1c';
+            document.write('<style>body{background:' + bg + ' !important}.content-section{display:none !important}.content-section.active-load{display:block !important}</style>');
+            
+            const savedView = sessionStorage.getItem('last_view_admin_sourcing') || 'dashboard';
+            window._initialSectionId = 'section-' + savedView;
+            window._tgIsLight = isLight;
+        })();
+    </script>
     <link
         href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&family=Plus Jakarta Sans:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
@@ -1756,7 +1779,12 @@
     </style>
 </head>
 
-<body class="dark-mode">
+<body>
+    <script>
+        document.body.className = window._tgIsLight ? 'light-mode' : 'dark-mode';
+        var sec = document.getElementById(window._initialSectionId);
+        if (sec) sec.classList.add('active-load', 'active');
+    </script>
     <!-- Loader -->
     <div id="loader">
         <div class="spinner"></div>
@@ -2743,16 +2771,14 @@
         };
 
         const tg = window.Telegram.WebApp;
-        tg.expand();
+        // expand already called in head
 
         // ─── Native Theme Support ───
         function applyTheme() {
-            const scheme = tg.colorScheme;
-            document.body.className = scheme === 'light' ? 'light-mode' : 'dark-mode';
-            tg.headerColor = scheme === 'light' ? '#ffffff' : '#111113';
-            tg.backgroundColor = scheme === 'light' ? '#ffffff' : '#111113';
+            document.body.className = tg.colorScheme === 'light' ? 'light-mode' : 'dark-mode';
         }
         tg.onEvent('themeChanged', applyTheme);
+        applyTheme();
 
         function formatMoney(val) {
             let num = parseFloat(val || 0);
