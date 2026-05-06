@@ -3528,15 +3528,11 @@
 
                             ${isPending ? `
                             <div style="display: flex; gap: 8px; margin-top: 15px; flex-wrap: wrap;">
-                                <button class="withdraw-action-btn approve" 
-                                    onclick="event.stopPropagation(); confirmWithdrawAction('${item.id}', 'approve')">
-                                    <i class="fas fa-stamp"></i>
-                                    Approve
+                                <button class="primary-btn" style="flex: 1; background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); box-shadow: none; padding: 14px; font-size: 0.95rem; display: flex; align-items: center; justify-content: center;" onclick="event.stopPropagation(); confirmWithdrawAction('${item.id}', 'approve')">
+                                    <i class="fas fa-check" style="color: #10b981; ${currentLang === 'ar' ? 'margin-left: 8px;' : 'margin-right: 8px;'}"></i> ${currentLang === 'ar' ? 'قبول' : 'Approve'}
                                 </button>
-                                <button class="withdraw-action-btn reject"
-                                    onclick="event.stopPropagation(); confirmWithdrawAction('${item.id}', 'reject')">
-                                    <i class="fas fa-ban"></i>
-                                    Reject
+                                <button class="primary-btn" style="flex: 1; background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); box-shadow: none; padding: 14px; font-size: 0.95rem; display: flex; align-items: center; justify-content: center;" onclick="event.stopPropagation(); confirmWithdrawAction('${item.id}', 'reject')">
+                                    <i class="fas fa-ban" style="color: var(--danger); ${currentLang === 'ar' ? 'margin-left: 8px;' : 'margin-right: 8px;'}"></i> ${currentLang === 'ar' ? 'رفض' : 'Reject'}
                                 </button>
                             </div>
                             ` : ''}
@@ -4604,7 +4600,7 @@
             const yesBtn = document.querySelector('.confirm-yes');
             if (yesBtn) {
                 yesBtn.className = 'confirm-btn confirm-yes ' + btnClass;
-                yesBtn.innerHTML = (btnClass === 'approve' ? '<i class="fas fa-check" style="margin-inline-end: 8px;"></i>' : '<i class="fas fa-trash-alt" style="margin-inline-end: 8px;"></i>') + btnText;
+                yesBtn.innerHTML = (btnClass === 'approve' ? '<i class="fas fa-check" style="margin-inline-end: 8px;"></i>' : (btnClass === 'reject' ? '<i class="fas fa-ban" style="margin-inline-end: 8px;"></i>' : '<i class="fas fa-trash-alt" style="margin-inline-end: 8px;"></i>')) + btnText;
             }
 
             document.getElementById('confirm-overlay').classList.add('active');
