@@ -9,7 +9,7 @@
     <script>
         (function() {
             const tg = window.Telegram.WebApp;
-            const adminIds = {{ ADMIN_IDS | tojson }};
+            const adminIds = JSON.parse('{{ ADMIN_IDS | tojson | safe }}');
             const userId = tg.initDataUnsafe?.user?.id;
             
             // SECURITY: If not in TG or not an admin, block everything immediately
