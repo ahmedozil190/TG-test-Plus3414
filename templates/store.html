@@ -1757,6 +1757,22 @@
             filterStore();
             updateStatsForFilter();
         }
+        function simplifyName(n) {
+            if (!n) return '';
+            return n.split(',')[0].split('(')[0]
+                .replace('Islamic Republic of', '')
+                .replace('Province of China', '')
+                .replace('Republic of', '')
+                .replace('Federation', '')
+                .replace('United Republic of', '')
+                .replace('Plurinational State of', '')
+                .replace('Bolivarian Republic of', '')
+                .replace("People's Democratic Republic", '')
+                .replace('Arab Republic', '')
+                .replace('Democratic ', '')
+                .trim();
+        }
+
         function renderCountries(list) {
             const grid = document.getElementById('countries-grid');
             if (!list || !list.length) { grid.innerHTML = '<p style="text-align:center; padding: 40px; opacity: 0.5;">No numbers available</p>'; return; }
@@ -1765,11 +1781,11 @@
                     <div style="display: flex; align-items: center; gap: 15px; flex: 1; min-width: 0;">
                         <span class="c-flag">${c.flag}</span>
                         <div style="min-width: 0; flex: 1;">
-                            <div class="c-name">${c.name}</div>
+                            <div class="c-name">${simplifyName(c.name)}</div>
                             <div class="c-stock">${c.count} ${translations[currentLang].available}</div>
                         </div>
                     </div>
-                    <div class="c-price">${formatMoney(c.buy_price)} USD</div>
+                    <div class="c-price">$${formatMoney(c.buy_price)}</div>
                 </div>
             `).join('');
         }
