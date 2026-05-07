@@ -159,23 +159,22 @@
         }
 
         .audit-row {
-            background: transparent;
-            border: 1px solid var(--border);
             padding: 14px 18px;
             border-radius: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 15px;
-            margin-bottom: 8px;
+            gap: 20px;
+            margin-bottom: 10px;
         }
 
         .audit-label {
             color: var(--text-secondary);
             font-size: 0.8rem;
-            font-weight: 700;
+            font-weight: 500;
             text-transform: uppercase;
             flex-shrink: 0;
+            opacity: 0.7;
         }
 
         .audit-value {
@@ -3533,7 +3532,7 @@
                 if (statusUpper === 'REJECTED') statusColor = '#ef4444'; // ERROR
 
                 const isPending = statusUpper === 'PENDING';
-                const rowS = (c) => `background: ${hexToRgba(c, 0.02)}; border: 1px solid ${hexToRgba(c, 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 10px;`;
+                const rowS = (c) => `background: ${hexToRgba(c, 0.02)}; border: 1px solid ${hexToRgba(c, 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px; margin-bottom: 10px;`;
                 const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 500; text-transform: uppercase; opacity: 0.7; flex-shrink: 0;";
                 const simpleMethod = item.method.split(' - ')[0];
 
@@ -3545,27 +3544,27 @@
                             </div>
                             <div style="${rowS(statusColor)}">
                                 <span style="${lblS}">STATUS</span>
-                                <span style="color: ${statusColor}; font-weight: 800; font-size: 0.85rem; text-transform: uppercase;">${statusUpper}</span>
+                                <span style="color: ${statusColor}; font-weight: 500; font-size: 0.9rem; text-transform: uppercase;">${statusUpper}</span>
                             </div>
                             <div style="${rowS('#10b981')}">
                                 <span style="${lblS}">DETAILS</span>
-                                <span style="color: var(--text-secondary); opacity: 0.7; font-weight: 800; font-size: 0.95rem; text-align: right;">$${formatMoney(item.amount)} - ${simpleMethod}</span>
+                                <span style="color: var(--text-secondary); font-weight: 500; font-size: 1rem; text-align: right;">$${formatMoney(item.amount)} - ${simpleMethod}</span>
                             </div>
                             <div style="${rowS('#8b5cf6')}">
                                 <span style="${lblS}">ID</span>
-                                <span style="color: var(--text-secondary); opacity: 0.7; font-weight: 600; font-size: 0.9rem; text-align: right;">${item.transaction_id || 'N/A'}</span>
+                                <span style="color: var(--text-secondary); font-weight: 500; font-size: 1rem; text-align: right;">${item.transaction_id || 'N/A'}</span>
                             </div>
                             <div style="${rowS('#ff9f0a')}">
                                 <span style="${lblS}">USER ID</span>
-                                <span style="color: var(--text-secondary); opacity: 0.7; font-weight: 800; font-size: 0.95rem; text-align: right;">${item.user_id}</span>
+                                <span style="color: var(--text-secondary); font-weight: 500; font-size: 1rem; text-align: right;">${item.user_id}</span>
                             </div>
                             <div style="${rowS('#3b82f6')}">
                                 <span style="${lblS}">WALLET</span>
-                                <span style="color: var(--text-secondary); opacity: 0.7; font-weight: 600; font-size: 0.85rem; text-align: right; direction: ltr; word-break: break-all; flex: 1; margin-left: 10px;">${item.address}</span>
+                                <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.9rem; text-align: right; direction: ltr; word-break: break-all; flex: 1; min-width: 0;">${item.address}</span>
                             </div>
                             <div style="${rowS('#fdd835')}; margin-bottom: 0;">
                                 <span style="${lblS}">DATE</span>
-                                <span style="color: var(--text-secondary); opacity: 0.7; font-weight: 600; font-size: 0.85rem; text-align: right;">${formatDateTime(item.date)}</span>
+                                <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.9rem; text-align: right;">${formatDateTime(item.date)}</span>
                             </div>
 
                             ${isPending ? `
@@ -4734,31 +4733,31 @@
                     </div>
                     <div style="display: flex; flex-direction: column; gap: 10px;">
                         <!-- Status Row -->
-                        <div style="background: ${hexToRgba(statusColor, 0.02)}; border: 1px solid ${hexToRgba(statusColor, 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
+                        <div style="background: ${hexToRgba(statusColor, 0.02)}; border: 1px solid ${hexToRgba(statusColor, 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
                             <span style="${lblS} color: var(--text-secondary); opacity: 0.7;">${translations[currentLang].lbl_status}</span>
-                            <span style="color: ${statusColor}; opacity: 0.9; font-weight: 500; font-size: 0.85rem; text-transform: uppercase; text-align: right; word-break: break-all; flex: 1; min-width: 0;">
+                            <span style="color: ${statusColor}; font-weight: 500; font-size: 0.9rem; text-transform: uppercase; text-align: right; word-break: break-all; flex: 1; min-width: 0;">
                                 ${statusText}
                             </span>
                         </div>
                         <!-- User ID Row -->
-                        <div style="background: ${hexToRgba('#b45309', 0.02)}; border: 1px solid ${hexToRgba('#b45309', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
+                        <div style="background: ${hexToRgba('#b45309', 0.02)}; border: 1px solid ${hexToRgba('#b45309', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
                             <span style="${lblS} color: var(--text-secondary); opacity: 0.7;">${translations[currentLang].lbl_user}</span>
-                            <span style="color: #b45309; font-weight: 800; font-size: 0.95rem; text-align: right; word-break: break-all;">${item.seller_id}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${item.seller_id}</span>
                         </div>
                         <!-- Number Row -->
-                        <div style="background: ${hexToRgba('#047857', 0.03)}; border: 1px solid ${hexToRgba('#047857', 0.12)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
+                        <div style="background: ${hexToRgba('#047857', 0.02)}; border: 1px solid ${hexToRgba('#047857', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
                             <span style="${lblS} color: var(--text-secondary); opacity: 0.7;">${translations[currentLang].lbl_number}</span>
-                            <span style="color: #10b981; font-weight: 900; font-size: 1.15rem; text-align: right; direction: ltr; word-break: break-all;">${item.phone}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; text-align: right; direction: ltr; word-break: break-all; flex: 1; min-width: 0;">${item.phone}</span>
                         </div>
                         <!-- Password Row -->
-                        <div style="background: ${hexToRgba('#be185d', 0.02)}; border: 1px solid ${hexToRgba('#be185d', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
+                        <div style="background: ${hexToRgba('#be185d', 0.02)}; border: 1px solid ${hexToRgba('#be185d', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
                             <span style="${lblS} color: var(--text-secondary); opacity: 0.7;">Password</span>
-                            <span style="color: #be185d; font-weight: 700; font-size: 1rem; text-align: right; direction: ltr; font-family: monospace; word-break: break-all;">${item.two_fa_password || 'N/A'}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1rem; text-align: right; direction: ltr; font-family: monospace; word-break: break-all; flex: 1; min-width: 0;">${item.two_fa_password || 'N/A'}</span>
                         </div>
                         <!-- Price Row -->
-                        <div style="background: ${hexToRgba('#1d4ed8', 0.02)}; border: 1px solid ${hexToRgba('#1d4ed8', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
+                        <div style="background: ${hexToRgba('#1d4ed8', 0.02)}; border: 1px solid ${hexToRgba('#1d4ed8', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
                             <span style="${lblS} color: var(--text-secondary); opacity: 0.7;">${translations[currentLang].lbl_price}</span>
-                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.2rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(item.buy_price)}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(item.buy_price)}</span>
                         </div>
                         <!-- Date Row -->
                         <div style="background: ${hexToRgba('#a16207', 0.02)}; border: 1px solid ${hexToRgba('#a16207', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
@@ -5169,19 +5168,19 @@
 
                 content.innerHTML = accounts.map(acc => `
                     <div class="audit-card" id="audit-card-${acc.id}">
-                        <div class="audit-row">
+                        <div class="audit-row" style="background: ${hexToRgba('#10b981', 0.02)}; border: 1px solid ${hexToRgba('#10b981', 0.08)};">
                             <span class="audit-label">Number</span>
-                            <span class="audit-value" style="color: #10b981; font-weight: 900; font-size: 1.1rem;">${acc.phone}</span>
+                            <span class="audit-value" style="color: #10b981; font-weight: 500; font-size: 1.1rem; direction: ltr;">${acc.phone}</span>
                         </div>
-                        <div class="audit-row">
+                        <div class="audit-row" style="background: ${hexToRgba('#3b82f6', 0.02)}; border: 1px solid ${hexToRgba('#3b82f6', 0.08)};">
                             <span class="audit-label">Price</span>
-                            <span class="audit-value" style="color: #3b82f6;">$${acc.price}</span>
+                            <span class="audit-value" style="color: var(--text-secondary); font-weight: 500; font-size: 1rem;">$${acc.price}</span>
                         </div>
-                        <div class="audit-row">
+                        <div class="audit-row" style="background: ${hexToRgba('#8b5cf6', 0.02)}; border: 1px solid ${hexToRgba('#8b5cf6', 0.08)};">
                             <span class="audit-label">Status</span>
-                            <span id="audit-status-${acc.id}" class="audit-value" style="color: #8b5cf6; text-transform: uppercase;">${acc.status}</span>
+                            <span id="audit-status-${acc.id}" class="audit-value" style="color: var(--text-secondary); font-weight: 500; font-size: 0.95rem; text-transform: uppercase;">${acc.status}</span>
                         </div>
-                        <button class="audit-verify-btn" onclick="checkOneAuditNumber(${acc.id}, this)">
+                        <button class="audit-verify-btn" onclick="checkOneAuditNumber(${acc.id}, this)" style="margin-top: 10px;">
                             <i class="fas fa-sync"></i> Verify
                         </button>
                     </div>
