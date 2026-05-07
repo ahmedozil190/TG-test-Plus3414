@@ -1252,7 +1252,7 @@
                 <i class="fas fa-paper-plane"></i> Submit Numbers
             </div>
             <div class="nav-item" id="btn-withdraw" onclick="changeView('withdraw')">
-                <i class="fas fa-hand-holding-usd"></i> Withdrawal
+                <i class="fas fa-hand-holding-usd"></i> Withdraw
             </div>
             <div class="nav-item" id="btn-pricing" onclick="changeView('pricing')">
                 <i class="fas fa-tags"></i> Price List
@@ -1438,7 +1438,7 @@
 
             <!-- New Sourcing History Section -->
             <div class="card" id="sourcing-section" style="padding: 22px; margin-top: 30px;">
-                <div class="section-header" style="margin-top: 0; margin-bottom: 35px; display: flex; align-items: center; justify-content: space-between;">
+                <div class="section-header" style="margin-top: 0; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between;">
                     <h2 style="font-weight: 600; margin: 0; font-size: 1rem; letter-spacing: 0.5px;">Submission History
                     </h2>
                     <div class="custom-dropdown" id="sourcing-filter-dropdown" style="position: relative;">
@@ -1532,7 +1532,7 @@
                 </div>
 
                 <button class="btn-action" id="submitWithdrawBtn" onclick="requestWithdraw()">
-                    Confirm Withdrawal <i class="fas fa-paper-plane"></i>
+                    Confirm Withdraw <i class="fas fa-paper-plane"></i>
                 </button>
             </div>
 
@@ -1541,7 +1541,7 @@
                     style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; gap: 15px;">
                     <h3 data-i18n="nav_withdrawals"
                         style="color: var(--text-secondary); font-size: 1rem; font-weight: 700; margin: 0; max-width: 140px; line-height: 1.2; flex-grow: 1;">
-                        Withdrawal History</h3>
+                        Withdraw History</h3>
                     <div class="custom-dropdown" style="position: relative;">
                         <button class="dropdown-trigger" onclick="toggleWithdrawDropdown(event)"
                             style="display: flex; align-items: center; gap: 8px; background: var(--card-glass); border: 1px solid var(--border); padding: 8px 14px; border-radius: 12px; color: var(--text-primary); cursor: pointer; font-size: 0.85rem; font-weight: 700; transition: all 0.2s;">
@@ -1637,7 +1637,7 @@
     <!-- Confirmation Modal Structure -->
     <div class="modal-overlay" id="confirmModal">
         <div class="confirm-modal">
-            <div class="modal-title">Confirm Withdrawal</div>
+            <div class="modal-title">Confirm Withdraw</div>
             <div class="modal-body">Please review your payout details carefully before proceeding.</div>
 
             <div id="confirm-rows-container"
@@ -1661,7 +1661,7 @@
             <div class="success-icon">✅</div>
             <div class="modal-title" style="color:var(--text-p)">Request Submitted</div>
             <div class="modal-body" id="successText" style="text-align: center; color: var(--text-p);">
-                Withdrawal request submitted, please be patient until the bot administrator approves your payment.
+                Withdraw request submitted, please be patient until the bot administrator approves your payment.
             </div>
 
             <div class="trans-no-box" id="successTransNo">
@@ -1932,8 +1932,8 @@
             const titles = {
                 dashboard: 'Dashboard',
                 submit: 'Submit Numbers',
-                withdraw: 'Withdrawal',
-                pricing: 'Rate List',
+                withdraw: 'Withdraw',
+                pricing: 'Price List',
                 support: 'Support'
             };
             document.getElementById('viewTitle').textContent = titles[viewId];
@@ -2321,7 +2321,7 @@
 
                     item.innerHTML = `
                         <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
-                            <h3 style="margin: 0; font-size: 1rem; font-weight: 700; color: var(--text-secondary);"><i class="fas fa-history" style="color: var(--accent); margin-right: 8px;"></i>${userLang === 'ar' ? 'عملية سحب' : 'Withdrawal'}</h3>
+                            <h3 style="margin: 0; font-size: 1rem; font-weight: 700; color: var(--text-secondary);"><i class="fas fa-history" style="color: var(--accent); margin-right: 8px;"></i>${userLang === 'ar' ? 'عملية سحب' : 'Withdraw'}</h3>
                         </div>
                         <div style="display: flex; flex-direction: column; gap: 10px;">
                             <div style="${rowS(statusColor)}">
