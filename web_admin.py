@@ -773,6 +773,19 @@ async def run_migrations():
                 logger.info("Added min_profit column to api_servers table.")
             except: pass
 
+            # One-time migration: Update server_type based on URL if it's 'standard' or 'other'
+            try:
+                await conn.execute(sqlalchemy.text("UPDATE api_servers SET server_type = 'max' WHERE (server_type = 'standard' OR server_type = 'other' OR server_type IS NULL) AND url LIKE '%max-tg.com%'"))
+                await conn.execute(sqlalchemy.text("UPDATE api_servers SET server_type = 'fast' WHERE (server_type = 'standard' OR server_type = 'other' OR server_type IS NULL) AND url LIKE '%fast-tg.com%'"))
+                await conn.execute(sqlalchemy.text("UPDATE api_servers SET server_type = 'lion' WHERE (server_type = 'standard' OR server_type = 'other' OR server_type IS NULL) AND (url LIKE '%TG-Lion.net%' OR url LIKE '%tg-lion%')"))
+                await conn.execute(sqlalchemy.text("UPDATE api_servers SET server_type = 'spider' WHERE (server_type = 'standard' OR server_type = 'other' OR server_type IS NULL) AND url LIKE '%spider-service.com%'"))
+                # If still standard/other, leave as 'other' to avoid 'Standard' label
+                await conn.execute(sqlalchemy.text("UPDATE api_servers SET server_type = 'other' WHERE server_type = 'standard'"))
+                logger.info("Successfully migrated legacy server types based on URLs.")
+            except Exception as e:
+                logger.warning(f"Failed to migrate server types: {e}")
+
+
                     
         logger.info("DB migration check complete.")
     except Exception as e:
