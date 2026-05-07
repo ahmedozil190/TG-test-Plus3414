@@ -3743,7 +3743,7 @@ async def detect_country(phone: str, user_id: int, init_data: str):
     return {"found": False}
 
 @app.get("/api/seller/accounts")
-async def get_seller_accounts(user_id: int, init_data: str, page: int = 1, limit: int = 10):
+async def get_seller_accounts(user_id: int, init_data: str, page: int = 1, limit: int = 10, status: str = "all"):
     from config import SELLER_BOT_TOKEN
     if not verify_user_auth_multi(init_data, user_id):
         return {"accounts": [], "total_pages": 0, "current_page": 1, "total_count": 0}
@@ -3751,13 +3751,23 @@ async def get_seller_accounts(user_id: int, init_data: str, page: int = 1, limit
     async with async_session() as session:
         offset = (page - 1) * limit
         
+        # Build base filter
+        base_filters = [Account.seller_id == user_id]
+        if status != "all":
+            if status == "pending":
+                base_filters.append(Account.status == AccountStatus.PENDING)
+            elif status == "accepted":
+                # Sellers see SOLD as AVAILABLE/ACCEPTED
+                base_filters.append(or_(Account.status == AccountStatus.AVAILABLE, Account.status == AccountStatus.SOLD))
+            elif status == "rejected":
+                base_filters.append(Account.status == AccountStatus.REJECTED)
+
         # Get total count for pagination
-        total_count = (await session.execute(
-            select(func.count(Account.id)).where(Account.seller_id == user_id)
-        )).scalar() or 0
+        count_stmt = select(func.count(Account.id)).where(*base_filters)
+        total_count = (await session.execute(count_stmt)).scalar() or 0
         total_pages = math.ceil(total_count / limit) if total_count > 0 else 1
         
-        stmt = select(Account).where(Account.seller_id == user_id).order_by(Account.id.desc()).offset(offset).limit(limit)
+        stmt = select(Account).where(*base_filters).order_by(Account.id.desc()).offset(offset).limit(limit)
         results = (await session.execute(stmt)).scalars().all()
         accounts_data = []
         for a in results:

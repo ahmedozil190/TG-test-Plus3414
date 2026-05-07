@@ -1441,9 +1441,40 @@
 
             <!-- New Sourcing History Section -->
             <div class="card" id="sourcing-section" style="padding: 22px; margin-top: 30px;">
-                <div class="section-header" style="margin-top: 0; margin-bottom: 35px;">
+                <div class="section-header" style="margin-top: 0; margin-bottom: 35px; display: flex; align-items: center; justify-content: space-between;">
                     <h2 style="font-weight: 600; margin: 0; font-size: 1rem; letter-spacing: 0.5px;">Submission History
                     </h2>
+                    <div class="custom-dropdown" id="sourcing-filter-dropdown" style="position: relative;">
+                        <button class="dropdown-trigger" onclick="toggleSourcingFilterDropdown(event)"
+                            style="display: flex; align-items: center; gap: 8px; background: var(--card-glass); border: 1px solid var(--border); padding: 6px 12px; border-radius: 10px; color: var(--text-primary); cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.2s;">
+                            <span id="sourcing-filter-status-dot"
+                                style="width: 8px; height: 8px; border-radius: 50%; background: #fbbf24;"></span>
+                            <span id="current-sourcing-filter-label" style="color: #fbbf24;">PENDING</span>
+                            <i class="fas fa-chevron-down"
+                                style="font-size: 0.7rem; opacity: 0.5; margin-left: 4px;"></i>
+                        </button>
+                        <div class="dropdown-menu" id="sourcing-filter-menu"
+                            style="display: none; position: absolute; top: calc(100% + 8px); right: 0; background: var(--card-glass); border: 1px solid var(--border); border-radius: 12px; min-width: 150px; z-index: 100; box-shadow: none; overflow: hidden; backdrop-filter: blur(10px);">
+                            <div class="dropdown-item" onclick="setSourcingFilter('PENDING', '#fbbf24')"
+                                style="padding: 10px 15px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
+                                <span
+                                    style="width: 8px; height: 8px; border-radius: 50%; background: #fbbf24;"></span>
+                                PENDING
+                            </div>
+                            <div class="dropdown-item" onclick="setSourcingFilter('ACCEPTED', '#10b981')"
+                                style="padding: 10px 15px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
+                                <span
+                                    style="width: 8px; height: 8px; border-radius: 50%; background: #10b981;"></span>
+                                ACCEPTED
+                            </div>
+                            <div class="dropdown-item" onclick="setSourcingFilter('REJECTED', '#ef4444')"
+                                style="padding: 10px 15px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
+                                <span
+                                    style="width: 8px; height: 8px; border-radius: 50%; background: #ef4444;"></span>
+                                REJECTED
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="list-container" id="sourcingHistory">
                 </div>
@@ -2521,6 +2552,7 @@
         let currentSourcingPage = 1;
         let totalSourcingPages = 1;
         const SOURCING_LIMIT = 10;
+        let currentSourcingFilter = 'PENDING';
         window.serverTimeOffset = 0;
 
         async function moveSourcingPage(delta) {
@@ -2536,7 +2568,7 @@
             const list = document.getElementById('sourcingHistory');
             const empty = document.getElementById('sourcingEmpty');
             try {
-                const res = await fetch(`/api/seller/accounts?user_id=${userId}&page=${currentSourcingPage}&limit=${SOURCING_LIMIT}`);
+                const res = await fetch(`/api/seller/accounts?user_id=${userId}&page=${currentSourcingPage}&limit=${SOURCING_LIMIT}&status=${currentSourcingFilter.toLowerCase()}`);
                 const data = await res.json();
 
                 if (data.server_now) {
@@ -2622,6 +2654,41 @@
                 console.error("History fail:", e);
             }
         }
+
+        function toggleSourcingFilterDropdown(event) {
+            if (event) event.stopPropagation();
+            const menu = document.getElementById('sourcing-filter-menu');
+            const isVisible = menu.style.display === 'block';
+            menu.style.display = isVisible ? 'none' : 'block';
+        }
+
+        function setSourcingFilter(status, color) {
+            currentSourcingFilter = status;
+            currentSourcingPage = 1;
+            
+            // Update UI Labels
+            const dot = document.getElementById('sourcing-filter-status-dot');
+            const label = document.getElementById('current-sourcing-filter-label');
+            if (dot) dot.style.background = color;
+            if (label) {
+                label.textContent = status;
+                label.style.color = color;
+            }
+            
+            // Close menu
+            const menu = document.getElementById('sourcing-filter-menu');
+            if (menu) menu.style.display = 'none';
+            
+            fetchSourcingHistory();
+        }
+
+        // Close dropdowns on outside click
+        window.addEventListener('click', () => {
+            const sm = document.getElementById('sourcing-filter-menu');
+            if (sm) sm.style.display = 'none';
+            const wm = document.getElementById('withdraw-filter-menu');
+            if (wm) wm.style.display = 'none';
+        });
 
         function showToast(title, desc = '', type = 'error', duration = 4000) {
             let container = document.getElementById('toast-container');
