@@ -8,17 +8,17 @@
     <link rel="icon" href="data:,">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
-        (function() {
+        (function () {
             const tg = window.Telegram.WebApp;
             const adminIds = JSON.parse('{{ ADMIN_IDS | tojson | safe }}');
             const userId = tg.initDataUnsafe?.user?.id;
-            
+
             if (!tg.initData || !adminIds.includes(userId)) {
                 document.write('<style>body { display: none !important; }</style>');
                 alert("Unauthorized Access");
                 return;
             }
-            try { tg.expand(); } catch(e) {}
+            try { tg.expand(); } catch (e) { }
 
             // INSTANT THEME BACKGROUND (Like User Panel)
             const isDark = tg.colorScheme === 'dark';
@@ -29,7 +29,7 @@
             const originalFetch = window.fetch;
             window.fetch = async (resource, config = {}) => {
                 let url = typeof resource === 'string' ? resource : resource.url;
-                
+
                 // Only intercept internal API calls
                 if (url.startsWith('/api/')) {
                     const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 0;
@@ -41,7 +41,7 @@
                         urlObj.searchParams.set('user_id', userId);
                         urlObj.searchParams.set('init_data', initData);
                         url = urlObj.pathname + urlObj.search;
-                    } 
+                    }
                     // 2. Handle POST/PUT/DELETE requests (Body or Query for DELETE)
                     else {
                         const method = config.method.toUpperCase();
@@ -54,7 +54,7 @@
                                 body.user_id = userId;
                                 body.init_data = initData;
                                 config.body = JSON.stringify(body);
-                                
+
                                 // Ensure Content-Type is set
                                 if (!config.headers) config.headers = {};
                                 if (config.headers instanceof Headers) {
@@ -322,7 +322,9 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         /* ─── Top Bar ─── */
@@ -1943,7 +1945,7 @@
                     <h2 data-i18n="stat_section">Inventory</h2>
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px;">
-                    
+
                     <div class="info-card">
                         <div class="info-card-l">
                             <span class="info-card-lbl" data-i18n="stat_accepted_ops">ACCEPTED ACCOUNTS</span>
@@ -2391,7 +2393,8 @@
                     <div
                         style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; gap: 15px;">
                         <h2 data-i18n="nav_withdrawals"
-                            style="margin: 0; font-size: 1rem; color: var(--text-secondary); max-width: 140px; line-height: 1.2; flex-grow: 1;">Withdrawals History</h2>
+                            style="margin: 0; font-size: 1rem; color: var(--text-secondary); max-width: 140px; line-height: 1.2; flex-grow: 1;">
+                            Withdrawals History</h2>
                         <div class="custom-dropdown" style="position: relative;">
                             <button class="dropdown-trigger" onclick="toggleWithdrawDropdown(event)"
                                 style="display: flex; align-items: center; gap: 8px; background: var(--card-glass); border: 1px solid var(--border); padding: 8px 14px; border-radius: 12px; color: var(--text-primary); cursor: pointer; font-size: 0.85rem; font-weight: 700; transition: all 0.2s;">
@@ -3164,7 +3167,7 @@
                         <!-- Country Name -->
                         <div style="background: ${hexToRgba('#10b981', 0.02)}; border: 1px solid ${hexToRgba('#10b981', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
                             <span style="color: var(--text-secondary); opacity: 0.7; font-size: 0.8rem; font-weight: 500; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'الدولة' : 'Country'}</span>
-                            <span style="color: #10b981; font-weight: 500; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${up.country_name}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${up.country_name}</span>
                         </div>
                         <!-- Country Code -->
                         <div style="background: ${hexToRgba('#8b5cf6', 0.02)}; border: 1px solid ${hexToRgba('#8b5cf6', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
@@ -3800,7 +3803,7 @@
                 const hsr = document.getElementById('home-stat-rejected');
                 const hsf = document.getElementById('home-stat-frozen');
                 const hss = document.getElementById('home-stat-spam');
-                
+
                 if (hsp) hsp.innerText = data.stats.pending_count || 0;
                 if (hsa) hsa.innerText = data.stats.available_count || 0;
                 if (hsr) hsr.innerText = data.stats.rejected_sourced || 0;
@@ -3844,7 +3847,7 @@
                 const hrEl = document.getElementById('stat-history-rejected');
                 const hfEl = document.getElementById('stat-history-frozen');
                 const hsEl = document.getElementById('stat-history-spam');
-                
+
                 if (hpEl) hpEl.innerText = data.stats.pending_count || 0;
                 if (haEl) haEl.innerText = data.stats.available_count || 0;
                 if (hrEl) hrEl.innerText = data.stats.rejected_sourced || 0;
@@ -4420,7 +4423,7 @@
                         <!-- Name -->
                         <div style="background: ${hexToRgba('#10b981', 0.02)}; border: 1px solid ${hexToRgba('#10b981', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
                             <span style="color: var(--text-secondary); opacity: 0.7; font-size: 0.8rem; font-weight: 500; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'الاسم' : 'Name'}</span>
-                            <span style="color: #10b981; font-weight: 500; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${p.name.replace(/\s?\(?[A-Z]{2,3}\)?$/, '').trim()}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${p.name.replace(/\s?\(?[A-Z]{2,3}\)?$/, '').trim()}</span>
                         </div>
                         <!-- Code -->
                         <div style="background: ${hexToRgba('#8b5cf6', 0.02)}; border: 1px solid ${hexToRgba('#8b5cf6', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">

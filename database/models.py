@@ -143,6 +143,7 @@ class ApiServer(Base):
     server_type = Column(String, default="standard") # 'standard' (Spider/Max) or 'lion' (TG-Lion)
     extra_id = Column(String, nullable=True) # For YourID in TG-Lion
     profit_margin = Column(Float, default=20.0)
+    min_profit = Column(Float, default=0.0)
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 

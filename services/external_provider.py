@@ -5,11 +5,12 @@ import asyncio
 logger = logging.getLogger(__name__)
 
 class ExternalProvider:
-    def __init__(self, name, url, api_key, profit_margin, server_type="standard", extra_id=None):
+    def __init__(self, name, url, api_key, profit_margin, min_profit=0.0, server_type="standard", extra_id=None):
         self.name = name
         self.url = url.rstrip('/') + '/'
         self.api_key = api_key
         self.profit_margin = profit_margin
+        self.min_profit = min_profit
         self.server_type = server_type
         self.extra_id = extra_id
 
@@ -283,5 +284,14 @@ class ExternalProvider:
             return {"status": "error", "message": str(e)}
 
     def calculate_price(self, provider_price):
-        """Calculate selling price based on profit margin."""
-        return float(provider_price) * (1 + self.profit_margin / 100.0)
+        """Calculate selling price based on profit margin and minimum profit."""
+        cost = float(provider_price)
+        if self.profit_margin <= 0:
+            return cost
+        
+        # Calculate percentage profit
+        percent_profit = cost * (self.profit_margin / 100.0)
+        # Final profit is the maximum of percentage profit or minimum profit
+        final_profit = max(percent_profit, self.min_profit)
+        
+        return cost + final_profit

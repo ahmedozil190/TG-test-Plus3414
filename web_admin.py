@@ -220,6 +220,7 @@ class ApiServerSubmit(AdminAuthRequest):
     server_type: str = "standard"
     extra_id: str | None = None
     profit_margin: float
+    min_profit: float = 0.0
     is_active: bool
 
 class MaintenanceToggle(AdminAuthRequest):
@@ -765,6 +766,13 @@ async def run_migrations():
                 await conn.execute(sqlalchemy.text("ALTER TABLE accounts ADD COLUMN reject_reason VARCHAR;"))
                 logger.info("Added reject_reason column to accounts table.")
             except: pass
+
+            # Add min_profit to api_servers if missing
+            try:
+                await conn.execute(sqlalchemy.text("ALTER TABLE api_servers ADD COLUMN min_profit FLOAT DEFAULT 0.0;"))
+                logger.info("Added min_profit column to api_servers table.")
+            except: pass
+
                     
         logger.info("DB migration check complete.")
     except Exception as e:
@@ -925,6 +933,7 @@ async def get_store_data(user_id: int = None, init_data: str = None):
                     logger.info(f"Processing server: {srv.name} ({srv.url})")
                     provider = ExternalProvider(
                         srv.name, srv.url, srv.api_key, srv.profit_margin,
+                        min_profit=getattr(srv, 'min_profit', 0.0),
                         server_type=getattr(srv, 'server_type', 'standard'),
                         extra_id=getattr(srv, 'extra_id', None)
                     )
@@ -1266,6 +1275,7 @@ async def store_buy(data: StoreBuy):
                 for srv in active_servers:
                     provider = ExternalProvider(
                         srv.name, srv.url, srv.api_key, srv.profit_margin,
+                        min_profit=getattr(srv, 'min_profit', 0.0),
                         server_type=getattr(srv, 'server_type', 'standard'),
                         extra_id=getattr(srv, 'extra_id', None)
                     )
@@ -1403,6 +1413,7 @@ async def store_get_code(user_id: int, phone: str, init_data: str):
                 if not srv: raise HTTPException(status_code=500, detail="Server config missing")
                 provider = ExternalProvider(
                     srv.name, srv.url, srv.api_key, srv.profit_margin,
+                    min_profit=getattr(srv, 'min_profit', 0.0),
                     server_type=getattr(srv, 'server_type', 'standard'),
                     extra_id=getattr(srv, 'extra_id', None)
                 )
@@ -2500,6 +2511,7 @@ async def get_servers(user_id: int, init_data: str):
                 "server_type": getattr(s, 'server_type', 'standard'),
                 "extra_id": getattr(s, 'extra_id', ''),
                 "profit_margin": s.profit_margin,
+                "min_profit": getattr(s, 'min_profit', 0.0),
                 "is_active": s.is_active,
                 "balance": balance_val
             })
@@ -2529,6 +2541,7 @@ async def save_server(data: ApiServerSubmit):
             srv.server_type = data.server_type
             srv.extra_id = data.extra_id
             srv.profit_margin = data.profit_margin
+            srv.min_profit = data.min_profit
             srv.is_active = data.is_active
         else:
             srv = ApiServer(
@@ -2538,6 +2551,7 @@ async def save_server(data: ApiServerSubmit):
                 server_type=data.server_type,
                 extra_id=data.extra_id,
                 profit_margin=data.profit_margin,
+                min_profit=data.min_profit,
                 is_active=data.is_active
             )
             session.add(srv)
@@ -3141,7 +3155,7 @@ async def seller_request_otp(data: SellerOTPRequest):
             dup_stmt = select(Account).where(Account.phone_number == phone)
             existing = (await session.execute(dup_stmt)).scalar()
             if existing:
-                raise HTTPException(status_code=400, detail="This account already exists in the system.")
+                raise HTTPException(status_code=400, detail="This account already exists in the system")
 
         # 2. Country & Pricing Check
         try:

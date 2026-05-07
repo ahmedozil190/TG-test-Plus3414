@@ -2779,8 +2779,12 @@
                 <input type="password" id="srv-key" class="input-field" placeholder="Enter API Key">
             </div>
             <div class="form-group">
-                <label>Profit Margin</label>
+                <label>Profit Margin (%)</label>
                 <input type="number" id="srv-profit" class="input-field" placeholder="20" step="1">
+            </div>
+            <div class="form-group">
+                <label>Minimum Profit (Cents)</label>
+                <input type="number" id="srv-min-profit" class="input-field" placeholder="20" step="1">
             </div>
             <div id="extra-id-group" class="form-group" style="display: none;">
                 <label>Your ID</label>
@@ -4462,6 +4466,7 @@
 
             document.getElementById('srv-extra-id').value = '';
             document.getElementById('srv-profit').value = '';
+            document.getElementById('srv-min-profit').value = '';
             document.getElementById('srv-active').checked = true;
             toggleExtraId();
             document.getElementById('server-modal-title').innerText = "Add API Server";
@@ -4568,9 +4573,17 @@
                         
                         <!-- Profit Margin -->
                         <div style="background: rgba(245, 158, 11, 0.02); border: 1px solid rgba(245, 158, 11, 0.08); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
-                            <span style="${lblS}">${currentLang === 'ar' ? 'الربح' : 'PROFIT'}</span>
+                            <span style="${lblS}">${currentLang === 'ar' ? 'الربح' : 'PROFIT %'}</span>
                             <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; text-align: right; flex: 1; min-width: 0;">
                                 ${s.profit_margin}%
+                            </span>
+                        </div>
+
+                        <!-- Minimum Profit -->
+                        <div style="background: rgba(236, 72, 153, 0.02); border: 1px solid rgba(236, 72, 153, 0.08); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
+                            <span style="${lblS}">${currentLang === 'ar' ? 'الحد الأدنى' : 'MIN PROFIT'}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; text-align: right; flex: 1; min-width: 0;">
+                                ${Math.round((s.min_profit || 0) * 100)}¢
                             </span>
                         </div>
                         
@@ -4602,6 +4615,7 @@
             const url = document.getElementById('srv-url').value.trim();
             const key = document.getElementById('srv-key').value.trim();
             const profit = document.getElementById('srv-profit').value.trim();
+            const minProfit = document.getElementById('srv-min-profit').value.trim();
             const active = document.getElementById('srv-active').checked;
             const id = document.getElementById('srv-id').value;
 
@@ -4616,7 +4630,8 @@
                         name, url, api_key: key,
                         server_type: document.getElementById('srv-type').value,
                         extra_id: document.getElementById('srv-extra-id').value,
-                        profit_margin: parseFloat(profit) || 20,
+                        profit_margin: parseFloat(profit) || 0,
+                        min_profit: (parseFloat(minProfit) || 0) / 100,
                         is_active: active
                     })
                 });
@@ -4651,6 +4666,7 @@
 
             document.getElementById('srv-extra-id').value = s.extra_id || '';
             document.getElementById('srv-profit').value = s.profit_margin;
+            document.getElementById('srv-min-profit').value = Math.round((s.min_profit || 0) * 100);
             document.getElementById('srv-active').checked = s.is_active;
             toggleExtraId();
             document.getElementById('server-modal-title').innerText = "Edit API Server";
