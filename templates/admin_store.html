@@ -8,17 +8,17 @@
     <link rel="icon" href="data:,">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
-        (function() {
+        (function () {
             const tg = window.Telegram.WebApp;
             const adminIds = JSON.parse('{{ ADMIN_IDS | tojson | safe }}');
             const userId = tg.initDataUnsafe?.user?.id;
-            
+
             if (!tg.initData || !adminIds.includes(userId)) {
                 document.write('<style>body { display: none !important; }</style>');
                 alert("Unauthorized Access");
                 return;
             }
-            try { tg.expand(); } catch(e) {}
+            try { tg.expand(); } catch (e) { }
 
             // INSTANT THEME BACKGROUND (Like User Panel)
             const isDark = tg.colorScheme === 'dark';
@@ -29,7 +29,7 @@
             const originalFetch = window.fetch;
             window.fetch = async (resource, config = {}) => {
                 let url = typeof resource === 'string' ? resource : resource.url;
-                
+
                 // Only intercept internal API calls
                 if (url.startsWith('/api/')) {
                     const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 0;
@@ -41,7 +41,7 @@
                         urlObj.searchParams.set('user_id', userId);
                         urlObj.searchParams.set('init_data', initData);
                         url = urlObj.pathname + urlObj.search;
-                    } 
+                    }
                     // 2. Handle POST/PUT/DELETE requests (Body or Query for DELETE)
                     else {
                         const method = config.method.toUpperCase();
@@ -54,7 +54,7 @@
                                 body.user_id = userId;
                                 body.init_data = initData;
                                 config.body = JSON.stringify(body);
-                                
+
                                 // Ensure Content-Type is set
                                 if (!config.headers) config.headers = {};
                                 if (config.headers instanceof Headers) {
@@ -215,7 +215,9 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         /* ─── Top Bar ─── */
@@ -871,7 +873,7 @@
             outline: none;
             height: auto;
         }
-        
+
         .pg-btn:hover:not(:disabled) {
             background: var(--border);
         }
@@ -4581,12 +4583,12 @@
                         </div>
                         
                         <!-- Actions -->
-                        <div style="display: flex; gap: 10px; margin-top: 5px;">
-                            <button class="server-action-btn edit" onclick="editServer(${s.id})">
-                                <span style="opacity: 0.9; font-weight: bold;"><i class="fas fa-edit"></i> ${currentLang === 'ar' ? 'تعديل' : 'Edit'}</span>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="primary-btn" style="flex: 1; background: rgba(96, 165, 250, 0.1); color: var(--accent); border: 1px solid rgba(96, 165, 250, 0.2); box-shadow: none; padding: 14px; font-size: 0.95rem; display: flex; align-items: center; justify-content: center;" onclick="editServer(${s.id})">
+                                <i class="fas fa-pen" style="color: var(--accent); ${currentLang === 'ar' ? 'margin-left: 8px;' : 'margin-right: 8px;'}"></i> ${currentLang === 'ar' ? 'تعديل' : 'Edit'}
                             </button>
-                            <button class="server-action-btn delete" onclick="deleteServer(${s.id})">
-                                <span style="opacity: 0.9; font-weight: bold;"><i class="fas fa-trash"></i> ${currentLang === 'ar' ? 'حذف' : 'Delete'}</span>
+                            <button class="primary-btn" style="flex: 1; background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); box-shadow: none; padding: 14px; font-size: 0.95rem; display: flex; align-items: center; justify-content: center;" onclick="deleteServer(${s.id})">
+                                <i class="fas fa-trash" style="color: var(--danger); ${currentLang === 'ar' ? 'margin-left: 8px;' : 'margin-right: 8px;'}"></i> ${currentLang === 'ar' ? 'حذف' : 'Delete'}
                             </button>
                         </div>
 
