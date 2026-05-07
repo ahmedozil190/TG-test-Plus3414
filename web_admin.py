@@ -1734,8 +1734,8 @@ async def get_sourcing_data(user_id: int, init_data: str):
             withdraw_pending_amount = (await session.execute(select(func.sum(WithdrawalRequest.amount)).where(WithdrawalRequest.status == WithdrawalStatus.PENDING))).scalar() or 0
             
             # User stats
-            total_users = (await session.execute(select(func.count(User.id)))).scalar() or 0
-            banned_users = (await session.execute(select(func.count(User.id)).where(User.is_banned_sourcing == True))).scalar() or 0
+            total_users = (await session.execute(select(func.count(User.id)).where(User.is_active_sourcing == True))).scalar() or 0
+            banned_users = (await session.execute(select(func.count(User.id)).where(User.is_active_sourcing == True, User.is_banned_sourcing == True))).scalar() or 0
             active_users = total_users - banned_users
             
             # Custom User Prices stats (Unique Users & Countries)
@@ -1821,10 +1821,10 @@ async def get_sourcing_data(user_id: int, init_data: str):
             except Exception as b_err:
                 logger.error(f"Error fetching sourcing bot name: {b_err}")
 
-            user_count = (await session.execute(select(func.count(User.id)))).scalar() or 0
-            total_sourcing_balance = (await session.execute(select(func.sum(User.balance_sourcing)))).scalar() or 0.0
+            user_count = (await session.execute(select(func.count(User.id)).where(User.is_active_sourcing == True))).scalar() or 0
+            total_sourcing_balance = (await session.execute(select(func.sum(User.balance_sourcing)).where(User.is_active_sourcing == True))).scalar() or 0.0
 
-            users_result = await session.execute(select(User).order_by(User.id.desc()).limit(200))
+            users_result = await session.execute(select(User).where(User.is_active_sourcing == True).order_by(User.id.desc()).limit(200))
             db_users = users_result.scalars().all()
             
             # Get seller stats for these users
@@ -1947,11 +1947,11 @@ async def get_admin_store_data(user_id: int, init_data: str):
             except Exception as b_err:
                 logger.error(f"Error fetching store bot name: {b_err}")
 
-            user_count = (await session.execute(select(func.count(User.id)))).scalar() or 0
-            banned_users = (await session.execute(select(func.count(User.id)).where(User.is_banned_store == True))).scalar() or 0
+            user_count = (await session.execute(select(func.count(User.id)).where(User.is_active_store == True))).scalar() or 0
+            banned_users = (await session.execute(select(func.count(User.id)).where(User.is_active_store == True, User.is_banned_store == True))).scalar() or 0
             active_users = user_count - banned_users
             stock_count = (await session.execute(select(func.count(Account.id)).where(Account.status == AccountStatus.AVAILABLE))).scalar() or 0
-            total_balance = (await session.execute(select(func.sum(User.balance_store)))).scalar() or 0.0
+            total_balance = (await session.execute(select(func.sum(User.balance_store)).where(User.is_active_store == True))).scalar() or 0.0
 
             # Sales stats
             total_sales_count = (await session.execute(select(func.count(Account.id)).where(Account.status == AccountStatus.SOLD))).scalar() or 0
@@ -1971,7 +1971,7 @@ async def get_admin_store_data(user_id: int, init_data: str):
             total_custom_users = (await session.execute(select(func.count(distinct(UserStorePrice.user_id))))).scalar() or 0
             total_custom_countries = (await session.execute(select(func.count(distinct(UserStorePrice.iso_code))))).scalar() or 0
 
-            users_result = await session.execute(select(User).order_by(User.id.desc()).limit(200))
+            users_result = await session.execute(select(User).where(User.is_active_store == True).order_by(User.id.desc()).limit(200))
             all_users_raw = users_result.scalars().all()
             u_ids = [u.id for u in all_users_raw]
 
@@ -2402,7 +2402,7 @@ async def get_store_user_prices(user_id: int, init_data: str):
     async with async_session() as session:
         result = await session.execute(
             select(UserStorePrice, User)
-            .join(User, UserStorePrice.user_id == User.id)
+            .join(User, (UserStorePrice.user_id == User.id) & (User.is_active_store == True))
             .order_by(UserStorePrice.created_at.desc())
         )
         data = []
@@ -2755,7 +2755,7 @@ async def get_user_prices(user_id: int, init_data: str):
     async with async_session() as session:
         result = await session.execute(
             select(UserCountryPrice, User)
-            .join(User, UserCountryPrice.user_id == User.id)
+            .join(User, (UserCountryPrice.user_id == User.id) & (User.is_active_sourcing == True))
             .order_by(UserCountryPrice.created_at.desc())
         )
         data = []
