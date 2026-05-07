@@ -2052,13 +2052,13 @@
                             <span style="${lblS}">STATUS</span>
                             <span style="color: #10b981; font-weight: 500; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; text-align: right; word-break: break-all; flex: 1; min-width: 0;">PAID</span>
                         </div>
-                        <div style="${rowS('#8b5cf6')}">
+                        <div style="${rowS('#8b5cf6')}" onclick="copyText('${h.phone}')">
                             <span style="${lblS}">NUMBER</span>
-                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; text-align: right; direction: ltr; word-break: break-all; flex: 1; min-width: 0;">${h.phone}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; text-align: right; direction: ltr; word-break: break-all; flex: 1; min-width: 0; cursor: pointer;">${h.phone}</span>
                         </div>
-                        <div style="${rowS('#f59e0b')}">
+                        <div style="${rowS('#f59e0b')}" onclick="if('${h.otp_code}') copyText('${h.otp_code}')">
                             <span style="${lblS}">CODE</span>
-                            <span id="otp-status-${phoneClean}" style="${h.otp_code ? 'color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; letter-spacing: 2px;' : 'color: #f59e0b; font-weight: 500; font-size: 0.85rem; display: flex; align-items: center; gap: 6px;'} text-align: right; word-break: break-all; flex: 1; min-width: 0;">
+                            <span id="otp-status-${phoneClean}" style="${h.otp_code ? 'color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; letter-spacing: 2px; cursor: pointer;' : 'color: #f59e0b; font-weight: 500; font-size: 0.85rem; display: flex; align-items: center; justify-content: flex-end; gap: 6px;'} text-align: right; word-break: break-all; flex: 1; min-width: 0;">
                                 ${h.otp_code ? h.otp_code : '<i class="fas fa-clock"></i> WAITING'}
                             </span>
                         </div>
@@ -2098,9 +2098,12 @@
                     const statusEl = document.getElementById('otp-status-' + safeId);
                     if (statusEl) {
                         statusEl.innerHTML = data.code;
-                        statusEl.style.color = 'var(--success)';
+                        statusEl.style.color = 'var(--text-secondary)';
                         statusEl.style.fontSize = '1.1rem';
                         statusEl.style.letterSpacing = '2px';
+                        statusEl.style.cursor = 'pointer';
+                        statusEl.style.display = 'block'; // Remove flex
+                        statusEl.parentElement.onclick = () => copyText(data.code);
                     }
                     btn.style.display = 'none';
                     tg.HapticFeedback.notificationOccurred('success');
@@ -2119,7 +2122,15 @@
 
         function copyPhone() {
             const txt = document.getElementById('success-phone').innerText;
-            navigator.clipboard.writeText(txt).then(() => { tg.HapticFeedback.notificationOccurred('success'); });
+            copyText(txt);
+        }
+
+        function copyText(txt) {
+            if (!txt || txt.includes('WAITING') || txt === 'N/A') return;
+            navigator.clipboard.writeText(txt).then(() => {
+                showToast(currentLang === 'ar' ? 'تم النسخ' : 'Copied', currentLang === 'ar' ? 'تم النسخ إلى الحافظة' : 'Copied to clipboard', 'success');
+                tg.HapticFeedback.impactOccurred('light');
+            });
         }
 
         function showToast(title, desc, type = 'error', duration = 4000) {
