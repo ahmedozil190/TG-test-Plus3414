@@ -4743,17 +4743,17 @@
                         <!-- User ID Row -->
                         <div style="background: ${hexToRgba('#b45309', 0.02)}; border: 1px solid ${hexToRgba('#b45309', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
                             <span style="${lblS} color: var(--text-secondary); opacity: 0.7;">${translations[currentLang].lbl_user}</span>
-                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${item.seller_id}</span>
+                            <span style="background: rgba(180, 83, 9, 0.08); color: #b45309; padding: 4px 12px; border-radius: 8px; font-weight: 800; font-size: 0.9rem; text-align: right; word-break: break-all;">${item.seller_id}</span>
                         </div>
                         <!-- Number Row -->
                         <div style="background: ${hexToRgba('#047857', 0.02)}; border: 1px solid ${hexToRgba('#047857', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
                             <span style="${lblS} color: var(--text-secondary); opacity: 0.7;">${translations[currentLang].lbl_number}</span>
-                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; text-align: right; direction: ltr; word-break: break-all; flex: 1; min-width: 0;">${item.phone}</span>
+                            <span style="background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 6px 14px; border-radius: 10px; font-weight: 900; font-size: 1.1rem; text-align: right; direction: ltr; word-break: break-all;">${item.phone}</span>
                         </div>
                         <!-- Password Row -->
                         <div style="background: ${hexToRgba('#be185d', 0.02)}; border: 1px solid ${hexToRgba('#be185d', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
                             <span style="${lblS} color: var(--text-secondary); opacity: 0.7;">Password</span>
-                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; text-align: right; direction: ltr; font-family: monospace; word-break: break-all; flex: 1; min-width: 0;">${item.two_fa_password || 'N/A'}</span>
+                            <span style="background: rgba(190, 24, 93, 0.08); color: #be185d; padding: 4px 12px; border-radius: 8px; font-weight: 700; font-size: 1rem; text-align: right; direction: ltr; font-family: monospace; word-break: break-all;">${item.two_fa_password || 'N/A'}</span>
                         </div>
                         <!-- Price Row -->
                         <div style="background: ${hexToRgba('#1d4ed8', 0.02)}; border: 1px solid ${hexToRgba('#1d4ed8', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
@@ -5171,7 +5171,7 @@
                     <div class="audit-card" id="audit-card-${acc.id}">
                         <div class="audit-row">
                             <span class="audit-label">Number</span>
-                            <span class="audit-value" style="color: #10b981;">${acc.phone}</span>
+                            <span class="audit-value" style="background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 4px 12px; border-radius: 10px; font-weight: 900;">${acc.phone}</span>
                         </div>
                         <div class="audit-row">
                             <span class="audit-label">Price</span>
@@ -5324,7 +5324,7 @@
         }
 
         function showOTPModal(phone, code) {
-            document.getElementById('otp-phone-display').innerText = phone;
+            document.getElementById('otp-phone-display').innerHTML = `<span style="background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 6px 14px; border-radius: 12px; font-weight: 900; font-size: 1.2rem; display: inline-block; margin-top: 10px; direction: ltr;">${phone}</span>`;
             document.getElementById('otp-code-display').innerText = code;
 
             // Set dynamic text

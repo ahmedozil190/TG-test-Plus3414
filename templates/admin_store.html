@@ -4543,7 +4543,7 @@
                         <!-- Status -->
                         <div style="${rowS}">
                             <span style="${lblS}">${currentLang === 'ar' ? 'الحالة' : 'STATUS'}</span>
-                            <span style="color: ${s.is_active ? '#10b981' : '#ef4444'}; font-weight: 800; font-size: 0.95rem; letter-spacing: 0.5px;">
+                            <span style="background: ${s.is_active ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)'}; color: ${s.is_active ? '#10b981' : '#ef4444'}; padding: 4px 10px; border-radius: 8px; font-weight: 800; font-size: 0.8rem; letter-spacing: 0.5px;">
                                 ${s.is_active ? (currentLang === 'ar' ? 'نشط' : 'ACTIVE') : (currentLang === 'ar' ? 'غير نشط' : 'INACTIVE')}
                             </span>
                         </div>
@@ -4551,7 +4551,7 @@
                         <!-- Server Name -->
                         <div style="${rowS}">
                             <span style="${lblS}">${currentLang === 'ar' ? 'المزود' : 'PROVIDER'}</span>
-                            <span style="color: #10b981; font-weight: 800; font-size: 1.05rem; text-align: right; word-break: break-all; flex: 1; margin-left: 10px;">
+                            <span style="background: rgba(139, 92, 246, 0.08); color: #8b5cf6; padding: 4px 12px; border-radius: 8px; font-weight: 800; font-size: 0.9rem; text-align: right; word-break: break-all;">
                                 ${s.name}
                             </span>
                         </div>
@@ -4559,7 +4559,7 @@
                         <!-- Type -->
                         <div style="${rowS}">
                             <span style="${lblS}">${currentLang === 'ar' ? 'النوع' : 'TYPE'}</span>
-                            <span style="color: #8b5cf6; font-weight: 700; font-size: 0.9rem; text-align: right; flex: 1;">
+                            <span style="background: rgba(59, 130, 246, 0.08); color: #3b82f6; padding: 4px 12px; border-radius: 8px; font-weight: 700; font-size: 0.85rem;">
                                 ${s.server_type === 'lion' || s.server_type === 'tg-lion' ? 'Lion' : 'Standard'}
                             </span>
                         </div>
@@ -4567,15 +4567,15 @@
                         <!-- Profit Margin -->
                         <div style="${rowS}">
                             <span style="${lblS}">${currentLang === 'ar' ? 'الربح' : 'PROFIT'}</span>
-                            <span style="color: #ff9f0a; font-weight: 800; font-size: 0.95rem;">
+                            <span style="background: rgba(245, 158, 11, 0.1); color: #f59e0b; padding: 4px 10px; border-radius: 8px; font-weight: 800; font-size: 0.85rem;">
                                 ${s.profit_margin}%
                             </span>
                         </div>
                         
                         <!-- Balance -->
-                        <div style="${rowS}; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.1);">
+                        <div style="${rowS}; background: rgba(16, 185, 129, 0.03); border: 1px solid rgba(16, 185, 129, 0.08);">
                             <span style="${lblS}; color: #10b981;">${currentLang === 'ar' ? 'الرصيد' : 'BALANCE'}</span>
-                            <span style="color: #10b981; font-weight: 900; font-size: 1.1rem; letter-spacing: 0.5px;">
+                            <span style="background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 6px 14px; border-radius: 10px; font-weight: 900; font-size: 1rem; letter-spacing: 0.5px;">
                                 ${s.balance ? (typeof s.balance === 'number' ? '$' + formatMoney(s.balance) : s.balance) : '$0'}
                             </span>
                         </div>
