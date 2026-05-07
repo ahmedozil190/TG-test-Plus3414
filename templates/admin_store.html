@@ -2815,13 +2815,13 @@
                 want to permanently delete this provider?</p>
 
             <div style="display: flex; gap: 12px; width: 100%;">
-                <button
+                <button class="cancel-btn"
                     style="flex: 1; margin: 0; padding: 14px 0; background: rgba(96, 165, 250, 0.1); color: var(--accent); border: 1px solid rgba(96, 165, 250, 0.2); border-radius: 12px; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center;"
                     onclick="closeDeleteConfirmModal()">
                     <i class="fas fa-times" style="margin-inline-end: 8px;"></i>
                     <span data-i18n="btn_cancel">Cancel</span>
                 </button>
-                <button
+                <button class="primary-btn"
                     style="flex: 1; margin: 0; padding: 14px 0; background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 12px; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center;"
                     onclick="executeDeleteServer()">
                     <i class="fas fa-trash-alt" style="margin-inline-end: 8px;"></i>
