@@ -11,9 +11,9 @@
     <title>Numbers Store</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
-        (function() {
+        (function () {
             const tg = window.Telegram.WebApp;
-            try { tg.expand(); } catch(e) {}
+            try { tg.expand(); } catch (e) { }
 
             // INSTANT THEME BACKGROUND
             const isDark = tg.colorScheme === 'dark';
@@ -424,18 +424,22 @@
                 scrollbar-width: thin;
                 scrollbar-color: var(--border) transparent;
             }
+
             .server-filter-bar::-webkit-scrollbar {
                 display: block;
                 height: 6px;
             }
+
             .server-filter-bar::-webkit-scrollbar-track {
                 background: transparent;
             }
+
             .server-filter-bar::-webkit-scrollbar-thumb {
                 background: var(--border);
                 border-radius: 10px;
                 transition: background 0.3s;
             }
+
             .server-filter-bar:hover::-webkit-scrollbar-thumb {
                 background: var(--text-s);
             }
@@ -1031,7 +1035,7 @@
                             <i class="fas fa-bolt"></i>
                         </div>
                         <div style="flex: 1;">
-                            <div style="font-weight: 800; font-size: 1rem; color: var(--text-s);">Binance Pay</div>
+                            <div style="font-weight: 800; font-size: 1rem; color: var(--text-p);">Binance Pay</div>
                         </div>
                         <div class="active-check" style="display: block; color: var(--accent);">
                             <i class="fas fa-circle-check"></i>
@@ -1048,7 +1052,7 @@
                             <i class="fas fa-coins"></i>
                         </div>
                         <div style="flex: 1;">
-                            <div style="font-weight: 800; font-size: 1rem; color: var(--text-s);">TRX (TRC20)</div>
+                            <div style="font-weight: 800; font-size: 1rem; color: var(--text-p);">TRX (TRC20)</div>
                         </div>
                         <div class="active-check" style="display: none; color: var(--accent);">
                             <i class="fas fa-circle-check"></i>
@@ -1065,7 +1069,7 @@
                             <i class="fas fa-shield-halved"></i>
                         </div>
                         <div style="flex: 1;">
-                            <div style="font-weight: 800; font-size: 1rem; color: var(--text-s);">USDT (BEP20)</div>
+                            <div style="font-weight: 800; font-size: 1rem; color: var(--text-p);">USDT (BEP20)</div>
                         </div>
                         <div class="active-check" style="display: none; color: var(--accent);">
                             <i class="fas fa-circle-check"></i>
@@ -1384,7 +1388,7 @@
                 if (!config || !config.method || config.method.toUpperCase() === 'GET') {
                     const sep = resource.includes('?') ? '&' : '?';
                     resource = `${resource}${sep}init_data=${encodeURIComponent(initData)}&_cb=${Date.now()}`;
-                } 
+                }
                 // Handle POST/PUT/DELETE requests (Body)
                 else if (config.body && typeof config.body === 'string') {
                     try {
