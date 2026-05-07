@@ -1,6 +1,7 @@
 import httpx
 import logging
 import asyncio
+import math
 
 logger = logging.getLogger(__name__)
 
@@ -294,4 +295,6 @@ class ExternalProvider:
         # Final profit is the maximum of percentage profit or minimum profit
         final_profit = max(percent_profit, self.min_profit)
         
-        return cost + final_profit
+        final_price = cost + final_profit
+        # Round up to 2 decimal places (e.g., 0.231 -> 0.24)
+        return math.ceil(final_price * 100) / 100.0
