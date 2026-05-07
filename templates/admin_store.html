@@ -2814,17 +2814,17 @@
             <p style="color: var(--text-s); font-size: 0.95rem; margin-bottom: 25px; line-height: 1.5;">Are you sure you
                 want to permanently delete this provider?</p>
 
-            <div style="display: flex; flex-direction: row; gap: 10px; width: 100%;">
-                <button class="cancel-btn"
+            <div style="display: flex; gap: 12px; width: 100%;">
+                <button
                     style="flex: 1; margin: 0; padding: 14px 0; background: rgba(96, 165, 250, 0.1); color: var(--accent); border: 1px solid rgba(96, 165, 250, 0.2); border-radius: 12px; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center;"
                     onclick="closeDeleteConfirmModal()">
-                    <i class="fas fa-times" style="color: var(--accent); margin-inline-end: 8px;"></i>
+                    <i class="fas fa-times" style="margin-inline-end: 8px;"></i>
                     <span data-i18n="btn_cancel">Cancel</span>
                 </button>
-                <button class="primary-btn"
-                    style="flex: 1; margin: 0; padding: 14px 0; background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 12px; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: 0.3s; height: auto !important; display: flex; align-items: center; justify-content: center;"
+                <button
+                    style="flex: 1; margin: 0; padding: 14px 0; background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 12px; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center;"
                     onclick="executeDeleteServer()">
-                    <i class="fas fa-trash-alt" style="color: var(--danger); margin-inline-end: 8px;"></i>
+                    <i class="fas fa-trash-alt" style="margin-inline-end: 8px;"></i>
                     <span data-i18n="btn_delete">Delete</span>
                 </button>
             </div>
