@@ -287,7 +287,8 @@ class ExternalProvider:
     def calculate_price(self, provider_price):
         """Calculate selling price based on profit margin and minimum profit."""
         cost = float(provider_price)
-        if self.profit_margin <= 0:
+        # Only return base cost if both margin and minimum profit are 0
+        if self.profit_margin <= 0 and self.min_profit <= 0:
             return cost
         
         # Calculate percentage profit
