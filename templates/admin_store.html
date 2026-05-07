@@ -1776,9 +1776,6 @@
             <div class="nav-item" id="menu-store-user-prices" onclick="switchNav('store-user-prices', this)">
                 <i class="fas fa-user-tag"></i> <span data-i18n="nav_store_user_prices">Custom Users</span>
             </div>
-            <div class="nav-item" id="menu-sales" onclick="switchNav('sales', this)">
-                <i class="fas fa-receipt"></i> <span data-i18n="nav_sales">Sales History</span>
-            </div>
             <div class="nav-item" id="menu-analytics" onclick="switchNav('analytics', this)">
                 <i class="fas fa-chart-line"></i> <span>Analytics</span>
             </div>
@@ -2159,67 +2156,6 @@
             </section>
 
 
-            <!-- ===== Sales History Section ===== -->
-            <section id="section-sales" class="view-section">
-                <!-- Sales Stats -->
-                <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px;">
-                    <div class="info-card">
-                        <div class="info-card-l">
-                            <span class="info-card-lbl" data-i18n="stat_sales">TOTAL SALES</span>
-                            <div class="info-card-val">
-                                <span id="stat-sales-total-count">0</span>
-                                <span
-                                    style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600; margin-left: 5px;"
-                                    data-i18n="unit_ops">SALES</span>
-                            </div>
-                        </div>
-                        <div class="info-card-icon" style="background: rgba(34, 197, 94, 0.1); color: var(--success);">
-                            <i class="fas fa-receipt"></i>
-                        </div>
-                    </div>
-                    <div class="info-card">
-                        <div class="info-card-l">
-                            <span class="info-card-lbl">TOTAL REVENUE</span>
-                            <div class="info-card-val">
-                                <span id="stat-sales-total-amount">0.00</span>
-                                <span
-                                    style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600; margin-left: 5px;">USD</span>
-                            </div>
-                        </div>
-                        <div class="info-card-icon" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">
-                            <i class="fas fa-sack-dollar"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Sales Search -->
-                <div
-                    style="background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 16px; padding: 0 18px; display: flex; align-items: center; gap: 12px; height: 54px; box-shadow: var(--shadow); margin-bottom: 25px;">
-                    <i class="fas fa-search" style="color: var(--text-secondary); font-size: 1rem;"></i>
-                    <input type="text" id="sales-search"
-                        style="flex: 1; background: transparent; border: none; outline: none; color: var(--text-primary); font-size: 0.95rem;"
-                        placeholder="Search Phone, Buyer ID or Country..." oninput="searchSales()">
-                </div>
-
-                <div id="sales-mgmt-section" class="card" style="padding: 22px;">
-                    <div class="section-header" style="margin-top: 0; margin-bottom: 35px;">
-                        <h2 data-i18n="sales_history" style="margin: 0;">Sales History</h2>
-                    </div>
-
-                    <div class="list-container" id="sales-list"></div>
-
-                    <!-- Pagination -->
-                    <div id="sales-pagination" class="pagination-ctrls" style="display: none; margin-top: 20px;">
-                        <button class="pg-btn" id="pgPrevSales" onclick="prevSalesPage()">
-                            <i class="fas fa-chevron-left"></i> <span data-i18n="pg_prev">Prev</span>
-                        </button>
-                        <span id="pgInfoSales" class="pg-info">Page 1 of 1</span>
-                        <button class="pg-btn" id="pgNextSales" onclick="nextSalesPage()">
-                            <span data-i18n="pg_next">Next</span> <i class="fas fa-chevron-right"></i>
-                        </button>
-                    </div>
-                </div>
-            </section>
 
             <!-- ===== Deposits Section ===== -->
             <section id="section-deposits" class="view-section">
@@ -3021,10 +2957,6 @@
         let currentPricePage = 1;
         let currentPriceTab = 'active';
 
-        const SALES_PER_PAGE = 10;
-        let currentSalesPage = 1;
-        let totalSalesPages = 1;
-        let salesSearchQuery = '';
 
         function updateUI() {
             document.documentElement.lang = currentLang;
@@ -3060,8 +2992,6 @@
             // 1. Reset Pagination Variables
             currentPage = 1;
             currentPricePage = 1;
-            currentSalesPage = 1;
-            salesSearchQuery = '';
 
             // 2. Reset Search & Filters to ensure clean state
             filteredUsers = null;
@@ -3071,8 +3001,6 @@
             if (userSearch) userSearch.value = '';
             const priceSearch = document.getElementById('price-search');
             if (priceSearch) priceSearch.value = '';
-            const salesSearch = document.getElementById('sales-search');
-            if (salesSearch) salesSearch.value = '';
             const resetSearchContainer = document.getElementById('reset-search-container');
             if (resetSearchContainer) resetSearchContainer.style.display = 'none';
             const resetPriceSearchContainer = document.getElementById('reset-price-search-container');
@@ -3084,7 +3012,6 @@
             // 4. Render page 1 data WHILE section is still hidden
             if (id === 'users') renderUsers(allUsers);
             if (id === 'prices') renderPrices(allPrices);
-            if (id === 'sales') fetchSalesHistory(1);
             if (id === 'analytics') fetchAnalytics();
             if (id === 'home') renderSales(allTransactions);
             if (id.startsWith('settings')) fetchStoreSettings();
@@ -3114,7 +3041,6 @@
                 home: 'nav_dashboard',
                 users: 'nav_users',
                 prices: 'nav_prices',
-                sales: 'nav_sales',
                 settings: 'nav_settings',
                 'settings-general': 'Purchase Channel',
                 'settings-payments': 'Payments',
@@ -3167,16 +3093,12 @@
                 if (hmin) hmin.innerText = formatMoney(stats.min_price || 0);
                 if (hmax) hmax.innerText = formatMoney(stats.max_price || 0);
 
-                // SALES (Home & Section)
+                // SALES (Home)
                 const hts = document.getElementById('home-total-sales');
                 const htr = document.getElementById('home-total-revenue');
-                const stc = document.getElementById('stat-sales-total-count');
-                const sta = document.getElementById('stat-sales-total-amount');
 
                 if (hts) hts.innerText = stats.total_sales_count || 0;
                 if (htr) htr.innerText = formatMoney(stats.total_revenue || 0);
-                if (stc) stc.innerText = stats.total_sales_count || 0;
-                if (sta) sta.innerText = formatMoney(stats.total_revenue || 0);
 
                 // Customers (Home)
                 const htu = document.getElementById('home-total-users');
@@ -3222,7 +3144,6 @@
                 if (bcEl) bcEl.innerText = allUsers.filter(u => u.banned).length;
 
                 renderSales(allTransactions);
-                renderSalesList(allTransactions);
                 renderUsers(filteredUsers || allUsers);
 
                 allPrices = data.prices || [];
@@ -3629,153 +3550,6 @@
             container.innerHTML = html;
         }
 
-        async function fetchSalesHistory(page = 1) {
-            try {
-                const tg = window.Telegram?.WebApp;
-                const userId = tg?.initDataUnsafe?.user?.id || 0;
-                const initData = tg?.initData || '';
-                const query = encodeURIComponent(salesSearchQuery);
-
-                const res = await fetch(`/api/admin/store/sales?user_id=${userId}&init_data=${encodeURIComponent(initData)}&page=${page}&limit=${SALES_PER_PAGE}&search=${query}`);
-                const data = await res.json();
-
-                totalSalesPages = data.total_pages;
-                currentSalesPage = data.current_page;
-
-                renderSalesList(data.sales);
-                if (data.stats) {
-                    renderServerStats(data.stats);
-                }
-            } catch (e) { console.error("Sales History error:", e); }
-        }
-
-        function renderServerStats(stats) {
-            const container = document.getElementById('sales-server-stats');
-            if (!container) return;
-
-            if (!stats || stats.length === 0) {
-                container.innerHTML = `<p style="text-align: center; color: var(--text-secondary); font-size: 0.9rem;">No server stats available</p>`;
-                return;
-            }
-
-            container.innerHTML = stats.map(s => `
-                <div class="user-card" style="padding: 20px; cursor: default; border: 1px solid var(--border); border-radius: 20px; box-shadow: var(--shadow);">
-                    <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
-                        <h3 style="margin: 0; font-size: 1rem; font-weight: 700; color: var(--text-secondary);"><i class="fas fa-server" style="color: var(--accent); margin-right: 8px;"></i>${s.server_name}</h3>
-                    </div>
-                    <div style="width: 100%; display: grid; grid-template-columns: 1fr; gap: 10px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(139, 92, 246, 0.05); border: 1px solid rgba(139, 92, 246, 0.2); padding: 14px 18px; border-radius: 16px;">
-                            <div style="font-size: 0.75rem; color: #8b5cf6; font-weight: 800; letter-spacing: 1px;">SALES</div>
-                            <div style="font-size: 1.15rem; font-weight: 800; color: #8b5cf6;">${s.total_sales}</div>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2); padding: 14px 18px; border-radius: 16px;">
-                            <div style="font-size: 0.75rem; color: #3b82f6; font-weight: 800; letter-spacing: 1px;">REVENUE</div>
-                            <div style="font-size: 1.15rem; font-weight: 800; color: #3b82f6;">$${formatMoney(s.total_revenue)}</div>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.2); padding: 14px 18px; border-radius: 16px;">
-                            <div style="font-size: 0.75rem; color: #f59e0b; font-weight: 800; letter-spacing: 1px;">COST</div>
-                            <div style="font-size: 1.15rem; font-weight: 800; color: #f59e0b;">$${formatMoney(s.total_cost)}</div>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); padding: 14px 18px; border-radius: 16px;">
-                            <div style="font-size: 0.75rem; color: #10b981; font-weight: 800; letter-spacing: 1px;">NET</div>
-                            <div style="font-size: 1.25rem; font-weight: 900; color: #10b981;">$${formatMoney(s.net_profit)}</div>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function renderSalesList(list) {
-            const container = document.getElementById('sales-list');
-            if (!container) return;
-            const pagContainer = document.getElementById('sales-pagination');
-
-            if (!list || list.length === 0) {
-                container.innerHTML = `
-                <div style="text-align: center; padding: 40px 20px; background: var(--card-glass); border-radius: 16px; border: 1px dashed var(--border); margin-top: 0; backdrop-filter: blur(10px);">
-                    <i class="fas fa-receipt" style="font-size: 2.5rem; color: var(--text-secondary); opacity: 0.3; margin-bottom: 12px;"></i>
-                    <p style="color: var(--text-secondary); font-weight: 600; font-size: 0.95rem;">${currentLang === 'ar' ? 'لا توجد مبيعات' : 'No sales found'}</p>
-                </div>`;
-                pagContainer.style.display = 'none';
-                return;
-            }
-
-            container.innerHTML = list.map(item => `
-                <div class="user-card" style="position: relative; cursor: default;">
-                    <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
-                        <h3 style="margin: 0; font-size: 1rem; font-weight: 700; color: var(--text-secondary);"><i class="fas fa-shopping-cart" style="color: var(--accent); margin-right: 8px;"></i>${currentLang === 'ar' ? 'عملية شراء' : 'Purchase Operation'}</h3>
-                    </div>
-                    <div style="display: flex; flex-direction: column; gap: 10px;">
-                        <!-- Status Row -->
-                        <div style="background: ${hexToRgba('#be185d', 0.02)}; border: 1px solid ${hexToRgba('#be185d', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
-                            <span style="${lblS} color: var(--text-secondary); opacity: 0.7;">${currentLang === 'ar' ? 'الحالة' : 'STATUS'}</span>
-                            <span style="color: #be185d; font-weight: 500; font-size: 0.9rem; letter-spacing: 0.5px; text-align: right; word-break: break-all; flex: 1; min-width: 0;">SOLD</span>
-                        </div>
-                        <!-- Buyer Row -->
-                        <div style="background: ${hexToRgba('#b45309', 0.02)}; border: 1px solid ${hexToRgba('#b45309', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
-                            <span style="${lblS} color: var(--text-secondary); opacity: 0.7;">${currentLang === 'ar' ? 'المشتري' : 'BUYER ID'}</span>
-                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${item.buyer_id}</span>
-                        </div>
-                        <!-- Number Row -->
-                        <div style="background: ${hexToRgba('#047857', 0.02)}; border: 1px solid ${hexToRgba('#047857', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
-                            <span style="${lblS} color: var(--text-secondary); opacity: 0.7;">${currentLang === 'ar' ? 'الرقم' : 'NUMBER'}</span>
-                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; text-align: right; direction: ltr; word-break: break-all; flex: 1; min-width: 0;">${item.phone}</span>
-                        </div>
-                        <!-- Password Row -->
-                        <div style="background: ${hexToRgba('#be185d', 0.02)}; border: 1px solid ${hexToRgba('#be185d', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
-                            <span style="${lblS} color: var(--text-secondary); opacity: 0.7;">${currentLang === 'ar' ? 'كلمة السر' : 'PASSWORD'}</span>
-                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; text-align: right; direction: ltr; font-family: monospace; word-break: break-all; flex: 1; min-width: 0;">${item.password || 'N/A'}</span>
-                        </div>
-                        <!-- Price Row -->
-                        <div style="background: ${hexToRgba('#1d4ed8', 0.02)}; border: 1px solid ${hexToRgba('#1d4ed8', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
-                            <span style="${lblS} color: var(--text-secondary); opacity: 0.7;">${currentLang === 'ar' ? 'السعر' : 'PRICE'}</span>
-                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(item.price)}</span>
-                        </div>
-                        <!-- Date Row -->
-                        <div style="background: ${hexToRgba('#a16207', 0.02)}; border: 1px solid ${hexToRgba('#a16207', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
-                            <span style="${lblS} color: var(--text-secondary); opacity: 0.7;">${translations[currentLang].lbl_date}</span>
-                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.85rem; direction: ltr; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${formatDateTime(item.date)}</span>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-
-            if (totalSalesPages > 1) {
-                pagContainer.style.display = 'flex';
-                document.getElementById('pgInfoSales').innerText = `Page ${currentSalesPage} of ${totalSalesPages}`;
-                document.getElementById('pgPrevSales').disabled = (currentSalesPage === 1);
-                document.getElementById('pgNextSales').disabled = (currentSalesPage === totalSalesPages);
-            } else {
-                pagContainer.style.display = 'none';
-            }
-        }
-
-        function searchSales() {
-            const input = document.getElementById('sales-search');
-            salesSearchQuery = input ? input.value.trim() : '';
-            fetchSalesHistory(1);
-        }
-
-        function resetSalesSearch() {
-            salesSearchQuery = '';
-            const input = document.getElementById('sales-search');
-            if (input) input.value = '';
-            fetchSalesHistory(1);
-        }
-
-        function prevSalesPage() {
-            if (currentSalesPage > 1) {
-                fetchSalesHistory(currentSalesPage - 1);
-                document.getElementById('app-content-scroller').scrollTop = 0;
-            }
-        }
-
-        function nextSalesPage() {
-            if (currentSalesPage < totalSalesPages) {
-                fetchSalesHistory(currentSalesPage + 1);
-                document.getElementById('app-content-scroller').scrollTop = 0;
-            }
-        }
 
         // ===== Users =====
         function toggleUserDropdown() {
