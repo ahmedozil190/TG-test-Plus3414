@@ -1696,14 +1696,14 @@ async def store_deposit_verify(req: DepositSubmit):
             
             # Send notification via Bot
             try:
-                # 1. Notify User
-                bot_buyer = app.state.bot_buyer
-                if bot_buyer:
-                    await bot_buyer.send_message(
-                        chat_id=user.id,
-                        text=f"✅ **تم الإيداع بنجاح!**\n\n💰 المبلغ: **${amount}**\n🔖 رقم المعاملة: `{txid}`\nرصيدك الحالي: **${user.balance_store:.2f}**",
-                        parse_mode="Markdown"
-                    )
+                # 1. Notify User (Disabled as per user request)
+                # bot_buyer = app.state.bot_buyer
+                # if bot_buyer:
+                #     await bot_buyer.send_message(
+                #         chat_id=user.id,
+                #         text=f"✅ **تم الإيداع بنجاح!**\n\n💰 المبلغ: **${amount}**\n🔖 رقم المعاملة: `{txid}`\nرصيدك الحالي: **${user.balance_store:.2f}**",
+                #         parse_mode="Markdown"
+                #     )
                 
                 # 2. Notify Admin Channel
                 log_ch_obj = (await session.execute(select(AppSetting).where(AppSetting.key == "deposit_log_channel_id"))).scalar_one_or_none()
@@ -1724,7 +1724,7 @@ async def store_deposit_verify(req: DepositSubmit):
             except Exception as notify_err:
                 logger.error(f"Deposit Notification Error: {notify_err}")
             
-            return {"status": "success", "message": f"Successfully deposited ${amount}", "new_balance": user.balance_store}
+            return {"status": "success", "message": f"Successfully deposited ${amount:.2f}", "new_balance": user.balance_store}
             
     except Exception as e:
         logger.error(f"Deposit Verify Error: {e}")
