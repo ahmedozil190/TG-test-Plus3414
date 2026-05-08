@@ -2418,6 +2418,22 @@ async def get_store_deposits(user_id: int, init_data: str):
             })
         return {"deposits": data}
 
+@app.get("/api/admin/store/clear-deposits")
+async def clear_store_deposits(key: str = None):
+    # Simple security key for direct browser access: ?key=clear99
+    if key != "clear99":
+        return {"status": "error", "message": "Invalid security key. Use ?key=clear99"}
+    
+    from database.models import Deposit
+    from sqlalchemy import delete
+    try:
+        async with async_session() as session:
+            await session.execute(delete(Deposit))
+            await session.commit()
+        return {"status": "success", "message": "All deposit records have been cleared successfully."}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
 @app.get("/api/admin/store/user-prices")
 async def get_store_user_prices(user_id: int, init_data: str):
     from config import BOT_TOKEN, ADMIN_IDS
