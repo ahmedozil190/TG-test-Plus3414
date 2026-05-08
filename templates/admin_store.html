@@ -3422,7 +3422,7 @@
 
         function simplifyName(n) {
             if (!n) return '';
-            return n.split(',')[0].split('(')[0]
+            let s = n.split(',')[0].split('(')[0]
                 .replace('Islamic Republic of', '')
                 .replace('Province of China', '')
                 .replace('Republic of', '')
@@ -3434,6 +3434,7 @@
                 .replace('Arab Republic', '')
                 .replace('Democratic ', '')
                 .trim();
+            return s.replace(/\s?\(?[A-Z]{2,3}\)?$/, '').trim();
         }
 
         function renderTopCountries(data) {
@@ -4566,7 +4567,7 @@
                         <!-- Country Name -->
                         <div style="background: ${hexToRgba('#10b981', 0.02)}; border: 1px solid ${hexToRgba('#10b981', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
                             <span style="color: var(--text-secondary); opacity: 0.7; font-size: 0.8rem; font-weight: 500; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'الدولة' : 'Country'}</span>
-                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${up.country_name}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${simplifyName(up.country_name)}</span>
                         </div>
                         <!-- Country Code -->
                         <div style="background: ${hexToRgba('#8b5cf6', 0.02)}; border: 1px solid ${hexToRgba('#8b5cf6', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">

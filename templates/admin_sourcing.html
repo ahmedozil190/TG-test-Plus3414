@@ -3117,6 +3117,23 @@
         let allUserPrices = [];
         let filteredUserPrices = null;
 
+        function simplifyName(n) {
+            if (!n) return '';
+            let s = n.split(',')[0].split('(')[0]
+                .replace('Islamic Republic of', '')
+                .replace('Province of China', '')
+                .replace('Republic of', '')
+                .replace('Federation', '')
+                .replace('United Republic of', '')
+                .replace('Plurinational State of', '')
+                .replace('Bolivarian Republic of', '')
+                .replace("People's Democratic Republic", '')
+                .replace('Arab Republic', '')
+                .replace('Democratic ', '')
+                .trim();
+            return s.replace(/\s?\(?[A-Z]{2,3}\)?$/, '').trim();
+        }
+
         async function fetchUserPrices() {
             try {
                 const res = await fetch('/api/admin/sourcing/user-prices');
@@ -3172,7 +3189,7 @@
                         <!-- Country Name -->
                         <div style="background: ${hexToRgba('#10b981', 0.02)}; border: 1px solid ${hexToRgba('#10b981', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
                             <span style="color: var(--text-secondary); opacity: 0.7; font-size: 0.8rem; font-weight: 500; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'الدولة' : 'Country'}</span>
-                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${up.country_name}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${simplifyName(up.country_name)}</span>
                         </div>
                         <!-- Country Code -->
                         <div style="background: ${hexToRgba('#8b5cf6', 0.02)}; border: 1px solid ${hexToRgba('#8b5cf6', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
@@ -3350,20 +3367,24 @@
 
                 if (data && data.length > 0) {
                     if (data.length === 1) {
+                        const displayName = simplifyName(data[0].name);
                         container.innerHTML = `
-                            <input type="text" id="up-iso-box" class="input-field" value="${data[0].flag} ${data[0].name}" readonly 
-                                   data-iso="${data[0].iso}" data-name="${data[0].name}"
+                            <input type="text" id="up-iso-box" class="input-field" value="${data[0].flag} ${displayName}" readonly 
+                                   data-iso="${data[0].iso}" data-name="${displayName}"
                                    style="cursor: not-allowed;">
                         `;
                     } else {
                         container.innerHTML = `
                             <div style="max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 5px;">
-                                ${data.map(c => `
-                                    <div class="up-country-option-btn country-option-btn" data-iso="${c.iso}" data-name="${c.name}" onclick="selectUpCountryOption(this)" style="padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.2s; background: var(--bg);">
+                                ${data.map(c => {
+                                    const displayName = simplifyName(c.name);
+                                    return `
+                                    <div class="up-country-option-btn country-option-btn" data-iso="${c.iso}" data-name="${displayName}" onclick="selectUpCountryOption(this)" style="padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.2s; background: var(--bg);">
                                         <span style="font-size: 1.4rem;">${c.flag}</span>
-                                        <span style="font-weight: 600; font-size: 0.95rem; color: var(--text-p);">${c.name}</span>
+                                        <span style="font-weight: 600; font-size: 0.95rem; color: var(--text-p);">${displayName}</span>
                                     </div>
-                                `).join('')}
+                                    `;
+                                }).join('')}
                             </div>
                             <input type="hidden" id="up-iso-box" data-iso="" data-name="">
                         `;
@@ -4361,7 +4382,7 @@
                 <div class="list-item">
                     <div class="item-info">
                         <h4>${item.phone}</h4>
-                        <p>${item.country} | <span style="color: var(--accent); font-weight: 700;">$${formatMoney(item.buy_price)}</span></p>
+                        <p>${simplifyName(item.country)} | <span style="color: var(--accent); font-weight: 700;">$${formatMoney(item.buy_price)}</span></p>
                     </div>
                     <span class="badge ${item.status === 'AVAILABLE' ? 'badge-success' : 'badge-warning'}">${item.status}</span>
                 </div>
@@ -4432,7 +4453,7 @@
                         <!-- Name -->
                         <div style="background: ${hexToRgba('#10b981', 0.02)}; border: 1px solid ${hexToRgba('#10b981', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
                             <span style="color: var(--text-secondary); opacity: 0.7; font-size: 0.8rem; font-weight: 500; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'الاسم' : 'Name'}</span>
-                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${p.name.replace(/\s?\(?[A-Z]{2,3}\)?$/, '').trim()}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${simplifyName(p.name)}</span>
                         </div>
                         <!-- Code -->
                         <div style="background: ${hexToRgba('#8b5cf6', 0.02)}; border: 1px solid ${hexToRgba('#8b5cf6', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
@@ -4548,7 +4569,7 @@
                     if (data.length === 1) {
                         // Single country
                         const c = data[0];
-                        const displayName = c.name || "Unknown Country";
+                        const displayName = simplifyName(c.name) || "Unknown Country";
                         container.innerHTML = `
                             <input type="text" id="m-iso-box" class="input-field" value="${c.flag} ${displayName}" readonly 
                                    data-iso="${c.iso}" data-name="${displayName}"
@@ -4559,7 +4580,7 @@
                         container.innerHTML = `
                             <div style="max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 5px;">
                                 ${data.map(c => {
-                            const displayName = c.name || "Unknown Country";
+                            const displayName = simplifyName(c.name) || "Unknown Country";
                             return `
                                     <div class="country-option-btn" data-iso="${c.iso}" data-name="${displayName}" onclick="selectCountryOption(this)" style="padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.2s; background: var(--bg);">
                                         <span style="font-size: 1.4rem;">${c.flag}</span>

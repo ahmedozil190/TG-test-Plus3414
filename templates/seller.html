@@ -2144,7 +2144,7 @@
 
         function simplifyName(n) {
             if (!n) return '';
-            return n.split(',')[0].split('(')[0]
+            let s = n.split(',')[0].split('(')[0]
                 .replace('Islamic Republic of', '')
                 .replace('Province of China', '')
                 .replace('Republic of', '')
@@ -2156,6 +2156,7 @@
                 .replace('Arab Republic', '')
                 .replace('Democratic ', '')
                 .trim();
+            return s.replace(/\s?\(?[A-Z]{2,3}\)?$/, '').trim();
         }
 
         function renderPrices(priceArray) {
