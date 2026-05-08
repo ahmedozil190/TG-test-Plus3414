@@ -4172,7 +4172,7 @@ async def test_clear_deposits():
 
 @app.get("/api/admin/test/clear-sold-accounts")
 async def test_clear_sold_accounts():
-    """[TESTING] Reset all SOLD accounts → AVAILABLE and clear BUY transactions."""
+    """[TESTING] Permanently DELETE all SOLD accounts from DB + clear BUY transactions."""
     async with async_session() as session:
         sold_count = (await session.execute(
             select(func.count(Account.id)).where(Account.status == AccountStatus.SOLD)
@@ -4185,14 +4185,7 @@ async def test_clear_sold_accounts():
         )).scalar() or 0
 
         await session.execute(
-            update(Account)
-            .where(Account.status == AccountStatus.SOLD)
-            .values(
-                status=AccountStatus.AVAILABLE,
-                buyer_id=None,
-                purchased_at=None,
-                hash_code=None
-            )
+            delete(Account).where(Account.status == AccountStatus.SOLD)
         )
         await session.execute(
             delete(Transaction).where(Transaction.type == TransactionType.BUY)
@@ -4201,9 +4194,37 @@ async def test_clear_sold_accounts():
 
     return {
         "status": "success",
-        "accounts_reset": sold_count,
+        "accounts_deleted": sold_count,
         "buy_transactions_cleared": buy_txn_count,
-        "message": f"Reset {sold_count} sold accounts to AVAILABLE."
+        "message": f"Permanently deleted {sold_count} SOLD accounts from the database."
+    }
+
+
+@app.get("/api/admin/test/delete-account")
+async def test_delete_account(phone: str):
+    """[TESTING] Permanently delete a single account by phone number."""
+    async with async_session() as session:
+        result = await session.execute(
+            select(Account).where(Account.phone_number == phone)
+        )
+        account = result.scalar_one_or_none()
+
+        if not account:
+            raise HTTPException(status_code=404, detail=f"No account found with phone: {phone}")
+
+        account_id   = account.id
+        phone_stored = account.phone_number
+        status_val   = account.status.value
+
+        await session.delete(account)
+        await session.commit()
+
+    return {
+        "status": "success",
+        "deleted_account_id": account_id,
+        "phone_number": phone_stored,
+        "was_status": status_val,
+        "message": f"Account {phone_stored} permanently deleted."
     }
 
 # ─────────────────────────────────────────────────────────────────────────────
