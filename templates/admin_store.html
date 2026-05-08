@@ -2919,6 +2919,8 @@
 
         let currentLang = localStorage.getItem('admin_lang') || 'en';
         let allUsers = [];
+        let userId = 0;
+        let initData = '';
         let allTransactions = [];
         let currentTab = 'active';
         let filteredUsers = null;
@@ -3045,8 +3047,8 @@
         async function init() {
             try {
                 const tg = window.Telegram?.WebApp;
-                const userId = tg?.initDataUnsafe?.user?.id || 0;
-                const initData = tg?.initData || '';
+                userId = tg?.initDataUnsafe?.user?.id || 0;
+                initData = tg?.initData || '';
 
                 const res = await fetch(`/api/admin/store/data?user_id=${userId}&init_data=${encodeURIComponent(initData)}`);
                 const data = await res.json();
@@ -3137,7 +3139,7 @@
 
         async function loadMaintenanceMode() {
             try {
-                const res = await fetch(`/api/admin/system/maintenance?_t=${Date.now()}`);
+                const res = await fetch(`/api/admin/system/maintenance?user_id=${userId}&init_data=${encodeURIComponent(initData)}&_t=${Date.now()}`);
                 const data = await res.json();
                 const toggle = document.getElementById('maintenance-toggle');
                 if (toggle) toggle.checked = data.store_enabled;
@@ -3146,7 +3148,15 @@
 
         async function toggleMaintenanceMode(enabled) {
             try {
-                const res = await fetch(`/api/admin/store/maintenance?enabled=${enabled}`, { method: 'POST' });
+                const res = await fetch(`/api/admin/store/maintenance`, { 
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        user_id: userId,
+                        init_data: initData,
+                        enabled: enabled
+                    })
+                });
                 const data = await res.json();
                 if (data.status === 'success') {
                     showToast(
@@ -3177,6 +3187,8 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
+                        user_id: userId,
+                        init_data: initData,
                         SUPPORT_USERNAME: username,
                         UPDATES_CHANNEL: updatesChannel,
                         purchase_log_channel_id: logChannel,
@@ -4098,7 +4110,7 @@
 
         async function fetchStoreSettings() {
             try {
-                const res = await fetch('/api/admin/store/settings');
+                const res = await fetch(`/api/admin/store/settings?user_id=${userId}&init_data=${encodeURIComponent(initData)}`);
                 if (!res.ok) throw new Error("Failed to fetch settings");
                 const data = await res.json();
                 document.getElementById('setting-binance-key').value = data.binance_api_key || "";
@@ -4137,6 +4149,8 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
+                        user_id: userId,
+                        init_data: initData,
                         binance_api_key: key,
                         binance_api_secret: secret,
                         binance_pay_id: binancePayId,
