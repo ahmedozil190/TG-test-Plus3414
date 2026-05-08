@@ -1,3 +1,4 @@
+import logging
 from aiogram import Router, Bot
 from aiogram.filters import CommandStart
 from aiogram.types import Message, BotCommand, BotCommandScopeChat, WebAppInfo, MenuButtonWebApp, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
@@ -8,6 +9,7 @@ from database.engine import async_session
 from keyboards.client import main_keyboard
 from config import STORE_URL
 
+logger = logging.getLogger(__name__)
 router = Router()
 
 @router.message(CommandStart())
