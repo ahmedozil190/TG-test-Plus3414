@@ -265,13 +265,25 @@ async def is_session_alive(session_string: str) -> tuple[bool, str]:
                         spambot_replied = True
                         logging.info(f"[AliveCheck] SpamBot replied: {text[:100]}")
                         
-                        negatives = ["unfortunately", "limited", "restrictions", "restricted",
-                                     "can't message", "cannot message", "banned",
-                                     "was blocked for violations", "terms of service"]
-                        if any(word in text for word in negatives):
+                        positives = [
+                            "good news", "no limits", "free as a bird", 
+                            "أخبار جيدة", "لا توجد قيود", "حر كعصفور", "حر كطائر", "لا يوجد تقييد"
+                        ]
+                        negatives = [
+                            "unfortunately", "limited", "restrictions", "restricted",
+                            "can't message", "cannot message", "banned",
+                            "was blocked", "terms of service", "spam",
+                            "للأسف", "شكاوى", "مقيد", "مقيّد", "انتهاكات", "شروط الخدمة", "محظور", "لا يمكنك مراسلة", "لا يمكنك إرسال", "لا يمكنك ارسال", "مزعج"
+                        ]
+                        
+                        if any(word in text for word in positives):
+                            return True, "" # Confirmed clean
+                        elif any(word in text for word in negatives):
                             return False, "Account is Spam"
                         else:
-                            return True, "" # SpamBot confirmed it is clean
+                            # If neither matched, fallback to assuming clean but log a warning
+                            logging.warning(f"[AliveCheck] Unrecognized SpamBot reply, assuming clean: {text[:100]}")
+                            return True, ""
                 if spambot_replied:
                     break
                     
