@@ -4142,10 +4142,8 @@ async def delete_subscription_channel(channel_id: int, user_id: int, init_data: 
 # ─── TESTING / RESET ENDPOINTS ───────────────────────────────────────────────
 
 @app.get("/api/admin/test/clear-deposits")
-async def test_clear_deposits(user_id: int, init_data: str):
+async def test_clear_deposits():
     """[TESTING] Clear all deposits + DEPOSIT transactions + reset balance_store."""
-    if not verify_admin_auth_multi(init_data, user_id):
-        raise HTTPException(status_code=403, detail="Unauthorized")
     async with async_session() as session:
         deposit_count = (await session.execute(
             select(func.count(Deposit.id))
@@ -4173,10 +4171,8 @@ async def test_clear_deposits(user_id: int, init_data: str):
 
 
 @app.get("/api/admin/test/clear-sold-accounts")
-async def test_clear_sold_accounts(user_id: int, init_data: str):
+async def test_clear_sold_accounts():
     """[TESTING] Reset all SOLD accounts → AVAILABLE and clear BUY transactions."""
-    if not verify_admin_auth_multi(init_data, user_id):
-        raise HTTPException(status_code=403, detail="Unauthorized")
     async with async_session() as session:
         sold_count = (await session.execute(
             select(func.count(Account.id)).where(Account.status == AccountStatus.SOLD)
