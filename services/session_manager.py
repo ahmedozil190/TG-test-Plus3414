@@ -261,28 +261,51 @@ async def is_session_alive(session_string: str) -> tuple[bool, str]:
                 await asyncio.sleep(0.5)
                 async for msg in client.get_chat_history("SpamBot", limit=3):
                     if msg.from_user and msg.from_user.id == 178220800 and msg.date.timestamp() > (start_time - 2):
-                        text = (msg.text or "").lower()
+                        text = (msg.text or "")
                         spambot_replied = True
-                        logging.info(f"[AliveCheck] SpamBot replied: {text[:100]}")
                         
+                        # Auto-translate the response to English for universal checking
+                        translated_text = text.lower()
+                        try:
+                            import urllib.request
+                            import urllib.parse
+                            import json
+                            url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=en&dt=t&q=' + urllib.parse.quote(text)
+                            req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+                            res = urllib.request.urlopen(req, timeout=5).read().decode('utf-8')
+                            data = json.loads(res)
+                            translated_text = "".join([sentence[0] for sentence in data[0]]).lower()
+                            logging.info(f"[AliveCheck] SpamBot replied (Translated): {translated_text[:100]}")
+                        except Exception as e:
+                            logging.error(f"[AliveCheck] SpamBot translation failed: {e}")
+                            logging.info(f"[AliveCheck] SpamBot replied (Original): {translated_text[:100]}")
+
                         positives = [
-                            "good news", "no limits", "free as a bird", 
+                            "good news", "no limits", "free as a bird", "no restrictions", 
                             "أخبار جيدة", "لا توجد قيود", "حر كعصفور", "حر كطائر", "لا يوجد تقييد"
                         ]
                         negatives = [
                             "unfortunately", "limited", "restrictions", "restricted",
                             "can't message", "cannot message", "banned",
-                            "was blocked", "terms of service", "spam",
+                            "was blocked", "terms of service", "spam", "violation", "complaint",
                             "للأسف", "شكاوى", "مقيد", "مقيّد", "انتهاكات", "شروط الخدمة", "محظور", "لا يمكنك مراسلة", "لا يمكنك إرسال", "لا يمكنك ارسال", "مزعج"
                         ]
                         
-                        if any(word in text for word in positives):
+                        # Also check if it contains buttons (SpamBot almost always adds an appeal button for restricted accounts)
+                        has_buttons = getattr(msg, "reply_markup", None) is not None
+                        
+                        if has_buttons:
+                            logging.info("[AliveCheck] SpamBot message has inline buttons. Flagging as Spam.")
+                            return False, "Account is Spam"
+                            
+                        original_lower = text.lower()
+                        if any(word in translated_text for word in positives) or any(word in original_lower for word in positives):
                             return True, "" # Confirmed clean
-                        elif any(word in text for word in negatives):
+                        elif any(word in translated_text for word in negatives) or any(word in original_lower for word in negatives):
                             return False, "Account is Spam"
                         else:
                             # If neither matched, fallback to assuming clean but log a warning
-                            logging.warning(f"[AliveCheck] Unrecognized SpamBot reply, assuming clean: {text[:100]}")
+                            logging.warning(f"[AliveCheck] Unrecognized SpamBot reply, assuming clean: {original_lower[:100]}")
                             return True, ""
                 if spambot_replied:
                     break
