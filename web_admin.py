@@ -881,8 +881,7 @@ async def store_page(request: Request):
 async def get_store_data(user_id: int = None, init_data: str = None):
     try:
         if user_id and init_data:
-            from config import BOT_TOKEN
-            if not verify_admin_auth_multi(init_data, user_id):
+            if not verify_user_auth_multi(init_data, user_id):
                  raise HTTPException(status_code=401, detail="Unauthorized identity")
         
         async with async_session() as session:
