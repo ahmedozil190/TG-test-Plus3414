@@ -2779,12 +2779,11 @@
                 changeView(hash);
             }
         };
-        function copyText(text) {
-            if (!text) return;
-            navigator.clipboard.writeText(text).then(() => {
-                showToast('Copied!', text.length > 20 ? text.slice(0, 8) + '...' + text.slice(-6) : text, 'success');
-            }).catch(() => {
-                showToast('Failed', 'Could not copy to clipboard.', 'error');
+        function copyText(txt) {
+            if (!txt || txt === 'N/A') return;
+            navigator.clipboard.writeText(txt).then(() => {
+                showToast('Copied', 'Copied to clipboard', 'success');
+                tg.HapticFeedback.impactOccurred('light');
             });
         }
     </script>
