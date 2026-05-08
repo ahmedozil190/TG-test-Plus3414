@@ -338,11 +338,13 @@ async def send_purchase_log(user_id: int, country_name: str, price: float, phone
             
         # HTML escaping
         safe_country = country_name.replace('<', '&lt;').replace('>', '&gt;')
+        # Simplify: "Iran, Islamic Republic of" → "Iran"
+        display_country = safe_country.split(',')[0].strip()
         display_password = password if password else "None"
         
         message = (
             "<b>• account purchased successfully .</b>\n\n"
-            f"<b>• For country :- {safe_country}{flag} </b>\n"
+            f"<b>• For country :- {display_country}{flag} </b>\n"
             "<b>• Application Type :- Telegram .</b>\n\n"
             f"<b>• Number :- {masked_phone} 📞.</b>\n"
             f"<b>• Activation code :- {code} 💬.</b>\n\n"
@@ -1712,7 +1714,7 @@ async def store_deposit_verify(req: DepositSubmit):
                     import aiogram
                     temp_bot = aiogram.Bot(token=BOT_TOKEN)
                     log_text = (
-                        f"<b>• Received New Deposit.</b>\n\n"
+                        f"<b>• Received New Deposit .</b>\n\n"
                         f"<b>• User ID :- {user.id} 👤.</b>\n"
                         f"<b>• Amount: ${amount:.2f} 💵.</b>\n\n"
                         f"<b>• Method: {req.method} 💳.</b>\n"
