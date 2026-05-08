@@ -2313,9 +2313,12 @@
                             <span style="${lblS}">METHOD</span>
                             <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.85rem; text-align: right; text-transform: uppercase; word-break: break-all; flex: 1; min-width: 0;">${d.method || 'Binance Pay'}</span>
                         </div>
-                        <div style="${rowS('#3b82f6')}">
+                        <div style="${rowS('#3b82f6')}" onclick="copyText('${d.txid}')" title="${d.txid}" style="cursor: pointer;">
                             <span style="${lblS}">TXID</span>
-                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.85rem; text-align: right; direction: ltr; font-family: monospace; word-break: break-all; flex: 1; min-width: 0;">${d.txid}</span>
+                            <span style="color: var(--accent); font-weight: 600; font-size: 0.85rem; text-align: right; direction: ltr; font-family: monospace; flex: 1; min-width: 0; cursor: pointer; display: flex; align-items: center; justify-content: flex-end; gap: 6px;">
+                                ${d.txid.length > 16 ? d.txid.slice(0, 8) + '···' + d.txid.slice(-6) : d.txid}
+                                <i class="fas fa-copy" style="opacity: 0.6; font-size: 0.75rem;"></i>
+                            </span>
                         </div>
                         <div style="${rowS('#fdd835')}">
                             <span style="${lblS}">DATE</span>
