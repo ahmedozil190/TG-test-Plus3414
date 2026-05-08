@@ -4619,7 +4619,11 @@
         }
 
         async function deletePrice(code, iso) {
-            const confirmed = await showConfirm();
+            const confirmed = await showConfirm(
+                currentLang === 'ar' ? 'حذف الدولة' : 'Delete Country',
+                currentLang === 'ar' ? 'هل أنت متأكد من حذف هذه الدولة؟ لا يمكن التراجع عن هذا الإجراء.' : 'Are you sure you want to delete this country? This action cannot be undone.',
+                currentLang === 'ar' ? 'حذف' : 'Delete'
+            );
             if (!confirmed) return;
 
             try {
