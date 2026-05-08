@@ -339,7 +339,7 @@ async def send_purchase_log(user_id: int, country_name: str, price: float, phone
         # HTML escaping
         safe_country = country_name.replace('<', '&lt;').replace('>', '&gt;')
         # Simplify: "Iran, Islamic Republic of" → "Iran"
-        display_country = safe_country.split(',')[0].strip()
+        display_country = clean_display_name(safe_country)
         display_password = password if password else "None"
         
         message = (
@@ -530,6 +530,24 @@ def clean_display_name(raw_name: str) -> str:
     if trimmed in codes_map:
         return codes_map[trimmed]
     
+    # Split by comma and parenthesis to take the first part
+    raw_name = raw_name.split(',')[0].split('(')[0]
+    
+    removals = [
+        "Islamic Republic of",
+        "Province of China",
+        "Republic of",
+        "Federation",
+        "United Republic of",
+        "Plurinational State of",
+        "Bolivarian Republic of",
+        "People's Democratic Republic",
+        "Arab Republic",
+        "Democratic "
+    ]
+    for r in removals:
+        raw_name = raw_name.replace(r, "")
+        
     # Handle formats like "Egypt EG", "Egypt (EG)", "Egypt [EG]"
     clean = re.sub(r'\s*[\(\[]?[A-Z]{2,3}[\)\]]?\s*$', '', raw_name)
     return clean.strip()
