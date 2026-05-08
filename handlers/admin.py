@@ -155,13 +155,13 @@ async def process_add_balance(message: Message, state: FSMContext):
                 log_ch_obj = (await session.execute(select(AppSetting).where(AppSetting.key == "deposit_log_channel_id"))).scalar_one_or_none()
                 if log_ch_obj and log_ch_obj.value:
                     log_text = (
-                        f"💰 **New Deposit**\n\n"
-                        f"👤 **User:** `{target_id}`\n"
-                        f"💵 **Amount:** `${amount:.2f}`\n"
-                        f"👨‍💻 **By Admin:** `{message.from_user.id}`\n"
-                        f"📅 **Date:** `{func.now()}`"
+                        f"💰 <b>New Deposit (Admin)</b>\n\n"
+                        f"👤 <b>User:</b> <code>{target_id}</code>\n"
+                        f"💵 <b>Amount:</b> <code>${amount:.2f}</code>\n"
+                        f"👨‍💻 <b>By Admin:</b> <code>{message.from_user.id}</code>\n"
+                        f"📅 <b>Date:</b> <code>{__import__('datetime').datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</code>"
                     )
-                    await message.bot.send_message(chat_id=log_ch_obj.value, text=log_text, parse_mode="Markdown")
+                    await message.bot.send_message(chat_id=log_ch_obj.value, text=log_text, parse_mode="HTML")
             except Exception:
                 pass
         else:

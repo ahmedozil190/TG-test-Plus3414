@@ -1712,14 +1712,14 @@ async def store_deposit_verify(req: DepositSubmit):
                     import aiogram
                     temp_bot = aiogram.Bot(token=BOT_TOKEN)
                     log_text = (
-                        f"💰 **New Deposit**\n\n"
-                        f"👤 **User:** `{user.id}`\n"
-                        f"💵 **Amount:** `${amount:.2f}`\n"
-                        f"💳 **Method:** `{req.method}`\n"
-                        f"🔖 **Transaction:** `{txid}`\n"
-                        f"📅 **Date:** `{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}`"
+                        f"💰 <b>New Deposit</b>\n\n"
+                        f"👤 <b>User:</b> <code>{user.id}</code>\n"
+                        f"💵 <b>Amount:</b> <code>${amount:.2f}</code>\n"
+                        f"💳 <b>Method:</b> <code>{req.method}</code>\n"
+                        f"📅 <b>Date:</b> <code>{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</code>\n"
+                        f"🔖 <b>Transaction:</b> <code>{txid}</code>"
                     )
-                    await temp_bot.send_message(chat_id=log_ch_obj.value, text=log_text, parse_mode="Markdown")
+                    await temp_bot.send_message(chat_id=log_ch_obj.value, text=log_text, parse_mode="HTML")
                     await temp_bot.session.close()
             except Exception as notify_err:
                 logger.error(f"Deposit Notification Error: {notify_err}")
