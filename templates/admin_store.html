@@ -3922,7 +3922,7 @@
                     if (data.length === 1) {
                         // Single country
                         const c = data[0];
-                        const displayName = c.name || "Unknown Country";
+                        const displayName = simplifyName(c.name) || "Unknown Country";
                         container.innerHTML = `
                             <input type="text" id="m-iso-box" class="input-field" value="${c.flag} ${displayName}" readonly 
                                    data-iso="${c.iso}" data-name="${displayName}"
@@ -3933,7 +3933,7 @@
                         container.innerHTML = `
                             <div style="max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 5px;">
                                 ${data.map(c => {
-                            const displayName = c.name || "Unknown Country";
+                            const displayName = simplifyName(c.name) || "Unknown Country";
                             return `
                                     <div class="country-option-btn" data-iso="${c.iso}" data-name="${displayName}" onclick="selectCountryOption(this)" style="padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.2s; background: var(--bg);">
                                         <span style="font-size: 1.4rem;">${c.flag}</span>
@@ -4704,21 +4704,25 @@
                 if (data && data.length > 0) {
                     if (data.length === 1) {
                         // Single country
+                        const displayName = simplifyName(data[0].name);
                         container.innerHTML = `
-                            <input type="text" id="m-sup-iso-box" class="input-field" value="${data[0].flag} ${data[0].name}" readonly 
-                                   data-iso="${data[0].iso}" data-name="${data[0].name}"
+                            <input type="text" id="m-sup-iso-box" class="input-field" value="${data[0].flag} ${displayName}" readonly 
+                                   data-iso="${data[0].iso}" data-name="${displayName}"
                                    style="cursor: not-allowed;">
                         `;
                     } else {
                         // Multiple countries
                         container.innerHTML = `
                             <div style="max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 5px;">
-                                ${data.map(c => `
-                                    <div class="sup-country-option-btn" data-iso="${c.iso}" data-name="${c.name}" onclick="selectSupCountryOption(this)" style="padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.2s; background: var(--bg);">
+                                ${data.map(c => {
+                                    const displayName = simplifyName(c.name);
+                                    return `
+                                    <div class="sup-country-option-btn" data-iso="${c.iso}" data-name="${displayName}" onclick="selectSupCountryOption(this)" style="padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.2s; background: var(--bg);">
                                         <span style="font-size: 1.4rem;">${c.flag}</span>
-                                        <span style="font-weight: 600; font-size: 0.95rem; color: var(--text-p);">${c.name}</span>
+                                        <span style="font-weight: 600; font-size: 0.95rem; color: var(--text-p);">${displayName}</span>
                                     </div>
-                                `).join('')}
+                                    `;
+                                }).join('')}
                             </div>
                             <input type="hidden" id="m-sup-iso-box" data-iso="" data-name="">
                         `;
