@@ -2450,7 +2450,7 @@
                     if (data.found) {
                         lastDetectedCountry = data.name;
                         document.getElementById('detFlag').textContent = data.flag;
-                        document.getElementById('detName').textContent = data.name;
+                        document.getElementById('detName').textContent = simplifyName(data.name);
                         document.getElementById('detPrice').textContent = `$${formatMoney(data.price)}`;
                         document.getElementById('detName').style.color = 'var(--text-p)';
                         area.style.display = 'block';
