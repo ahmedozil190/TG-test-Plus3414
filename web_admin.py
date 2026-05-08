@@ -1712,12 +1712,12 @@ async def store_deposit_verify(req: DepositSubmit):
                     import aiogram
                     temp_bot = aiogram.Bot(token=BOT_TOKEN)
                     log_text = (
-                        f"💰 **عملية إيداع جديدة (تلقائية)**\n\n"
-                        f"👤 المستخدم: `{user.id}`\n"
-                        f"💵 المبلغ: `${amount:.2f}`\n"
-                        f"💳 الوسيلة: `{req.method}`\n"
-                        f"🔖 المعاملة: `{txid}`\n"
-                        f"📅 التاريخ: `{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}`"
+                        f"💰 **New Deposit**\n\n"
+                        f"👤 **User:** `{user.id}`\n"
+                        f"💵 **Amount:** `${amount:.2f}`\n"
+                        f"💳 **Method:** `{req.method}`\n"
+                        f"🔖 **Transaction:** `{txid}`\n"
+                        f"📅 **Date:** `{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}`"
                     )
                     await temp_bot.send_message(chat_id=log_ch_obj.value, text=log_text, parse_mode="Markdown")
                     await temp_bot.session.close()
