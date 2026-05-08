@@ -148,22 +148,6 @@ async def process_add_balance(message: Message, state: FSMContext):
             
             await session.commit()
             await message.answer(f"✅ تم إضافة ${amount:.2f} لرصيد المتجر الخاص بالمستخدم بنجاح.\nالرصيد الجديد: ${user.balance_store:.2f}", reply_markup=admin_back_keyboard())
-            
-            # Send Notification to Log Channel
-            try:
-                from database.models import AppSetting
-                log_ch_obj = (await session.execute(select(AppSetting).where(AppSetting.key == "deposit_log_channel_id"))).scalar_one_or_none()
-                if log_ch_obj and log_ch_obj.value:
-                    log_text = (
-                        f"💰 <b>New Deposit (Admin)</b>\n\n"
-                        f"👤 <b>User:</b> <code>{target_id}</code>\n"
-                        f"💵 <b>Amount:</b> <code>${amount:.2f}</code>\n"
-                        f"👨‍💻 <b>By Admin:</b> <code>{message.from_user.id}</code>\n"
-                        f"📅 <b>Date:</b> <code>{__import__('datetime').datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</code>"
-                    )
-                    await message.bot.send_message(chat_id=log_ch_obj.value, text=log_text, parse_mode="HTML")
-            except Exception:
-                pass
         else:
             await message.answer("حدث خطأ، المستخدم غير موجود.")
     await state.clear()
