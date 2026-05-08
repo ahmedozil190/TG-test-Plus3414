@@ -3146,7 +3146,11 @@
                 });
                 const data = await res.json();
                 if (data.status === 'success') {
-                    showToast(currentLang === 'ar' ? 'تم الحفظ' : 'Saved', 'Support settings updated', 'success');
+                    showToast(
+                        currentLang === 'ar' ? 'تم الحفظ' : 'Saved',
+                        currentLang === 'ar' ? 'تم حفظ إعدادات الدعم بنجاح' : 'Support settings updated successfully',
+                        'success'
+                    );
                 } else {
                     showToast(currentLang === 'ar' ? 'خطأ' : 'Error', data.message || 'Failed to save', 'error');
                 }
@@ -4109,14 +4113,18 @@
                 });
                 const data = await res.json();
                 if (data.status === 'success') {
-                    showToast("Success", "Settings saved successfully", "success");
+                    showToast(
+                        currentLang === 'ar' ? 'تم الحفظ' : 'Saved',
+                        currentLang === 'ar' ? 'تم حفظ الإعدادات بنجاح' : 'Settings saved successfully',
+                        'success'
+                    );
                     fetchStoreSettings(); // Refresh masked secret
                 } else {
-                    showToast("Error", data.message || "Failed to save", "error");
+                    showToast(currentLang === 'ar' ? 'خطأ' : 'Error', data.message || (currentLang === 'ar' ? 'فشل الحفظ' : 'Failed to save'), 'error');
                 }
             } catch (e) {
                 console.error("Save settings error:", e);
-                showToast("Error", "Connection error", "error");
+                showToast(currentLang === 'ar' ? 'خطأ' : 'Error', currentLang === 'ar' ? 'خطأ في الاتصال' : 'Connection error', 'error');
             } finally {
                 if (btn) {
                     btn.disabled = false;
