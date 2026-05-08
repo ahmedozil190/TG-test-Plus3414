@@ -881,8 +881,9 @@ async def store_page(request: Request):
 async def get_store_data(user_id: int = None, init_data: str = None):
     try:
         if user_id and init_data:
-            if not verify_user_auth_multi(init_data, user_id):
-                 raise HTTPException(status_code=401, detail="Unauthorized identity")
+            from config import BOT_TOKEN
+            if not verify_telegram_auth(init_data, BOT_TOKEN, user_id):
+                raise HTTPException(status_code=401, detail="Unauthorized identity")
         
         async with async_session() as session:
             # CHECK MAINTENANCE MODE FIRST (Admins bypass)
