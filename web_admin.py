@@ -211,6 +211,7 @@ class StoreSettingsSubmit(AdminAuthRequest):
 class GeneralSettingsSubmit(AdminAuthRequest):
     bot_name: str
     purchase_log_channel_id: str
+    deposit_log_channel_id: str = ""
 
 class ApiServerSubmit(AdminAuthRequest):
     id: int | None = None
@@ -1693,16 +1694,35 @@ async def store_deposit_verify(req: DepositSubmit):
             
             await session.commit()
             
-            # Send notification via Bot (if available)
-            # try:
-            #     bot_buyer = app.state.bot_buyer
-            #     if bot_buyer:
-            #         await bot_buyer.send_message(
-            #             chat_id=user.id,
-            #             text=f"✅ **تم الإيداع بنجاح!**\n\n💰 المبلغ: **${amount}**\n🔖 رقم المعاملة: `{txid}`\nرصيدك الحالي: **${user.balance_store:.2f}**",
-            #             parse_mode="Markdown"
-            #         )
-            # except: pass
+            # Send notification via Bot
+            try:
+                # 1. Notify User
+                bot_buyer = app.state.bot_buyer
+                if bot_buyer:
+                    await bot_buyer.send_message(
+                        chat_id=user.id,
+                        text=f"✅ **تم الإيداع بنجاح!**\n\n💰 المبلغ: **${amount}**\n🔖 رقم المعاملة: `{txid}`\nرصيدك الحالي: **${user.balance_store:.2f}**",
+                        parse_mode="Markdown"
+                    )
+                
+                # 2. Notify Admin Channel
+                log_ch_obj = (await session.execute(select(AppSetting).where(AppSetting.key == "deposit_log_channel_id"))).scalar_one_or_none()
+                if log_ch_obj and log_ch_obj.value:
+                    from config import BOT_TOKEN
+                    import aiogram
+                    temp_bot = aiogram.Bot(token=BOT_TOKEN)
+                    log_text = (
+                        f"💰 **عملية إيداع جديدة (تلقائية)**\n\n"
+                        f"👤 المستخدم: `{user.id}`\n"
+                        f"💵 المبلغ: `${amount:.2f}`\n"
+                        f"💳 الوسيلة: `{req.method}`\n"
+                        f"🔖 المعاملة: `{txid}`\n"
+                        f"📅 التاريخ: `{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}`"
+                    )
+                    await temp_bot.send_message(chat_id=log_ch_obj.value, text=log_text, parse_mode="Markdown")
+                    await temp_bot.session.close()
+            except Exception as notify_err:
+                logger.error(f"Deposit Notification Error: {notify_err}")
             
             return {"status": "success", "message": f"Successfully deposited ${amount}", "new_balance": user.balance_store}
             
@@ -1933,6 +1953,9 @@ async def get_admin_store_data(user_id: int, init_data: str):
                 support_username = support_username_obj.value if support_username_obj else ""
                 updates_channel = updates_channel_obj.value if updates_channel_obj else ""
                 
+                dep_log_ch_obj = (await session.execute(select(AppSetting).where(AppSetting.key == "deposit_log_channel_id"))).scalar_one_or_none()
+                deposit_log_channel_id = dep_log_ch_obj.value if dep_log_ch_obj else ""
+                
                 if not bn_obj:
                     from config import BOT_TOKEN
                     def fetch_bot_name_store():
@@ -2046,6 +2069,7 @@ async def get_admin_store_data(user_id: int, init_data: str):
         return {
             "bot_name": bot_name,
             "purchase_log_channel_id": purchase_log_channel_id,
+            "deposit_log_channel_id": deposit_log_channel_id,
             "support_username": support_username,
             "updates_channel": updates_channel,
             "stats": {
@@ -2223,7 +2247,8 @@ async def save_general_settings(req: GeneralSettingsSubmit):
         async with async_session() as session:
             updates = {
                 "bot_name": req.bot_name.strip(),
-                "purchase_log_channel_id": req.purchase_log_channel_id.strip()
+                "purchase_log_channel_id": req.purchase_log_channel_id.strip(),
+                "deposit_log_channel_id": req.deposit_log_channel_id.strip() if hasattr(req, 'deposit_log_channel_id') else ""
             }
             for k, v in updates.items():
                 obj = (await session.execute(select(AppSetting).where(AppSetting.key == k))).scalar_one_or_none()
@@ -2317,7 +2342,7 @@ async def save_support_settings(data: dict):
         async with async_session() as session:
             for k, v in data.items():
                 if k in ["user_id", "init_data"]: continue
-                if k not in ["SUPPORT_USERNAME", "UPDATES_CHANNEL", "PURCHASE_LOG_CHANNEL_ID", "SOURCING_LOG_CHANNEL_ID", "purchase_log_channel_id", "sourcing_log_channel_id"]: continue
+                if k not in ["SUPPORT_USERNAME", "UPDATES_CHANNEL", "PURCHASE_LOG_CHANNEL_ID", "SOURCING_LOG_CHANNEL_ID", "purchase_log_channel_id", "sourcing_log_channel_id", "deposit_log_channel_id"]: continue
                 obj = (await session.execute(select(AppSetting).where(AppSetting.key == k))).scalar_one_or_none()
                 if obj:
                     obj.value = v.strip()

@@ -1767,9 +1767,6 @@
             <div class="nav-item" id="menu-users" onclick="switchNav('users', this)">
                 <i class="fas fa-users-cog"></i> <span data-i18n="nav_users">Customers</span>
             </div>
-            <div class="nav-item" id="menu-deposits" onclick="switchNav('deposits', this)">
-                <i class="fas fa-wallet"></i> <span data-i18n="nav_deposits">Deposits</span>
-            </div>
             <div class="nav-item" id="menu-prices" onclick="switchNav('prices', this)">
                 <i class="fas fa-tags"></i> <span data-i18n="nav_prices">Selling Prices</span>
             </div>
@@ -2181,39 +2178,6 @@
                             </div>
                         </div>
                         <div class="info-card-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">
-                            <i class="fas fa-coins"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Search Card -->
-                <!-- Deposits Search -->
-                <div
-                    style="background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 16px; padding: 0 18px; display: flex; align-items: center; gap: 12px; height: 54px; box-shadow: var(--shadow); margin-bottom: 25px;">
-                    <i class="fas fa-search" style="color: var(--text-secondary); font-size: 1rem;"></i>
-                    <input type="text" id="deposits-search"
-                        style="flex: 1; background: transparent; border: none; outline: none; color: var(--text-primary); font-size: 0.95rem;"
-                        placeholder="Search User ID or TxID..." oninput="searchDeposits()">
-                </div>
-
-                <!-- History Card -->
-                <div class="card" id="deposits-history-card" style="padding: 22px;">
-                    <div class="section-header" id="deposits-history-header" style="margin: 0 0 35px 0;">
-                        <h2>Deposits History</h2>
-                    </div>
-                    <div class="list-container" id="deposits-list"></div>
-                    <div id="deposits-pagination" class="pagination-ctrls" style="display: none;">
-                        <button class="pg-btn" id="pgPrevDeposits" onclick="prevDepositsPage()">
-                            <i class="fas fa-chevron-left"></i> <span data-i18n="pg_prev">Prev</span>
-                        </button>
-                        <span class="pg-info" id="pgInfoDeposits">Page 1 / 1</span>
-                        <button class="pg-btn" id="pgNextDeposits" onclick="nextDepositsPage()">
-                            <span data-i18n="pg_next">Next</span> <i class="fas fa-chevron-right"></i>
-                        </button>
-                    </div>
-                </div>
-            </section>
-
             <!-- ===== Store User Prices Section ===== -->
             <section id="section-store-user-prices" class="view-section">
                 <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px;">
@@ -2548,12 +2512,23 @@
                     <div class="form-group" style="margin-bottom: 25px;">
                         <label
                             style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">
-                            Purchase Channel
+                            Purchase Channel ID
                         </label>
                         <input type="text" id="setting-log-channel" class="search-input"
                             style="margin-bottom: 0; padding: 16px; font-size: 1rem; height: auto;"
                             placeholder="Enter Channel ID">
                     </div>
+
+                    <div class="form-group" style="margin-bottom: 25px;">
+                        <label
+                            style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">
+                            Deposit Log Channel ID
+                        </label>
+                        <input type="text" id="setting-deposit-log-channel" class="search-input"
+                            style="margin-bottom: 0; padding: 16px; font-size: 1rem; height: auto;"
+                            placeholder="Enter Channel ID">
+                    </div>
+
                     <div class="form-group" style="margin-bottom: 25px;">
                         <label
                             style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">
@@ -2854,7 +2829,6 @@
                 tab_recent: "Recent",
                 no_users: "No users found",
                 nav_settings: "Settings",
-                nav_deposits: "Deposits",
                 pg_prev: "Prev",
                 pg_next: "Next",
                 stat_active: "Active Users",
@@ -2916,7 +2890,6 @@
                 tab_recent: "الأخيرة",
                 no_users: "لا يوجد مستخدمين",
                 nav_settings: "الإعدادات",
-                nav_deposits: "الإيداعات",
                 pg_prev: "السابق",
                 pg_next: "التالي",
                 stat_active: "المستخدمون النشطون",
@@ -3016,7 +2989,6 @@
             if (id === 'home') renderSales(allTransactions);
             if (id.startsWith('settings')) fetchStoreSettings();
             if (id === 'settings-servers') fetchServers();
-            if (id === 'deposits') fetchDeposits();
             if (id === 'store-user-prices') fetchStoreUserPrices();
             if (id === 'settings-subscriptions') fetchSubscriptionChannels();
 
@@ -3049,7 +3021,6 @@
                 'settings-referral': 'Referral Program',
                 'settings-support': 'Support & Channels',
                 analytics: 'Analytics',
-                deposits: 'nav_deposits',
                 'store-user-prices': 'nav_store_user_prices'
             };
             const titleEl = document.getElementById('page-title');
@@ -3108,18 +3079,6 @@
                 if (hau) hau.innerText = stats.active_users || 0;
                 if (hbu) hbu.innerText = stats.banned_users || 0;
 
-                // Deposits (Home)
-                const htdr = document.getElementById('home-total-deposit-requests');
-                const htda = document.getElementById('home-total-deposits-amount');
-                if (htdr) htdr.innerText = stats.total_deposit_requests || 0;
-                if (htda) htda.innerText = formatMoney(stats.total_deposits_amount || 0);
-
-                // Deposits Section (New Stats)
-                const dtr = document.getElementById('stat-deposits-total-requests');
-                const dta = document.getElementById('stat-deposits-total-amount');
-                if (dtr) dtr.innerText = stats.total_deposit_requests || 0;
-                if (dta) dta.innerText = formatMoney(stats.total_deposits_amount || 0);
-
                 // Selling Prices (Home)
                 const hac = document.getElementById('home-active-countries');
                 if (hac) hac.innerText = stats.active_countries_count || 0;
@@ -3153,6 +3112,7 @@
                 renderPrices(allPrices);
 
                 if (data.purchase_log_channel_id) document.getElementById('setting-log-channel').value = data.purchase_log_channel_id;
+                if (data.deposit_log_channel_id) document.getElementById('setting-deposit-log-channel').value = data.deposit_log_channel_id;
                 if (data.support_username) document.getElementById('setting-support-username').value = data.support_username;
                 if (data.updates_channel) document.getElementById('setting-updates-channel').value = data.updates_channel;
 
@@ -3203,33 +3163,11 @@
             }
         }
 
-        async function saveGeneralSettings() {
-            const logChannel = document.getElementById('setting-log-channel').value;
-
-            try {
-                const res = await fetch('/api/admin/store/general-settings', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        purchase_log_channel_id: logChannel
-                    })
-                });
-                const data = await res.json();
-                if (data.status === 'success') {
-                    showToast(currentLang === 'ar' ? 'تم الحفظ' : 'Saved', currentLang === 'ar' ? 'تم حفظ معرف قناة الشراء' : 'Purchase channel ID saved', 'success');
-                } else {
-                    showToast(currentLang === 'ar' ? 'خطأ' : 'Error', data.message || 'Failed to save', 'error');
-                }
-            } catch (e) {
-                console.error('Error saving general settings', e);
-                showToast(currentLang === 'ar' ? 'خطأ' : 'Error', 'Connection failed', 'error');
-            }
-        }
-
         async function saveSupportSettings(btn) {
             const username = document.getElementById('setting-support-username').value;
             const updatesChannel = document.getElementById('setting-updates-channel').value;
             const logChannel = document.getElementById('setting-log-channel').value;
+            const depositLogChannel = document.getElementById('setting-deposit-log-channel').value;
             const originalText = btn.innerHTML;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
             btn.disabled = true;
@@ -3241,7 +3179,8 @@
                     body: JSON.stringify({
                         SUPPORT_USERNAME: username,
                         UPDATES_CHANNEL: updatesChannel,
-                        purchase_log_channel_id: logChannel
+                        purchase_log_channel_id: logChannel,
+                        deposit_log_channel_id: depositLogChannel
                     })
                 });
                 const data = await res.json();
@@ -4569,137 +4508,6 @@
         updateUI();
         init();
 
-
-        // ==========================================
-        // DEPOSITS LOGIC
-        // ==========================================
-        let allDeposits = [];
-        let filteredDeposits = null;
-        let currentDepositsPage = 1;
-        const DEPOSITS_PER_PAGE = 10;
-
-        async function fetchDeposits() {
-            try {
-                const res = await fetch('/api/admin/store/deposits');
-                const data = await res.json();
-                allDeposits = data.deposits || [];
-                filteredDeposits = null;
-                currentDepositsPage = 1;
-                renderDepositsList(allDeposits);
-            } catch (e) { console.error("Error fetching deposits", e); }
-        }
-
-        function renderDepositsList(list) {
-            const container = document.getElementById('deposits-list');
-            const pagContainer = document.getElementById('deposits-pagination');
-
-            // Update Top Stats
-            const reqEl = document.getElementById('stat-deposits-total-requests');
-            const amtEl = document.getElementById('stat-deposits-total-amount');
-            if (reqEl) reqEl.innerText = allDeposits.length;
-            if (amtEl) {
-                const sum = allDeposits.reduce((acc, curr) => acc + Number(curr.amount), 0);
-                amtEl.innerText = formatMoney(sum);
-            }
-
-            const header = document.getElementById('deposits-history-header');
-            if (!list || !list.length) {
-                if (header) header.style.marginBottom = '35px';
-                container.innerHTML = `
-                <div style="text-align: center; padding: 40px 20px; background: var(--card-glass); border-radius: 16px; border: 1px dashed var(--border); margin-top: 0; backdrop-filter: blur(10px);">
-                    <i class="fas fa-history" style="font-size: 2.5rem; color: var(--text-secondary); opacity: 0.15; margin-bottom: 12px;"></i>
-                    <p style="color: var(--text-secondary); font-weight: 600; font-size: 0.95rem;">${translations[currentLang].no_data || 'No deposits found'}</p>
-                </div>`;
-                pagContainer.style.display = 'none';
-                return;
-            }
-            if (header) header.style.marginBottom = '35px';
-
-            const totalPages = Math.ceil(list.length / DEPOSITS_PER_PAGE);
-            const start = (currentDepositsPage - 1) * DEPOSITS_PER_PAGE;
-            const paged = list.slice(start, start + DEPOSITS_PER_PAGE);
-
-            const rowS = (c) => `background: ${hexToRgba(c, 0.02)}; border: 1px solid ${hexToRgba(c, 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;`;
-            const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 500; text-transform: uppercase; opacity: 0.7; flex-shrink: 0;";
-
-            container.innerHTML = paged.map((item, idx) => {
-                const methodDisp = (item.method || 'Binance Pay').replace(' Pay', '');
-                const details = `$${formatMoney(item.amount)} - ${methodDisp}`;
-                const isLast = idx === paged.length - 1;
-                return `
-                <div class="user-card" style="padding: 20px; margin-bottom: ${isLast ? '0' : '15px'}; cursor: default;">
-                    <div style="display: flex; flex-direction: column; gap: 10px;">
-                        <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                            <h3 style="margin: 0; font-size: 1rem; font-weight: 700; color: var(--text-secondary);"><i class="fas fa-wallet" style="color: var(--accent); margin-right: 8px;"></i>Deposit</h3>
-                        </div>
-                        <!-- Status -->
-                        <div style="${rowS('#10b981')}">
-                            <span style="${lblS}">${currentLang === 'ar' ? 'الحالة' : 'STATUS'}</span>
-                            <span style="color: #10b981; font-weight: 900; font-size: 0.9rem; letter-spacing: 0.5px;">
-                                COMPLETED
-                            </span>
-                        </div>
-                        <!-- Details -->
-                        <div style="${rowS('#10b981')}">
-                            <span style="${lblS}">${currentLang === 'ar' ? 'التفاصيل' : 'DETAILS'}</span>
-                            <span style="color: var(--text-secondary); opacity: 0.7; font-weight: 800; font-size: 0.95rem; text-align: right; word-break: break-all; flex: 1; margin-left: 10px;">${details}</span>
-                        </div>
-                        <!-- TxID -->
-                        <div style="${rowS('#8b5cf6')}">
-                            <span style="${lblS}">${currentLang === 'ar' ? 'رقم العملية' : 'TxID'}</span>
-                            <span style="color: var(--text-secondary); opacity: 0.7; font-weight: 700; font-size: 0.85rem; text-align: right; word-break: break-all; flex: 1; margin-left: 10px;">${item.txid}</span>
-                        </div>
-                        <!-- User ID -->
-                        <div style="${rowS('#ff9f0a')}">
-                            <span style="${lblS}">${currentLang === 'ar' ? 'رقم المعرف' : 'USER ID'}</span>
-                            <span style="color: var(--text-secondary); opacity: 0.7; font-weight: 800; font-size: 1rem;">${item.user_id}</span>
-                        </div>
-                        <!-- Date -->
-                        <div style="${rowS('#fdd835')}">
-                            <span style="${lblS}">${currentLang === 'ar' ? 'التاريخ' : 'Date'}</span>
-                            <span style="color: var(--text-secondary); opacity: 0.7; font-weight: 600; font-size: 0.85rem; direction: ltr;">${formatDateTime(item.date)}</span>
-                        </div>
-                    </div>
-                </div>
-            `;
-            }).join('');
-
-            pagContainer.style.display = totalPages > 1 ? 'flex' : 'none';
-            document.getElementById('pgInfoDeposits').innerText = `Page ${currentDepositsPage} / ${totalPages}`;
-            document.getElementById('pgPrevDeposits').disabled = currentDepositsPage === 1;
-            document.getElementById('pgNextDeposits').disabled = currentDepositsPage === totalPages;
-        }
-
-        function prevDepositsPage() {
-            if (currentDepositsPage > 1) {
-                currentDepositsPage--;
-                renderDepositsList(filteredDeposits || allDeposits);
-                document.getElementById('deposits-history-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-        }
-        function nextDepositsPage() {
-            const list = filteredDeposits || allDeposits;
-            const totalPages = Math.ceil(list.length / DEPOSITS_PER_PAGE);
-            if (currentDepositsPage < totalPages) {
-                currentDepositsPage++;
-                renderDepositsList(list);
-                document.getElementById('deposits-history-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-        }
-
-        function searchDeposits() {
-            const q = document.getElementById('deposits-search').value.toLowerCase().trim();
-            if (!q) { filteredDeposits = null; currentDepositsPage = 1; renderDepositsList(allDeposits); return; }
-            filteredDeposits = allDeposits.filter(d => String(d.user_id).includes(q) || String(d.txid).toLowerCase().includes(q));
-            currentDepositsPage = 1;
-            renderDepositsList(filteredDeposits);
-        }
-        function resetDepositsSearch() {
-            document.getElementById('deposits-search').value = '';
-            filteredDeposits = null;
-            currentDepositsPage = 1;
-            renderDepositsList(allDeposits);
-        }
 
         // ==========================================
         // STORE USER PRICES LOGIC

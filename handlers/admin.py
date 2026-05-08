@@ -148,6 +148,22 @@ async def process_add_balance(message: Message, state: FSMContext):
             
             await session.commit()
             await message.answer(f"✅ تم إضافة ${amount:.2f} لرصيد المتجر الخاص بالمستخدم بنجاح.\nالرصيد الجديد: ${user.balance_store:.2f}", reply_markup=admin_back_keyboard())
+            
+            # Send Notification to Log Channel
+            try:
+                from database.models import AppSetting
+                log_ch_obj = (await session.execute(select(AppSetting).where(AppSetting.key == "deposit_log_channel_id"))).scalar_one_or_none()
+                if log_ch_obj and log_ch_obj.value:
+                    log_text = (
+                        f"💰 **عملية إيداع جديدة (يدوية)**\n\n"
+                        f"👤 المستخدم: `{target_id}`\n"
+                        f"💵 المبلغ: `${amount:.2f}`\n"
+                        f"👨‍💻 بواسطة الأدمن: `{message.from_user.id}`\n"
+                        f"📅 التاريخ: `{func.now()}`"
+                    )
+                    await message.bot.send_message(chat_id=log_ch_obj.value, text=log_text, parse_mode="Markdown")
+            except Exception:
+                pass
         else:
             await message.answer("حدث خطأ، المستخدم غير موجود.")
     await state.clear()
