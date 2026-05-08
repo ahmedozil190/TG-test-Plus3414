@@ -1714,9 +1714,9 @@ async def store_deposit_verify(req: DepositSubmit):
                     log_text = (
                         f"💰 <b>New Deposit</b>\n\n"
                         f"👤 <b>User:</b> <code>{user.id}</code>\n"
-                        f"💵 <b>Amount:</b> <code>${amount:.2f}</code>\n"
+                        f"💵 <b>Amount:</b> <code>${amount:.2f}</code>\n\n"
                         f"💳 <b>Method:</b> <code>{req.method}</code>\n"
-                        f"📅 <b>Date:</b> <code>{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</code>\n"
+                        f"📅 <b>Date:</b> <code>{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</code>\n\n"
                         f"🔖 <b>Transaction:</b> <code>{txid}</code>"
                     )
                     await temp_bot.send_message(chat_id=log_ch_obj.value, text=log_text, parse_mode="HTML")
