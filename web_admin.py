@@ -1713,11 +1713,11 @@ async def store_deposit_verify(req: DepositSubmit):
                     temp_bot = aiogram.Bot(token=BOT_TOKEN)
                     log_text = (
                         f"💰 <b>New Deposit</b>\n\n"
-                        f"👤 <b>User:</b> <code>{user.id}</code>\n"
+                        f"👤 <b>User:</b> {user.id}\n"
                         f"💵 <b>Amount:</b> ${amount:.2f}\n\n"
                         f"💳 <b>Method:</b> {req.method}\n"
                         f"📅 <b>Date:</b> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n"
-                        f"🔖 <b>Transaction:</b> <code>{txid}</code>"
+                        f"🔖 <b>Transaction:</b> {txid}"
                     )
                     await temp_bot.send_message(chat_id=log_ch_obj.value, text=log_text, parse_mode="HTML")
                     await temp_bot.session.close()
@@ -2418,21 +2418,6 @@ async def get_store_deposits(user_id: int, init_data: str):
             })
         return {"deposits": data}
 
-@app.get("/api/admin/store/clear-deposits")
-async def clear_store_deposits(key: str = None):
-    # Simple security key for direct browser access: ?key=clear99
-    if key != "clear99":
-        return {"status": "error", "message": "Invalid security key. Use ?key=clear99"}
-    
-    from database.models import Deposit
-    from sqlalchemy import delete
-    try:
-        async with async_session() as session:
-            await session.execute(delete(Deposit))
-            await session.commit()
-        return {"status": "success", "message": "All deposit records have been cleared successfully."}
-    except Exception as e:
-        return {"status": "error", "message": str(e)}
 
 @app.get("/api/admin/store/user-prices")
 async def get_store_user_prices(user_id: int, init_data: str):
