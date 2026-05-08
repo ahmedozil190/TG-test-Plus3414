@@ -4858,7 +4858,9 @@
 
         async function loadMaintenanceMode() {
             try {
-                const res = await fetch(`/api/admin/system/maintenance?user_id=${userId}&init_data=${encodeURIComponent(initData)}&_t=${Date.now()}`);
+                const _uid = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 0;
+                const _idata = window.Telegram?.WebApp?.initData || '';
+                const res = await fetch(`/api/admin/system/maintenance?user_id=${_uid}&init_data=${encodeURIComponent(_idata)}&_t=${Date.now()}`);
                 if (!res.ok) return;
                 const data = await res.json();
                 const srcToggle = document.getElementById('src-maintenance-toggle');
@@ -4870,10 +4872,12 @@
 
         async function toggleMaintenanceMode(enabled, target) {
             try {
+                const _uid = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 0;
+                const _idata = window.Telegram?.WebApp?.initData || '';
                 const res = await fetch('/api/admin/sourcing/maintenance', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ user_id: userId, init_data: initData, enabled: enabled })
+                    body: JSON.stringify({ user_id: _uid, init_data: _idata, enabled: enabled })
                 });
                 const data = await res.json();
                 if (data.status === 'success') {
@@ -4886,7 +4890,6 @@
                     );
                 } else {
                     showToast(currentLang === 'ar' ? 'خطأ' : 'Error', 'Failed to update maintenance', 'error');
-                    // Revert toggle on failure
                     const tog = document.getElementById('src-maintenance-toggle');
                     if (tog) tog.checked = !enabled;
                 }
