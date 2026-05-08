@@ -2044,17 +2044,6 @@
                 <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px;">
                     <div class="info-card">
                         <div class="info-card-l">
-                            <span class="info-card-lbl" data-i18n="lbl_pending_requests">PENDING REQUESTS</span>
-                            <div class="info-card-val"><span id="home-stat-withdraw-pending">0</span>
-                                <span>REQUESTS</span>
-                            </div>
-                        </div>
-                        <div class="info-card-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--warning);">
-                            <i class="fas fa-hourglass-half"></i>
-                        </div>
-                    </div>
-                    <div class="info-card">
-                        <div class="info-card-l">
                             <span class="info-card-lbl" data-i18n="lbl_approved_requests">APPROVED REQUESTS</span>
                             <div class="info-card-val"><span id="home-stat-withdraw-approved">0</span>
                                 <span>REQUESTS</span>
@@ -2062,6 +2051,17 @@
                         </div>
                         <div class="info-card-icon" style="background: rgba(34, 197, 94, 0.1); color: var(--success);">
                             <i class="fas fa-circle-check"></i>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-l">
+                            <span class="info-card-lbl" data-i18n="lbl_pending_requests">PENDING REQUESTS</span>
+                            <div class="info-card-val"><span id="home-stat-withdraw-pending">0</span>
+                                <span>REQUESTS</span>
+                            </div>
+                        </div>
+                        <div class="info-card-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--warning);">
+                            <i class="fas fa-hourglass-half"></i>
                         </div>
                     </div>
                     <div class="info-card">
@@ -2349,6 +2349,16 @@
                 <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px;">
                     <div class="info-card">
                         <div class="info-card-l">
+                            <span class="info-card-lbl">APPROVED REQUESTS</span>
+                            <div class="info-card-val"><span id="stat-withdraw-approved">0</span> <span>REQUESTS</span>
+                            </div>
+                        </div>
+                        <div class="info-card-icon" style="background: rgba(34, 197, 94, 0.1); color: var(--success);">
+                            <i class="fas fa-circle-check"></i>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-l">
                             <span class="info-card-lbl">PENDING REQUESTS</span>
                             <div class="info-card-val"><span id="stat-withdraw-pending">0</span> <span>REQUESTS</span>
                             </div>
@@ -2359,12 +2369,12 @@
                     </div>
                     <div class="info-card">
                         <div class="info-card-l">
-                            <span class="info-card-lbl">APPROVED REQUESTS</span>
-                            <div class="info-card-val"><span id="stat-withdraw-approved">0</span> <span>REQUESTS</span>
+                            <span class="info-card-lbl">REJECTED REQUESTS</span>
+                            <div class="info-card-val"><span id="stat-withdraw-rejected">0</span> <span>REQUESTS</span>
                             </div>
                         </div>
-                        <div class="info-card-icon" style="background: rgba(34, 197, 94, 0.1); color: var(--success);">
-                            <i class="fas fa-circle-check"></i>
+                        <div class="info-card-icon" style="background: rgba(239, 68, 68, 0.1); color: var(--error);">
+                            <i class="fas fa-circle-xmark"></i>
                         </div>
                     </div>
                     <div class="info-card">
@@ -3861,9 +3871,11 @@
                 const ws = data.stats;
                 const wp = document.getElementById('stat-withdraw-pending');
                 const wa = document.getElementById('stat-withdraw-approved');
+                const wr = document.getElementById('stat-withdraw-rejected');
                 const wtp = document.getElementById('stat-withdraw-total-paid');
                 if (wp) wp.innerText = ws.withdraw_pending || 0;
                 if (wa) wa.innerText = ws.withdraw_approved || 0;
+                if (wr) wr.innerText = ws.withdraw_rejected || 0;
                 if (wtp) wtp.innerText = formatMoney(ws.total_paid_amount || 0);
 
                 renderRecent(data.recent);
@@ -3928,9 +3940,11 @@
 
                 const wp = document.getElementById('stat-withdraw-pending');
                 const wa = document.getElementById('stat-withdraw-approved');
+                const wr2 = document.getElementById('stat-withdraw-rejected');
                 const wtp = document.getElementById('stat-withdraw-total-paid');
                 if (wp) wp.innerText = ws.withdraw_pending || 0;
                 if (wa) wa.innerText = ws.withdraw_approved || 0;
+                if (wr2) wr2.innerText = ws.withdraw_rejected || 0;
                 if (wtp) wtp.innerText = formatMoney(ws.total_paid_amount || 0);
 
                 document.getElementById('stat-history-pending').innerText = ws.pending_count || 0;

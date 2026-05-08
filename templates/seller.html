@@ -2338,9 +2338,11 @@
                                 <span style="${lblS}">ID</span>
                                 <span style="color: var(--text-secondary); opacity: 0.7; font-weight: 500; font-size: 0.9rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${h.transaction_id}</span>
                             </div>
-                            <div style="${rowS('#3b82f6')}">
+                            <div style="${rowS('#3b82f6')}" onclick="copyText('${h.address}')" title="${h.address}" style="cursor:pointer;">
                                 <span style="${lblS}">WALLET</span>
-                                <span style="color: var(--text-secondary); opacity: 0.7; font-weight: 500; font-size: 0.85rem; text-align: right; direction: ltr; word-break: break-all; flex: 1; min-width: 0;">${h.address}</span>
+                                <span style="color: var(--text-secondary); opacity: 0.7; font-weight: 500; font-size: 0.85rem; text-align: right; direction: ltr; font-family: monospace; flex: 1; min-width: 0; cursor: pointer;">
+                                    ${h.address && h.address.length > 14 ? h.address.slice(0, 8) + '···' + h.address.slice(-6) : (h.address || 'N/A')}
+                                </span>
                             </div>
                             <div style="${rowS('#fdd835')}">
                                 <span style="${lblS}">DATE</span>
@@ -2777,6 +2779,14 @@
                 changeView(hash);
             }
         };
+        function copyText(text) {
+            if (!text) return;
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Copied!', text.length > 20 ? text.slice(0, 8) + '...' + text.slice(-6) : text, 'success');
+            }).catch(() => {
+                showToast('Failed', 'Could not copy to clipboard.', 'error');
+            });
+        }
     </script>
 </body>
 
