@@ -4139,6 +4139,79 @@ async def delete_subscription_channel(channel_id: int, user_id: int, init_data: 
             await session.commit()
         return {"ok": True}
 
+# ─── TESTING / RESET ENDPOINTS ───────────────────────────────────────────────
+
+@app.get("/api/admin/test/clear-deposits")
+async def test_clear_deposits(user_id: int, init_data: str):
+    """[TESTING] Clear all deposits + DEPOSIT transactions + reset balance_store."""
+    if not verify_admin_auth_multi(init_data, user_id):
+        raise HTTPException(status_code=403, detail="Unauthorized")
+    async with async_session() as session:
+        deposit_count = (await session.execute(
+            select(func.count(Deposit.id))
+        )).scalar() or 0
+
+        txn_count = (await session.execute(
+            select(func.count(Transaction.id)).where(
+                Transaction.type == TransactionType.DEPOSIT
+            )
+        )).scalar() or 0
+
+        await session.execute(delete(Deposit))
+        await session.execute(
+            delete(Transaction).where(Transaction.type == TransactionType.DEPOSIT)
+        )
+        await session.execute(update(User).values(balance_store=0.0))
+        await session.commit()
+
+    return {
+        "status": "success",
+        "deposits_cleared": deposit_count,
+        "transactions_cleared": txn_count,
+        "message": f"Cleared {deposit_count} deposits and reset all store balances."
+    }
+
+
+@app.get("/api/admin/test/clear-sold-accounts")
+async def test_clear_sold_accounts(user_id: int, init_data: str):
+    """[TESTING] Reset all SOLD accounts → AVAILABLE and clear BUY transactions."""
+    if not verify_admin_auth_multi(init_data, user_id):
+        raise HTTPException(status_code=403, detail="Unauthorized")
+    async with async_session() as session:
+        sold_count = (await session.execute(
+            select(func.count(Account.id)).where(Account.status == AccountStatus.SOLD)
+        )).scalar() or 0
+
+        buy_txn_count = (await session.execute(
+            select(func.count(Transaction.id)).where(
+                Transaction.type == TransactionType.BUY
+            )
+        )).scalar() or 0
+
+        await session.execute(
+            update(Account)
+            .where(Account.status == AccountStatus.SOLD)
+            .values(
+                status=AccountStatus.AVAILABLE,
+                buyer_id=None,
+                purchased_at=None,
+                hash_code=None
+            )
+        )
+        await session.execute(
+            delete(Transaction).where(Transaction.type == TransactionType.BUY)
+        )
+        await session.commit()
+
+    return {
+        "status": "success",
+        "accounts_reset": sold_count,
+        "buy_transactions_cleared": buy_txn_count,
+        "message": f"Reset {sold_count} sold accounts to AVAILABLE."
+    }
+
+# ─────────────────────────────────────────────────────────────────────────────
+
 @app.get("/api/check-subscription")
 async def check_subscription(user_id: int, bot_type: str = "store"):
     from config import BOT_TOKEN, SELLER_BOT_TOKEN, ADMIN_IDS
