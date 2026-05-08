@@ -4858,10 +4858,11 @@
 
         async function loadMaintenanceMode() {
             try {
-                const res = await fetch(`/api/admin/system/maintenance?_t=${Date.now()}`);
+                const res = await fetch(`/api/admin/system/maintenance?user_id=${userId}&init_data=${encodeURIComponent(initData)}&_t=${Date.now()}`);
+                if (!res.ok) return;
                 const data = await res.json();
                 const srcToggle = document.getElementById('src-maintenance-toggle');
-                if (srcToggle) srcToggle.checked = data.sourcing_enabled;
+                if (srcToggle) srcToggle.checked = data.sourcing_enabled === true;
             } catch (e) {
                 console.error('Error loading maintenance mode', e);
             }
@@ -4869,20 +4870,31 @@
 
         async function toggleMaintenanceMode(enabled, target) {
             try {
-                const res = await fetch(`/api/admin/sourcing/maintenance?enabled=${enabled}`, { method: 'POST' });
+                const res = await fetch('/api/admin/sourcing/maintenance', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId, init_data: initData, enabled: enabled })
+                });
                 const data = await res.json();
                 if (data.status === 'success') {
                     showToast(
                         currentLang === 'ar' ? 'تم التحديث' : 'Updated',
                         enabled
-                            ? (currentLang === 'ar' ? `${target === 'store' ? 'متجر الأرقام' : 'بوت التوريد'} الآن في وضع الصيانة` : `${target === 'store' ? 'Store' : 'Sourcing'} bot is now in maintenance mode`)
+                            ? (currentLang === 'ar' ? 'بوت التوريد الآن في وضع الصيانة' : 'Sourcing bot is now in maintenance mode')
                             : (currentLang === 'ar' ? 'البوت متاح الآن للجميع' : 'Bot is now live for everyone'),
                         'success'
                     );
+                } else {
+                    showToast(currentLang === 'ar' ? 'خطأ' : 'Error', 'Failed to update maintenance', 'error');
+                    // Revert toggle on failure
+                    const tog = document.getElementById('src-maintenance-toggle');
+                    if (tog) tog.checked = !enabled;
                 }
             } catch (e) {
                 console.error('Error toggling maintenance mode', e);
                 showToast(currentLang === 'ar' ? 'خطأ' : 'Error', 'Failed to update', 'error');
+                const tog = document.getElementById('src-maintenance-toggle');
+                if (tog) tog.checked = !enabled;
             }
         }
 
