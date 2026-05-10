@@ -35,11 +35,12 @@
                     const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 0;
                     const initData = window.Telegram?.WebApp?.initData || '';
 
-                    // 1. Handle GET requests (Query Parameters)
+                    // 1. Handle GET requests (Query Parameters + Cache Busting)
                     if (!config.method || config.method.toUpperCase() === 'GET') {
                         const urlObj = new URL(url, window.location.origin);
                         urlObj.searchParams.set('user_id', userId);
                         urlObj.searchParams.set('init_data', initData);
+                        urlObj.searchParams.set('_cb', Date.now());
                         url = urlObj.pathname + urlObj.search;
                     }
                     // 2. Handle POST/PUT/DELETE requests (Body or Query for DELETE)
@@ -2627,7 +2628,7 @@
                         <span class="settings-text">Subscriptions</span>
                         <i class="fas fa-chevron-right settings-arrow"></i>
                     </div>
-                    
+
                 </div>
             </section>
 
@@ -2857,19 +2858,6 @@
             const g = parseInt(hex.slice(3, 5), 16);
             const b = parseInt(hex.slice(5, 7), 16);
             return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-        };
-
-        // Global Fetch Override for Cache Busting
-        const originalFetch = window.fetch;
-        window.fetch = function () {
-            let [resource, config] = arguments;
-            if (typeof resource === 'string' && resource.startsWith('/api/')) {
-                if (!config || !config.method || config.method.toUpperCase() === 'GET') {
-                    const sep = resource.includes('?') ? '&' : '?';
-                    resource = `${resource}${sep}_cb=${Date.now()}`;
-                }
-            }
-            return originalFetch(resource, config);
         };
 
         const tg = window.Telegram.WebApp;
@@ -3377,14 +3365,14 @@
                         container.innerHTML = `
                             <div style="max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 5px;">
                                 ${data.map(c => {
-                                    const displayName = simplifyName(c.name);
-                                    return `
+                            const displayName = simplifyName(c.name);
+                            return `
                                     <div class="up-country-option-btn country-option-btn" data-iso="${c.iso}" data-name="${displayName}" onclick="selectUpCountryOption(this)" style="padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.2s; background: var(--bg);">
                                         <span style="font-size: 1.4rem;">${c.flag}</span>
                                         <span style="font-weight: 600; font-size: 0.95rem; color: var(--text-p);">${displayName}</span>
                                     </div>
                                     `;
-                                }).join('')}
+                        }).join('')}
                             </div>
                             <input type="hidden" id="up-iso-box" data-iso="" data-name="">
                         `;
