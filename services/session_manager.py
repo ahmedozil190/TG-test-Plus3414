@@ -263,50 +263,28 @@ async def is_session_alive(session_string: str) -> tuple[bool, str]:
                     if msg.from_user and msg.from_user.id == 178220800 and msg.date.timestamp() > (start_time - 2):
                         text = (msg.text or "")
                         spambot_replied = True
+                                           # --- PURE BUTTON-COUNT LOGIC (Zero Text Reliance) ---
+                        # Logic: Clean accounts <= 2 buttons | Restricted >= 3 buttons.
                         
-                        # Auto-translate the response to English for universal checking
-                        translated_text = text.lower()
-                        try:
-                            import urllib.request
-                            import urllib.parse
-                            import json
-                            url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=en&dt=t&q=' + urllib.parse.quote(text)
-                            req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-                            res = urllib.request.urlopen(req, timeout=5).read().decode('utf-8')
-                            data = json.loads(res)
-                            translated_text = "".join([sentence[0] for sentence in data[0]]).lower()
-                            logging.info(f"[AliveCheck] SpamBot replied (Translated): {translated_text[:100]}")
-                        except Exception as e:
-                            logging.error(f"[AliveCheck] SpamBot translation failed: {e}")
-                            logging.info(f"[AliveCheck] SpamBot replied (Original): {translated_text[:100]}")
+                        btn_count = 0
+                        btn_texts = []
+                        if getattr(msg, "reply_markup", None) and getattr(msg.reply_markup, "inline_keyboard", None):
+                            for row in msg.reply_markup.inline_keyboard:
+                                for btn in row:
+                                    btn_count += 1
+                                    btn_texts.append(btn.text or "")
+                        
+                        # LOGGING for manual verification
+                        logging.info(f"[AliveCheck] SpamBot Result: Buttons={btn_count} | Labels={btn_texts}")
 
-                        positives = [
-                            "good news", "no limits", "free as a bird", "no restrictions", 
-                            "أخبار جيدة", "لا توجد قيود", "حر كعصفور", "حر كطائر", "لا يوجد تقييد"
-                        ]
-                        negatives = [
-                            "unfortunately", "limited", "restrictions", "restricted",
-                            "can't message", "cannot message", "banned",
-                            "was blocked", "terms of service", "spam", "violation", "complaint",
-                            "للأسف", "شكاوى", "مقيد", "مقيّد", "انتهاكات", "شروط الخدمة", "محظور", "لا يمكنك مراسلة", "لا يمكنك إرسال", "لا يمكنك ارسال", "مزعج"
-                        ]
-                        
-                        # Also check if it contains buttons (SpamBot almost always adds an appeal button for restricted accounts)
-                        has_buttons = getattr(msg, "reply_markup", None) is not None
-                        
-                        if has_buttons:
-                            logging.info("[AliveCheck] SpamBot message has inline buttons. Flagging as Spam.")
+                        # 1. Decision based on Button Count
+                        if btn_count >= 3:
+                            logging.info(f"[AliveCheck] Result: SPAM (Reason: {btn_count} buttons detected)")
                             return False, "Account is Spam"
-                            
-                        original_lower = text.lower()
-                        if any(word in translated_text for word in positives) or any(word in original_lower for word in positives):
-                            return True, "" # Confirmed clean
-                        elif any(word in translated_text for word in negatives) or any(word in original_lower for word in negatives):
-                            return False, "Account is Spam"
-                        else:
-                            # If neither matched, fallback to assuming clean but log a warning
-                            logging.warning(f"[AliveCheck] Unrecognized SpamBot reply, assuming clean: {original_lower[:100]}")
-                            return True, ""
+                        
+                        # 2. Decision based on structural absence of Spam indicators
+                        logging.info(f"[AliveCheck] Result: CLEAN (Reason: {btn_count} buttons detected)")
+                        return True, ""
                 if spambot_replied:
                     break
                     
