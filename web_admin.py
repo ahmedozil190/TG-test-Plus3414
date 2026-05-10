@@ -1436,9 +1436,6 @@ async def store_buy(data: StoreBuy):
                 from services.session_manager import clean_account_for_buyer
                 asyncio.create_task(clean_account_for_buyer(account.session_string, account.two_fa_password))
                 
-                # Immediate Purchase Log (Initial)
-                asyncio.create_task(send_purchase_log(user.id, data.country, final_price, account.phone_number, "Waiting for code...", account.two_fa_password))
-                
                 return {"status": "success", "phone": account.phone_number, "id": account.id}
             
             # If we are here and not returned, it means nothing was found or bought
@@ -1460,6 +1457,9 @@ async def store_get_code(user_id: int, phone: str, init_data: str):
             stmt = select(Account).where(Account.phone_number == phone, Account.buyer_id == user_id)
             account = (await session.execute(stmt)).scalar_one_or_none()
             if not account: raise HTTPException(status_code=404, detail="Account not found")
+            
+            if account.otp_code:
+                return {"status": "success", "code": account.otp_code}
             
             if account.server_id:
                 # 1. Fetch from external server
