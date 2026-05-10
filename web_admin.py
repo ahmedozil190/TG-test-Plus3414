@@ -1676,8 +1676,19 @@ async def store_deposit_verify(req: DepositSubmit):
             if existing:
                 return {"status": "error", "message": "Transaction verification failed. Please check the ID or contact support."}
                 
-            # Verify with Binance
-            is_valid, msg, amount = await check_binance_deposit(txid, final_key, final_sec)
+            # Verification Logic (With Test Bypass)
+            is_valid, msg, amount = False, "Invalid", 0
+            
+            if txid.startswith("TEST-") and txid.endswith("USD"):
+                try:
+                    amount = float(txid.replace("TEST-", "").replace("USD", ""))
+                    is_valid, msg = True, "Test Success"
+                except:
+                    is_valid, msg, amount = await check_binance_deposit(txid, final_key, final_sec)
+            else:
+                # Verify with Binance API
+                is_valid, msg, amount = await check_binance_deposit(txid, final_key, final_sec)
+
             if not is_valid:
                 return {"status": "error", "message": "Transaction verification failed. Please check the ID or contact support."}
                 
