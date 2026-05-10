@@ -3229,23 +3229,37 @@
 
         function buildChannelCard(ch) {
             const div = document.createElement('div');
-            div.className = 'list-item';
+            div.className = 'user-card';
             div.dataset.chId = ch.id;
-            div.style.cssText = 'display:flex;flex-direction:column;align-items:stretch;gap:0;padding:20px;background:transparent;border-radius:12px;border:1px solid var(--border);';
+            div.style.cssText = 'padding: 20px; margin-bottom: 15px; cursor: default;';
+            
+            const lblS = "color: var(--text-secondary); opacity: 0.7; font-size: 0.8rem; font-weight: 500; text-transform: uppercase; flex-shrink: 0;";
+            
             div.innerHTML = `
-                <div style="display:grid;grid-template-columns:1fr;gap:15px;margin-bottom:15px;">
-                    <div style="display:flex;justify-content:space-between;align-items:center;background:transparent;padding:14px 15px;border-radius:10px;border:1px solid var(--border);">
-                        <span style="font-size:0.7rem;font-weight:800;color:var(--text-s);text-transform:uppercase;min-width:80px;">USERNAME</span>
-                        <span style="flex:1;text-align:right;margin-left:15px;word-break:break-all;font-weight:normal;font-size:0.95rem;color:var(--warning);">${ch.username}</span>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <!-- Username -->
+                    <div style="background: rgba(139, 92, 246, 0.02); border: 1px solid rgba(139, 92, 246, 0.08); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
+                        <span style="${lblS}">${currentLang === 'ar' ? 'اسم المستخدم' : 'USERNAME'}</span>
+                        <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">
+                            ${ch.username}
+                        </span>
                     </div>
-                    <div style="display:flex;justify-content:space-between;align-items:center;background:transparent;padding:14px 15px;border-radius:10px;border:1px solid var(--border);">
-                        <span style="font-size:0.7rem;font-weight:800;color:var(--text-s);text-transform:uppercase;min-width:80px;">LINK</span>
-                        <span style="flex:1;text-align:right;margin-left:15px;word-break:break-all;font-weight:normal;font-size:0.95rem;color:#3b82f6;">${ch.link}</span>
+                    
+                    <!-- Link -->
+                    <div style="background: rgba(59, 130, 246, 0.02); border: 1px solid rgba(59, 130, 246, 0.08); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
+                        <span style="${lblS}">${currentLang === 'ar' ? 'الرابط' : 'LINK'}</span>
+                        <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">
+                            ${ch.link}
+                        </span>
+                    </div>
+
+                    <!-- Actions -->
+                    <div style="display: flex; gap: 10px; margin-top: 5px;">
+                        <button class="primary-btn" style="flex: 1; background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); box-shadow: none; padding: 14px; font-size: 0.95rem; display: flex; align-items: center; justify-content: center;" onclick="deleteSubscriptionChannel(${ch.id}, this)">
+                            <i class="fas fa-trash-alt" style="color: var(--danger); ${currentLang === 'ar' ? 'margin-left: 8px;' : 'margin-right: 8px;'}"></i> ${currentLang === 'ar' ? 'حذف القناة' : 'Delete Channel'}
+                        </button>
                     </div>
                 </div>
-                <button class="primary-btn" onclick="deleteSubscriptionChannel(${ch.id}, this)" style="width:100%;background:rgba(239,68,68,0.1);color:var(--danger) !important;border:1px solid rgba(239,68,68,0.2);padding:14px;border-radius:10px;font-weight:700;box-shadow:none;">
-                    <i class="fas fa-trash-alt" style="margin-right:8px;color:var(--danger);"></i> Delete Channel
-                </button>
             `;
             return div;
         }
@@ -3317,7 +3331,7 @@
                     const data = await res.json();
                     if (data.ok) {
                         // Optimistic UI: remove card directly from DOM
-                        const card = btn ? btn.closest('.list-item') : document.querySelector(`.list-item[data-ch-id="${id}"]`);
+                        const card = btn ? btn.closest('.user-card') : document.querySelector(`.user-card[data-ch-id="${id}"]`);
                         if (card) {
                             card.remove();
                             const list = document.getElementById('sub-channels-list');

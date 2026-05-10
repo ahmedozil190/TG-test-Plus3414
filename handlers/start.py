@@ -71,9 +71,15 @@ async def cmd_start(message: Message, bot: Bot = None):
                     await ref_session.commit()
                     logger.info(f"Referral Awarded: User {user_id} joined via {referrer_id}, awarded ${bonus_val}")
 
-                    # Notify referrer (outside session to avoid delay)
-                    try: await bot.send_message(referrer_id, f"🎁 You earned ${bonus_val:.3f if f'{bonus_val:.3f}'[-1] != '0' else bonus_val:.2f} From a referral")
-                    except: pass
+                    # Notify referrer
+                    try:
+                        # Use the bot instance from the message if the injected one is None
+                        target_bot = bot or message.bot
+                        msg_text = f"🎁 You earned ${bonus_val:.3f if f'{bonus_val:.3f}'[-1] != '0' else bonus_val:.2f} From a referral"
+                        await target_bot.send_message(referrer_id, msg_text)
+                        logger.info(f"Referral notification sent to {referrer_id}")
+                    except Exception as send_err:
+                        logger.error(f"Failed to send referral notification to {referrer_id}: {send_err}")
         
         if user and user.is_banned_store:
             from database.models import AppSetting

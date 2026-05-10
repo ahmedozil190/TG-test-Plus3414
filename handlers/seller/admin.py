@@ -27,25 +27,14 @@ async def admin_add_country(message: Message):
         return
 
     try:
-        code = args[0].strip().lstrip('+')
+        code = args[0]
         name = args[1]
         buy_p = float(args[2])
         sell_p = float(args[3])
         delay = int(args[4]) if len(args) > 4 else 0
 
-        from web_admin import resolve_country_info, send_sourcing_price_log
-        
-        # Resolve ISO code to ensure uniqueness (e.g. +1 for US vs CA)
-        detected_name, _, iso = resolve_country_info(code)
-        if not name or name.lower() == "auto":
-            name = detected_name
-
         async with async_session() as session:
-            # Match by both code and ISO to support shared prefixes like +1
-            stmt = select(CountryPrice).where(
-                CountryPrice.country_code == code,
-                CountryPrice.iso_code == iso
-            )
+            stmt = select(CountryPrice).where(CountryPrice.country_code == code)
             cp = (await session.execute(stmt)).scalar_one_or_none()
             
             if cp:
@@ -53,12 +42,10 @@ async def admin_add_country(message: Message):
                 cp.buy_price = buy_p
                 cp.price = sell_p
                 cp.approve_delay = delay
-                cp.iso_code = iso
                 status = "Updated"
             else:
                 cp = CountryPrice(
                     country_code=code,
-                    iso_code=iso,
                     country_name=name,
                     buy_price=buy_p,
                     price=sell_p,
@@ -68,21 +55,7 @@ async def admin_add_country(message: Message):
                 status = "Added"
             
             await session.commit()
-            
-            # Trigger price log in background (consistent with web admin)
-            try:
-                await send_sourcing_price_log(
-                    cp.country_name, 
-                    cp.iso_code, 
-                    cp.country_code, 
-                    cp.buy_price, 
-                    cp.approve_delay, 
-                    cp.log_quantity
-                )
-            except Exception as log_err:
-                print(f"Failed to send sourcing price log: {log_err}")
-
-            await message.answer(f"✅ <b>{status} Successfully:</b>\n- {name} (+{code}) [ISO: {iso}]\n- Buy: ${buy_p:.3f if f'{buy_p:.3f}'[-1] != '0' else buy_p:.2f}\n- Sell: ${sell_p:.3f if f'{sell_p:.3f}'[-1] != '0' else sell_p:.2f}", parse_mode="HTML")
+            await message.answer(f"✅ <b>{status} Successfully:</b>\n- {name} (+{code})\n- Buy: ${buy_p:.3f if f'{buy_p:.3f}'[-1] != '0' else buy_p:.2f}\n- Sell: ${sell_p:.3f if f'{sell_p:.3f}'[-1] != '0' else sell_p:.2f}", parse_mode="HTML")
             
     except Exception as e:
         await message.answer(f"❌ Error: {str(e)}")
