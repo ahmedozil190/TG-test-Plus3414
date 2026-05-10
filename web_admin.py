@@ -319,6 +319,7 @@ async def send_purchase_log(user_id: int, country_name: str, price: float, phone
             if channel_id.isdigit() or (channel_id.startswith('-') and channel_id[1:].isdigit()):
                 if not channel_id.startswith('-100') and not channel_id.startswith('-'):
                     channel_id = f"-100{channel_id}"
+            logger.info(f"Resolved Purchase Log Channel ID: {channel_id}")
             
         flag = "🌐"
         try:
