@@ -1548,10 +1548,10 @@
             if (overlay) overlay.style.display = 'none';
         }
 
-        function formatMoney(val) {
+        function formatMoney(val, precision = 2) {
             let num = parseFloat(val || 0);
             if (num === 0) return "0";
-            return num.toFixed(2);
+            return num.toFixed(precision);
         }
 
         function hexToRgba(hex, alpha) {
@@ -1688,7 +1688,7 @@
                     const refCountEl = document.getElementById('ref-total-count');
                     if (refCountEl) {
                         refCountEl.innerHTML = `${data.user.referral_count || 0} <span>USERS</span>`;
-                        document.getElementById('ref-total-earnings').innerHTML = `${formatMoney(data.user.referral_earnings)} <span>USD</span>`;
+                        document.getElementById('ref-total-earnings').innerHTML = `${formatMoney(data.user.referral_earnings, 3)} <span>USD</span>`;
                         const botUsername = data.bot_username || "YourBot";
                         document.getElementById('ref-link-val').innerText = `https://t.me/${botUsername}?start=REF${userId}`;
                     }
@@ -1698,7 +1698,7 @@
                 const refBonusValEl = document.getElementById('ref-join-bonus-val');
                 const refCommValEl = document.getElementById('ref-commission-val');
                 if (refBonusValEl && data.referral_join_bonus !== undefined) {
-                    refBonusValEl.innerText = `$${formatMoney(data.referral_join_bonus)}`;
+                    refBonusValEl.innerText = `$${formatMoney(data.referral_join_bonus, 3)}`;
                 }
                 if (refCommValEl && data.referral_commission_percent !== undefined) {
                     refCommValEl.innerText = `${data.referral_commission_percent}%`;
