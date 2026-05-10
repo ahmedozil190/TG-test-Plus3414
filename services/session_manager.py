@@ -189,6 +189,13 @@ async def clean_account_for_buyer(session_string: str, two_fa: str = None):
         except Exception as e:
             logging.error(f"Failed to remove 2FA during cleaning: {e}")
             
+        try:
+            # Clean temporary chats
+            await client.delete_chat("SpamBot")
+            await client.delete_chat("me")
+            logging.info(f"Cleaned chats during buyer handover.")
+        except Exception: pass
+            
         if client.is_connected:
             await client.disconnect()
     except Exception as e:
