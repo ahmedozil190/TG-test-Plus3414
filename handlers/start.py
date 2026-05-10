@@ -77,10 +77,7 @@ async def cmd_start(message: Message, bot: Bot = None):
                         target_bot = bot or message.bot
                         formatted_bonus = f"{bonus_val:.3f}" if f"{bonus_val:.3f}"[-1] != '0' else f"{bonus_val:.2f}"
                         
-                        if referrer.language == 'ar':
-                            msg_text = f"🎁 لقد ربحت <b>${formatted_bonus}</b> من إحالة جديدة!"
-                        else:
-                            msg_text = f"🎁 You earned <b>${formatted_bonus}</b> from a new referral!"
+                        msg_text = f"🎁 You earned <b>${formatted_bonus}</b> from a new referral!"
                             
                         await target_bot.send_message(referrer_id, msg_text, parse_mode="HTML")
                         logger.info(f"Referral notification sent to {referrer_id}")
