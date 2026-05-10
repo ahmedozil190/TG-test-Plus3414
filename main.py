@@ -2,7 +2,7 @@ import asyncio
 import logging
 import sys
 import os
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 
 import phonenumbers
 from aiogram import Bot, Dispatcher
@@ -57,9 +57,7 @@ async def auto_approve_task(bot_seller: Bot):
                             buy_price = buy_price if buy_price is not None else (cp.buy_price if cp else 0)
 
                         delay_delta = timedelta(seconds=approve_delay)
-                        now_utc = datetime.now(timezone.utc)
-                        acc_created = acc.created_at.replace(tzinfo=timezone.utc) if acc.created_at.tzinfo is None else acc.created_at
-                        if now_utc >= (acc_created + delay_delta):
+                        if datetime.utcnow() >= (acc.created_at + delay_delta):
                             # Pre-Approval Verification Check
                             is_alive, reject_reason = await is_session_alive(acc.session_string)
                             
@@ -105,7 +103,7 @@ async def auto_approve_task(bot_seller: Bot):
                             if is_alive:
                                 if sessions_count > 1:
                                     # Delay approval by exactly 24 hours from NOW
-                                    acc.created_at = datetime.now(timezone.utc) + timedelta(hours=24)
+                                    acc.created_at = datetime.utcnow() + timedelta(hours=24)
                                     logger.info(f"Delayed approval for {acc.phone_number} by 24h due to active sessions.")
                                     
                                     # Notify the seller about the delay

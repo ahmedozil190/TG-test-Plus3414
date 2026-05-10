@@ -2,7 +2,7 @@ import os
 import logging
 import math
 import traceback
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 import phonenumbers
 from phonenumbers import geocoder
 from fastapi import FastAPI, Request, HTTPException, Depends
@@ -28,7 +28,7 @@ import re
 import urllib.request
 import json
 import asyncio
-
+from datetime import datetime
 import random
 import string
 
@@ -733,7 +733,7 @@ async def run_migrations():
             except: pass
 
             try:
-                await conn.execute(sqlalchemy.text("UPDATE country_prices SET updated_at = '" + datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S') + "' WHERE updated_at IS NULL"))
+                await conn.execute(sqlalchemy.text("UPDATE country_prices SET updated_at = '" + datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S') + "' WHERE updated_at IS NULL"))
             except: pass
 
             # Fix: Sync existing available accounts with CountryPrice selling prices
@@ -1367,7 +1367,7 @@ async def store_buy(data: StoreBuy):
                                     price=final_price,
                                     locked_buy_price=cost_price,
                                     buyer_id=user.id,
-                                    purchased_at=datetime.now(timezone.utc),
+                                    purchased_at=datetime.utcnow(),
                                     server_id=srv.id,
                                     hash_code=buy_res.get("hash_code")
                                 )
@@ -1421,7 +1421,7 @@ async def store_buy(data: StoreBuy):
                 account.status = AccountStatus.SOLD
                 account.buyer_id = user.id
                 account.otp_code = None
-                account.purchased_at = datetime.now(timezone.utc)
+                account.purchased_at = datetime.utcnow()
                 account.price = final_price
                 txn = Transaction(user_id=user.id, type=TransactionType.BUY, amount=-final_price)
                 session.add(txn)
@@ -2811,7 +2811,7 @@ async def update_sourcing_price(data: dict):
             cp.buy_price = buy_p
             cp.approve_delay = delay
             cp.log_quantity = qty
-            cp.updated_at = datetime.now(timezone.utc)
+            cp.updated_at = datetime.utcnow()
             if c_name: cp.country_name = c_name
         else:
             cp = CountryPrice(
@@ -2994,7 +2994,7 @@ async def update_price(data: PriceUpdate):
             
             # CRITICAL: Do NOT overwrite buy_price or approve_delay if update is from store dashboard
             # We keep whatever is currently there.
-            cp.updated_at = datetime.now(timezone.utc)
+            cp.updated_at = datetime.utcnow()
         else:
             name = data.country_name
             iso = data.iso_code
@@ -3902,7 +3902,7 @@ async def get_seller_accounts(user_id: int, init_data: str, page: int = 1, limit
             "accounts": accounts_data,
             "total_pages": total_pages,
             "current_page": page,
-            "server_now": int(datetime.now(timezone.utc).timestamp() * 1000)
+            "server_now": int(datetime.utcnow().timestamp() * 1000)
         }
 
 @app.get("/api/admin/sourcing/history")
@@ -4002,7 +4002,7 @@ async def get_admin_sourcing_history(
             "history": history,
             "total_pages": total_pages,
             "current_page": page,
-            "server_now": int(datetime.now(timezone.utc).timestamp() * 1000)
+            "server_now": int(datetime.utcnow().timestamp() * 1000)
         }
 
 @app.get("/api/admin/sourcing/account/{phone}/code")
