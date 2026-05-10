@@ -301,14 +301,16 @@ async def is_session_alive(session_string: str) -> tuple[bool, str]:
 
         except Exception as e:
             err_type = type(e).__name__
+            logging.error(f"[AliveCheck] SpamBot check CRASHED for {getattr(me, 'phone_number', '?')}: {err_type} - {e}")
             if any(x in err_type for x in ["PeerFlood", "UserRestricted", "Forbidden", "ChatWriteForbidden"]):
                 return False, "Account is spam-restricted"
             # Any other error (PEER_ID_INVALID, Timeout, etc) = can't verify = reject
-            return False, "Account is frozen or banned"
+            return False, f"Account check failed: {err_type}"
             
     except Exception as e:
         err_type = type(e).__name__
         err_str = str(e).lower()
+        logging.error(f"[AliveCheck] Global check error: {err_type} - {e}")
         if "unauthorized" in err_str or "auth" in err_str or "session" in err_str:
             return False, "Bot session was removed"
         logging.warning(f"Session failed alive check: {e}")
