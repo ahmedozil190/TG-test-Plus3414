@@ -263,34 +263,33 @@ async def is_session_alive(session_string: str) -> tuple[bool, str]:
                 async for msg in client.get_chat_history("SpamBot", limit=3):
                     if msg.from_user and msg.from_user.id == 178220800 and msg.date.timestamp() > (start_time - 2):
                         spambot_replied = True
-                        text = (msg.text or "")
                         
-                        # --- HYBRID LOGIC (Button Count + Keyword Safety) ---
+                        # --- UNIVERSAL BUTTON-COUNT LOGIC (Inline + Reply Keyboard) ---
                         btn_count = 0
                         btn_texts = []
-                        if getattr(msg, "reply_markup", None) and getattr(msg.reply_markup, "inline_keyboard", None):
-                            for row in msg.reply_markup.inline_keyboard:
-                                for btn in row:
-                                    btn_count += 1
-                                    btn_texts.append(btn.text or "")
+                        markup = getattr(msg, "reply_markup", None)
+                        if markup:
+                            # Check for Inline Buttons (attached to message)
+                            if hasattr(markup, "inline_keyboard"):
+                                for row in markup.inline_keyboard:
+                                    for btn in row:
+                                        btn_count += 1
+                                        btn_texts.append(btn.text or "")
+                            
+                            # Check for Keyboard Buttons (bottom keyboard)
+                            if hasattr(markup, "keyboard"):
+                                for row in markup.keyboard:
+                                    for btn in row:
+                                        btn_count += 1
+                                        btn_texts.append(btn.text or "")
                         
-                        # LOGGING for manual verification
-                        text_preview = text.replace('\n', ' ')[:100]
-                        logging.info(f"[AliveCheck] SpamBot Result for {getattr(me, 'phone_number', '?')}: Buttons={btn_count} | Text={text_preview} | Labels={btn_texts}")
+                        logging.info(f"[AliveCheck] SpamBot Result for {getattr(me, 'phone_number', '?')}: Buttons={btn_count} | Labels={btn_texts}")
 
-                        # 1. Primary check: Button Count (3 or more is definitely Spam)
                         if btn_count >= 3:
                             logging.info(f"[AliveCheck] Result: REJECTED (Reason: {btn_count} buttons detected)")
                             return False, "Account is Spam"
                         
-                        # 2. Safety check: Keywords (catch frozen/blocked accounts with 0 buttons)
-                        negatives = ["unfortunately", "blocked", "violation", "restricted", "limit", "للأسف", "محظور", "انتهاك", "تقييد"]
-                        if any(word in text.lower() for word in negatives):
-                            logging.info(f"[AliveCheck] Result: REJECTED (Reason: Negative keywords found in text)")
-                            return False, "Account is restricted or blocked"
-
-                        # 3. Final Decision
-                        logging.info(f"[AliveCheck] Result: PASSED (Reason: Clean structure detected)")
+                        logging.info(f"[AliveCheck] Result: PASSED (Reason: {btn_count} buttons detected)")
                         return True, ""
                 
                 if spambot_replied:
