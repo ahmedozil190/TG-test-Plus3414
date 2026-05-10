@@ -391,75 +391,83 @@ async def send_purchase_log(user_id: int, country_name: str, price: float, phone
 
 async def send_sourcing_price_log(country_name: str, iso_code: str, country_code: str, buy_price: float, approve_delay: int, quantity: int = 1000):
     """Send a price update log to the configured Telegram channel."""
+    import asyncio
+    import urllib.request
+    import json
+    import html as _html
     try:
         async with async_session() as session:
             stmt = select(AppSetting).where(AppSetting.key == "sourcing_log_channel_id")
             res = await session.execute(stmt)
             obj = res.scalar_one_or_none()
             if not obj or not obj.value:
+                logger.warning("send_sourcing_price_log: sourcing_log_channel_id is not configured.")
                 return
             channel_id = obj.value.strip()
 
-            # Standardize channel ID (more aggressive logic)
+            # Standardize channel ID
             if channel_id.isdigit() or (channel_id.startswith('-') and not channel_id.startswith('-100')):
                 if not channel_id.startswith('-'):
                     channel_id = f"-100{channel_id}"
                 elif channel_id.startswith('-') and not channel_id.startswith('-100'):
-                    # Handle cases where user might put -12345 instead of -10012345
                     channel_id = f"-100{channel_id[1:]}"
 
         from config import SELLER_BOT_TOKEN
-        import urllib.request
-        import json
-        import html
-        
+
         flag = get_flag_emoji(iso_code)
-        
-        # Clean name safely
         c_name = str(country_name or "Unknown")
-        for e in ["🇸🇦", "🇪🇬", "🇺🇾", "🌐"]:
+        for e in ["\U0001f1f8\U0001f1e6", "\U0001f1ea\U0001f1ec", "\U0001f1fa\U0001f1fe", "\U0001f310"]:
             c_name = c_name.replace(e, "")
-        clean_name = html.escape(c_name.strip())
-        
+        clean_name = _html.escape(c_name.strip())
+
+        buy_str = f"{buy_price:.3f}".rstrip('0').rstrip('.')
+        if '.' not in buy_str:
+            buy_str = f"{buy_price:.2f}"
+
         message = (
-            f"- {clean_name} - {flag} - ${buy_price:.3f if f'{buy_price:.3f}'[-1] != '0' else buy_price:.2f}\n\n"
-            f"- Quantity - {quantity} - +{html.escape(str(country_code))} - {html.escape(str(iso_code))}\n\n"
+            f"- {clean_name} - {flag} - ${buy_str}\n\n"
+            f"- Quantity - {quantity} - +{_html.escape(str(country_code))} - {_html.escape(str(iso_code))}\n\n"
             f"- Confirmation time [ {approve_delay} ] second\n\n"
             "-The bot is always open. I will announce on this channel if the price goes up or down"
         )
-        
-        bot_username = ""
-        try:
-            req_info = urllib.request.Request(f"https://api.telegram.org/bot{SELLER_BOT_TOKEN}/getMe")
-            with urllib.request.urlopen(req_info, timeout=5) as r:
-                res_data = json.loads(r.read().decode())
-                if res_data.get("ok"):
-                    bot_username = res_data["result"].get("username", "")
-        except: pass
 
-        payload = {
-            "chat_id": channel_id,
-            "text": message,
-            "parse_mode": "HTML"
-        }
-        
-        if bot_username:
-            payload["reply_markup"] = {
-                "inline_keyboard": [[{"text": "🤖 BOT 🤖", "url": f"https://t.me/{bot_username}"}]]
-            }
-            
-        # Send via urllib to be consistent and avoid sync requests issues
-        req = urllib.request.Request(
-            f"https://api.telegram.org/bot{SELLER_BOT_TOKEN}/sendMessage",
-            data=json.dumps(payload).encode('utf-8'),
-            headers={'Content-Type': 'application/json'},
-            method='POST'
-        )
-        with urllib.request.urlopen(req, timeout=10) as response:
-            pass
-            
+        def _send_tg():
+            _username = ""
+            try:
+                r0 = urllib.request.Request(f"https://api.telegram.org/bot{SELLER_BOT_TOKEN}/getMe")
+                with urllib.request.urlopen(r0, timeout=5) as rr:
+                    d0 = json.loads(rr.read().decode())
+                    if d0.get("ok"):
+                        _username = d0["result"].get("username", "")
+            except Exception:
+                pass
+
+            payload = {"chat_id": channel_id, "text": message, "parse_mode": "HTML"}
+            if _username:
+                payload["reply_markup"] = {
+                    "inline_keyboard": [[{"text": "\U0001f916 BOT \U0001f916", "url": f"https://t.me/{_username}"}]]
+                }
+
+            req = urllib.request.Request(
+                f"https://api.telegram.org/bot{SELLER_BOT_TOKEN}/sendMessage",
+                data=json.dumps(payload).encode('utf-8'),
+                headers={'Content-Type': 'application/json'},
+                method='POST'
+            )
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                return json.loads(resp.read().decode())
+
+        result = await asyncio.to_thread(_send_tg)
+        if not result.get("ok"):
+            logger.error(f"Telegram API rejected sourcing log: {result}")
+        else:
+            logger.info(f"Sourcing price log sent -> channel={channel_id} country={country_name}")
+
     except Exception as e:
         logger.error(f"Error sending sourcing price log: {e}")
+
+# ---- end send_sourcing_price_log ----
+
 
 def resolve_country_info(country_code_str: str, full_phone: str = None):
     """Resolve ISO code and Country Name. Handles numeric codes, Alpha-2, and Alpha-3."""
