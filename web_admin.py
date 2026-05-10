@@ -353,7 +353,7 @@ async def send_purchase_log(user_id: int, country_name: str, price: float, phone
             f"<b>• Number :- {masked_phone} 📞.</b>\n"
             f"<b>• Activation code :- {code} 💬.</b>\n\n"
             f"<b>• Password :- {display_password} 🔑.</b>\n"
-            f"<b>• Price :- ${price:.2f} 💵.</b>\n\n"
+            f"<b>• Price :- ${price:.3f} 💵.</b>\n\n"
             f"<b>• ID buyer :- {masked_id} 👨🏻‍💻 .</b>"
         )
         
@@ -422,7 +422,7 @@ async def send_sourcing_price_log(country_name: str, iso_code: str, country_code
         clean_name = html.escape(c_name.strip())
         
         message = (
-            f"- {clean_name} - {flag} - ${buy_price:.2f}\n\n"
+            f"- {clean_name} - {flag} - ${buy_price:.3f}\n\n"
             f"- Quantity - {quantity} - +{html.escape(str(country_code))} - {html.escape(str(iso_code))}\n\n"
             f"- Confirmation time [ {approve_delay} ] second\n\n"
             "-The bot is always open. I will announce on this channel if the price goes up or down"
@@ -1645,7 +1645,7 @@ async def check_binance_deposit(txid: str, api_key: str, api_secret: str):
                                 if price <= 0:
                                     return False, f"Could not determine price for {coin}. Please contact admin.", 0
                                 final_usd_amount = amount * price
-                                return True, f"Success: {amount} {coin} converted to ${final_usd_amount:.2f}", final_usd_amount
+                                return True, f"Success: {amount} {coin} converted to ${final_usd_amount:.3f}", final_usd_amount
                             else:
                                 return True, "Success", amount
                         else:
@@ -1759,7 +1759,7 @@ async def store_deposit_verify(req: DepositSubmit):
             except Exception as notify_err:
                 logger.error(f"Deposit Notification Error: {notify_err}")
             
-            return {"status": "success", "message": f"Successfully deposited ${amount:.2f}", "new_balance": user.balance_store}
+            return {"status": "success", "message": f"Successfully deposited ${amount:.3f}", "new_balance": user.balance_store}
             
     except Exception as e:
         logger.error(f"Deposit Verify Error: {e}")

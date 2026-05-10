@@ -1548,7 +1548,7 @@
             if (overlay) overlay.style.display = 'none';
         }
 
-        function formatMoney(val, precision = 2) {
+        function formatMoney(val, precision = 3) {
             let num = parseFloat(val || 0);
             if (num === 0) return "0";
             return num.toFixed(precision);

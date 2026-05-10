@@ -2746,9 +2746,9 @@
         tg.onEvent('themeChanged', applyTheme);
         applyTheme();
 
-        function formatMoney(val, precision = 2) {
+        function formatMoney(val, precision = 3) {
             let num = parseFloat(val || 0);
-            if (num === 0) return "0.00";
+            if (num === 0) return "0.000";
             return num.toFixed(precision);
         }
 
