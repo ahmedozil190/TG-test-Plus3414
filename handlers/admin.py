@@ -127,11 +127,16 @@ async def process_add_balance(message: Message, state: FSMContext):
             txn = Transaction(user_id=target_id, type=TransactionType.DEPOSIT, amount=amount)
             session.add(txn)
             
-            # Referral 1% Bonus
+            # Referral Dynamic Bonus
             if user.referred_by:
                 referrer = (await session.execute(select(User).where(User.id == user.referred_by))).scalar_one_or_none()
                 if referrer:
-                    bonus = amount * 0.01
+                    # Fetch Dynamic Commission % from AppSetting
+                    from database.models import AppSetting
+                    comm_obj = (await session.execute(select(AppSetting).where(AppSetting.key == "referral_commission_percent"))).scalar_one_or_none()
+                    comm_percent = float(comm_obj.value) if comm_obj and comm_obj.value else 1.0
+                    
+                    bonus = amount * (comm_percent / 100.0)
                     referrer.balance_store += bonus
                     referrer.referral_earnings = (referrer.referral_earnings or 0.0) + bonus
                     tx_ref = Transaction(user_id=referrer.id, type=TransactionType.REFERRAL, amount=bonus)
@@ -147,10 +152,57 @@ async def process_add_balance(message: Message, state: FSMContext):
                         pass
             
             await session.commit()
-            await message.answer(f"✅ تم إضافة ${amount:.2f} لرصيد المتجر الخاص بالمستخدم بنجاح.\nالرصيد الجديد: ${user.balance_store:.2f}", reply_markup=admin_back_keyboard())
+            await message.answer(f"✅ تم إضافة ${amount:.2f} لرصيد المتجر الخاص بالمستخدم بنجاح.\nالرصيد الجديد: ${user.balance_store:.2f}\n(تم احتساب عمولة الإحالة بنسبة {comm_percent if 'comm_percent' in locals() else '1.0'}%)", reply_markup=admin_back_keyboard())
         else:
             await message.answer("حدث خطأ، المستخدم غير موجود.")
     await state.clear()
+
+@router.message(Command("test_deposit"))
+async def cmd_test_deposit(message: Message):
+    """Hidden command to simulate a deposit for testing on hosting."""
+    if not is_admin(message.from_user.id): return
+    
+    args = message.text.split()
+    if len(args) < 2:
+        await message.answer("Usage: /test_deposit <amount>")
+        return
+        
+    try:
+        amount = float(args[1])
+    except ValueError:
+        await message.answer("Invalid amount.")
+        return
+
+    async with async_session() as session:
+        user = (await session.execute(select(User).where(User.id == message.from_user.id))).scalar_one_or_none()
+        if not user:
+            await message.answer("User not found in DB.")
+            return
+
+        user.balance_store += amount
+        session.add(Transaction(user_id=user.id, type=TransactionType.DEPOSIT, amount=amount))
+        
+        bonus_msg = ""
+        if user.referred_by:
+            referrer = (await session.execute(select(User).where(User.id == user.referred_by))).scalar_one_or_none()
+            if referrer:
+                from database.models import AppSetting
+                comm_obj = (await session.execute(select(AppSetting).where(AppSetting.key == "referral_commission_percent"))).scalar_one_or_none()
+                comm_percent = float(comm_obj.value) if comm_obj and comm_obj.value else 1.0
+                
+                bonus = amount * (comm_percent / 100.0)
+                referrer.balance_store += bonus
+                referrer.referral_earnings = (referrer.referral_earnings or 0.0) + bonus
+                session.add(Transaction(user_id=referrer.id, type=TransactionType.REFERRAL, amount=bonus))
+                bonus_msg = f"\n✨ Referral Bonus of ${bonus:.2f} credited to referrer {referrer.id} ({comm_percent}%)"
+                
+                try:
+                    await message.bot.send_message(referrer.id, f"🎉 Test Referral Bonus: You received ${bonus:.2f} from a referral deposit!")
+                except: pass
+
+        await session.commit()
+        await message.answer(f"✅ Simulated Deposit of ${amount:.2f} successful!{bonus_msg}")
+
     
 @router.callback_query(F.data.startswith("usr_sub_"))
 async def cq_sub_balance(call: CallbackQuery, state: FSMContext):
