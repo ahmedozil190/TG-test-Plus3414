@@ -254,6 +254,7 @@ async def is_session_alive(session_string: str) -> tuple[bool, str]:
         try:
             import time
             start_time = time.time()
+            logging.info(f"[AliveCheck] Starting SpamBot check for {getattr(me, 'phone_number', '?')}...")
             await client.send_message("SpamBot", "/start")
             
             spambot_replied = False
@@ -261,11 +262,9 @@ async def is_session_alive(session_string: str) -> tuple[bool, str]:
                 await asyncio.sleep(0.5)
                 async for msg in client.get_chat_history("SpamBot", limit=3):
                     if msg.from_user and msg.from_user.id == 178220800 and msg.date.timestamp() > (start_time - 2):
-                        text = (msg.text or "")
                         spambot_replied = True
-                                           # --- PURE BUTTON-COUNT LOGIC (Zero Text Reliance) ---
-                        # Logic: Clean accounts <= 2 buttons | Restricted >= 3 buttons.
                         
+                        # --- PURE BUTTON-COUNT LOGIC (Zero Text Reliance) ---
                         btn_count = 0
                         btn_texts = []
                         if getattr(msg, "reply_markup", None) and getattr(msg.reply_markup, "inline_keyboard", None):
@@ -274,23 +273,21 @@ async def is_session_alive(session_string: str) -> tuple[bool, str]:
                                     btn_count += 1
                                     btn_texts.append(btn.text or "")
                         
-                        # LOGGING for manual verification
-                        logging.info(f"[AliveCheck] SpamBot Result: Buttons={btn_count} | Labels={btn_texts}")
+                        logging.info(f"[AliveCheck] SpamBot Result for {getattr(me, 'phone_number', '?')}: Buttons={btn_count} | Labels={btn_texts}")
 
-                        # 1. Decision based on Button Count
                         if btn_count >= 3:
-                            logging.info(f"[AliveCheck] Result: SPAM (Reason: {btn_count} buttons detected)")
+                            logging.info(f"[AliveCheck] Result: REJECTED (Reason: {btn_count} buttons detected)")
                             return False, "Account is Spam"
                         
-                        # 2. Decision based on structural absence of Spam indicators
-                        logging.info(f"[AliveCheck] Result: CLEAN (Reason: {btn_count} buttons detected)")
+                        logging.info(f"[AliveCheck] Result: PASSED (Reason: {btn_count} buttons detected)")
                         return True, ""
+                
                 if spambot_replied:
                     break
                     
             if not spambot_replied:
-                logging.warning("[AliveCheck] SpamBot did not reply during timeout. Assuming clean.")
-                return True, "" # Assume ok if no error was thrown
+                logging.warning(f"[AliveCheck] SpamBot did not reply for {getattr(me, 'phone_number', '?')}. Rejecting for safety.")
+                return False, "Could not verify spam status (No reply from SpamBot)"
 
         except Exception as e:
             err_type = type(e).__name__
