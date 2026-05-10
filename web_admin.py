@@ -315,6 +315,7 @@ async def send_purchase_log(user_id: int, country_name: str, price: float, phone
                 logger.info("Purchase log skipped: No channel ID configured.")
                 return
             channel_id = obj.value.strip()
+            logger.info(f"Resolved Purchase Log Channel ID: {channel_id}")
             # Standardize channel ID
             if channel_id.isdigit() or (channel_id.startswith('-') and channel_id[1:].isdigit()):
                 if not channel_id.startswith('-100') and not channel_id.startswith('-'):
@@ -1431,6 +1432,9 @@ async def store_buy(data: StoreBuy):
                 # Background cleaning: Reset authorizations and remove 2FA
                 from services.session_manager import clean_account_for_buyer
                 asyncio.create_task(clean_account_for_buyer(account.session_string, account.two_fa_password))
+                
+                # Immediate Purchase Log (Initial)
+                asyncio.create_task(send_purchase_log(user.id, data.country, final_price, account.phone_number, "Waiting for code...", account.two_fa_password))
                 
                 return {"status": "success", "phone": account.phone_number, "id": account.id}
             
@@ -3796,7 +3800,8 @@ async def detect_country(phone: str, user_id: int, init_data: str):
                     UserCountryPrice.user_id == user_id,
                     or_(UserCountryPrice.country_code == cc_clean, UserCountryPrice.country_code == cc_plus)
                 )
-                ucp_list = (await session.execute(ucp_stmt)).scalars().all()
+                ucp_res = await session.execute(ucp_stmt)
+                ucp_list = ucp_res.scalars().all()
                 ucp = next((u for u in ucp_list if u.iso_code == target_iso), 
                            next((u for u in ucp_list if u.iso_code == 'XX'), 
                                 (ucp_list[0] if ucp_list else None)))
@@ -3805,7 +3810,8 @@ async def detect_country(phone: str, user_id: int, init_data: str):
             cp_stmt = select(CountryPrice).where(
                 or_(CountryPrice.country_code == cc_clean, CountryPrice.country_code == cc_plus)
             )
-            cp_list = (await session.execute(cp_stmt)).scalars().all()
+            cp_res = await session.execute(cp_stmt)
+            cp_list = cp_res.scalars().all()
             cp = next((c for c in cp_list if c.iso_code == target_iso), 
                       next((c for c in cp_list if c.iso_code == 'XX'), 
                            (cp_list[0] if cp_list else None)))
