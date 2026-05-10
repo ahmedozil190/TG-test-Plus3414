@@ -55,7 +55,7 @@ async def admin_add_country(message: Message):
                 status = "Added"
             
             await session.commit()
-            await message.answer(f"✅ <b>{status} Successfully:</b>\n- {name} (+{code})\n- Buy: ${buy_p}\n- Sell: ${sell_p}", parse_mode="HTML")
+            await message.answer(f"✅ <b>{status} Successfully:</b>\n- {name} (+{code})\n- Buy: ${buy_p:.3f if f'{buy_p:.3f}'[-1] != '0' else buy_p:.2f}\n- Sell: ${sell_p:.3f if f'{sell_p:.3f}'[-1] != '0' else sell_p:.2f}", parse_mode="HTML")
             
     except Exception as e:
         await message.answer(f"❌ Error: {str(e)}")

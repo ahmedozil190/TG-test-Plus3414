@@ -1822,10 +1822,12 @@
         }
         tg.onEvent('themeChanged', applyTheme);
 
-        function formatMoney(val, precision = 3) {
+        function formatMoney(val) {
             let num = parseFloat(val || 0);
-            if (num === 0) return "0.000";
-            return num.toFixed(precision);
+            if (num === 0) return "0.00";
+            let s3 = num.toFixed(3);
+            if (s3.endsWith('0')) return num.toFixed(2);
+            return s3;
         }
 
         function hexToRgba(hex, alpha) {

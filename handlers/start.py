@@ -72,7 +72,7 @@ async def cmd_start(message: Message, bot: Bot = None):
                     logger.info(f"Referral Awarded: User {user_id} joined via {referrer_id}, awarded ${bonus_val}")
 
                     # Notify referrer (outside session to avoid delay)
-                    try: await bot.send_message(referrer_id, f"🎁 You earned ${bonus_val:.3f} From a referral")
+                    try: await bot.send_message(referrer_id, f"🎁 You earned ${bonus_val:.3f if f'{bonus_val:.3f}'[-1] != '0' else bonus_val:.2f} From a referral")
                     except: pass
         
         if user and user.is_banned_store:
@@ -118,11 +118,11 @@ async def cq_my_referral(call: CallbackQuery, bot: Bot):
     
     text = (
         "Share your referral link with your friends or channels and earn rewards:\n"
-        f"• <b>${bonus_val:.3f}</b> for each person who joins.\n"
+        f"• <b>${bonus_val:.3f if f'{bonus_val:.3f}'[-1] != '0' else bonus_val:.2f}</b> for each person who joins.\n"
         f"• <b>{comm_val}% commission</b> on all their deposits!\n\n"
         f"🔗 <b>Your Link:</b>\n<code>{ref_link}</code>\n\n"
         f"👥 <b>Total Referrals:</b> {refs_count}\n"
-        f"💰 <b>Total Earnings:</b> ${user.referral_earnings or 0.0:.3f}"
+        f"💰 <b>Total Earnings:</b> ${user.referral_earnings or 0.0:.3f if f'{user.referral_earnings or 0.0:.3f}'[-1] != '0' else user.referral_earnings or 0.0:.2f}"
     )
     
     markup = InlineKeyboardMarkup(inline_keyboard=[
