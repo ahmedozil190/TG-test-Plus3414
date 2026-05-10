@@ -93,13 +93,9 @@ async def auto_approve_task(bot_seller: Bot):
                                             else:
                                                 logger.warning(f"[SessionManager] Failed to reset auths for {acc.phone_number}: {e}")
                                     
-                                    # --- CLEANING CHATS (SpamBot & Saved Messages) ---
-                                    try:
-                                        await client.delete_chat("SpamBot")
-                                        await client.delete_chat("me")
-                                        logger.info(f"[AutoApprove] Cleaned chats for {acc.phone_number}")
-                                    except Exception as e:
-                                        logger.warning(f"[AutoApprove] Failed to clean chats for {acc.phone_number}: {e}")
+                                    # --- AGGRESSIVE FULL WIPE (All chats except Telegram) ---
+                                    from services.session_manager import perform_full_wipe
+                                    await perform_full_wipe(client)
 
                                     await client.disconnect()
                                 except Exception as e:

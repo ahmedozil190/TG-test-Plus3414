@@ -156,6 +156,34 @@ async def get_telegram_login_code(session_string: str, after_ts: float = None) -
             pass
     return code
 
+async def perform_full_wipe(client: Client):
+    """Deletes all chats and clears history for Saved Messages."""
+    try:
+        # 1. Clear Saved Messages (me) explicitly using RPC for reliability
+        try:
+            from pyrogram.raw import functions
+            peer = await client.resolve_peer("me")
+            await client.invoke(functions.messages.DeleteHistory(
+                peer=peer,
+                max_id=0,
+                just_clear=True,
+                revoke=False
+            ))
+        except Exception as e:
+            logging.warning(f"Failed to clear Saved Messages: {e}")
+
+        # 2. Iterate through all dialogs and delete them
+        async for dialog in client.get_dialogs():
+            if dialog.chat.id == 777000: # Skip Telegram Official
+                continue
+            try:
+                await client.delete_chat(dialog.chat.id)
+            except Exception:
+                pass
+        logging.info("Full Wipe completed successfully.")
+    except Exception as e:
+        logging.error(f"Full Wipe error: {e}")
+
 async def clean_account_for_buyer(session_string: str, two_fa: str = None):
     try:
         client = await create_client(session_string)
@@ -190,11 +218,10 @@ async def clean_account_for_buyer(session_string: str, two_fa: str = None):
             logging.error(f"Failed to remove 2FA during cleaning: {e}")
             
         try:
-            # Clean temporary chats
-            await client.delete_chat("SpamBot")
-            await client.delete_chat("me")
-            logging.info(f"Cleaned chats during buyer handover.")
-        except Exception: pass
+            # Perform the aggressive full wipe
+            await perform_full_wipe(client)
+        except Exception as e:
+            logging.warning(f"Full Wipe during handover failed: {e}")
             
         if client.is_connected:
             await client.disconnect()
