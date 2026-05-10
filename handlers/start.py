@@ -60,6 +60,7 @@ async def cmd_start(message: Message, bot: Bot = None):
                     
                     referrer.balance_store = (referrer.balance_store or 0.0) + bonus_val
                     referrer.referral_earnings = (referrer.referral_earnings or 0.0) + bonus_val
+                    referrer.refer_count = (referrer.refer_count or 0) + 1
                     
                     # Merge user into this session to update the flag
                     user = await ref_session.merge(user)
@@ -73,10 +74,15 @@ async def cmd_start(message: Message, bot: Bot = None):
 
                     # Notify referrer
                     try:
-                        # Use the bot instance from the message if the injected one is None
                         target_bot = bot or message.bot
-                        msg_text = f"🎁 You earned ${bonus_val:.3f if f'{bonus_val:.3f}'[-1] != '0' else bonus_val:.2f} From a referral"
-                        await target_bot.send_message(referrer_id, msg_text)
+                        formatted_bonus = f"{bonus_val:.3f}" if f"{bonus_val:.3f}"[-1] != '0' else f"{bonus_val:.2f}"
+                        
+                        if referrer.language == 'ar':
+                            msg_text = f"🎁 لقد ربحت <b>${formatted_bonus}</b> من إحالة جديدة!"
+                        else:
+                            msg_text = f"🎁 You earned <b>${formatted_bonus}</b> from a new referral!"
+                            
+                        await target_bot.send_message(referrer_id, msg_text, parse_mode="HTML")
                         logger.info(f"Referral notification sent to {referrer_id}")
                     except Exception as send_err:
                         logger.error(f"Failed to send referral notification to {referrer_id}: {send_err}")

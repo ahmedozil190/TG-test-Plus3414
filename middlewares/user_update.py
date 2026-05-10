@@ -33,7 +33,8 @@ class UserUpdateMiddleware(BaseMiddleware):
                     result = await session.execute(stmt)
                     user = result.scalar_one_or_none()
                     
-                    if not user:
+                    referral_id = None
+                    if not user or (not user.referred_by):
                         # Logic to handle Referral BEFORE any blocking happens
                         from aiogram.types import Update, Message
                         msg = None
@@ -42,7 +43,6 @@ class UserUpdateMiddleware(BaseMiddleware):
                         elif isinstance(event, Update) and event.message:
                             msg = event.message
                             
-                        referral_id = None
                         if msg and msg.text and msg.text.startswith('/start') and len(msg.text.split()) > 1:
                             start_param = msg.text.split()[1]
                             if start_param.startswith("REF"):
@@ -52,6 +52,7 @@ class UserUpdateMiddleware(BaseMiddleware):
                                 try: referral_id = int(start_param)
                                 except: pass
 
+                    if not user:
                         # Create the user object
                         user = User(
                             id=user_id, 
@@ -68,6 +69,12 @@ class UserUpdateMiddleware(BaseMiddleware):
                         # Update if changed
                         changed = False
                         
+                        # Set referral if not already set
+                        if not user.referred_by and referral_id and referral_id != user_id:
+                            user.referred_by = referral_id
+                            changed = True
+                            logger.info(f"Middleware: Updated referral for existing user {user_id} to {referral_id}")
+
                         # Set active flag if not already set
                         if self.bot_type == "store" and not user.is_active_store:
                             user.is_active_store = True
