@@ -2653,7 +2653,7 @@
             </div>
             <div class="form-group">
                 <label>Minimum Profit ($)</label>
-                <input type="number" id="srv-min-profit" class="input-field" placeholder="0.20" step="0.01">
+                <input type="number" id="srv-min-profit" class="input-field" placeholder="0.200" step="0.001">
             </div>
             <div id="extra-id-group" class="form-group" style="display: none;">
                 <label>Your ID</label>
@@ -4295,7 +4295,7 @@
                         <div style="background: rgba(236, 72, 153, 0.02); border: 1px solid rgba(236, 72, 153, 0.08); padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
                             <span style="${lblS}">${currentLang === 'ar' ? 'الحد الأدنى' : 'MIN PROFIT'}</span>
                             <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; text-align: right; flex: 1; min-width: 0;">
-                                $${(s.min_profit || 0).toFixed(2)}
+                                $${formatMoney(s.min_profit || 0)}
                             </span>
                         </div>
                         

@@ -58,8 +58,8 @@ async def cq_admin_stats(call: CallbackQuery):
     text = (
         "📊 <b>الإحصائيات العامة للمتجر:</b>\n\n"
         f"👥 <b>إجمالي المستخدمين:</b> {users_count}\n"
-        f"💰 <b>إجمالي أرصدة المتجر:</b> ${total_balance_store:.2f}\n"
-        f"💸 <b>إجمالي أرصدة التوريد:</b> ${total_balance_sourcing:.2f}\n\n"
+        f"💰 <b>إجمالي أرصدة المتجر:</b> ${total_balance_store:.3f}\n"
+        f"💸 <b>إجمالي أرصدة التوريد:</b> ${total_balance_sourcing:.3f}\n\n"
         f"📱 <b>الأرقام المتاحة للبيع:</b> {avail_count}\n"
         f"✅ <b>الأرقام المباعة:</b> {sold_count}"
     )
@@ -90,8 +90,8 @@ async def process_user_id(message: Message, state: FSMContext):
     text = (
         f"👤 <b>بيانات المستخدم:</b>\n"
         f"<b>ID:</b> <code>{user.id}</code>\n"
-        f"<b>رصيد المتجر:</b> <code>${user.balance_store:.2f}</code>\n"
-        f"<b>رصيد التوريد:</b> <code>${user.balance_sourcing:.2f}</code>\n"
+        f"<b>رصيد المتجر:</b> <code>${user.balance_store:.3f}</code>\n"
+        f"<b>رصيد التوريد:</b> <code>${user.balance_sourcing:.3f}</code>\n"
         f"<b>تاريخ الانضمام:</b> {user.join_date.strftime('%Y-%m-%d')}"
     )
     await message.answer(text, reply_markup=admin_user_keyboard(user.id), parse_mode="HTML")
@@ -152,7 +152,7 @@ async def process_add_balance(message: Message, state: FSMContext):
                         pass
             
             await session.commit()
-            await message.answer(f"✅ تم إضافة ${amount:.2f} لرصيد المتجر الخاص بالمستخدم بنجاح.\nالرصيد الجديد: ${user.balance_store:.2f}\n(تم احتساب عمولة الإحالة بنسبة {comm_percent if 'comm_percent' in locals() else '1.0'}%)", reply_markup=admin_back_keyboard())
+            await message.answer(f"✅ تم إضافة ${amount:.3f} لرصيد المتجر الخاص بالمستخدم بنجاح.\nالرصيد الجديد: ${user.balance_store:.3f}\n(تم احتساب عمولة الإحالة بنسبة {comm_percent if 'comm_percent' in locals() else '1.0'}%)", reply_markup=admin_back_keyboard())
         else:
             await message.answer("حدث خطأ، المستخدم غير موجود.")
     await state.clear()
@@ -194,14 +194,14 @@ async def cmd_test_deposit(message: Message):
                 referrer.balance_store += bonus
                 referrer.referral_earnings = (referrer.referral_earnings or 0.0) + bonus
                 session.add(Transaction(user_id=referrer.id, type=TransactionType.REFERRAL, amount=bonus))
-                bonus_msg = f"\n✨ Referral Bonus of ${bonus:.2f} credited to referrer {referrer.id} ({comm_percent}%)"
+                bonus_msg = f"\n✨ Referral Bonus of ${bonus:.3f} credited to referrer {referrer.id} ({comm_percent}%)"
                 
                 try:
-                    await message.bot.send_message(referrer.id, f"🎉 Test Referral Bonus: You received ${bonus:.2f} from a referral deposit!")
+                    await message.bot.send_message(referrer.id, f"🎉 Test Referral Bonus: You received ${bonus:.3f} from a referral deposit!")
                 except: pass
 
         await session.commit()
-        await message.answer(f"✅ Simulated Deposit of ${amount:.2f} successful!{bonus_msg}")
+        await message.answer(f"✅ Simulated Deposit of ${amount:.3f} successful!{bonus_msg}")
 
     
 @router.callback_query(F.data.startswith("usr_sub_"))
@@ -233,7 +233,7 @@ async def process_sub_balance(message: Message, state: FSMContext):
                 return
             user.balance_store -= amount
             await session.commit()
-            await message.answer(f"✅ تم خصم ${amount:.2f} من رصيد المتجر بنجاح.\nالرصيد المتبقي: ${user.balance_store:.2f}", reply_markup=admin_back_keyboard())
+            await message.answer(f"✅ تم خصم ${amount:.3f} من رصيد المتجر بنجاح.\nالرصيد المتبقي: ${user.balance_store:.3f}", reply_markup=admin_back_keyboard())
         else:
             await message.answer("حدث خطأ، المستخدم غير موجود.")
     await state.clear()
