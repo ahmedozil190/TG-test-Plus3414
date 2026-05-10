@@ -274,14 +274,14 @@ async def is_session_alive(session_string: str) -> tuple[bool, str]:
                                 for row in markup.inline_keyboard:
                                     for btn in row:
                                         btn_count += 1
-                                        btn_texts.append(btn.text or "")
+                                        btn_texts.append(getattr(btn, "text", str(btn)))
                             
                             # Check for Keyboard Buttons (bottom keyboard)
                             if hasattr(markup, "keyboard"):
                                 for row in markup.keyboard:
                                     for btn in row:
                                         btn_count += 1
-                                        btn_texts.append(btn.text or "")
+                                        btn_texts.append(getattr(btn, "text", str(btn)))
                         
                         logging.info(f"[AliveCheck] SpamBot Result for {getattr(me, 'phone_number', '?')}: Buttons={btn_count} | Labels={btn_texts}")
 
