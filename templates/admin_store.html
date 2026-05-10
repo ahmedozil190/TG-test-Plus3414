@@ -3186,6 +3186,8 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
+                        user_id: userId,
+                        init_data: initData,
                         join_bonus: parseFloat(joinBonus) || 0,
                         commission_percent: parseFloat(commission) || 0
                     })

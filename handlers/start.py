@@ -51,25 +51,29 @@ async def cmd_start(message: Message, bot: Bot = None):
         
         if user and user.referred_by and not user.referral_bonus_awarded:
             referrer_id = user.referred_by
-            referrer = (await session.execute(select(User).where(User.id == referrer_id))).scalar_one_or_none()
-            if referrer:
-                from database.models import AppSetting, Transaction, TransactionType
-                bonus_obj = (await session.execute(select(AppSetting).where(AppSetting.key == "referral_join_bonus"))).scalar_one_or_none()
-                bonus_val = float(bonus_obj.value) if bonus_obj and bonus_obj.value else 0.005
-                
-                referrer.balance_store += bonus_val
-                referrer.referral_earnings = (referrer.referral_earnings or 0.0) + bonus_val
-                user.referral_bonus_awarded = True
-                
-                txn = Transaction(user_id=referrer_id, type=TransactionType.REFERRAL, amount=bonus_val)
-                session.add(txn)
-                
-                # Notify referrer
-                try: await bot.send_message(referrer_id, f"🎁 You earned ${bonus_val} From a referral")
-                except: pass
-                
-                await session.commit()
-                logger.info(f"Referral Awarded: User {user_id} joined via {referrer_id}, awarded ${bonus_val}")
+            async with async_session() as ref_session:
+                referrer = (await ref_session.execute(select(User).where(User.id == referrer_id))).scalar_one_or_none()
+                if referrer:
+                    from database.models import AppSetting, Transaction, TransactionType
+                    bonus_obj = (await ref_session.execute(select(AppSetting).where(AppSetting.key == "referral_join_bonus"))).scalar_one_or_none()
+                    bonus_val = float(bonus_obj.value) if bonus_obj and bonus_obj.value else 0.005
+                    
+                    referrer.balance_store = (referrer.balance_store or 0.0) + bonus_val
+                    referrer.referral_earnings = (referrer.referral_earnings or 0.0) + bonus_val
+                    
+                    # Merge user into this session to update the flag
+                    user = await ref_session.merge(user)
+                    user.referral_bonus_awarded = True
+                    
+                    txn = Transaction(user_id=referrer_id, type=TransactionType.REFERRAL, amount=bonus_val)
+                    ref_session.add(txn)
+                    
+                    await ref_session.commit()
+                    logger.info(f"Referral Awarded: User {user_id} joined via {referrer_id}, awarded ${bonus_val}")
+
+                    # Notify referrer (outside session to avoid delay)
+                    try: await bot.send_message(referrer_id, f"🎁 You earned ${bonus_val:.3f} From a referral")
+                    except: pass
         
         if user and user.is_banned_store:
             from database.models import AppSetting
@@ -101,13 +105,21 @@ async def cq_my_referral(call: CallbackQuery, bot: Bot):
             
         refs_count = (await session.execute(select(func.count(User.id)).where(User.referred_by == user.id))).scalar() or 0
         
+        # Fetch dynamic settings
+        from database.models import AppSetting
+        bonus_obj = (await session.execute(select(AppSetting).where(AppSetting.key == "referral_join_bonus"))).scalar_one_or_none()
+        comm_obj = (await session.execute(select(AppSetting).where(AppSetting.key == "referral_commission_percent"))).scalar_one_or_none()
+        
+        bonus_val = float(bonus_obj.value) if bonus_obj and bonus_obj.value else 0.005
+        comm_val = float(comm_obj.value) if comm_obj and comm_obj.value else 1.0
+        
     bot_info = await bot.get_me()
     ref_link = f"https://t.me/{bot_info.username}?start=REF{user.id}"
     
     text = (
         "Share your referral link with your friends or channels and earn rewards:\n"
-        "• <b>$0.005</b> for each person who joins.\n"
-        "• <b>1% commission</b> on all their deposits!\n\n"
+        f"• <b>${bonus_val:.3f}</b> for each person who joins.\n"
+        f"• <b>{comm_val}% commission</b> on all their deposits!\n\n"
         f"🔗 <b>Your Link:</b>\n<code>{ref_link}</code>\n\n"
         f"👥 <b>Total Referrals:</b> {refs_count}\n"
         f"💰 <b>Total Earnings:</b> ${user.referral_earnings or 0.0:.3f}"

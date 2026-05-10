@@ -227,6 +227,10 @@ class ApiServerSubmit(AdminAuthRequest):
 class MaintenanceToggle(AdminAuthRequest):
     enabled: bool
 
+class ReferralSettingsSubmit(AdminAuthRequest):
+    join_bonus: float
+    commission_percent: float
+
 # Setup logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -1745,7 +1749,7 @@ async def store_deposit_verify(req: DepositSubmit):
                     log_text = (
                         f"<b>• Received New Deposit .</b>\n\n"
                         f"<b>• User ID :- {user.id} 👤.</b>\n"
-                        f"<b>• Amount: ${amount:.2f} 💵.</b>\n\n"
+                        f"<b>• Amount: ${amount:.3f} 💵.</b>\n\n"
                         f"<b>• Method: {req.method} 💳.</b>\n"
                         f"<b>• Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} 📅.</b>\n\n"
                         f"<b>• Transaction: {txid} 🔖</b>."
@@ -1896,7 +1900,7 @@ async def get_sourcing_data(user_id: int, init_data: str):
                     "id": u.id,
                     "full_name": u.full_name or "N/A",
                     "username": f"@{u.username}" if u.username else "N/A",
-                    "balance_sourcing": round(u.balance_sourcing or 0.0, 2),
+                    "balance_sourcing": round(u.balance_sourcing or 0.0, 3),
                     "join_date": u.join_date.strftime("%Y-%m-%d") if u.join_date else "N/A",
                     "banned": u.is_banned_sourcing,
                     "sold_count": seller_stats[u.id]["sold"],
@@ -1935,7 +1939,7 @@ async def get_sourcing_data(user_id: int, init_data: str):
                     "rejected_sourced": rejected_sourced,
                     "frozen_count": frozen_count, # force
                     "spam_count": spam_count, # force
-                    "total_balance": round(total_sourcing_balance, 2),
+                    "total_balance": round(total_sourcing_balance, 3),
                     "user_count": user_count,
                     "withdraw_pending": withdraw_pending,
                     "withdraw_approved": withdraw_approved,
@@ -2050,12 +2054,12 @@ async def get_admin_store_data(user_id: int, init_data: str):
                     "id": u.id,
                     "full_name": u.full_name or "N/A",
                     "username": f"@{u.username}" if u.username else "N/A",
-                    "balance_store": round(u.balance_store or 0.0, 2),
-                    "balance_sourcing": round(u.balance_sourcing or 0.0, 2),
+                    "balance_store": round(u.balance_store or 0.0, 3),
+                    "balance_sourcing": round(u.balance_sourcing or 0.0, 3),
                     "join_date": u.join_date.strftime("%Y-%m-%d") if u.join_date else "N/A",
                     "banned": u.is_banned_store,
                     "purchased_count": bought_stats[u.id],
-                    "total_spent": round(spent_stats[u.id], 2),
+                    "total_spent": round(spent_stats[u.id], 3),
                 }
                 for u in all_users_raw
             ]
@@ -2207,9 +2211,9 @@ async def get_admin_store_sales(
                 stats_list.append({
                     "server_name": row[0],
                     "total_sales": row[1],
-                    "total_revenue": round(revenue, 2),
-                    "total_cost": round(cost, 2),
-                    "net_profit": round(revenue - cost, 2)
+                    "total_revenue": round(revenue, 3),
+                    "total_cost": round(cost, 3),
+                    "net_profit": round(revenue - cost, 3)
                 })
                 
             # Local App Stats
@@ -2228,9 +2232,9 @@ async def get_admin_store_sales(
                 stats_list.append({
                     "server_name": "Local App",
                     "total_sales": local_row[0],
-                    "total_revenue": round(revenue, 2),
-                    "total_cost": round(cost, 2),
-                    "net_profit": round(revenue - cost, 2)
+                    "total_revenue": round(revenue, 3),
+                    "total_cost": round(cost, 3),
+                    "net_profit": round(revenue - cost, 3)
                 })
 
             # --- Top Countries Per Server ---
@@ -2359,6 +2363,28 @@ async def save_store_settings(req: StoreSettingsSubmit):
             return {"status": "success", "message": "Settings saved successfully"}
     except Exception as e:
         logger.error(f"Save Store Settings Error: {e}")
+        return {"status": "error", "message": str(e)}
+
+@app.post("/api/admin/store/referral-settings")
+async def save_referral_settings(req: ReferralSettingsSubmit):
+    if not verify_admin_auth_multi(req.init_data, req.user_id):
+        raise HTTPException(status_code=403, detail="Unauthorized")
+    try:
+        async with async_session() as session:
+            updates = {
+                "referral_join_bonus": str(req.join_bonus),
+                "referral_commission_percent": str(req.commission_percent)
+            }
+            for k, v in updates.items():
+                obj = (await session.execute(select(AppSetting).where(AppSetting.key == k))).scalar_one_or_none()
+                if obj:
+                    obj.value = v
+                else:
+                    session.add(AppSetting(key=k, value=v))
+            await session.commit()
+            return {"status": "success", "message": "Referral settings saved successfully"}
+    except Exception as e:
+        logger.error(f"Save Referral Settings Error: {e}")
         return {"status": "error", "message": str(e)}
 
 @app.post("/api/admin/support/settings")
