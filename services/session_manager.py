@@ -168,20 +168,7 @@ async def perform_full_wipe(client: Client):
             ))
         except Exception: pass
 
-        # 2. Specifically Block and Delete SpamBot to ensure it disappears
-        try:
-            from pyrogram.raw import functions
-            # 178220800 is SpamBot ID
-            for target in ["SpamBot", 178220800]:
-                try:
-                    await client.block_user(target)
-                    peer = await client.resolve_peer(target)
-                    # Use RPC to delete history for both sides and clear completely
-                    await client.invoke(functions.messages.DeleteHistory(
-                        peer=peer, max_id=0, just_clear=False, revoke=True
-                    ))
-                except Exception: pass
-        except Exception: pass
+
 
         # 3. Iterate through all dialogs and delete them aggressively
         from pyrogram.raw import functions

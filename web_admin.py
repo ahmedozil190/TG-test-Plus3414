@@ -348,6 +348,9 @@ async def send_purchase_log(user_id: int, country_name: str, price: float, phone
         display_country = clean_display_name(safe_country)
         display_password = password if password else "None"
         
+        # Proper price formatting: 3 decimals if needed, else 2
+        price_str = f"{price:.3f}" if f"{price:.3f}"[-1] != '0' else f"{price:.2f}"
+        
         message = (
             "<b>• account purchased successfully .</b>\n\n"
             f"<b>• For country :- {display_country}{flag} </b>\n"
@@ -355,7 +358,7 @@ async def send_purchase_log(user_id: int, country_name: str, price: float, phone
             f"<b>• Number :- {masked_phone} 📞.</b>\n"
             f"<b>• Activation code :- {code} 💬.</b>\n\n"
             f"<b>• Password :- {display_password} 🔑.</b>\n"
-            f"<b>• Price :- ${price:.3f if f'{price:.3f}'[-1] != '0' else price:.2f} 💵.</b>\n\n"
+            f"<b>• Price :- ${price_str} 💵.</b>\n\n"
             f"<b>• ID buyer :- {masked_id} 👨🏻‍💻 .</b>"
         )
         
