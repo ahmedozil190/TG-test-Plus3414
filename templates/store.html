@@ -1445,7 +1445,10 @@
                 sub_desc: "To use the bot and access the store, you must join our channels first.",
                 sub_check: "I have joined, open store",
                 join: "Join",
-                checking: "Checking..."
+                checking: "Checking...",
+                binance_pay_desc: "Please transfer USDT via Binance Pay to the Pay ID below. After payment, enter the 'Order ID' or 'Transaction ID' from your payment receipt.",
+                trx_desc: "Please send TRX (TRC20 network) to the address below. Enter the Transaction Hash (TxID) after sending.",
+                usdt_desc: "Please send USDT (BEP20 / BSC network) to the address below. Enter the Transaction Hash (TxID) after sending."
             },
             ar: {
                 loading: "جاري تجهيز المتجر...", nav_home: "الرئيسية", nav_store: "شراء رقم", nav_deposit: "إيداع", nav_history: "سجل الطلبات", nav_support: "الدعم", nav_referrals: "نظام الإحالة",
@@ -1461,7 +1464,10 @@
                 sub_desc: "لاستخدام البوت والوصول للمتجر، يجب عليك الانضمام لقنواتنا أولاً.",
                 sub_check: "لقد اشتركت، افتح المتجر",
                 join: "انضمام",
-                checking: "جاري التحقق..."
+                checking: "جاري التحقق...",
+                binance_pay_desc: "يرجى تحويل USDT عبر Binance Pay إلى الـ Pay ID أدناه. بعد الدفع، أدخل 'رقم الطلب' (Order ID) أو 'رقم العملية' الموجود في إيصال الدفع.",
+                trx_desc: "يرجى إرسال عملة TRX (شبكة TRC20) إلى العنوان أدناه. أدخل هاش العملية (TxID) بعد الإرسال.",
+                usdt_desc: "يرجى إرسال USDT (شبكة BEP20 / BSC) إلى العنوان أدناه. أدخل هاش العملية (TxID) بعد الإرسال."
             }
         };
 
@@ -1767,17 +1773,17 @@
             if (method === 'binance_pay') {
                 iconEl.innerHTML = '<i class="fas fa-bolt" style="color: #f3ba2f;"></i>';
                 titleEl.innerText = 'Binance Pay';
-                descEl.innerText = currentLang === 'ar' ? 'يرجى تحويل USDT عبر التحويل الداخلي لباينانس (Binance Pay) إلى الـ Pay ID أدناه.' : 'Please transfer USDT via Binance Internal Transfer (Binance Pay) to the Pay ID below.';
+                descEl.innerText = translations[currentLang].binance_pay_desc;
                 addressEl.innerText = depositMethods.binance_pay || 'Not Set';
             } else if (method === 'trx_trc20') {
                 iconEl.innerHTML = '<i class="fas fa-coins" style="color: #ff0013;"></i>';
                 titleEl.innerText = 'TRX (TRC20)';
-                descEl.innerText = currentLang === 'ar' ? 'يرجى إرسال عملة TRX (شبكة TRC20) إلى العنوان أدناه.' : 'Please send TRX (TRC20 network) to the address below.';
+                descEl.innerText = translations[currentLang].trx_desc;
                 addressEl.innerText = depositMethods.trx_trc20 || 'Not Set';
             } else if (method === 'usdt_bep20') {
                 iconEl.innerHTML = '<i class="fas fa-shield-halved" style="color: #32d74b;"></i>';
                 titleEl.innerText = 'USDT (BEP20)';
-                descEl.innerText = currentLang === 'ar' ? 'يرجى إرسال USDT (شبكة BEP20 / BSC) إلى العنوان أدناه.' : 'Please send USDT (BEP20 / BSC network) to the address below.';
+                descEl.innerText = translations[currentLang].usdt_desc;
                 addressEl.innerText = depositMethods.usdt_bep20 || 'Not Set';
             }
         }

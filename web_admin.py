@@ -1596,6 +1596,76 @@ async def get_binance_price(coin: str):
         pass
     return 0
 
+async def check_binance_pay_transaction(txid: str, api_key: str, api_secret: str):
+    """Verify a Binance Pay transaction."""
+    if not api_key or not api_secret:
+        return False, "Binance API keys not configured", 0
+        
+    api_key = api_key.strip()
+    api_secret = api_secret.strip()
+    
+    base_url = "https://api.binance.com"
+    
+    # Sync time
+    try:
+        time_res = await asyncio.to_thread(requests.get, f"{base_url}/api/v3/time", timeout=5)
+        server_time = time_res.json().get("serverTime")
+        timestamp = server_time if server_time else int(time.time() * 1000)
+    except:
+        timestamp = int(time.time() * 1000)
+
+    endpoint = "/sapi/v1/pay/transactions"
+    params = {
+        "timestamp": timestamp,
+        "recvWindow": 60000
+    }
+    
+    query_string = "&".join([f"{k}={v}" for k, v in params.items()])
+    signature = hmac.new(
+        api_secret.encode('utf-8'),
+        query_string.encode('utf-8'),
+        hashlib.sha256
+    ).hexdigest()
+    
+    headers = {"X-MBX-APIKEY": api_key}
+    url = f"{base_url}{endpoint}?{query_string}&signature={signature}"
+    
+    try:
+        response = await asyncio.to_thread(requests.get, url, headers=headers)
+        data = response.json()
+        
+        if response.status_code == 200:
+            if data.get("code") == "000000" and "data" in data:
+                transactions = data.get("data", [])
+                for tx in transactions:
+                    # Check orderId or transactionId
+                    if str(tx.get("orderId")) == txid or str(tx.get("transactionId")) == txid:
+                        status = tx.get("status") # SUCCESS is expected
+                        if status == "SUCCESS":
+                            amount = float(tx.get("amount", 0))
+                            currency = tx.get("currency", "USDT")
+                            
+                            # Check time (24h)
+                            tx_time = tx.get("transactionTime") or 0
+                            current_time = int(time.time() * 1000)
+                            if tx_time > 0 and (current_time - tx_time) > (24 * 60 * 60 * 1000):
+                                return False, "Transaction is too old.", 0
+                                
+                            if currency.upper() != "USDT":
+                                price = await get_binance_price(currency)
+                                if price <= 0: return False, f"Price error for {currency}", 0
+                                amount = amount * price
+                                
+                            return True, "Success", amount
+                return False, "Transaction not found in Binance Pay history.", 0
+            else:
+                return False, f"Binance Pay API Error: {data.get('msg', 'Unknown')}", 0
+        else:
+            # If 403/400, maybe permission missing
+            return False, f"Binance Pay API Error (Status {response.status_code}): {data.get('msg', 'Permission denied or invalid request')}", 0
+    except Exception as e:
+        return False, f"Pay Request error: {str(e)}", 0
+
 async def check_binance_deposit(txid: str, api_key: str, api_secret: str):
     if not api_key or not api_secret:
         return False, "Binance API keys not configured", 0
@@ -1666,12 +1736,24 @@ async def check_binance_deposit(txid: str, api_key: str, api_secret: str):
                                 return True, "Success", amount
                         else:
                             return False, f"Deposit pending (status: {status}). Please wait.", 0
-                return False, "Transaction ID not found in your Binance account.", 0
+                
+                # If not found in deposit history, try Pay history as fallback
+                return await check_binance_pay_transaction(txid, api_key, api_secret)
             else:
-                return False, "Transaction ID not found or unexpected response format.", 0
+                # If list is empty, try Pay history
+                return await check_binance_pay_transaction(txid, api_key, api_secret)
         else:
+            # If error, try Pay history as fallback if it's a 400/403 which might mean txId param was rejected or hisrec is not for this ID
+            is_valid_pay, msg_pay, amt_pay = await check_binance_pay_transaction(txid, api_key, api_secret)
+            if is_valid_pay: return is_valid_pay, msg_pay, amt_pay
+            
             return False, f"Binance error: {data.get('msg', 'Unknown')}", 0
     except Exception as e:
+        # Fallback to Pay check on any error
+        try:
+            is_valid_pay, msg_pay, amt_pay = await check_binance_pay_transaction(txid, api_key, api_secret)
+            if is_valid_pay: return is_valid_pay, msg_pay, amt_pay
+        except: pass
         return False, f"Request error: {str(e)}", 0
 
 @app.post("/api/store/deposit/verify")
@@ -1704,13 +1786,24 @@ async def store_deposit_verify(req: DepositSubmit):
                     amount = float(txid.replace("TEST-", "").replace("USD", ""))
                     is_valid, msg = True, "Test Success"
                 except:
-                    is_valid, msg, amount = await check_binance_deposit(txid, final_key, final_sec)
+                    # Fallback to normal check if parsing fails
+                    if req.method == "Binance Pay":
+                        is_valid, msg, amount = await check_binance_pay_transaction(txid, final_key, final_sec)
+                        if not is_valid: # Try deposit history too
+                            is_valid, msg, amount = await check_binance_deposit(txid, final_key, final_sec)
+                    else:
+                        is_valid, msg, amount = await check_binance_deposit(txid, final_key, final_sec)
             else:
                 # Verify with Binance API
-                is_valid, msg, amount = await check_binance_deposit(txid, final_key, final_sec)
+                if req.method == "Binance Pay":
+                    is_valid, msg, amount = await check_binance_pay_transaction(txid, final_key, final_sec)
+                    if not is_valid: # Try deposit history too (sometimes people enter TxID for Pay)
+                        is_valid, msg, amount = await check_binance_deposit(txid, final_key, final_sec)
+                else:
+                    is_valid, msg, amount = await check_binance_deposit(txid, final_key, final_sec)
 
             if not is_valid:
-                return {"status": "error", "message": "Transaction verification failed. Please check the ID or contact support."}
+                return {"status": "error", "message": f"Verification failed: {msg}"}
                 
             # Update user balance
             user = (await session.execute(select(User).where(User.id == req.user_id))).scalar_one_or_none()
