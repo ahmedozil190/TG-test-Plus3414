@@ -2877,9 +2877,29 @@
 
         function formatMoney(val) {
             let num = parseFloat(val || 0);
-            if (num === 0) return "0";
-            let s = num.toFixed(3);
-            return s.replace(/0+$/, '').replace(/\.$/, '.0');
+            if (num === 0) return "0.00";
+            let s3 = num.toFixed(3);
+            if (s3.endsWith('0')) return num.toFixed(2);
+            return s3;
+        }
+
+        function copyToClipboard(text) {
+            const el = document.createElement('textarea');
+            el.value = text;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            
+            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.showPopup) {
+                window.Telegram.WebApp.showPopup({
+                    title: currentLang === 'ar' ? 'تم النسخ' : 'Copied',
+                    message: text,
+                    buttons: [{ type: 'ok' }]
+                });
+            } else {
+                alert((currentLang === 'ar' ? 'تم نسخ: ' : 'Copied: ') + text);
+            }
         }
 
         function formatDateTime(isoStr) {
@@ -3192,7 +3212,7 @@
                         <!-- User Name -->
                         <div style="background: ${hexToRgba('#f59e0b', 0.02)}; border: 1px solid ${hexToRgba('#f59e0b', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
                             <span style="color: var(--text-secondary); opacity: 0.7; font-size: 0.8rem; font-weight: 500; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'المستخدم' : 'User'}</span>
-                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; min-width: 0;">${up.user_name}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; min-width: 0; cursor: pointer;" onclick="copyToClipboard('${up.user_name}')">${up.user_name}</span>
                         </div>
                         <!-- User ID -->
                         <div style="background: ${hexToRgba('#ffcc00', 0.02)}; border: 1px solid ${hexToRgba('#ffcc00', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
