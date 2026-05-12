@@ -4621,7 +4621,7 @@
                         <!-- User ID -->
                         <div style="background: ${hexToRgba('#ffcc00', 0.02)}; border: 1px solid ${hexToRgba('#ffcc00', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
                             <span style="color: var(--text-secondary); opacity: 0.7; font-size: 0.8rem; font-weight: 500; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'معرف المستخدم' : 'User ID'}</span>
-                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${up.user_id}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; min-width: 0; cursor: pointer;" onclick="copyToClipboard('${up.user_id}')">${up.user_id}</span>
                         </div>
                     </div>
                     <!-- Action Buttons -->
