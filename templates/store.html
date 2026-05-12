@@ -703,7 +703,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            box-shadow: var(--shadow);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
             transform: translateX(120%);
             transition: transform 0.4s var(--ease);
             pointer-events: auto;
@@ -722,12 +722,11 @@
             justify-content: center;
             flex-shrink: 0;
             font-size: 1.1rem;
+            color: var(--text-p);
         }
 
         .toast-error .toast-icon {
-            background: rgba(239, 68, 68, 0.12);
             color: #ef4444;
-            border: 1px solid rgba(239, 68, 68, 0.1);
         }
 
         .toast-content {
@@ -1792,7 +1791,7 @@
             const addr = document.getElementById('deposit-address-display').innerText;
             if (addr && addr !== 'Loading Address...' && addr !== 'Not Set') {
                 navigator.clipboard.writeText(addr).then(() => {
-                    showToast("Copied", "Address copied to clipboard", "success");
+                    showToast("Copied", "Copied to clipboard", "success");
                     tg.HapticFeedback.impactOccurred('light');
                 });
             }
@@ -2135,7 +2134,7 @@
         function copyText(txt) {
             if (!txt || txt.includes('WAITING') || txt === 'N/A') return;
             navigator.clipboard.writeText(txt).then(() => {
-                showToast(currentLang === 'ar' ? 'تم النسخ' : 'Copied', currentLang === 'ar' ? 'تم النسخ إلى الحافظة' : 'Copied to clipboard', 'success');
+                showToast("Copied", "Copied to clipboard", "success");
                 tg.HapticFeedback.impactOccurred('light');
             });
         }
@@ -2350,7 +2349,7 @@
             if (!link || link === "Loading...") return;
             navigator.clipboard.writeText(link).then(() => {
                 tg.HapticFeedback.notificationOccurred('success');
-                showToast("Copied!", "Referral link copied to clipboard.", false);
+                showToast("Copied", "Copied to clipboard", "success");
             }).catch(() => {
                 showToast("Error", "Failed to copy link.", true);
             });
