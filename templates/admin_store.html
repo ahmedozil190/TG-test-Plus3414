@@ -545,7 +545,7 @@
         }
 
         .confirm-no:hover {
-            background: rgba(96, 165, 250, 0.15) !important;
+            background: rgba(96, 165, 250, 0.15);
             transform: translateY(-2px);
         }
 
@@ -1758,6 +1758,72 @@
                 opacity: 0;
             }
         }
+        /* Copy Toast */
+        .copy-toast-container {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 10001;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            pointer-events: none;
+            width: auto;
+            max-width: 320px;
+            align-items: flex-end;
+        }
+
+        .copy-toast {
+            background: var(--bg-elevated);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 14px 18px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            transform: translateX(120%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: auto;
+        }
+
+        .copy-toast.show {
+            transform: translateX(0);
+        }
+
+        .copy-toast-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 1.1rem;
+        }
+
+        .copy-toast-content {
+            flex: 1;
+        }
+
+        .copy-toast-title {
+            font-weight: 800;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 2px;
+        }
+
+        .copy-toast-desc {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            opacity: 0.6;
+            font-weight: 500;
+            word-break: break-all;
+        }
     </style>
 </head>
 
@@ -2759,16 +2825,35 @@
         }
 
         function copyToClipboard(text) {
+            if (!text || text === 'N/A') return;
             const el = document.createElement('textarea');
             el.value = text;
             document.body.appendChild(el);
             el.select();
             document.execCommand('copy');
             document.body.removeChild(el);
-            if (typeof showToast === 'function') {
-                showToast(currentLang === 'ar' ? 'تم النسخ' : 'Copied', text, 'success');
-            } else {
-                tg.showAlert((currentLang === 'ar' ? 'تم نسخ: ' : 'Copied: ') + text);
+
+            const container = document.getElementById('copy-toast-container');
+            if (!container) return;
+
+            const toast = document.createElement('div');
+            toast.className = 'copy-toast';
+            toast.innerHTML = `
+                <div class="copy-toast-icon"><i class="fas fa-check"></i></div>
+                <div class="copy-toast-content">
+                    <div class="copy-toast-title">${currentLang === 'ar' ? 'تم النسخ' : 'Copied'}</div>
+                    <div class="copy-toast-desc">${text}</div>
+                </div>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 500);
+            }, 3000);
+
+            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+                window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
             }
         }
 
@@ -5038,6 +5123,7 @@
             </div>
         </div>
     </div>
+    <div class="copy-toast-container" id="copy-toast-container"></div>
 </body>
 
 </html>
