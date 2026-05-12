@@ -4897,8 +4897,8 @@
 
         async function deleteStoreUserPrice(id) {
             const confirmed = await showConfirm(
-                currentLang === 'ar' ? 'حذف المستخدم المخصص' : 'Delete Custom User',
-                currentLang === 'ar' ? 'هل أنت متأكد من حذف هذا المستخدم المخصص؟' : 'Are you sure you want to delete this custom user price?',
+                currentLang === 'ar' ? 'هل أنت متأكد؟' : 'Are you sure?',
+                currentLang === 'ar' ? 'هل أنت متأكد من حذف هذا السعر المخصص؟' : 'Are you sure you want to delete this custom price?',
                 currentLang === 'ar' ? 'حذف' : 'Delete',
                 'fas fa-trash-alt', 'rgba(239, 68, 68, 0.1)', '#ef4444', 'danger'
             );

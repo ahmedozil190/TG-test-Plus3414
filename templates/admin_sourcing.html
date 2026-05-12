@@ -3521,7 +3521,7 @@
         async function deleteUserPrice(id) {
             const confirmed = await showConfirm(
                 currentLang === 'ar' ? 'هل أنت متأكد؟' : 'Are you sure?',
-                currentLang === 'ar' ? 'هل تريد حقاً حذف هذا السعر المخصص؟' : 'Do you really want to delete this custom price?',
+                currentLang === 'ar' ? 'هل أنت متأكد من حذف هذا السعر المخصص؟' : 'Are you sure you want to delete this custom price?',
                 currentLang === 'ar' ? 'حذف' : 'Delete',
                 'fas fa-trash', 'rgba(239, 68, 68, 0.1)', '#ef4444', 'danger'
             );
