@@ -343,6 +343,10 @@ async def is_session_alive(session_string: str) -> tuple[bool, str]:
         except Exception as e:
             err_type = type(e).__name__
             logging.error(f"[AliveCheck] SpamBot check CRASHED for {getattr(me, 'phone_number', '?')}: {err_type} - {e}")
+            
+            if "YouBlockedUser" in err_type:
+                return False, "Please unblock @spambot first then try again"
+                
             if any(x in err_type for x in ["PeerFlood", "UserRestricted", "Forbidden", "ChatWriteForbidden"]):
                 return False, "Account is spam-restricted"
             # Any other error (PEER_ID_INVALID, Timeout, etc) = can't verify = reject
