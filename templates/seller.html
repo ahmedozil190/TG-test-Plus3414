@@ -2280,7 +2280,9 @@
                 </div>
                 <div style="${rowS('#3b82f6')}">
                     <span style="${lblS}">Wallet</span>
-                    <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.85rem; text-align: right; direction: ltr; word-break: break-all; flex: 1; min-width: 0;">${addr}</span>
+                    <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.95rem; text-align: right; direction: ltr; flex: 1; min-width: 0;">
+                        ${addr && addr.length > 14 ? addr.slice(0, 8) + '···' + addr.slice(-6) : (addr || 'N/A')}
+                    </span>
                 </div>
             `;
 
@@ -2407,7 +2409,7 @@
                             </div>
                             <div style="${rowS('#3b82f6')}" onclick="copyText('${h.address}')" title="${h.address}" style="cursor:pointer;">
                                 <span style="${lblS}">WALLET</span>
-                                <span style="color: var(--text-secondary); opacity: 0.7; font-weight: 500; font-size: 0.85rem; text-align: right; direction: ltr; font-family: monospace; flex: 1; min-width: 0; cursor: pointer;">
+                                <span style="color: var(--text-secondary); opacity: 0.7; font-weight: 500; font-size: 0.95rem; text-align: right; direction: ltr; font-family: monospace; flex: 1; min-width: 0; cursor: pointer;">
                                     ${h.address && h.address.length > 14 ? h.address.slice(0, 8) + '···' + h.address.slice(-6) : (h.address || 'N/A')}
                                 </span>
                             </div>

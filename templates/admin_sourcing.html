@@ -3647,9 +3647,11 @@
                                 <span style="${lblS}">USER ID</span>
                                 <span style="color: var(--text-secondary); font-weight: 500; font-size: 1rem; text-align: right;">${item.user_id}</span>
                             </div>
-                            <div style="${rowS('#3b82f6')}">
+                            <div style="${rowS('#3b82f6')}" onclick="event.stopPropagation(); copyToClipboard('${item.address}')" style="cursor: pointer;">
                                 <span style="${lblS}">WALLET</span>
-                                <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.9rem; text-align: right; direction: ltr; word-break: break-all; flex: 1; min-width: 0;">${item.address}</span>
+                                <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.95rem; text-align: right; direction: ltr; font-family: monospace; flex: 1; min-width: 0; cursor: pointer;">
+                                    ${item.address && item.address.length > 14 ? item.address.slice(0, 8) + '···' + item.address.slice(-6) : (item.address || 'N/A')}
+                                </span>
                             </div>
                             <div style="${rowS('#fdd835')}; margin-bottom: 0;">
                                 <span style="${lblS}">DATE</span>
