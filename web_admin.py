@@ -1583,6 +1583,13 @@ async def get_deposit_history(user_id: int, init_data: str, page: int = 1, limit
         logger.error(f"Deposit History Error: {e}")
         return {"deposits": [], "total_pages": 0, "current_page": 1, "total_count": 0}
 
+def format_usd(amount: float) -> str:
+    """Format USD amount: 3 decimal places if the 3rd is non-zero, otherwise 2."""
+    s3 = f"{amount:.3f}"
+    if s3[-1] == '0':
+        return f"{amount:.2f}"
+    return s3
+
 async def get_binance_price(coin: str):
     """Fetch current price of a coin in USDT."""
     if coin.upper() == "USDT":
@@ -1731,7 +1738,7 @@ async def check_binance_deposit(txid: str, api_key: str, api_secret: str):
                                 if price <= 0:
                                     return False, f"Could not determine price for {coin}. Please contact admin.", 0
                                 final_usd_amount = amount * price
-                                return True, f"Success: {amount} {coin} converted to ${final_usd_amount:.3f if f'{final_usd_amount:.3f}'[-1] != '0' else final_usd_amount:.2f}", final_usd_amount
+                                return True, f"Success: {amount} {coin} converted to ${format_usd(final_usd_amount)}", final_usd_amount
                             else:
                                 return True, "Success", amount
                         else:
@@ -1858,7 +1865,7 @@ async def store_deposit_verify(req: DepositSubmit):
                     log_text = (
                         f"<b>• Received New Deposit .</b>\n\n"
                         f"<b>• User ID :- {user.id} 👤.</b>\n"
-                        f"<b>• Amount: ${amount:.3f if f'{amount:.3f}'[-1] != '0' else amount:.2f} 💵.</b>\n\n"
+                        f"<b>• Amount: ${format_usd(amount)} 💵.</b>\n\n"
                         f"<b>• Method: {req.method} 💳.</b>\n"
                         f"<b>• Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} 📅.</b>\n\n"
                         f"<b>• Transaction: {txid} 🔖</b>."
@@ -1868,7 +1875,7 @@ async def store_deposit_verify(req: DepositSubmit):
             except Exception as notify_err:
                 logger.error(f"Deposit Notification Error: {notify_err}")
             
-            return {"status": "success", "message": f"Successfully deposited ${amount:.3f if f'{amount:.3f}'[-1] != '0' else amount:.2f}", "new_balance": user.balance_store}
+            return {"status": "success", "message": f"Successfully deposited ${format_usd(amount)}", "new_balance": user.balance_store}
             
     except Exception as e:
         logger.error(f"Deposit Verify Error: {e}")
