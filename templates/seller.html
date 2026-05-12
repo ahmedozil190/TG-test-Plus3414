@@ -1376,22 +1376,22 @@
             <div class="info-card-stack">
                 <div class="info-card">
                     <div class="info-card-l">
-                        <span class="info-card-lbl">Sold Numbers</span>
-                        <div class="info-card-val" id="statSold" style="color: var(--text-p)">0<span> NUMBERS</span>
-                        </div>
-                    </div>
-                    <div class="info-card-icon" style="background:rgba(16, 185, 129, 0.1); color: var(--success);">
-                        <i class="fas fa-shopping-basket"></i>
-                    </div>
-                </div>
-                <div class="info-card">
-                    <div class="info-card-l">
                         <span class="info-card-lbl">Accepted Numbers</span>
                         <div class="info-card-val" id="statAccepted" style="color: var(--text-p)">0<span> NUMBERS</span>
                         </div>
                     </div>
                     <div class="info-card-icon" style="background:rgba(88, 101, 242, 0.1); color: var(--accent);">
                         <i class="fas fa-check-circle"></i>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-l">
+                        <span class="info-card-lbl">Pending Numbers</span>
+                        <div class="info-card-val" id="statPending" style="color: var(--text-p)">0<span> NUMBERS</span>
+                        </div>
+                    </div>
+                    <div class="info-card-icon" style="background:rgba(245, 158, 11, 0.1); color: var(--warning);">
+                        <i class="fas fa-clock"></i>
                     </div>
                 </div>
                 <div class="info-card">
@@ -2120,8 +2120,8 @@
                 }
 
                 // Stats Grid
-                document.getElementById('statSold').innerHTML = `${data.stats.sold}<span> NUMBERS</span>`;
                 document.getElementById('statAccepted').innerHTML = `${data.stats.accepted}<span> NUMBERS</span>`;
+                document.getElementById('statPending').innerHTML = `${data.stats.pending}<span> NUMBERS</span>`;
                 document.getElementById('statRejected').innerHTML = `${data.stats.rejected}<span> NUMBERS</span>`;
 
                 allPrices = data.prices;
