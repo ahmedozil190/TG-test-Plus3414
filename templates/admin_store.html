@@ -4107,6 +4107,9 @@
             }
 
             const yesBtn = document.querySelector('.confirm-yes');
+            const noBtn = document.querySelector('.confirm-no');
+            if (noBtn) noBtn.style.display = 'flex';
+            
             if (yesBtn) {
                 yesBtn.className = 'confirm-btn confirm-yes ' + btnClass;
                 const btnIcon = (btnClass.includes('danger') || btnClass.includes('delete')) ? 'fa-trash-alt' : 'fa-check';

@@ -4715,7 +4715,7 @@
         async function deletePrice(code, iso) {
             const confirmed = await showConfirm(
                 currentLang === 'ar' ? 'حذف الدولة' : 'Delete Country',
-                currentLang === 'ar' ? 'هل أنت متأكد من حذف هذه الدولة؟ لا يمكن التراجع عن هذا الإجراء.' : 'Are you sure you want to delete this country? This action cannot be undone.',
+                currentLang === 'ar' ? 'هل أنت متأكد من حذف هذه الدولة؟' : 'Are you sure you want to delete this country?',
                 currentLang === 'ar' ? 'حذف' : 'Delete'
             );
             if (!confirmed) return;
@@ -4745,6 +4745,9 @@
             iconWrap.style.color = iconColor;
 
             const yesBtn = document.querySelector('.confirm-yes');
+            const noBtn = document.querySelector('.confirm-no');
+            if (noBtn) noBtn.style.display = 'flex';
+            
             if (yesBtn) {
                 yesBtn.className = 'confirm-btn confirm-yes ' + btnClass;
                 yesBtn.innerHTML = (btnClass === 'approve' ? '<i class="fas fa-check" style="margin-inline-end: 8px;"></i>' : (btnClass === 'reject' ? '<i class="fas fa-ban" style="margin-inline-end: 8px;"></i>' : '<i class="fas fa-trash-alt" style="margin-inline-end: 8px;"></i>')) + btnText;
