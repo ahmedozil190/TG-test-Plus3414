@@ -2742,6 +2742,23 @@
                             style="margin-bottom: 0; padding: 16px; font-size: 1rem; height: auto;"
                             placeholder="e.g. 10.0">
                     </div>
+                    <hr style="border: none; border-top: 1px solid var(--border); margin: 30px 0;">
+                    <div class="form-group" style="margin-bottom: 25px;">
+                        <label
+                            style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">Withdrawal
+                            Fee (TRX) — deducted from requested amount</label>
+                        <input type="number" id="setting-fee-withdraw-trx" class="search-input"
+                            style="margin-bottom: 0; padding: 16px; font-size: 1rem; height: auto;"
+                            placeholder="e.g. 1.0">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 25px;">
+                        <label
+                            style="font-size: 0.95rem; color: var(--text-primary); font-weight: 600; margin-bottom: 12px; display: block;">Withdrawal
+                            Fee (USDT) — deducted from requested amount</label>
+                        <input type="number" id="setting-fee-withdraw-usdt" class="search-input"
+                            style="margin-bottom: 0; padding: 16px; font-size: 1rem; height: auto;"
+                            placeholder="e.g. 1.0">
+                    </div>
                     <div style="display: flex; gap: 10px;">
                         <button class="primary-btn" onclick="saveSettings()" style="flex: 1;">Save Withdrawal
                             Settings</button>
@@ -3727,8 +3744,16 @@
                                 <span style="color: ${statusColor}; font-weight: 500; font-size: 0.9rem; text-transform: uppercase;">${statusUpper}</span>
                             </div>
                             <div style="${rowS('#10b981')}">
-                                <span style="${lblS}">DETAILS</span>
-                                <span style="color: var(--text-secondary); font-weight: 500; font-size: 1rem; text-align: right;">$${formatMoney(item.amount)} - ${simpleMethod}</span>
+                                <span style="${lblS}">REQUESTED</span>
+                                <span style="color: var(--text-secondary); font-weight: 500; font-size: 1rem; text-align: right;">$${formatMoney(item.amount)}</span>
+                            </div>
+                            <div style="${rowS('#ef4444')}">
+                                <span style="${lblS}">FEE</span>
+                                <span style="color: var(--text-secondary); font-weight: 500; font-size: 1rem; text-align: right;">$${formatMoney(item.fee || 0)}</span>
+                            </div>
+                            <div style="${rowS('#10b981')}">
+                                <span style="${lblS}">SEND (NET)</span>
+                                <span style="color: var(--success); font-weight: 700; font-size: 1.1rem; text-align: right;">$${formatMoney(item.net_amount || item.amount)} - ${simpleMethod}</span>
                             </div>
                             <div style="${rowS('#8b5cf6')}">
                                 <span style="${lblS}">ID</span>
@@ -4077,6 +4102,14 @@
                 if (data.min_withdraw_usdt) {
                     const usdtMin = document.getElementById('setting-min-withdraw-usdt');
                     if (usdtMin) usdtMin.value = data.min_withdraw_usdt;
+                }
+                if (data.fee_withdraw_trx) {
+                    const trxFee = document.getElementById('setting-fee-withdraw-trx');
+                    if (trxFee) trxFee.value = data.fee_withdraw_trx;
+                }
+                if (data.fee_withdraw_usdt) {
+                    const usdtFee = document.getElementById('setting-fee-withdraw-usdt');
+                    if (usdtFee) usdtFee.value = data.fee_withdraw_usdt;
                 }
                 if (data.support_username) {
                     const supInput = document.getElementById('setting-support-username');
@@ -4993,6 +5026,8 @@
             const logChannel = document.getElementById('setting-sourcing-log-channel').value;
             const trxMin = document.getElementById('setting-min-withdraw-trx').value;
             const usdtMin = document.getElementById('setting-min-withdraw-usdt').value;
+            const trxFee = document.getElementById('setting-fee-withdraw-trx').value;
+            const usdtFee = document.getElementById('setting-fee-withdraw-usdt').value;
 
             try {
                 const res = await fetch('/api/admin/system/settings', {
@@ -5001,7 +5036,9 @@
                     body: JSON.stringify({
                         sourcing_log_channel_id: logChannel,
                         min_withdraw_trx: trxMin,
-                        min_withdraw_usdt: usdtMin
+                        min_withdraw_usdt: usdtMin,
+                        fee_withdraw_trx: trxFee,
+                        fee_withdraw_usdt: usdtFee
                     })
                 });
                 const data = await res.json();

@@ -811,6 +811,13 @@ async def run_migrations():
                 logger.info("Added min_profit column to api_servers table.")
             except: pass
 
+            # Add fee and net_amount to withdrawal_requests if missing
+            try:
+                await conn.execute(sqlalchemy.text("ALTER TABLE withdrawal_requests ADD COLUMN fee FLOAT NOT NULL DEFAULT 0.0;"))
+                await conn.execute(sqlalchemy.text("ALTER TABLE withdrawal_requests ADD COLUMN net_amount FLOAT NOT NULL DEFAULT 0.0;"))
+                logger.info("Added fee and net_amount columns to withdrawal_requests table.")
+            except: pass
+
             # One-time migration: Update server_type based on URL if it's 'standard' or 'other'
             try:
                 await conn.execute(sqlalchemy.text("UPDATE api_servers SET server_type = 'max' WHERE (server_type = 'standard' OR server_type = 'other' OR server_type IS NULL) AND url LIKE '%max-tg.com%'"))
@@ -970,7 +977,7 @@ async def get_store_data(user_id: int = None, init_data: str = None):
                     countries_map[map_key] = {"name": name, "count": count, "server_id": None, "server_name": "Server 1"}
 
             server_names = []
-            if local_enabled:
+            if local_enabled and len(local_results) > 0:
                 server_names.append("Server 1")
                 
             # 2. External Stock
@@ -2059,13 +2066,15 @@ async def get_sourcing_data(user_id: int, init_data: str):
                 })
 
             # Sourcing settings
-            settings_stmt = select(AppSetting).where(AppSetting.key.in_(["sourcing_log_channel_id", "min_withdraw_trx", "min_withdraw_usdt"]))
+            settings_stmt = select(AppSetting).where(AppSetting.key.in_(["sourcing_log_channel_id", "min_withdraw_trx", "min_withdraw_usdt", "fee_withdraw_trx", "fee_withdraw_usdt"]))
             settings_res = await session.execute(settings_stmt)
             settings_dict = {s.key: s.value for s in settings_res.scalars().all()}
             
             sourcing_log_channel_id = settings_dict.get("sourcing_log_channel_id", "")
             min_withdraw_trx = settings_dict.get("min_withdraw_trx", "4.0")
             min_withdraw_usdt = settings_dict.get("min_withdraw_usdt", "10.0")
+            fee_withdraw_trx = settings_dict.get("fee_withdraw_trx", "0.0")
+            fee_withdraw_usdt = settings_dict.get("fee_withdraw_usdt", "0.0")
 
             # Support & Channel settings
             support_username_obj = (await session.execute(select(AppSetting).where(AppSetting.key == "SUPPORT_USERNAME"))).scalar_one_or_none()
@@ -2080,6 +2089,8 @@ async def get_sourcing_data(user_id: int, init_data: str):
                 "updates_channel": updates_channel,
                 "min_withdraw_trx": min_withdraw_trx,
                 "min_withdraw_usdt": min_withdraw_usdt,
+                "fee_withdraw_trx": fee_withdraw_trx,
+                "fee_withdraw_usdt": fee_withdraw_usdt,
                 "stats": {
                     "total_sourced": total_sourced, 
                     "pending_count": pending_count,
@@ -3617,13 +3628,30 @@ async def seller_withdraw(req: WithdrawSubmit):
         except ValueError:
             min_usdt = 10.0
         
+        # Get dynamic withdrawal fees from AppSetting
+        trx_fee_setting = (await session.execute(select(AppSetting).where(AppSetting.key == "fee_withdraw_trx"))).scalar()
+        usdt_fee_setting = (await session.execute(select(AppSetting).where(AppSetting.key == "fee_withdraw_usdt"))).scalar()
+
+        try:
+            fee_trx = float(trx_fee_setting.value) if trx_fee_setting and trx_fee_setting.value else 0.0
+        except ValueError:
+            fee_trx = 0.0
+            
+        try:
+            fee_usdt = float(usdt_fee_setting.value) if usdt_fee_setting and usdt_fee_setting.value else 0.0
+        except ValueError:
+            fee_usdt = 0.0
+            
         min_amount = min_trx if "TRX" in req.method else min_usdt
+        fee = fee_trx if "TRX" in req.method else fee_usdt
         
         if withdraw_amount < min_amount:
             raise HTTPException(status_code=400, detail=f"Minimum withdrawal is ${min_amount}")
         
-        if withdraw_amount <= 0.20:
-            raise HTTPException(status_code=400, detail="Amount too low to cover fees")
+        if withdraw_amount <= fee:
+            raise HTTPException(status_code=400, detail="Amount too low to cover network fees")
+
+        net_amount = withdraw_amount - fee
 
         # Create Request
         tid = generate_transaction_id()
@@ -3632,6 +3660,8 @@ async def seller_withdraw(req: WithdrawSubmit):
             amount=withdraw_amount,
             method=req.method,
             address=req.address,
+            fee=fee,
+            net_amount=net_amount,
             transaction_id=tid
         )
         
