@@ -2090,6 +2090,8 @@
                 if (data.settings) {
                     minWithdrawTrx = data.settings.min_withdraw_trx || 4.0;
                     minWithdrawUsdt = data.settings.min_withdraw_usdt || 10.0;
+                    window.feeWithdrawTrx = data.settings.fee_withdraw_trx || 0.0;
+                    window.feeWithdrawUsdt = data.settings.fee_withdraw_usdt || 0.0;
                     document.getElementById('min-trx-val').textContent = formatMoney(minWithdrawTrx);
                     document.getElementById('min-usdt-val').textContent = formatMoney(minWithdrawUsdt);
                 }
@@ -2261,7 +2263,8 @@
             if (amt < currentMin) return; // Button should be disabled anyway
             if (!addr) return showToast("Address required");
 
-            const net = amt - 0.20;
+            const fee = currentMethod.includes('TRX') ? window.feeWithdrawTrx : window.feeWithdrawUsdt;
+            const net = amt - fee;
             const simpleMethod = currentMethod.split(' - ')[0];
 
             // Build Rows
