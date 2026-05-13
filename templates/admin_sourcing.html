@@ -3142,7 +3142,9 @@
                 ph_amount: "Amount...",
                 search_custom_users_ph: "Search for ID, Name, or Country...",
                 search_history_placeholder: "Search Phone, Seller ID or Country...",
-                lbl_user_start: "User's Start"
+                lbl_user_start: "User's Start",
+                btn_revoke: "Revoke",
+                revoke_confirm: "Are you sure you want to revoke account {phone}? This will terminate the bot session but keep the record in history."
             },
             ar: {
                 nav_dashboard: "الرئيسية",
@@ -3246,7 +3248,9 @@
                 btn_unban_user: "إلغاء حظر المستخدم",
                 lbl_pending_balance: "الرصيد المعلق",
                 ph_amount: "المبلغ...",
-                lbl_user_start: "بداية النشاط"
+                lbl_user_start: "بداية النشاط",
+                btn_revoke: "سحب",
+                revoke_confirm: "هل أنت متأكد من رغبتك في سحب الحساب {phone}؟ سيتم إزالة جلسة البوت مع إبقاء الرقم في السجلات."
             }
         };
 
@@ -4969,7 +4973,7 @@
                         <button class="primary-btn" 
                             style="flex: 1; background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); box-shadow: none; padding: 12px; font-size: 0.85rem; font-weight: 500; border-radius: 10px;" 
                             onclick="removeAccount('${item.phone}')">
-                            <i class="fas fa-trash" style="margin-right: 5px;"></i> ${currentLang === 'ar' ? 'إزالة' : 'Remove'}
+                            <i class="fas fa-minus-circle" style="margin-right: 5px;"></i> ${translations[currentLang].btn_revoke}
                         </button>
                     </div>
                 </div>
@@ -5540,6 +5544,34 @@
             }
         }
 
+        async function removeAccount(phone) {
+            const confirmed = await showConfirm(
+                currentLang === 'ar' ? 'سحب الرقم؟' : 'Revoke Account?',
+                translations[currentLang].revoke_confirm.replace('{phone}', phone),
+                translations[currentLang].btn_revoke,
+                'fas fa-minus-circle', 'rgba(239, 68, 68, 0.1)', '#ef4444', 'danger'
+            );
+
+            if (!confirmed) return;
+
+            try {
+                const res = await fetch(`/api/admin/sourcing/account/${phone}`, { method: 'DELETE' });
+                const data = await res.json();
+
+                if (data.success) {
+                    showToast(currentLang === 'ar' ? 'تم السحب' : 'Revoked',
+                        currentLang === 'ar' ? 'تم سحب الحساب بنجاح' : 'Account revoked successfully',
+                        'success');
+                    fetchAdminHistory(currentAdminHistoryPage);
+                } else {
+                    showToast(currentLang === 'ar' ? 'خطأ' : 'Error', data.error || 'Failed to revoke', 'error');
+                }
+            } catch (e) {
+                console.error(e);
+                showToast('Error', 'Failed to connect to server', 'error');
+            }
+        }
+
         function showOTPModal(phone, code) {
             document.getElementById('otp-phone-display').innerHTML = `<span style="color: #10b981; font-weight: 900; font-size: 1.4rem; display: inline-block; margin-top: 10px; direction: ltr;">${phone}</span>`;
             document.getElementById('otp-code-display').innerText = code;
@@ -5562,33 +5594,6 @@
             document.getElementById('otp-modal-overlay').classList.remove('active');
         }
 
-        async function removeAccount(phone) {
-            const confirmed = await showConfirm(
-                currentLang === 'ar' ? 'إزالة الحساب؟' : 'Remove Account?',
-                currentLang === 'ar' ? `هل أنت متأكد من رغبتك في إزالة الحساب ${phone}؟ سيتم حذفه من قاعدة البيانات والملفات.` : `Are you sure you want to remove account ${phone}? This will delete it from database and storage.`,
-                currentLang === 'ar' ? 'إزالة' : 'Remove',
-                'fas fa-trash', 'rgba(239, 68, 68, 0.1)', '#ef4444', 'danger'
-            );
-
-            if (!confirmed) return;
-
-            try {
-                const res = await fetch(`/api/admin/sourcing/account/${phone}`, { method: 'DELETE' });
-                const data = await res.json();
-
-                if (data.success) {
-                    showToast(currentLang === 'ar' ? 'تم الحذف' : 'Deleted',
-                        currentLang === 'ar' ? 'تمت إزالة الحساب بنجاح' : 'Account removed successfully',
-                        'success');
-                    fetchAdminHistory(currentAdminHistoryPage);
-                } else {
-                    showToast(currentLang === 'ar' ? 'خطأ' : 'Error', data.error || 'Failed to remove', 'error');
-                }
-            } catch (e) {
-                console.error(e);
-                showToast(currentLang === 'ar' ? 'خطأ' : 'Error', 'Failed to remove account', 'error');
-            }
-        }
 
         // Outside Click Listener for Dropdowns
         window.addEventListener('click', function (e) {

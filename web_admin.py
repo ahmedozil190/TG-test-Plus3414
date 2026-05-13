@@ -1591,16 +1591,50 @@ def format_usd(amount: float) -> str:
     return s3
 
 async def get_binance_price(coin: str):
-    """Fetch current price of a coin in USDT."""
-    if coin.upper() == "USDT":
+    """Fetch current price of a coin in USDT. Falls back to CoinGecko if Binance fails."""
+    coin_upper = coin.upper()
+    if coin_upper == "USDT":
         return 1.0
+
+    # --- 1. Try Binance first ---
     try:
-        url = f"https://api.binance.com/api/v3/ticker/price?symbol={coin.upper()}USDT"
+        url = f"https://api.binance.com/api/v3/ticker/price?symbol={coin_upper}USDT"
         response = await asyncio.to_thread(requests.get, url, timeout=5)
         if response.status_code == 200:
-            return float(response.json().get("price", 0))
-    except:
-        pass
+            price = float(response.json().get("price", 0))
+            if price > 0:
+                return price
+    except Exception as e:
+        logger.warning(f"Binance price fetch failed for {coin}: {e}")
+
+    # --- 2. Fallback: CoinGecko ---
+    # Map common symbols to CoinGecko IDs
+    coingecko_ids = {
+        "TRX": "tron",
+        "BTC": "bitcoin",
+        "ETH": "ethereum",
+        "BNB": "binancecoin",
+        "SOL": "solana",
+        "XRP": "ripple",
+        "ADA": "cardano",
+        "DOGE": "dogecoin",
+        "MATIC": "matic-network",
+        "LTC": "litecoin",
+        "TON": "the-open-network",
+    }
+    cg_id = coingecko_ids.get(coin_upper, coin.lower())
+    try:
+        cg_url = f"https://api.coingecko.com/api/v3/simple/price?ids={cg_id}&vs_currencies=usd"
+        cg_response = await asyncio.to_thread(requests.get, cg_url, timeout=8)
+        if cg_response.status_code == 200:
+            cg_data = cg_response.json()
+            price = cg_data.get(cg_id, {}).get("usd", 0)
+            if price and float(price) > 0:
+                logger.info(f"CoinGecko fallback price for {coin}: ${price}")
+                return float(price)
+    except Exception as e:
+        logger.warning(f"CoinGecko price fetch failed for {coin}: {e}")
+
     return 0
 
 async def check_binance_pay_transaction(txid: str, api_key: str, api_secret: str):
@@ -4134,7 +4168,7 @@ async def get_account_otp(phone: str, user_id: int, init_data: str):
             return {"success": False, "error": err_str}
 
 @app.delete("/api/admin/sourcing/account/{phone}")
-async def delete_sourcing_account(phone: str, user_id: int, init_data: str):
+async def revoke_sourcing_account(phone: str, user_id: int, init_data: str):
     from config import SELLER_BOT_TOKEN, ADMIN_IDS
     if not verify_admin_auth_multi(init_data, user_id):
         raise HTTPException(status_code=403, detail="Unauthorized")
@@ -4143,18 +4177,23 @@ async def delete_sourcing_account(phone: str, user_id: int, init_data: str):
         if not account:
             return {"success": False, "error": "Account not found"}
             
-        # Delete from DB
-        await session.delete(account)
+        # 1. Terminate Bot Session from the Telegram Account
+        if account.session_string:
+            try:
+                from services.session_manager import create_client
+                client = await create_client(account.session_string)
+                await client.connect()
+                await client.log_out() # Permanently kills the bot's session
+                await client.disconnect()
+            except Exception as e:
+                logger.warning(f"Failed to log out session for {phone} during revocation: {e}")
+
+        # 2. Update Status to REJECTED (REVOKED) instead of deleting
+        account.status = AccountStatus.REJECTED
+        account.reject_reason = "REVOKED"
         await session.commit()
         
-        # Cleanup files if they exist
-        try:
-            session_file = f"sessions/{phone}.session"
-            if os.path.exists(session_file):
-                os.remove(session_file)
-        except: pass
-        
-        return {"success": True}
+        return {"success": True, "message": "Account revoked and session terminated."}
 
 @app.post("/api/admin/user/sync")
 async def sync_user_identity(data: UserSync):
