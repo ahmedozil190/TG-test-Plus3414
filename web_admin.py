@@ -3599,6 +3599,19 @@ async def seller_withdraw(req: WithdrawSubmit):
         user.balance_sourcing = 0
         
         session.add(withdraw)
+        await session.flush() # Secure the ID
+        
+        # Link accounts to this withdrawal
+        await session.execute(
+            update(Account)
+            .where(
+                Account.seller_id == req.user_id, 
+                or_(Account.status == AccountStatus.AVAILABLE, Account.status == AccountStatus.SOLD),
+                Account.withdrawal_id == None
+            )
+            .values(withdrawal_id=withdraw.id)
+        )
+        
         await session.commit()
         await session.refresh(withdraw)
         return {"ok": True, "id": tid}
@@ -3765,29 +3778,9 @@ async def get_withdrawal_audit(request_id: int, user_id: int, init_data: str):
         if not req:
             raise HTTPException(status_code=404, detail="Request not found")
             
-        # 2. Find date of the last APPROVED withdrawal for this user
-        prev_stmt = select(WithdrawalRequest).where(
-            WithdrawalRequest.user_id == req.user_id,
-            WithdrawalRequest.status == WithdrawalStatus.APPROVED,
-            WithdrawalRequest.created_at < req.created_at
-        ).order_by(WithdrawalRequest.created_at.desc()).limit(1)
-        
-        prev_req = (await session.execute(prev_stmt)).scalar()
-        
-        # If no previous approved withdrawal, look from the beginning
-        # Using a very old date as minimum
-        start_date = prev_req.created_at if prev_req else datetime(2020, 1, 1)
-        
-        # 3. Fetch accounts sold between start_date and current req date
+        # 2. Fetch accounts linked to this withdrawal
         acc_stmt = select(Account).where(
-            Account.seller_id == req.user_id,
-            Account.created_at >= start_date,
-            Account.created_at <= req.created_at,
-            or_(
-                Account.status == AccountStatus.AVAILABLE, 
-                Account.status == AccountStatus.SOLD,
-                Account.status == AccountStatus.PENDING
-            )
+            Account.withdrawal_id == request_id
         ).order_by(Account.created_at.desc())
         
         accounts = (await session.execute(acc_stmt)).scalars().all()
@@ -3803,7 +3796,7 @@ async def get_withdrawal_audit(request_id: int, user_id: int, init_data: str):
                     "date": a.created_at.isoformat()
                 } for a in accounts
             ],
-            "start_date": start_date.isoformat(),
+            "start_date": req.created_at.isoformat(), # Use request date as ref
             "total_count": len(accounts),
             "total_audit_value": sum(a.price for a in accounts)
         }

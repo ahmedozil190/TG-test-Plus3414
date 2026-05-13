@@ -68,6 +68,9 @@ class Account(Base):
     # New fields for external servers
     server_id = Column(Integer, ForeignKey('api_servers.id'), nullable=True)
     hash_code = Column(String, nullable=True)
+    
+    # Withdrawal linking
+    withdrawal_id = Column(Integer, ForeignKey('withdrawal_requests.id'), nullable=True)
 
 class Transaction(Base):
     __tablename__ = 'transactions'
