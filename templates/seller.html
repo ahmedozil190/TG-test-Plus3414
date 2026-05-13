@@ -1709,12 +1709,16 @@
                 <!-- Rows will be injected here -->
             </div>
 
-            <div class="modal-actions">
+            <div class="modal-actions" style="display: flex; gap: 12px; margin-top: 10px;">
                 <button class="btn-secondary" onclick="closeConfirmModal()"
-                    style="background: rgba(59, 130, 246, 0.12); color: #3b82f6; border: none; font-weight: 700; border-radius: 14px;">Cancel</button>
+                    style="flex: 1; padding:14px 0; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); box-shadow: none; font-weight: 700; font-size: 0.95rem; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-times" style="margin-right: 8px;"></i> Cancel
+                </button>
                 <button class="btn-action" id="finalConfirmBtn"
-                    style="padding:14px; background: rgba(16, 185, 129, 0.12); color: #10b981; border: none; box-shadow: none; font-weight: 700; border-radius: 14px;"
-                    onclick="confirmWithdraw()">Withdraw</button>
+                    style="flex: 1; padding:14px 0; background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); box-shadow: none; font-weight: 700; font-size: 0.95rem; border-radius: 12px; display: flex; align-items: center; justify-content: center;"
+                    onclick="confirmWithdraw()">
+                    <i class="fas fa-check" style="margin-right: 8px;"></i> Withdraw
+                </button>
             </div>
         </div>
     </div>
@@ -2335,7 +2339,7 @@
                 showToast("Request failed");
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = 'Withdraw';
+                btn.innerHTML = '<i class="fas fa-check" style="margin-right: 8px;"></i> Withdraw';
             }
         }
 

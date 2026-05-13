@@ -2073,8 +2073,8 @@ async def get_sourcing_data(user_id: int, init_data: str):
             sourcing_log_channel_id = settings_dict.get("sourcing_log_channel_id", "")
             min_withdraw_trx = settings_dict.get("min_withdraw_trx", "4.0")
             min_withdraw_usdt = settings_dict.get("min_withdraw_usdt", "10.0")
-            fee_withdraw_trx = settings_dict.get("fee_withdraw_trx", "0.0")
-            fee_withdraw_usdt = settings_dict.get("fee_withdraw_usdt", "0.0")
+            fee_withdraw_trx = settings_dict.get("fee_withdraw_trx", "0.2")
+            fee_withdraw_usdt = settings_dict.get("fee_withdraw_usdt", "0.2")
 
             # Support & Channel settings
             support_username_obj = (await session.execute(select(AppSetting).where(AppSetting.key == "SUPPORT_USERNAME"))).scalar_one_or_none()
@@ -3369,8 +3369,8 @@ async def get_seller_data(user_id: int, init_data: str):
                 "settings": {
                     "min_withdraw_trx": float((await session.execute(select(AppSetting).where(AppSetting.key == "min_withdraw_trx"))).scalar_one_or_none().value or 4.0) if (await session.execute(select(AppSetting).where(AppSetting.key == "min_withdraw_trx"))).scalar_one_or_none() else 4.0,
                     "min_withdraw_usdt": float((await session.execute(select(AppSetting).where(AppSetting.key == "min_withdraw_usdt"))).scalar_one_or_none().value or 10.0) if (await session.execute(select(AppSetting).where(AppSetting.key == "min_withdraw_usdt"))).scalar_one_or_none() else 10.0,
-                    "fee_withdraw_trx": float((await session.execute(select(AppSetting).where(AppSetting.key == "fee_withdraw_trx"))).scalar_one_or_none().value or 0.0) if (await session.execute(select(AppSetting).where(AppSetting.key == "fee_withdraw_trx"))).scalar_one_or_none() else 0.0,
-                    "fee_withdraw_usdt": float((await session.execute(select(AppSetting).where(AppSetting.key == "fee_withdraw_usdt"))).scalar_one_or_none().value or 0.0) if (await session.execute(select(AppSetting).where(AppSetting.key == "fee_withdraw_usdt"))).scalar_one_or_none() else 0.0
+                    "fee_withdraw_trx": float((await session.execute(select(AppSetting).where(AppSetting.key == "fee_withdraw_trx"))).scalar_one_or_none().value or 0.2) if (await session.execute(select(AppSetting).where(AppSetting.key == "fee_withdraw_trx"))).scalar_one_or_none() else 0.2,
+                    "fee_withdraw_usdt": float((await session.execute(select(AppSetting).where(AppSetting.key == "fee_withdraw_usdt"))).scalar_one_or_none().value or 0.2) if (await session.execute(select(AppSetting).where(AppSetting.key == "fee_withdraw_usdt"))).scalar_one_or_none() else 0.2
                 },
                 "support_username": support_username.value if support_username else "",
                 "updates_channel": updates_channel.value if updates_channel else ""
@@ -3635,14 +3635,14 @@ async def seller_withdraw(req: WithdrawSubmit):
         usdt_fee_setting = (await session.execute(select(AppSetting).where(AppSetting.key == "fee_withdraw_usdt"))).scalar()
 
         try:
-            fee_trx = float(trx_fee_setting.value) if trx_fee_setting and trx_fee_setting.value else 0.0
+            fee_trx = float(trx_fee_setting.value) if trx_fee_setting and trx_fee_setting.value else 0.2
         except ValueError:
-            fee_trx = 0.0
+            fee_trx = 0.2
             
         try:
-            fee_usdt = float(usdt_fee_setting.value) if usdt_fee_setting and usdt_fee_setting.value else 0.0
+            fee_usdt = float(usdt_fee_setting.value) if usdt_fee_setting and usdt_fee_setting.value else 0.2
         except ValueError:
-            fee_usdt = 0.0
+            fee_usdt = 0.2
             
         min_amount = min_trx if "TRX" in req.method else min_usdt
         fee = fee_trx if "TRX" in req.method else fee_usdt
