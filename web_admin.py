@@ -972,9 +972,21 @@ async def get_store_data(user_id: int = None, init_data: str = None):
                 logger.info(f"Local results: {len(local_results)} countries")
                 
                 for row in local_results:
-                    name, count = row
-                    map_key = f"{name}|__local__"
-                    countries_map[map_key] = {"name": name, "count": count, "server_id": None, "server_name": "Server 1"}
+                    raw_country, count = row
+                    # Resolve real name and flag for local countries
+                    res_name, res_flag, res_iso = resolve_country_info(raw_country)
+                    # Use resolved name if it's not "Code X", otherwise keep raw_country
+                    display_name = res_name if "Code " not in res_name else raw_country
+                    
+                    map_key = f"{display_name}|__local__"
+                    countries_map[map_key] = {
+                        "name": display_name, 
+                        "flag": res_flag,
+                        "iso": res_iso,
+                        "count": count, 
+                        "server_id": None, 
+                        "server_name": "Server 1"
+                    }
 
             server_names = []
             if local_enabled and len(local_results) > 0:
@@ -1077,9 +1089,10 @@ async def get_store_data(user_id: int = None, init_data: str = None):
             # Pre-fetch all pricing data to avoid N+1 queries
             # Pre-fetch all pricing data
             all_cp = (await session.execute(select(CountryPrice))).scalars().all()
-            # Map by name and also by ISO for better matching
+            # Map by name, ISO, and country code for better matching
             cp_name_map = {cp.country_name: cp for cp in all_cp}
             cp_iso_map = {cp.iso_code: cp for cp in all_cp if cp.iso_code and cp.iso_code != 'XX'}
+            cp_code_map = {cp.country_code.strip().replace('+', ''): cp for cp in all_cp}
             
             all_usp = []
             if user_id:
@@ -1100,8 +1113,8 @@ async def get_store_data(user_id: int = None, init_data: str = None):
                     price = c_data.get("calc_price", 1.0)
                 
                 # 2. Apply CountryPrice Overrides
-                # Try match by ISO first (most accurate), then by name
-                cp = cp_iso_map.get(c_data.get("iso")) or cp_name_map.get(name)
+                # Try match by ISO first (most accurate), then by name, then by calling code
+                cp = cp_iso_map.get(c_data.get("iso")) or cp_name_map.get(name) or cp_code_map.get(str(name).strip().replace('+', ''))
                 
                 if cp:
                     # Always use flag from DB if available (for both local and external)
