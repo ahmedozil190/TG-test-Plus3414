@@ -4272,17 +4272,17 @@
                         <!-- Name -->
                         <div style="background: ${hexToRgba('#00d2ff', 0.02)}; border: 1px solid ${hexToRgba('#00d2ff', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
                             <span style="color: var(--text-secondary); opacity: 0.7; font-size: 0.8rem; font-weight: 500; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'الاسم' : 'Name'}</span>
-                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${u.full_name || 'N/A'}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1rem; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; min-width: 0; cursor: pointer;" onclick="event.stopPropagation(); copyToClipboard('${u.full_name || 'N/A'}')">${u.full_name || 'N/A'}</span>
                         </div>
                         <!-- Username -->
                         <div style="background: ${hexToRgba('#bf5af2', 0.02)}; border: 1px solid ${hexToRgba('#bf5af2', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
                             <span style="color: var(--text-secondary); opacity: 0.7; font-size: 0.8rem; font-weight: 500; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'المعرف' : 'Username'}</span>
-                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${u.username ? (u.username.startsWith('@') ? u.username : '@' + u.username) : 'N/A'}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1rem; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; min-width: 0; cursor: pointer;" onclick="event.stopPropagation(); copyToClipboard('${u.username ? (u.username.startsWith('@') ? u.username : '@' + u.username) : 'N/A'}')">${u.username ? (u.username.startsWith('@') ? u.username : '@' + u.username) : 'N/A'}</span>
                         </div>
                         <!-- User ID -->
                         <div style="background: ${hexToRgba('#ff9f0a', 0.02)}; border: 1px solid ${hexToRgba('#ff9f0a', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
                             <span style="color: var(--text-secondary); opacity: 0.7; font-size: 0.8rem; font-weight: 500; text-transform: uppercase; flex-shrink: 0;">${currentLang === 'ar' ? 'رقم المعرف' : 'User ID'}</span>
-                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${u.id}</span>
+                            <span style="color: var(--text-secondary); font-weight: 500; font-size: 1rem; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; min-width: 0; cursor: pointer;" onclick="event.stopPropagation(); copyToClipboard('${u.id}')">${u.id}</span>
                         </div>
                         <!-- Balance -->
                         <div style="background: ${hexToRgba('#30d158', 0.02)}; border: 1px solid ${hexToRgba('#30d158', 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 20px;">
