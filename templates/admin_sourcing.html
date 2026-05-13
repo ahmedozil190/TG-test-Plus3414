@@ -5439,6 +5439,9 @@
                 if (data.status === 'alive') {
                     statusLabel.innerHTML = 'ALIVE';
                     statusLabel.style.color = 'var(--success)';
+                } else if (data.status === 'sold') {
+                    statusLabel.innerHTML = 'SOLD';
+                    statusLabel.style.color = 'var(--success)';
                 } else {
                     let failLabel = 'DEAD';
                     if (data.error) {

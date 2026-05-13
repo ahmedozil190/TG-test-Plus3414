@@ -3854,6 +3854,9 @@ async def admin_check_account_alive(data: dict):
         acc = await session.get(Account, acc_id)
         if not acc: return {"status": "error", "message": "Not found"}
         
+        if acc.status == AccountStatus.SOLD:
+            return {"status": "sold"}
+            
         try:
             is_alive, reason = await is_session_alive(acc.session_string)
             if is_alive:
