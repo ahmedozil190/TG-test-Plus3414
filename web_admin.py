@@ -3260,9 +3260,12 @@ async def get_seller_data(user_id: int, init_data: str):
             accepted_count = (await session.execute(select(func.count(Account.id)).where(Account.seller_id == user_id, Account.status == AccountStatus.AVAILABLE))).scalar() or 0
             rejected_count = (await session.execute(select(func.count(Account.id)).where(Account.seller_id == user_id, Account.status == AccountStatus.REJECTED))).scalar() or 0
             
-            # Calculate Pending Balance
+            # Calculate Pending Withdrawn — sum PENDING withdrawal requests
             pending_balance = (await session.execute(
-                select(func.sum(Account.price)).where(Account.seller_id == user_id, Account.status == AccountStatus.PENDING)
+                select(func.sum(WithdrawalRequest.amount)).where(
+                    WithdrawalRequest.user_id == user_id,
+                    WithdrawalRequest.status == WithdrawalStatus.PENDING
+                )
             )).scalar() or 0.0
             
             # Calculate Total Withdrawn — sum only APPROVED withdrawal requests
