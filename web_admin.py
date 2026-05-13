@@ -3265,9 +3265,12 @@ async def get_seller_data(user_id: int, init_data: str):
                 select(func.sum(Account.price)).where(Account.seller_id == user_id, Account.status == AccountStatus.PENDING)
             )).scalar() or 0.0
             
-            # Calculate Total Withdrawn
+            # Calculate Total Withdrawn — sum ALL withdrawal requests (pending + approved) for this user
             total_withdrawn = (await session.execute(
-                select(func.sum(Transaction.amount)).where(Transaction.user_id == user_id, Transaction.type == TransactionType.WITHDRAW)
+                select(func.sum(WithdrawalRequest.amount)).where(
+                    WithdrawalRequest.user_id == user_id,
+                    WithdrawalRequest.status.in_([WithdrawalStatus.APPROVED, WithdrawalStatus.PENDING])
+                )
             )).scalar() or 0.0
             
             # Get prices
