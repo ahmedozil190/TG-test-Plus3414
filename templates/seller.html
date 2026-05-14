@@ -142,6 +142,10 @@
             left: 0;
         }
 
+        [dir="rtl"] .input-group label {
+            text-align: right !important;
+        }
+
         .dropdown-item {
             padding: 12px 16px;
             cursor: pointer;
@@ -1636,13 +1640,13 @@
                 </div>
 
                 <div class="input-group">
-                    <label data-i18n="withdraw_amount_lbl" style="display: block; text-align: right !important; width: 100%;">Withdraw Amount (USD)</label>
+                    <label data-i18n="withdraw_amount_lbl" style="display: block;">Withdraw Amount (USD)</label>
                     <input type="number" id="withdrawAmount" class="w-input" placeholder="0.00" readonly
                         oninput="validateWithdraw()">
                 </div>
 
                 <div class="input-group">
-                    <label data-i18n="wallet_lbl" style="display: block; text-align: right !important; width: 100%;">Wallet</label>
+                    <label data-i18n="wallet_lbl" style="display: block;">Wallet</label>
                     <input type="text" id="paymentDetails" class="w-input" data-i18n-ph="wallet_ph"
                         placeholder="Enter address here...">
                 </div>
