@@ -856,13 +856,15 @@
             style="width: 80px; height: 80px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border-radius: 24px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin-bottom: 25px;">
             <i class="fas fa-tools"></i>
         </div>
-        <h1 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 12px; color: var(--text-p);" data-i18n="maint_title">Under Maintenance
+        <h1 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 12px; color: var(--text-p);"
+            data-i18n="maint_title">Under Maintenance
         </h1>
-        <p style="color: var(--text-s); font-size: 1rem; max-width: 300px; line-height: 1.6; margin-bottom: 30px;" data-i18n="maint_desc">
+        <p style="color: var(--text-s); font-size: 1rem; max-width: 300px; line-height: 1.6; margin-bottom: 30px;"
+            data-i18n="maint_desc">
             We're currently performing some scheduled maintenance to improve your experience. Please check back soon!
         </p>
-        <div
-            style="padding: 12px 24px; background: var(--card-glass); border: 1px solid var(--border); border-radius: 12px; color: var(--text-s); font-size: 0.85rem; font-weight: 600;" data-i18n="maint_eta">
+        <div style="padding: 12px 24px; background: var(--card-glass); border: 1px solid var(--border); border-radius: 12px; color: var(--text-s); font-size: 0.85rem; font-weight: 600;"
+            data-i18n="maint_eta">
             Estimated time: 30-60 mins
         </div>
     </div>
@@ -874,10 +876,12 @@
             style="width: 80px; height: 80px; background: rgba(88, 101, 242, 0.1); color: var(--accent); border-radius: 24px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin-bottom: 25px;">
             <i class="fas fa-lock"></i>
         </div>
-        <h1 id="sub-title" style="font-size: 1.8rem; font-weight: 800; margin-bottom: 12px; color: var(--text-p);" data-i18n="sub_required">
+        <h1 id="sub-title" style="font-size: 1.8rem; font-weight: 800; margin-bottom: 12px; color: var(--text-p);"
+            data-i18n="sub_required">
             Subscription Required</h1>
         <p id="sub-desc"
-            style="color: var(--text-s); font-size: 1rem; max-width: 300px; line-height: 1.6; margin-bottom: 30px;" data-i18n="sub_desc">
+            style="color: var(--text-s); font-size: 1rem; max-width: 300px; line-height: 1.6; margin-bottom: 30px;"
+            data-i18n="sub_desc">
             To use the bot and access the store, you must join our channels first.
         </p>
 
@@ -885,7 +889,8 @@
             <!-- Channels buttons will be injected here -->
         </div>
 
-        <button id="sub-check-btn" onclick="init(true)" class="primary-btn" style="width: 100%; max-width: 300px;" data-i18n="sub_check">
+        <button id="sub-check-btn" onclick="init(true)" class="primary-btn" style="width: 100%; max-width: 300px;"
+            data-i18n="sub_check">
             I have joined, open store
         </button>
     </div>
@@ -1108,7 +1113,8 @@
                 <div id="deposit-method-icon" style="font-size: 2.5rem; color: #f3ba2f; margin-bottom: 12px;">
                     <i class="fas fa-bolt"></i>
                 </div>
-                <h3 id="deposit-method-title" style="margin-bottom: 10px; font-size: 1.1rem; direction: ltr !important;">Binance Pay</h3>
+                <h3 id="deposit-method-title"
+                    style="margin-bottom: 10px; font-size: 1.1rem; direction: ltr !important;">Binance Pay</h3>
                 <p id="deposit-method-desc" data-i18n="binance_pay_short_desc"
                     style="color: var(--text-s); font-size: 0.85rem; margin-bottom: 20px; line-height: 1.5;">
                     Please transfer USDT via Binance Internal Transfer (Binance Pay) to the Pay ID below.
@@ -1124,15 +1130,16 @@
                         style="display: block; margin-bottom: 8px; color: var(--text-p); font-size: 0.85rem; font-weight: 700; opacity: 0.9;">Transaction
                         ID</label>
                     <div style="position: relative; margin-bottom: 20px;">
-                        <input type="text" id="deposit-txid" class="search-input"
-                            data-i18n-ph="txid_ph" placeholder="Enter Transaction ID Here"
+                        <input type="text" id="deposit-txid" class="search-input" data-i18n-ph="txid_ph"
+                            placeholder="Enter Transaction ID Here"
                             style="width: 100%; margin-bottom: 0; text-align: center; border: 1px solid var(--border); background: rgba(255,255,255,0.03); font-size: 0.95rem; height: 50px; border-radius: 12px;">
                     </div>
 
                     <button class="primary-btn"
                         style="height: 50px; border-radius: 12px; background: linear-gradient(135deg, var(--accent), var(--accent-purple)); box-shadow: 0 8px 30px rgba(88, 101, 242, 0.4);"
                         onclick="verifyDeposit()" id="btn-verify-deposit">
-                        <i class="fas fa-shield-check" style="margin-right: 4px;"></i> <span data-i18n="btn_verify_dep">Verify Deposit</span>
+                        <i class="fas fa-shield-check" style="margin-right: 4px;"></i> <span
+                            data-i18n="btn_verify_dep">Verify Deposit</span>
                     </button>
                 </div>
             </div>
@@ -1175,7 +1182,8 @@
             <div class="info-card" style="margin-bottom: 25px;">
                 <div class="info-card-l">
                     <span class="info-card-lbl" data-i18n="total_orders_lbl">Total Orders</span>
-                    <div class="info-card-val" id="hist-total-orders">0 <span data-i18n="orders_count_lbl">ORDERS</span></div>
+                    <div class="info-card-val" id="hist-total-orders">0 <span data-i18n="orders_count_lbl">ORDERS</span>
+                    </div>
                 </div>
                 <div class="info-card-icon" style="background: rgba(88, 101, 242, 0.1); color: var(--accent);">
                     <i class="fas fa-shopping-bag"></i>
@@ -1224,8 +1232,10 @@
                     <i class="fas fa-headset"></i>
                 </div>
                 <div>
-                    <h2 style="font-weight: 800; margin-bottom: 10px;" data-i18n="contact_support_title">Contact Support</h2>
-                    <p style="color: var(--text-s); font-size: 0.95rem; line-height: 1.6;" data-i18n="support_desc">Our dedicated support team is
+                    <h2 style="font-weight: 800; margin-bottom: 10px;" data-i18n="contact_support_title">Contact Support
+                    </h2>
+                    <p style="color: var(--text-s); font-size: 0.95rem; line-height: 1.6;" data-i18n="support_desc">Our
+                        dedicated support team is
                         available to help you with any questions or issues you may have.</p>
                 </div>
                 <button class="primary-btn" id="btn-message-support"
@@ -1496,8 +1506,12 @@
                 ref_join_bonus_lbl: "Upon Joining", ref_commission_lbl: "On Deposits", your_link_lbl: "Your Unique Link", loading_lbl: "Loading...", tap_copy_lbl: "Tap to Copy",
                 quick_buy: "Quick Access", btn_start_shopping: "Browse Numbers",
                 confirm_title: "Confirmation", lbl_country: "Country", lbl_price: "Price", btn_confirm_pay: "Buy Now",
+                total_numbers: "Total Numbers", countries: "Total Countries", lowest_price: "Lowest Price",
+                store_search_ph: "Search countries...", no_numbers_found: "No numbers available",
                 success_title: "Payment Success!", success_desc: "Wait for the code in your bot chat.", btn_close: "Dismiss",
                 available: "Available", search_ph: "Search countries...",
+                total_numbers: "Total Numbers", countries: "Total Countries", lowest_price: "Lowest Price",
+                store_search_ph: "Search countries...", no_numbers_found: "No numbers available",
                 total_numbers: "Total Numbers", countries: "Total Countries", lowest_price: "Lowest Price",
                 dep_title: "Deposit History", dep_empty: "No deposits found.",
                 hist_title: "Orders History", hist_empty: "No orders history found.",
@@ -1531,17 +1545,17 @@
                 number: "Number",
                 price: "Price",
                 date: "Date",
-                        unit_numbers: "NUMBERS",
-                        unit_orders: "ORDERS",
-                        unit_usd: "USD",
-                        unit_users: "USERS",
-                        unit_countries: "COUNTRIES",
-                        unit_deposits: "DEPOSITS"
-                    },
+                unit_numbers: "NUMBERS",
+                unit_orders: "ORDERS",
+                unit_usd: "USD",
+                unit_users: "USERS",
+                unit_countries: "COUNTRIES",
+                unit_deposits: "DEPOSITS"
+            },
             ar: {
                 loading: "تحسين المتجر...", nav_home: "لوحة التحكم", nav_store: "شراء رقم", nav_deposit: "إيداع", nav_history: "سجل الطلبات", nav_support: "الدعم", nav_referrals: "نظام الإحالات",
                 total_numbers: "إجمالي الأرقام", countries: "إجمالي الدول", lowest_price: "أقل سعر",
-                store_search_ph: "ابحث عن دولة...", no_numbers_found: "لا توجد أرقام متاحة حالياً",
+                store_search_ph: "ابحث عن دولة...", no_numbers_found: "لا توجد أرقام متاحة حالياً لعملية البحث هذه.",
                 financials_header: "البيانات المالية", stats_header: "الإحصائيات", balance: "الرصيد الحالي", total_spent: "إجمالي المشتريات", total_deposits: "إجمالي الإيداعات",
                 completed_orders: "الطلبات المكتملة", active_orders: "الطلبات النشطة", unique_countries: "الدول الفريدة",
                 loading_addr: "جاري تحميل العنوان...", txid_lbl: "معرف العملية (TXID)", txid_ph: "أدخل معرف العملية هنا", btn_verify_dep: "تحقق من الإيداع",
@@ -1552,6 +1566,8 @@
                 ref_join_bonus_lbl: "عند الانضمام", ref_commission_lbl: "على الإيداعات", your_link_lbl: "رابطك الفريد", loading_lbl: "جاري التحميل...", tap_copy_lbl: "اضغط للنسخ",
                 quick_buy: "وصول سريع", btn_start_shopping: "تصفح الأرقام",
                 confirm_title: "تأكيد الشراء", lbl_country: "الدولة", lbl_price: "السعر", btn_confirm_pay: "شراء الآن",
+                total_numbers: "إجمالي الأرقام", countries: "إجمالي الدول", lowest_price: "أقل سعر",
+                store_search_ph: "ابحث عن دولة...", no_numbers_found: "لا توجد أرقام متاحة حالياً لعملية البحث هذه.",
                 success_title: "تم الدفع بنجاح!", success_desc: "انتظر وصول الكود في محادثة البوت.", btn_close: "إغلاق",
                 available: "رقم متاح", search_ph: "ابحث عن دولة...",
                 total_numbers: "إجمالي الأرقام", countries: "إجمالي الدول", lowest_price: "أقل سعر",
@@ -1608,6 +1624,8 @@
                 ref_join_bonus_lbl: "加入时", ref_commission_lbl: "充值佣金", your_link_lbl: "您的专属链接", loading_lbl: "正在加载...", tap_copy_lbl: "点击复制",
                 quick_buy: "快速访问", btn_start_shopping: "浏览号码",
                 confirm_title: "确认购买", lbl_country: "国家", lbl_price: "价格", btn_confirm_pay: "立即购买",
+                total_numbers: "总号码", countries: "总国家", lowest_price: "最低价格",
+                store_search_ph: "搜索国家...", no_numbers_found: "目前没有可用号码",
                 success_title: "支付成功!", success_desc: "请在机器人聊天中等待验证码。", btn_close: "关闭",
                 available: "可用", search_ph: "搜索国家...",
                 total_numbers: "总号码", countries: "总国家", lowest_price: "最低价格",
@@ -1914,6 +1932,7 @@
                 if (savedTab && savedTab !== 'home') {
                     switchNav(savedTab, null);
                 } else {
+                    switchNav('home', null); // Force title/nav sync even for home
                     await fetchDeposits();
                 }
             } catch (e) {
@@ -2040,14 +2059,14 @@
         function renderDashboardStats() {
             if (!window.lastDashboardData) return;
             const data = window.lastDashboardData;
-            
+
             if (data.user) {
                 updateBalanceUI(data.user.balance || 0);
                 const depositsEl = document.getElementById('dash-total-deposits');
                 if (depositsEl) depositsEl.innerHTML = `${data.user.total_deposits || 0}&nbsp;<span>${translations[currentLang].unit_deposits}</span>`;
                 const spentEl = document.getElementById('dash-spent');
                 if (spentEl) spentEl.innerHTML = `${formatMoney(data.user.total_spent)}&nbsp;<span>${translations[currentLang].unit_usd}</span>`;
-                
+
                 const refCountEl = document.getElementById('ref-total-count');
                 if (refCountEl) {
                     refCountEl.innerHTML = `${data.user.referral_count || 0}&nbsp;<span>${translations[currentLang].unit_users}</span>`;
@@ -2063,13 +2082,16 @@
                 const uniqueCountries = document.getElementById('dash-unique-countries');
                 if (uniqueCountries) uniqueCountries.innerHTML = `${data.user.unique_countries || 0}&nbsp;<span>${translations[currentLang].unit_countries}</span>`;
             }
-
+            
             // Also update Store section stats if data exists
             if (window.lastDashboardData) {
                 const data = window.lastDashboardData;
-                safeSetHTML('stat-total-numbers', `${data.total_numbers || 0}&nbsp;<span>${translations[currentLang].unit_numbers}</span>`);
-                safeSetHTML('stat-countries', `${(data.countries || []).length}&nbsp;<span>${translations[currentLang].unit_countries}</span>`);
-                safeSetHTML('stat-lowest-price', `${formatMoney(data.lowest_price || 0)}&nbsp;<span>${translations[currentLang].unit_usd}</span>`);
+                const tn = document.getElementById('stat-total-numbers');
+                if (tn) tn.innerHTML = `${data.total_numbers || 0}&nbsp;<span>${translations[currentLang].unit_numbers}</span>`;
+                const cn = document.getElementById('stat-countries');
+                if (cn) cn.innerHTML = `${(data.countries || []).length}&nbsp;<span>${translations[currentLang].unit_countries}</span>`;
+                const lp = document.getElementById('stat-lowest-price');
+                if (lp) lp.innerHTML = `${formatMoney(data.lowest_price || 0)}&nbsp;<span>${translations[currentLang].unit_usd}</span>`;
             }
         }
 
@@ -2108,7 +2130,10 @@
 
         function renderCountries(list) {
             const grid = document.getElementById('countries-grid');
-            if (!list || !list.length) { grid.innerHTML = '<p style="text-align:center; padding: 40px; opacity: 0.5;">No numbers available</p>'; return; }
+            if (!list || !list.length) { 
+                grid.innerHTML = `<p style="text-align:center; padding: 40px; opacity: 0.5;" data-i18n="no_numbers_found">${translations[currentLang].no_numbers_found}</p>`; 
+                return; 
+            }
             grid.innerHTML = list.map(c => `
                 <div class="country-card" onclick="openBuyModal(${JSON.stringify(c).replace(/"/g, '&quot;')})">
                     <div style="display: flex; align-items: center; gap: 15px; flex: 1; min-width: 0;">
@@ -2190,9 +2215,9 @@
             const validPrices = filtered.map(c => parseFloat(c.buy_price)).filter(p => !isNaN(p) && p > 0);
             const lowestPrice = validPrices.length ? Math.min(...validPrices) : 0;
 
-            document.getElementById('stat-total-numbers').innerHTML = `${totalNumbers} <span>NUMBERS</span>`;
-            document.getElementById('stat-countries').innerHTML = `${countriesCount} <span>COUNTRIES</span>`;
-            document.getElementById('stat-lowest-price').innerHTML = `${formatMoney(lowestPrice)} <span>USD</span>`;
+            document.getElementById('stat-total-numbers').innerHTML = `${totalNumbers}&nbsp;<span>${translations[currentLang].unit_numbers}</span>`;
+            document.getElementById('stat-countries').innerHTML = `${countriesCount}&nbsp;<span>${translations[currentLang].unit_countries}</span>`;
+            document.getElementById('stat-lowest-price').innerHTML = `${formatMoney(lowestPrice)}&nbsp;<span>${translations[currentLang].unit_usd}</span>`;
         }
 
         function openBuyModal(c) {
