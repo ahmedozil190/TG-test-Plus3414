@@ -1999,6 +1999,8 @@
                 number: "Number",
                 price: "Price",
                 date: "Date",
+                financials_header: "FINANCIALS",
+                stats_header: "STATISTICS",
                 unit_numbers: "NUMBERS",
                 unit_orders: "ORDERS",
                 unit_usd: "USD",
@@ -2007,6 +2009,7 @@
             },
             ar: {
                 nav_dashboard: "لوحة التحكم", nav_submit: "إضافة أرقام", nav_withdraw: "سحب الأرباح", nav_pricing: "قائمة الأسعار", nav_support: "الدعم الفني", nav_lang: "اللغة",
+                financials_header: "البيانات المالية", stats_header: "الإحصائيات",
                 curr_bal: "الرصيد الحالي", pend_with: "قيد السحب", total_with: "إجمالي المسحوبات",
                 stats: "الإحصائيات", accepted: "أرقام مقبولة", pending: "أرقام معلقة", rejected: "أرقام مرفوضة",
                 sub_required: "الاشتراك إجباري", sub_desc: "لاستخدام البوت والوصول لهذه اللوحة، يجب عليك الانضمام لقنواتنا أولاً.",
@@ -2087,6 +2090,8 @@
                 number: "号码",
                 price: "价格",
                 date: "日期",
+                financials_header: "财务数据",
+                stats_header: "统计数据",
                 unit_numbers: "号码",
                 unit_orders: "订单",
                 unit_usd: "美元",
@@ -2389,7 +2394,7 @@
                 }
 
                 userBalance = data.user.balance;
-                safeSetHTML('currBal', `${formatMoney(userBalance)} <span>${translations[currentLang].unit_usd}</span>`);
+                safeSetHTML('currBal', `${formatMoney(userBalance)}&nbsp;<span>${translations[currentLang].unit_usd}</span>`);
 
                 if (data.settings) {
                     minWithdrawTrx = data.settings.min_withdraw_trx || 4.0;
@@ -2406,8 +2411,8 @@
                     withdrawInput.value = formatMoney(userBalance);
                     setWithdrawMethod('TRX - TRC20', minWithdrawTrx);
                 }
-                safeSetHTML('pendBal', `${formatMoney(data.user.pending_balance)} <span>${translations[currentLang].unit_usd}</span>`);
-                safeSetHTML('totalWith', `${formatMoney(data.user.total_withdrawn)} <span>${translations[currentLang].unit_usd}</span>`);
+                safeSetHTML('pendBal', `${formatMoney(data.user.pending_balance)}&nbsp;<span>${translations[currentLang].unit_usd}</span>`);
+                safeSetHTML('totalWith', `${formatMoney(data.user.total_withdrawn)}&nbsp;<span>${translations[currentLang].unit_usd}</span>`);
 
                 // Update Branding
                 if (data.bot_name) {
@@ -2425,9 +2430,9 @@
                 }
 
                 // Stats Grid
-                safeSetHTML('statAccepted', `${data.stats.accepted}<span> ${translations[currentLang].unit_numbers}</span>`);
-                safeSetHTML('statPending', `${data.stats.pending}<span> ${translations[currentLang].unit_numbers}</span>`);
-                safeSetHTML('statRejected', `${data.stats.rejected}<span> ${translations[currentLang].unit_numbers}</span>`);
+                safeSetHTML('statAccepted', `${data.stats.accepted}&nbsp;<span>${translations[currentLang].unit_numbers}</span>`);
+                safeSetHTML('statPending', `${data.stats.pending}&nbsp;<span>${translations[currentLang].unit_numbers}</span>`);
+                safeSetHTML('statRejected', `${data.stats.rejected}&nbsp;<span>${translations[currentLang].unit_numbers}</span>`);
 
                 allPrices = data.prices;
                 renderPrices(allPrices);

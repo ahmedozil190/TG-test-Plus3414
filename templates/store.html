@@ -1867,16 +1867,16 @@
 
                 if (data.user) {
                     updateBalanceUI(data.user.balance || 0);
-                    document.getElementById('dash-total-deposits').innerHTML = `${data.user.total_deposits || 0} <span>${translations[currentLang].unit_deposits}</span>`;
-                    document.getElementById('dash-spent').innerHTML = `${formatMoney(data.user.total_spent)} <span>${translations[currentLang].unit_usd}</span>`;
+                    document.getElementById('dash-total-deposits').innerHTML = `${data.user.total_deposits || 0}&nbsp;<span>${translations[currentLang].unit_deposits}</span>`;
+                    document.getElementById('dash-spent').innerHTML = `${formatMoney(data.user.total_spent)}&nbsp;<span>${translations[currentLang].unit_usd}</span>`;
                     const nameForUI = (data.user.full_name && data.user.full_name !== 'Unknown') ? data.user.full_name : (userData?.first_name || "User");
                     const initialEl = document.getElementById('userInitial');
                     if (initialEl) initialEl.innerText = nameForUI.charAt(0).toUpperCase();
 
                     const refCountEl = document.getElementById('ref-total-count');
                     if (refCountEl) {
-                        refCountEl.innerHTML = `${data.user.referral_count || 0} <span>${translations[currentLang].unit_users}</span>`;
-                        document.getElementById('ref-total-earnings').innerHTML = `${formatMoney(data.user.referral_earnings, 3)} <span>${translations[currentLang].unit_usd}</span>`;
+                        refCountEl.innerHTML = `${data.user.referral_count || 0}&nbsp;<span>${translations[currentLang].unit_users}</span>`;
+                        document.getElementById('ref-total-earnings').innerHTML = `${formatMoney(data.user.referral_earnings, 3)}&nbsp;<span>${translations[currentLang].unit_usd}</span>`;
                         const botUsername = data.bot_username || "YourBot";
                         document.getElementById('ref-link-val').innerText = `https://t.me/${botUsername}?start=REF${userId}`;
                     }
@@ -1905,11 +1905,11 @@
 
                 if (data.stats && data.user) {
                     const compOrders = document.getElementById('dash-completed-orders');
-                    if (compOrders) compOrders.innerHTML = `${data.user.completed_orders || 0} <span>${translations[currentLang].unit_orders}</span>`;
+                    if (compOrders) compOrders.innerHTML = `${data.user.completed_orders || 0}&nbsp;<span>${translations[currentLang].unit_orders}</span>`;
                     const activeOrders = document.getElementById('dash-active-orders');
-                    if (activeOrders) activeOrders.innerHTML = `${data.user.active_orders || 0} <span>${translations[currentLang].unit_orders}</span>`;
+                    if (activeOrders) activeOrders.innerHTML = `${data.user.active_orders || 0}&nbsp;<span>${translations[currentLang].unit_orders}</span>`;
                     const uniqueCountries = document.getElementById('dash-unique-countries');
-                    if (uniqueCountries) uniqueCountries.innerHTML = `${data.user.unique_countries || 0} <span>${translations[currentLang].unit_countries}</span>`;
+                    if (uniqueCountries) uniqueCountries.innerHTML = `${data.user.unique_countries || 0}&nbsp;<span>${translations[currentLang].unit_countries}</span>`;
                 }
 
                 // Restore active tab
@@ -1980,9 +1980,9 @@
 
         function updateBalanceUI(val) {
             const fval = formatMoney(val);
-            document.getElementById('dash-balance').innerHTML = `${fval} <span style="font-size: 0.85rem; color: var(--text-s); font-weight: 600;">USD</span>`;
+            document.getElementById('dash-balance').innerHTML = `${fval} <span style="font-size: 0.85rem; color: var(--text-s); font-weight: 600;"> ${translations[currentLang].unit_usd}</span>`;
             const topBal = document.getElementById('top-balance');
-            if (topBal) topBal.innerText = `${fval} USD`;
+            if (topBal) topBal.innerText = `${fval} ${translations[currentLang].unit_usd}`;
         }
         function updateTranslations() {
             // Temporarily disable transitions during layout shift
