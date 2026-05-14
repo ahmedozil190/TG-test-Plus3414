@@ -203,12 +203,15 @@
             overflow-x: hidden;
         }
 
+        /* Prevent sidebar from jumping across screen during language switch */
+        body.switching .sidebar {
+            transition: none !important;
+        }
+
         body.rtl .sidebar {
             left: auto;
             right: 0;
             transform: translateX(100%);
-            border-right: none;
-            border-left: 1px solid var(--border);
         }
 
         .sidebar.open {
@@ -1712,26 +1715,26 @@
         <!-- View: Language -->
         <div class="view-panel" id="view-lang">
             <div style="display: flex; flex-direction: column; gap: 15px;">
-                <div class="info-card" onclick="setLanguage('en')" style="cursor: pointer; padding: 20px; border: 1px solid var(--border); min-height: 75px;">
-                    <div style="display: flex; align-items: center; gap: 15px; flex: 1; height: 100%;">
+                <div class="info-card" onclick="setLanguage('en')" style="cursor: pointer; padding: 0 20px; border: 1px solid var(--border); height: 75px; display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
                         <span style="font-size: 1.5rem; width: 30px; text-align: center;">🇺🇸</span>
-                        <div style="flex: 1; font-weight: 700; color: var(--text-p); font-size: 1rem;">English</div>
-                        <i id="check-en" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
+                        <div style="font-weight: 700; color: var(--text-p); font-size: 1rem; line-height: 1;">English</div>
                     </div>
+                    <i id="check-en" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
                 </div>
-                <div class="info-card" onclick="setLanguage('ar')" style="cursor: pointer; padding: 20px; border: 1px solid var(--border); min-height: 75px;">
-                    <div style="display: flex; align-items: center; gap: 15px; flex: 1; height: 100%;">
+                <div class="info-card" onclick="setLanguage('ar')" style="cursor: pointer; padding: 0 20px; border: 1px solid var(--border); height: 75px; display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
                         <span style="font-size: 1.5rem; width: 30px; text-align: center;">🇸🇦</span>
-                        <div style="flex: 1; font-weight: 700; color: var(--text-p); font-size: 1rem;">العربية</div>
-                        <i id="check-ar" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
+                        <div style="font-weight: 700; color: var(--text-p); font-size: 1rem; line-height: 1;">العربية</div>
                     </div>
+                    <i id="check-ar" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
                 </div>
-                <div class="info-card" onclick="setLanguage('zh')" style="cursor: pointer; padding: 20px; border: 1px solid var(--border); min-height: 75px;">
-                    <div style="display: flex; align-items: center; gap: 15px; flex: 1; height: 100%;">
+                <div class="info-card" onclick="setLanguage('zh')" style="cursor: pointer; padding: 0 20px; border: 1px solid var(--border); height: 75px; display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
                         <span style="font-size: 1.5rem; width: 30px; text-align: center;">🇨🇳</span>
-                        <div style="flex: 1; font-weight: 700; color: var(--text-p); font-size: 1rem;">简体中文</div>
-                        <i id="check-zh" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
+                        <div style="font-weight: 700; color: var(--text-p); font-size: 1rem; line-height: 1;">简体中文</div>
                     </div>
+                    <i id="check-zh" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
                 </div>
             </div>
         </div>
@@ -1933,6 +1936,9 @@
         let currentLang = 'en';
 
         function updateTranslations() {
+            // Temporarily disable transitions during layout shift
+            document.body.classList.add('switching');
+
             // Update direction
             document.body.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
             document.body.classList.toggle('rtl', currentLang === 'ar');
@@ -1977,6 +1983,11 @@
             const titleKey = titles[activeView] || 'nav_dashboard';
             const viewTitleEl = document.getElementById('viewTitle');
             if (viewTitleEl) viewTitleEl.innerText = translations[currentLang][titleKey] || 'Dashboard';
+
+            // Restore transitions
+            setTimeout(() => {
+                document.body.classList.remove('switching');
+            }, 50);
         }
 
         function setLanguage(lang) {
