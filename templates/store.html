@@ -1530,7 +1530,13 @@
                 account: "Account",
                 number: "Number",
                 price: "Price",
-                date: "Date"
+                date: "Date",
+                unit_numbers: "NUMBERS",
+                unit_orders: "ORDERS",
+                unit_usd: "USD",
+                unit_users: "USERS",
+                unit_countries: "COUNTRIES",
+                unit_deposits: "DEPOSITS"
             },
             ar: {
                 loading: "تحسين المتجر...", nav_home: "لوحة التحكم", nav_store: "شراء رقم", nav_deposit: "إيداع", nav_history: "سجل الطلبات", nav_support: "الدعم", nav_referrals: "نظام الإحالات",
@@ -1578,7 +1584,13 @@
                 account: "حساب",
                 number: "رقم",
                 price: "السعر",
-                date: "التاريخ"
+                date: "التاريخ",
+                unit_numbers: "رقم",
+                unit_orders: "طلب",
+                unit_usd: "دولار",
+                unit_users: "مستخدم",
+                unit_countries: "دولة",
+                unit_deposits: "إيداع"
             },
             zh: {
                 loading: "优化商店...", nav_home: "控制面板", nav_store: "购买号码", nav_deposit: "充值", nav_history: "订单历史", nav_support: "支持", nav_referrals: "邀请系统",
@@ -1626,7 +1638,13 @@
                 account: "账号",
                 number: "号码",
                 price: "价格",
-                date: "日期"
+                date: "日期",
+                unit_numbers: "号码",
+                unit_orders: "订单",
+                unit_usd: "美元",
+                unit_users: "用户",
+                unit_countries: "国家",
+                unit_deposits: "充值"
             }
         };
 
@@ -1849,16 +1867,16 @@
 
                 if (data.user) {
                     updateBalanceUI(data.user.balance || 0);
-                    document.getElementById('dash-total-deposits').innerHTML = `${data.user.total_deposits || 0} <span>DEPOSITS</span>`;
-                    document.getElementById('dash-spent').innerHTML = `${formatMoney(data.user.total_spent)} <span>USD</span>`;
+                    document.getElementById('dash-total-deposits').innerHTML = `${data.user.total_deposits || 0} <span>${translations[currentLang].unit_deposits}</span>`;
+                    document.getElementById('dash-spent').innerHTML = `${formatMoney(data.user.total_spent)} <span>${translations[currentLang].unit_usd}</span>`;
                     const nameForUI = (data.user.full_name && data.user.full_name !== 'Unknown') ? data.user.full_name : (userData?.first_name || "User");
                     const initialEl = document.getElementById('userInitial');
                     if (initialEl) initialEl.innerText = nameForUI.charAt(0).toUpperCase();
 
                     const refCountEl = document.getElementById('ref-total-count');
                     if (refCountEl) {
-                        refCountEl.innerHTML = `${data.user.referral_count || 0} <span>USERS</span>`;
-                        document.getElementById('ref-total-earnings').innerHTML = `${formatMoney(data.user.referral_earnings, 3)} <span>USD</span>`;
+                        refCountEl.innerHTML = `${data.user.referral_count || 0} <span>${translations[currentLang].unit_users}</span>`;
+                        document.getElementById('ref-total-earnings').innerHTML = `${formatMoney(data.user.referral_earnings, 3)} <span>${translations[currentLang].unit_usd}</span>`;
                         const botUsername = data.bot_username || "YourBot";
                         document.getElementById('ref-link-val').innerText = `https://t.me/${botUsername}?start=REF${userId}`;
                     }
@@ -1887,11 +1905,11 @@
 
                 if (data.stats && data.user) {
                     const compOrders = document.getElementById('dash-completed-orders');
-                    if (compOrders) compOrders.innerHTML = `${data.user.completed_orders || 0} <span>ORDERS</span>`;
+                    if (compOrders) compOrders.innerHTML = `${data.user.completed_orders || 0} <span>${translations[currentLang].unit_orders}</span>`;
                     const activeOrders = document.getElementById('dash-active-orders');
-                    if (activeOrders) activeOrders.innerHTML = `${data.user.active_orders || 0} <span>ORDERS</span>`;
+                    if (activeOrders) activeOrders.innerHTML = `${data.user.active_orders || 0} <span>${translations[currentLang].unit_orders}</span>`;
                     const uniqueCountries = document.getElementById('dash-unique-countries');
-                    if (uniqueCountries) uniqueCountries.innerHTML = `${data.user.unique_countries || 0} <span>COUNTRIES</span>`;
+                    if (uniqueCountries) uniqueCountries.innerHTML = `${data.user.unique_countries || 0} <span>${translations[currentLang].unit_countries}</span>`;
                 }
 
                 // Restore active tab
