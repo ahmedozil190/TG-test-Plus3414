@@ -3362,6 +3362,15 @@ async def get_seller_data(user_id: int, init_data: str):
                     except: pass
                 
             
+            # Safe helper for settings
+            async def get_setting_float(key, default):
+                try:
+                    obj = (await session.execute(select(AppSetting).where(AppSetting.key == key))).scalar_one_or_none()
+                    if obj and obj.value and str(obj.value).strip():
+                        return float(obj.value)
+                except: pass
+                return default
+
             return {
                 "maintenance_mode": False,
                 "user": {
@@ -3380,10 +3389,10 @@ async def get_seller_data(user_id: int, init_data: str):
                 },
                 "prices": formatted_prices,
                 "settings": {
-                    "min_withdraw_trx": float((await session.execute(select(AppSetting).where(AppSetting.key == "min_withdraw_trx"))).scalar_one_or_none().value or 4.0) if (await session.execute(select(AppSetting).where(AppSetting.key == "min_withdraw_trx"))).scalar_one_or_none() else 4.0,
-                    "min_withdraw_usdt": float((await session.execute(select(AppSetting).where(AppSetting.key == "min_withdraw_usdt"))).scalar_one_or_none().value or 10.0) if (await session.execute(select(AppSetting).where(AppSetting.key == "min_withdraw_usdt"))).scalar_one_or_none() else 10.0,
-                    "fee_withdraw_trx": float((await session.execute(select(AppSetting).where(AppSetting.key == "fee_withdraw_trx"))).scalar_one_or_none().value or 0.2) if (await session.execute(select(AppSetting).where(AppSetting.key == "fee_withdraw_trx"))).scalar_one_or_none() else 0.2,
-                    "fee_withdraw_usdt": float((await session.execute(select(AppSetting).where(AppSetting.key == "fee_withdraw_usdt"))).scalar_one_or_none().value or 0.2) if (await session.execute(select(AppSetting).where(AppSetting.key == "fee_withdraw_usdt"))).scalar_one_or_none() else 0.2
+                    "min_withdraw_trx": await get_setting_float("min_withdraw_trx", 4.0),
+                    "min_withdraw_usdt": await get_setting_float("min_withdraw_usdt", 10.0),
+                    "fee_withdraw_trx": await get_setting_float("fee_withdraw_trx", 0.2),
+                    "fee_withdraw_usdt": await get_setting_float("fee_withdraw_usdt", 0.2)
                 },
                 "support_username": support_username.value if support_username else "",
                 "updates_channel": updates_channel.value if updates_channel else ""

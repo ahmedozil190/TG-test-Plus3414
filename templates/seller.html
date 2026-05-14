@@ -2243,8 +2243,18 @@
 
         async function fetchSellerData() {
             try {
+                if (!tg.initData) {
+                    console.warn("Telegram initData is empty. Some features might fail.");
+                }
+
                 const res = await fetch(`/api/seller/data?user_id=${userId}`);
                 const data = await res.json();
+
+                if (!res.ok) {
+                    console.error("API Error Response:", data);
+                    showToast(data.detail || "Server Error: " + res.status);
+                    return;
+                }
 
                 // ─── Status Overlays (Maintenance & Ban) ───
                 const showStatusPage = (icon, title, desc, btnText, btnLink, isDanger = true) => {
@@ -2344,7 +2354,8 @@
                 allPrices = data.prices;
                 renderPrices(allPrices);
             } catch (err) {
-                showToast("Connection Error");
+                console.error("Fetch Seller Data Exception:", err);
+                showToast("Connection Error: " + err.message);
             } finally {
                 const loader = document.getElementById('loader');
                 if (loader) loader.classList.add('hide');
