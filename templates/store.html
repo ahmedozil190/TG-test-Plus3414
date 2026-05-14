@@ -2275,11 +2275,17 @@
 
         async function fetchHistory() {
             const list = document.getElementById('history-list');
+            const empty = document.getElementById('history-empty');
             try {
                 const res = await fetch(`/api/store/history?user_id=${userId}&page=${currentHistoryPage}&limit=${HISTORY_LIMIT}&_t=${new Date().getTime()}`);
+                if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
                 const data = await res.json();
                 renderHistory(data);
-            } catch (e) { list.innerHTML = '<p style="text-align:center;">Error loading history</p>'; }
+            } catch (e) {
+                console.error("History Fetch Error:", e);
+                if (list) list.innerHTML = `<p style="text-align:center; padding: 20px; color: var(--error);">${currentLang === 'ar' ? 'خطأ في تحميل السجل' : 'Error loading history'}</p>`;
+                if (empty) empty.style.display = 'none';
+            }
         }
 
         function formatDateTime(isoStr) {
@@ -2308,17 +2314,31 @@
         function renderHistory(data) {
             const list = document.getElementById('history-list');
             const empty = document.getElementById('history-empty');
+            if (!list || !empty) return;
 
-            const orders = data.orders || [];
-            totalHistoryPages = data.total_pages || 1;
-            document.getElementById('hist-total-orders').innerHTML = `${data.total_count || 0} <span>ORDERS</span>`;
+            const orders = (data && data.orders) ? data.orders : [];
+            totalHistoryPages = (data && data.total_pages) ? data.total_pages : 1;
+            const totalCount = (data && data.total_count) !== undefined ? data.total_count : 0;
+            
+            const totalOrdersEl = document.getElementById('hist-total-orders');
+            if (totalOrdersEl) {
+                totalOrdersEl.innerHTML = `${totalCount} <span>${translations[currentLang].unit_orders}</span>`;
+            }
 
-            document.getElementById('historyPagination').style.display = totalHistoryPages > 1 ? 'flex' : 'none';
-            document.getElementById('pgInfoHistory').textContent = translations[currentLang].page_of.replace('{current}', data.current_page).replace('{total}', totalHistoryPages);
-            document.getElementById('pgPrevHist').disabled = ((data.current_page || 1) <= 1);
-            document.getElementById('pgNextHist').disabled = ((data.current_page || 1) >= totalHistoryPages);
+            const paginationEl = document.getElementById('historyPagination');
+            if (paginationEl) {
+                paginationEl.style.display = totalHistoryPages > 1 ? 'flex' : 'none';
+                const pgInfo = document.getElementById('pgInfoHistory');
+                if (pgInfo) {
+                    pgInfo.textContent = translations[currentLang].page_of.replace('{current}', data.current_page || 1).replace('{total}', totalHistoryPages);
+                }
+                const prevBtn = document.getElementById('pgPrevHist');
+                if (prevBtn) prevBtn.disabled = ((data.current_page || 1) <= 1);
+                const nextBtn = document.getElementById('pgNextHist');
+                if (nextBtn) nextBtn.disabled = ((data.current_page || 1) >= totalHistoryPages);
+            }
 
-            if (!orders || !orders.length) {
+            if (!orders || orders.length === 0) {
                 list.style.display = 'none';
                 empty.style.display = 'block';
                 return;
