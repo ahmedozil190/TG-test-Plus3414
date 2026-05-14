@@ -874,10 +874,10 @@
             style="width: 80px; height: 80px; background: rgba(88, 101, 242, 0.1); color: var(--accent); border-radius: 24px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin-bottom: 25px;">
             <i class="fas fa-lock"></i>
         </div>
-        <h1 id="sub-title" style="font-size: 1.8rem; font-weight: 800; margin-bottom: 12px; color: var(--text-p);">
+        <h1 id="sub-title" style="font-size: 1.8rem; font-weight: 800; margin-bottom: 12px; color: var(--text-p);" data-i18n="sub_required">
             Subscription Required</h1>
         <p id="sub-desc"
-            style="color: var(--text-s); font-size: 1rem; max-width: 300px; line-height: 1.6; margin-bottom: 30px;">
+            style="color: var(--text-s); font-size: 1rem; max-width: 300px; line-height: 1.6; margin-bottom: 30px;" data-i18n="sub_desc">
             To use the bot and access the store, you must join our channels first.
         </p>
 
@@ -885,7 +885,7 @@
             <!-- Channels buttons will be injected here -->
         </div>
 
-        <button id="sub-check-btn" onclick="init(true)" class="primary-btn" style="width: 100%; max-width: 300px;">
+        <button id="sub-check-btn" onclick="init(true)" class="primary-btn" style="width: 100%; max-width: 300px;" data-i18n="sub_check">
             I have joined, open store
         </button>
     </div>
@@ -935,7 +935,7 @@
         <section id="section-home" class="view-panel active">
             <div class="section-header" style="margin-top: 0;">
                 <i class="fas fa-wallet"></i>
-                <span
+                <span data-i18n="financials_header"
                     style="font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;">FINANCIALS</span>
             </div>
             <div style="display: flex; flex-direction: column; gap: 15px;">
@@ -1109,30 +1109,30 @@
                     <i class="fas fa-bolt"></i>
                 </div>
                 <h3 id="deposit-method-title" style="margin-bottom: 10px; font-size: 1.1rem;">Binance Pay</h3>
-                <p id="deposit-method-desc"
+                <p id="deposit-method-desc" data-i18n="binance_pay_short_desc"
                     style="color: var(--text-s); font-size: 0.85rem; margin-bottom: 20px; line-height: 1.5;">
                     Please transfer USDT via Binance Internal Transfer (Binance Pay) to the Pay ID below.
                 </p>
 
                 <div style="background: var(--bg); padding: 18px; border-radius: 12px; width: 100%; word-break: break-all; font-family: monospace; font-size: 1rem; border: 1px solid var(--border); margin-bottom: 20px; cursor: pointer; position: relative; color: var(--accent); font-weight: 600;"
-                    id="deposit-address-display" onclick="copyDepositAddress()">
+                    id="deposit-address-display" onclick="copyDepositAddress()" data-i18n="loading_addr">
                     Loading Address...
                 </div>
 
                 <div style="width: 100%; text-align: left;">
-                    <label
+                    <label data-i18n="txid_lbl"
                         style="display: block; margin-bottom: 8px; color: var(--text-p); font-size: 0.85rem; font-weight: 700; opacity: 0.9;">Transaction
                         ID</label>
                     <div style="position: relative; margin-bottom: 20px;">
                         <input type="text" id="deposit-txid" class="search-input"
-                            placeholder="Enter Transaction ID Here"
+                            data-i18n-ph="txid_ph" placeholder="Enter Transaction ID Here"
                             style="width: 100%; margin-bottom: 0; text-align: center; border: 1px solid var(--border); background: rgba(255,255,255,0.03); font-size: 0.95rem; height: 50px; border-radius: 12px;">
                     </div>
 
                     <button class="primary-btn"
                         style="height: 50px; border-radius: 12px; background: linear-gradient(135deg, var(--accent), var(--accent-purple)); box-shadow: 0 8px 30px rgba(88, 101, 242, 0.4);"
                         onclick="verifyDeposit()" id="btn-verify-deposit">
-                        <i class="fas fa-shield-check" style="margin-right: 4px;"></i> Verify Deposit
+                        <i class="fas fa-shield-check" style="margin-right: 4px;"></i> <span data-i18n="btn_verify_dep">Verify Deposit</span>
                     </button>
                 </div>
             </div>
@@ -1161,11 +1161,11 @@
                     style="display: none; margin-top: 25px; background: transparent;">
                     <button class="pg-btn" style="background: transparent;" id="pgPrevDep"
                         onclick="moveDepositPage(-1)">
-                        <i class="fas fa-chevron-left"></i> <span>Prev</span>
+                        <i class="fas fa-chevron-left"></i> <span data-i18n="prev">Prev</span>
                     </button>
                     <span id="pgInfoDep" class="pg-info">Page 1 of 1</span>
                     <button class="pg-btn" style="background: transparent;" id="pgNextDep" onclick="moveDepositPage(1)">
-                        <span>Next</span> <i class="fas fa-chevron-right"></i>
+                        <span data-i18n="next">Next</span> <i class="fas fa-chevron-right"></i>
                     </button>
                 </div>
             </div>
@@ -1174,8 +1174,8 @@
         <section id="section-history" class="view-panel">
             <div class="info-card" style="margin-bottom: 25px;">
                 <div class="info-card-l">
-                    <span class="info-card-lbl">Total Orders</span>
-                    <div class="info-card-val" id="hist-total-orders">0 <span>ORDERS</span></div>
+                    <span class="info-card-lbl" data-i18n="total_orders_lbl">Total Orders</span>
+                    <div class="info-card-val" id="hist-total-orders">0 <span data-i18n="orders_count_lbl">ORDERS</span></div>
                 </div>
                 <div class="info-card-icon" style="background: rgba(88, 101, 242, 0.1); color: var(--accent);">
                     <i class="fas fa-shopping-bag"></i>
@@ -1197,12 +1197,12 @@
                     style="display: none; margin-top: 25px; background: transparent;">
                     <button class="pg-btn" style="background: transparent;" id="pgPrevHist"
                         onclick="moveHistoryPage(-1)">
-                        <i class="fas fa-chevron-left"></i> <span>Prev</span>
+                        <i class="fas fa-chevron-left"></i> <span data-i18n="prev">Prev</span>
                     </button>
                     <span id="pgInfoHist" class="pg-info">Page 1 of 1</span>
                     <button class="pg-btn" style="background: transparent;" id="pgNextHist"
                         onclick="moveHistoryPage(1)">
-                        <span>Next</span> <i class="fas fa-chevron-right"></i>
+                        <span data-i18n="next">Next</span> <i class="fas fa-chevron-right"></i>
                     </button>
                 </div>
 
@@ -1224,14 +1224,14 @@
                     <i class="fas fa-headset"></i>
                 </div>
                 <div>
-                    <h2 style="font-weight: 800; margin-bottom: 10px;">Contact Support</h2>
-                    <p style="color: var(--text-s); font-size: 0.95rem; line-height: 1.6;">Our dedicated support team is
+                    <h2 style="font-weight: 800; margin-bottom: 10px;" data-i18n="contact_support_title">Contact Support</h2>
+                    <p style="color: var(--text-s); font-size: 0.95rem; line-height: 1.6;" data-i18n="support_desc">Our dedicated support team is
                         available to help you with any questions or issues you may have.</p>
                 </div>
                 <button class="primary-btn" id="btn-message-support"
                     style="width: auto; padding: 16px 40px; border-radius: 50px;"
                     onclick="tg.openTelegramLink('https://t.me/')">
-                    <i class="fab fa-telegram"></i> Message Support
+                    <i class="fab fa-telegram"></i> <span data-i18n="btn_message_support">Message Support</span>
                 </button>
             </div>
         </section>
@@ -1274,8 +1274,8 @@
         <!-- Stats at the top, stacked -->
         <div class="info-card" style="margin-bottom: 15px;">
             <div class="info-card-l">
-                <span class="info-card-lbl">Total Invited</span>
-                <div class="info-card-val" id="ref-total-count">0 <span>USERS</span></div>
+                <span class="info-card-lbl" data-i18n="total_invited_lbl">Total Invited</span>
+                <div class="info-card-val" id="ref-total-count">0 <span data-i18n="users_count_lbl">USERS</span></div>
             </div>
             <div class="info-card-icon" style="background: rgba(88, 101, 242, 0.1); color: var(--accent);">
                 <i class="fas fa-users"></i>
@@ -1284,8 +1284,8 @@
 
         <div class="info-card" style="margin-bottom: 25px;">
             <div class="info-card-l">
-                <span class="info-card-lbl">Total Earnings</span>
-                <div class="info-card-val" id="ref-total-earnings">0.0 <span>USD</span></div>
+                <span class="info-card-lbl" data-i18n="total_earnings_lbl">Total Earnings</span>
+                <div class="info-card-val" id="ref-total-earnings">0.0 <span data-i18n="usd_lbl">USD</span></div>
             </div>
             <div class="info-card-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">
                 <i class="fas fa-hand-holding-dollar"></i>
@@ -1302,10 +1302,10 @@
                 <i class="fas fa-rocket"></i>
             </div>
 
-            <h3
+            <h3 data-i18n="referral_prog_title"
                 style="font-weight: 900; font-size: 1.7rem; margin-bottom: 12px; color: var(--text-p); letter-spacing: -0.5px;">
                 Referral Program</h3>
-            <p
+            <p data-i18n="referral_prog_desc"
                 style="color: var(--text-s); font-size: 0.95rem; font-weight: 500; margin-bottom: 35px; max-width: 260px; margin-left: auto; margin-right: auto; line-height: 1.5;">
                 Share your link and earn massive rewards from every user!
             </p>
@@ -1315,7 +1315,7 @@
                     <div id="ref-join-bonus-val"
                         style="font-size: 1.2rem; font-weight: 900; color: var(--success); margin-bottom: 2px;">$0.005
                     </div>
-                    <div
+                    <div data-i18n="ref_join_bonus_lbl"
                         style="font-size: 0.65rem; font-weight: 800; color: var(--text-s); text-transform: uppercase; letter-spacing: 1px;">
                         Upon Joining</div>
                 </div>
@@ -1323,7 +1323,7 @@
                 <div style="text-align: center;">
                     <div id="ref-commission-val"
                         style="font-size: 1.2rem; font-weight: 900; color: var(--accent); margin-bottom: 2px;">1%</div>
-                    <div
+                    <div data-i18n="ref_commission_lbl"
                         style="font-size: 0.65rem; font-weight: 800; color: var(--text-s); text-transform: uppercase; letter-spacing: 1px;">
                         On Deposits</div>
                 </div>
@@ -1335,19 +1335,19 @@
                 <div
                     style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px; opacity: 0.8;">
                     <i class="fas fa-link" style="color: var(--accent); font-size: 0.9rem;"></i>
-                    <span
+                    <span data-i18n="your_link_lbl"
                         style="font-size: 0.7rem; font-weight: 800; color: var(--text-s); text-transform: uppercase; letter-spacing: 1.5px;">Your
                         Unique Link</span>
                 </div>
 
-                <div id="ref-link-val"
+                <div id="ref-link-val" data-i18n="loading_lbl"
                     style="font-size: 0.95rem; font-weight: 700; color: var(--accent); word-break: break-all; margin-bottom: 20px; font-family: 'JetBrains Mono', monospace; line-height: 1.6; background: transparent; padding: 15px; border-radius: 16px; border: 1px solid var(--border);">
                     Loading...</div>
 
                 <div class="copy-action-label"
                     style="display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--text-s); font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">
                     <i class="fas fa-copy" style="font-size: 1rem; color: var(--accent); opacity: 0.7;"></i>
-                    <span>Tap to Copy</span>
+                    <span data-i18n="tap_copy_lbl">Tap to Copy</span>
                 </div>
 
                 <!-- Hover effect glow -->
@@ -1486,12 +1486,19 @@
         const translations = {
             en: {
                 loading: "Optimizing Store...", nav_home: "Dashboard", nav_store: "Buy Number", nav_deposit: "Deposit", nav_history: "Orders History", nav_support: "Support", nav_referrals: "Referrals",
-                balance: "Current Balance", total_spent: "TOTAL SPENT", total_deposits: "TOTAL DEPOSITS", quick_buy: "Quick Access", btn_start_shopping: "Browse Numbers",
+                financials_header: "FINANCIALS", stats_header: "STATISTICS", balance: "Current Balance", total_spent: "TOTAL SPENT", total_deposits: "TOTAL DEPOSITS",
+                completed_orders: "COMPLETED ORDERS", active_orders: "ACTIVE ORDERS", unique_countries: "UNIQUE COUNTRIES",
+                loading_addr: "Loading Address...", txid_lbl: "Transaction ID", txid_ph: "Enter Transaction ID Here", btn_verify_dep: "Verify Deposit",
+                total_orders_lbl: "Total Orders", orders_count_lbl: "ORDERS", prev: "Prev", next: "Next",
+                contact_support_title: "Contact Support", support_desc: "Our dedicated support team is available to help you with any questions or issues you may have.", btn_message_support: "Message Support",
+                total_invited_lbl: "Total Invited", users_count_lbl: "USERS", total_earnings_lbl: "Total Earnings", usd_lbl: "USD",
+                referral_prog_title: "Referral Program", referral_prog_desc: "Share your link and earn massive rewards from every user!",
+                ref_join_bonus_lbl: "Upon Joining", ref_commission_lbl: "On Deposits", your_link_lbl: "Your Unique Link", loading_lbl: "Loading...", tap_copy_lbl: "Tap to Copy",
+                quick_buy: "Quick Access", btn_start_shopping: "Browse Numbers",
                 confirm_title: "Confirmation", lbl_country: "Country", lbl_price: "Price", btn_confirm_pay: "Buy Now",
                 success_title: "Payment Success!", success_desc: "Wait for the code in your bot chat.", btn_close: "Dismiss",
                 available: "Available", search_ph: "Search countries...",
                 total_numbers: "Total Numbers", countries: "Total Countries", lowest_price: "Lowest Price",
-                completed_orders: "Completed Orders", active_orders: "Active Orders", unique_countries: "Unique Countries",
                 dep_title: "Deposit History", dep_empty: "No deposits found.",
                 hist_title: "Orders History", hist_empty: "No orders history found.",
                 nav_lang: "Language", lang_desc: "Select your preferred language for the interface.",
@@ -1501,39 +1508,55 @@
                 sub_check: "I have joined, open store",
                 join: "Join",
                 checking: "Checking...",
+                binance_pay_short_desc: "Please transfer USDT via Binance Internal Transfer (Binance Pay) to the Pay ID below.",
                 binance_pay_desc: "Please transfer USDT via Binance Pay to the Pay ID below. After payment, enter the 'Order ID' or 'Transaction ID' from your payment receipt.",
                 trx_desc: "Please send TRX (TRC20 network) to the address below. Enter the Transaction Hash (TxID) after sending.",
                 usdt_desc: "Please send USDT (BEP20 / BSC network) to the address below. Enter the Transaction Hash (TxID) after sending."
             },
             ar: {
-                loading: "جاري تجهيز المتجر...", nav_home: "الرئيسية", nav_store: "شراء رقم", nav_deposit: "إيداع", nav_history: "سجل الطلبات", nav_support: "الدعم", nav_referrals: "نظام الإحالة",
-                balance: "الرصيد الحالي", total_spent: "إجمالي المدفوعات", total_orders: "إجمالي المشتريات", quick_buy: "وصول سريع", btn_start_shopping: "تصفح الأرقام",
-                confirm_title: "تأكيد الشراء", lbl_country: "الدولة", lbl_price: "السعر", btn_confirm_pay: "إتمام الشراء",
-                success_title: "تم بنجاح!", success_desc: "انتظر وصول الكود في البوت.", btn_close: "إغلاق",
+                loading: "تحسين المتجر...", nav_home: "لوحة التحكم", nav_store: "شراء رقم", nav_deposit: "إيداع", nav_history: "سجل الطلبات", nav_support: "الدعم", nav_referrals: "نظام الإحالات",
+                financials_header: "البيانات المالية", stats_header: "الإحصائيات", balance: "الرصيد الحالي", total_spent: "إجمالي المشتريات", total_deposits: "إجمالي الإيداعات",
+                completed_orders: "الطلبات المكتملة", active_orders: "الطلبات النشطة", unique_countries: "الدول الفريدة",
+                loading_addr: "جاري تحميل العنوان...", txid_lbl: "معرف العملية (TXID)", txid_ph: "أدخل معرف العملية هنا", btn_verify_dep: "تحقق من الإيداع",
+                total_orders_lbl: "إجمالي الطلبات", orders_count_lbl: "طلب", prev: "السابق", next: "التالي",
+                contact_support_title: "تواصل مع الدعم", support_desc: "فريق الدعم المخصص لدينا متاح لمساعدتك في أي أسئلة أو مشكلات قد تواجهك.", btn_message_support: "مراسلة الدعم",
+                total_invited_lbl: "إجمالي المدعوين", users_count_lbl: "مستخدم", total_earnings_lbl: "إجمالي الأرباح", usd_lbl: "دولار",
+                referral_prog_title: "برنامج الإحالة", referral_prog_desc: "شارك رابطك واربح مكافآت ضخمة من كل مستخدم!",
+                ref_join_bonus_lbl: "عند الانضمام", ref_commission_lbl: "على الإيداعات", your_link_lbl: "رابطك الفريد", loading_lbl: "جاري التحميل...", tap_copy_lbl: "اضغط للنسخ",
+                quick_buy: "وصول سريع", btn_start_shopping: "تصفح الأرقام",
+                confirm_title: "تأكيد الشراء", lbl_country: "الدولة", lbl_price: "السعر", btn_confirm_pay: "شراء الآن",
+                success_title: "تم الدفع بنجاح!", success_desc: "انتظر وصول الكود في محادثة البوت.", btn_close: "إغلاق",
                 available: "رقم متاح", search_ph: "ابحث عن دولة...",
                 total_numbers: "إجمالي الأرقام", countries: "إجمالي الدول", lowest_price: "أقل سعر",
-                completed_orders: "طلبات مكتملة", active_orders: "طلبات نشطة", unique_countries: "دول فريدة",
-                hist_title: "سجل الطلبات", hist_empty: "لا توجد طلبات.",
                 dep_title: "سجل الإيداعات", dep_empty: "لا توجد سجلات إيداع.",
-                nav_lang: "اللغة", lang_desc: "اختر لغتك المفضلة لواجهة المستخدم.",
+                hist_title: "سجل الطلبات", hist_empty: "لا يوجد سجل طلبات.",
+                nav_lang: "اللغة", lang_desc: "اختر لغتك المفضلة للواجهة.",
                 insufficient_bal: "الرصيد غير كافٍ",
                 sub_required: "الاشتراك إجباري",
                 sub_desc: "لاستخدام البوت والوصول للمتجر، يجب عليك الانضمام لقنواتنا أولاً.",
                 sub_check: "لقد اشتركت، افتح المتجر",
                 join: "انضمام",
                 checking: "جاري التحقق...",
+                binance_pay_short_desc: "يرجى تحويل USDT عبر التحويل الداخلي (Binance Pay) إلى المعرف أدناه.",
                 binance_pay_desc: "يرجى تحويل USDT عبر Binance Pay إلى المعرف أدناه. بعد الدفع، أدخل 'Order ID' من إيصال الدفع.",
                 trx_desc: "يرجى إرسال TRX إلى العنوان أدناه. أدخل Hash العملية بعد الإرسال.",
-                usdt_desc: "يرجى إرسال USDT (شبكة BEP20) إلى العنوان أدناه. أدخل Hash العملية بعد الإرسال."
+                usdt_desc: "يرجى إرسال USDT (BEP20) إلى العنوان أدناه. أدخل Hash العملية بعد الإرسال."
             },
             zh: {
                 loading: "优化商店...", nav_home: "控制面板", nav_store: "购买号码", nav_deposit: "充值", nav_history: "订单历史", nav_support: "支持", nav_referrals: "邀请系统",
-                balance: "当前余额", total_spent: "总支出", total_deposits: "总充值", quick_buy: "快速访问", btn_start_shopping: "浏览号码",
+                financials_header: "财务数据", stats_header: "统计数据", balance: "当前余额", total_spent: "总支出", total_deposits: "总充值",
+                completed_orders: "已完成订单", active_orders: "活跃订单", unique_countries: "独特国家",
+                loading_addr: "正在加载地址...", txid_lbl: "交易 ID", txid_ph: "在此输入交易 ID", btn_verify_dep: "验证充值",
+                total_orders_lbl: "总订单", orders_count_lbl: "订单", prev: "上一页", next: "下一页",
+                contact_support_title: "联系支持", support_desc: "我们的专属支持团队随时为您解答任何问题或解决您可能遇到的问题。", btn_message_support: "联系支持",
+                total_invited_lbl: "总邀请人数", users_count_lbl: "用户", total_earnings_lbl: "总收益", usd_lbl: "美元",
+                referral_prog_title: "推荐计划", referral_prog_desc: "分享您的链接并从每位用户那里获得丰厚奖励！",
+                ref_join_bonus_lbl: "加入时", ref_commission_lbl: "充值佣金", your_link_lbl: "您的专属链接", loading_lbl: "正在加载...", tap_copy_lbl: "点击复制",
+                quick_buy: "快速访问", btn_start_shopping: "浏览号码",
                 confirm_title: "确认购买", lbl_country: "国家", lbl_price: "价格", btn_confirm_pay: "立即购买",
                 success_title: "支付成功!", success_desc: "请在机器人聊天中等待验证码。", btn_close: "关闭",
                 available: "可用", search_ph: "搜索国家...",
                 total_numbers: "总号码", countries: "总国家", lowest_price: "最低价格",
-                completed_orders: "已完成订单", active_orders: "活跃订单", unique_countries: "独特国家",
                 hist_title: "订单历史", hist_empty: "未找到订单历史。",
                 dep_title: "充值记录", dep_empty: "未找到充值记录。",
                 nav_lang: "语言", lang_desc: "选择您界面的首选语言。",
@@ -1543,6 +1566,7 @@
                 sub_check: "我已加入，进入商店",
                 join: "加入",
                 checking: "正在检查...",
+                binance_pay_short_desc: "请通过币安内部转账 (Binance Pay) 将 USDT 转至下方 Pay ID。",
                 binance_pay_desc: "请通过 Binance Pay 转账 USDT 到下方的 Pay ID。付款后，输入收据上的 'Order ID' 或 'Transaction ID'。",
                 trx_desc: "请发送 TRX 到下方地址。发送后输入交易哈希 (TxID)。",
                 usdt_desc: "请发送 USDT (BEP20 / BSC) 到下方地址。发送后输入交易哈希 (TxID)。"
@@ -1910,8 +1934,12 @@
             });
 
             // Update placeholders
-            const searchInput = document.getElementById('store-search');
-            if (searchInput) searchInput.placeholder = translations[currentLang].search_ph;
+            document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+                const key = el.getAttribute('data-i18n-ph');
+                if (translations[currentLang] && translations[currentLang][key]) {
+                    el.placeholder = translations[currentLang][key];
+                }
+            });
 
             // Sync selector
             const selector = document.getElementById('lang-selector');

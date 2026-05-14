@@ -1448,12 +1448,12 @@
 
             <div class="wizard-pane" id="step-phone" style="padding-top:0">
                 <div class="w-icon"><i class="fas fa-mobile-alt"></i></div>
-                <h2 class="w-title">Account Details</h2>
-                <p class="w-desc">Enter the international phone number. We'll automatically detect the country and your
+                <h2 class="w-title" data-i18n="account_details_title">Account Details</h2>
+                <p class="w-desc" data-i18n="account_details_desc">Enter the international phone number. We'll automatically detect the country and your
                     reward price.</p>
 
                 <div class="input-group">
-                    <label>Phone Number</label>
+                    <label data-i18n="phone_number_lbl">Phone Number</label>
                     <input type="text" id="phoneInput" class="w-input" placeholder="+123..."
                         oninput="handlePhoneInput()">
                 </div>
@@ -1477,17 +1477,17 @@
                 </div>
 
                 <button class="btn-action" id="requestCodeBtn" onclick="requestOTP()"
-                    style="margin-top:20px; opacity:0.5" disabled>
+                    style="margin-top:20px; opacity:0.5" disabled data-i18n="btn_get_code">
                     Get Verification Code
                 </button>
             </div>
 
             <div class="wizard-pane" id="step-otp" style="display:none; padding-top:0">
                 <div class="w-icon" style="color:var(--warning)"><i class="fas fa-key"></i></div>
-                <h2 class="w-title">Verify Login</h2>
-                <p class="w-desc">A 5-digit code was sent to <b id="displayPhone"></b> on Telegram.</p>
+                <h2 class="w-title" data-i18n="verify_login_title">Verify Login</h2>
+                <p class="w-desc" id="otp-desc-node">A 5-digit code was sent to <b id="displayPhone"></b> on Telegram.</p>
                 <div class="input-group">
-                    <label>Telegram Code</label>
+                    <label data-i18n="telegram_code_lbl">Telegram Code</label>
                     <input type="text" id="otpInput" class="w-input" placeholder="•••••" maxlength="5"
                         style="text-align:center; letter-spacing:8px; font-size:1.5rem">
                 </div>
@@ -1499,20 +1499,20 @@
                 </div>
 
                 <button class="btn-action" id="submitCodeBtn" onclick="submitOTP()">
-                    Finish Submission
+                    <span data-i18n="btn_finish_sub">Finish Submission</span>
                 </button>
             </div>
 
             <div class="wizard-pane" id="step-success" style="display:none; padding-top:0">
                 <div class="w-icon" style="color:var(--success)"><i class="fas fa-check-double"></i></div>
-                <h2 class="w-title">Great Work!</h2>
-                <p class="w-desc">Account <span id="successPhone" style="font-weight:700"></span> has been submitted for
+                <h2 class="w-title" data-i18n="success_title_sub">Great Work!</h2>
+                <p class="w-desc" data-i18n="success_desc_sub">Account <span id="successPhone" style="font-weight:700"></span> has been submitted for
                     review.</p>
                 <div style="display:flex; gap:10px; margin-top:20px">
-                    <button class="btn-secondary" style="flex:1; opacity:0.9" onclick="resetSubmission()">Try
+                    <button class="btn-secondary" style="flex:1; opacity:0.9" onclick="resetSubmission()" data-i18n="btn_try_another">Try
                         Another</button>
                     <button class="btn-secondary" style="flex:1; opacity:0.9"
-                        onclick="changeView('dashboard')">Home</button>
+                        onclick="changeView('dashboard')" data-i18n="btn_home">Home</button>
                 </div>
             </div>
 
@@ -1520,13 +1520,13 @@
             <div class="wizard-pane" id="step-rejected" style="display:none; padding-top:0">
                 <div class="w-icon" style="background:rgba(239, 68, 68, 0.1); color:var(--error)"><i
                         class="fas fa-ban"></i></div>
-                <h2 class="w-title">Account Rejected</h2>
-                <p class="w-desc" id="rejectionDesc">This account is restricted or frozen and cannot be accepted.</p>
+                <h2 class="w-title" data-i18n="rejected_title_sub">Account Rejected</h2>
+                <p class="w-desc" id="rejectionDesc" data-i18n="rejected_desc_sub">This account is restricted or frozen and cannot be accepted.</p>
                 <div style="display:flex; gap:10px; margin-top:20px">
-                    <button class="btn-secondary" style="flex:1; opacity:0.9" onclick="resetSubmission()">Try
+                    <button class="btn-secondary" style="flex:1; opacity:0.9" onclick="resetSubmission()" data-i18n="btn_try_another">Try
                         Another</button>
                     <button class="btn-secondary" style="flex:1; opacity:0.9"
-                        onclick="changeView('dashboard')">Home</button>
+                        onclick="changeView('dashboard')" data-i18n="btn_home">Home</button>
                 </div>
             </div>
 
@@ -1534,7 +1534,7 @@
             <div class="card" id="sourcing-section" style="padding: 22px; margin-top: 30px;">
                 <div class="section-header"
                     style="margin-top: 0; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between;">
-                    <h2 style="font-weight: 600; margin: 0; font-size: 1rem; letter-spacing: 0.5px;">Submission History
+                    <h2 style="font-weight: 600; margin: 0; font-size: 1rem; letter-spacing: 0.5px;" data-i18n="sub_history_title">Submission History
                     </h2>
                     <div class="custom-dropdown" id="sourcing-filter-dropdown" style="position: relative;">
                         <button class="dropdown-trigger" onclick="toggleSourcingFilterDropdown(event)"
@@ -1572,19 +1572,19 @@
                     style="display: none; margin-top: 25px; background: transparent;">
                     <button class="pg-btn" style="background: transparent;" id="pgPrevSourcing"
                         onclick="moveSourcingPage(-1)">
-                        <i class="fas fa-chevron-left"></i> <span>Prev</span>
+                        <i class="fas fa-chevron-left"></i> <span data-i18n="prev">Prev</span>
                     </button>
                     <span id="pgInfoSourcing" class="pg-info">Page 1 of 1</span>
                     <button class="pg-btn" style="background: transparent;" id="pgNextSourcing"
                         onclick="moveSourcingPage(1)">
-                        <span>Next</span> <i class="fas fa-chevron-right"></i>
+                        <span data-i18n="next">Next</span> <i class="fas fa-chevron-right"></i>
                     </button>
                 </div>
                 <div id="sourcingEmpty"
                     style="text-align: center; padding: 40px 20px; background: var(--card-glass); border-radius: 16px; border: 1px dashed var(--border); margin-top: 0; backdrop-filter: blur(10px); display: none;">
                     <i class="fas fa-history"
                         style="font-size: 2.5rem; color: var(--text-secondary); opacity: 0.15; margin-bottom: 12px;"></i>
-                    <p style="color: var(--text-secondary); font-weight: 600; font-size: 0.95rem;">No submissions found
+                    <p style="color: var(--text-secondary); font-weight: 600; font-size: 0.95rem;" data-i18n="no_subs_found">No submissions found
                     </p>
                 </div>
             </div>
@@ -1593,8 +1593,8 @@
         <!-- View: Withdrawal -->
         <div class="view-panel" id="view-withdraw">
             <div class="withdraw-card" id="withdrawalForm">
-                <h2 class="w-title" style="text-align:left; margin-bottom:10px">Payout Request</h2>
-                <p class="w-desc" style="text-align:left; margin-bottom:25px">Select your preferred method and enter the
+                <h2 class="w-title" style="text-align:left; margin-bottom:10px" data-i18n="payout_req_title">Payout Request</h2>
+                <p class="w-desc" style="text-align:left; margin-bottom:25px" data-i18n="payout_req_desc">Select your preferred method and enter the
                     amount. Requests are processed within 24-48h.</p>
 
                 <div class="method-selectors">
@@ -1602,36 +1602,36 @@
                         id="method-TRX">
                         <div class="m-icon"><i class="fas fa-coins"></i></div>
                         <div class="m-name">TRX (TRC20)</div>
-                        <div class="m-min">Min $<span id="min-trx-val">4.00</span></div>
+                        <div class="m-min" data-i18n="min_lbl">Min $<span id="min-trx-val">4.00</span></div>
                     </div>
                     <div class="method-card" onclick="setWithdrawMethod('USDT - BEP20', minWithdrawUsdt)"
                         id="method-USDT">
                         <div class="m-icon"><i class="fab fa-ethereum"></i></div>
                         <div class="m-name">USDT (BEP20)</div>
-                        <div class="m-min">Min $<span id="min-usdt-val">10.00</span></div>
+                        <div class="m-min" data-i18n="min_lbl">Min $<span id="min-usdt-val">10.00</span></div>
                     </div>
                 </div>
 
                 <div class="input-group">
-                    <label>Withdraw Amount (USD)</label>
+                    <label data-i18n="withdraw_amount_lbl">Withdraw Amount (USD)</label>
                     <input type="number" id="withdrawAmount" class="w-input" placeholder="0.00" readonly
                         oninput="validateWithdraw()">
                 </div>
 
                 <div class="input-group">
-                    <label>Wallet</label>
-                    <input type="text" id="paymentDetails" class="w-input" placeholder="Enter address here...">
+                    <label data-i18n="wallet_lbl">Wallet</label>
+                    <input type="text" id="paymentDetails" class="w-input" data-i18n-ph="wallet_ph" placeholder="Enter address here...">
                 </div>
 
                 <button class="btn-action" id="submitWithdrawBtn" onclick="requestWithdraw()">
-                    Confirm Withdraw <i class="fas fa-paper-plane"></i>
+                    <span data-i18n="btn_confirm_withdraw">Confirm Withdraw</span> <i class="fas fa-paper-plane"></i>
                 </button>
             </div>
 
             <div class="card" id="withdraw-history-section" style="padding: 22px; margin-top: 30px; margin-bottom: 0;">
                 <div
                     style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; gap: 15px;">
-                    <h3 data-i18n="nav_withdrawals"
+                    <h3 data-i18n="withdraw_history_title"
                         style="color: var(--text-secondary); font-size: 1rem; font-weight: 700; margin: 0; max-width: 140px; line-height: 1.2; flex-grow: 1;">
                         Withdraw History</h3>
                     <div class="custom-dropdown" style="position: relative;">
@@ -1666,18 +1666,18 @@
                     style="text-align: center; padding: 40px 20px; background: var(--card-glass); border-radius: 16px; border: 1px dashed var(--border); margin-top: 0; backdrop-filter: blur(10px); display: none;">
                     <i class="fas fa-history"
                         style="font-size: 2.5rem; color: var(--text-secondary); opacity: 0.15; margin-bottom: 12px;"></i>
-                    <p style="color: var(--text-secondary); font-weight: 600; font-size: 0.95rem;">No withdrawal records
+                    <p style="color: var(--text-secondary); font-weight: 600; font-size: 0.95rem;" data-i18n="no_withdrawals_found">No withdrawal records
                         found.</p>
                 </div>
 
                 <!-- Pagination Controls -->
                 <div id="historyPagination" class="pagination-ctrls" style="display: none;">
                     <button class="pg-btn" id="pgPrevWithdraw" onclick="moveWithdrawPage(-1)">
-                        <i class="fas fa-chevron-left"></i> Prev
+                        <i class="fas fa-chevron-left"></i> <span data-i18n="prev">Prev</span>
                     </button>
                     <span class="pg-info" id="pgInfoWithdraw">Page 1 of 1</span>
                     <button class="pg-btn" id="pgNextWithdraw" onclick="moveWithdrawPage(1)">
-                        Next <i class="fas fa-chevron-right"></i>
+                        <span data-i18n="next">Next</span> <i class="fas fa-chevron-right"></i>
                     </button>
                 </div>
             </div>
@@ -1688,7 +1688,7 @@
             <div class="search-area">
                 <div class="search-box" style="margin-bottom: 20px;">
                     <i class="fas fa-search"></i>
-                    <input type="text" class="search-input" id="priceSearch" placeholder="Search by country or code..."
+                    <input type="text" class="search-input" id="priceSearch" data-i18n-ph="price_search_ph" placeholder="Search by country or code..."
                         oninput="filterPrices()">
                 </div>
             </div>
@@ -1699,7 +1699,7 @@
 
             <div class="empty-state" id="priceEmpty">
                 <div class="empty-icon"><i class="fas fa-map-location-dot"></i></div>
-                <div class="empty-text">No results found for your search.</div>
+                <div class="empty-text" data-i18n="no_results_found">No results found for your search.</div>
             </div>
         </div>
 
@@ -1712,14 +1712,14 @@
                     <i class="fas fa-headset"></i>
                 </div>
                 <div>
-                    <h2 style="font-weight: 800; margin-bottom: 10px; color: var(--text-p);">Contact Support</h2>
-                    <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">Our dedicated support
+                    <h2 style="font-weight: 800; margin-bottom: 10px; color: var(--text-p);" data-i18n="contact_support_title">Contact Support</h2>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;" data-i18n="support_desc">Our dedicated support
                         team is available to help you with any questions or issues you may have.</p>
                 </div>
                 <button class="btn-action" id="btn-message-support"
                     style="width: auto; padding: 16px 40px; border-radius: 50px;"
                     onclick="tg.openTelegramLink('https://t.me/')">
-                    <i class="fab fa-telegram"></i> Message Support
+                    <i class="fab fa-telegram"></i> <span data-i18n="btn_message_support">Message Support</span>
                 </button>
             </div>
         </div>
@@ -1761,8 +1761,8 @@
     <!-- Confirmation Modal Structure -->
     <div class="modal-overlay" id="confirmModal">
         <div class="confirm-modal">
-            <div class="modal-title">Confirm Withdraw</div>
-            <div class="modal-body">Please review your payout details carefully before proceeding.</div>
+            <div class="modal-title" data-i18n="confirm_withdraw_title">Confirm Withdraw</div>
+            <div class="modal-body" data-i18n="confirm_withdraw_body">Please review your payout details carefully before proceeding.</div>
 
             <div id="confirm-rows-container"
                 style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 25px;">
@@ -1772,12 +1772,12 @@
             <div class="modal-actions" style="display: flex; gap: 12px; margin-top: 10px;">
                 <button class="btn-secondary" onclick="closeConfirmModal()"
                     style="flex: 1; padding:14px 0; background: rgba(59, 130, 246, 0.1); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.2); box-shadow: none; font-weight: 700; font-size: 0.95rem; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                    <i class="fas fa-times"></i>Cancel
+                    <i class="fas fa-times"></i><span data-i18n="btn_cancel">Cancel</span>
                 </button>
                 <button class="btn-action" id="finalConfirmBtn"
                     style="flex: 1; padding:14px 0; background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); box-shadow: none; font-weight: 700; font-size: 0.95rem; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 6px;"
                     onclick="confirmWithdraw()">
-                    <i class="fas fa-check"></i>Withdraw
+                    <i class="fas fa-check"></i><span data-i18n="btn_withdraw_confirm">Withdraw</span>
                 </button>
             </div>
         </div>
@@ -1787,8 +1787,8 @@
     <div class="modal-overlay" id="successModal">
         <div class="confirm-modal" style="max-width: 450px;">
             <div class="success-icon">✅</div>
-            <div class="modal-title" style="color:var(--text-p)">Request Submitted</div>
-            <div class="modal-body" id="successText" style="text-align: center; color: var(--text-p);">
+            <div class="modal-title" style="color:var(--text-p)" data-i18n="req_submitted_title">Request Submitted</div>
+            <div class="modal-body" id="successText" style="text-align: center; color: var(--text-p);" data-i18n="req_submitted_body">
                 Withdraw request submitted, please be patient until the bot administrator approves your payment.
             </div>
 
@@ -1797,7 +1797,8 @@
             </div>
 
             <div style="margin-top: 25px;">
-                <button class="btn-action" style="padding:14px; width:100%" onclick="closeSuccessModal()">Got
+                <button class="btn-action" style="padding:14px; width:100%" onclick="closeSuccessModal()" data-i18n="btn_got_it">Got It</button>
+            </div>
                     it</button>
             </div>
         </div>
@@ -1813,13 +1814,13 @@
             style="width: 80px; height: 80px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border-radius: 24px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin-bottom: 25px;">
             <i class="fas fa-tools"></i>
         </div>
-        <h1 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 12px; color: var(--text-p);">Under Maintenance
+        <h1 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 12px; color: var(--text-p);" data-i18n="maint_title">Under Maintenance
         </h1>
-        <p style="color: var(--text-s); font-size: 1rem; max-width: 300px; line-height: 1.6; margin-bottom: 30px;">
+        <p style="color: var(--text-s); font-size: 1rem; max-width: 300px; line-height: 1.6; margin-bottom: 30px;" data-i18n="maint_desc">
             Sourcing panel is currently undergoing scheduled maintenance. We'll be back online shortly!
         </p>
         <div
-            style="padding: 12px 24px; background: var(--card-glass); border: 1px solid var(--border); border-radius: 12px; color: var(--text-s); font-size: 0.85rem; font-weight: 600;">
+            style="padding: 12px 24px; background: var(--card-glass); border: 1px solid var(--border); border-radius: 12px; color: var(--text-s); font-size: 0.85rem; font-weight: 600;" data-i18n="maint_eta">
             Estimated time: 30-60 mins
         </div>
     </div>
@@ -1831,10 +1832,10 @@
             style="width: 80px; height: 80px; background: rgba(88, 101, 242, 0.1); color: var(--accent); border-radius: 24px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin-bottom: 25px;">
             <i class="fas fa-lock"></i>
         </div>
-        <h1 id="sub-title" style="font-size: 1.8rem; font-weight: 800; margin-bottom: 12px; color: var(--text-p);">
+        <h1 id="sub-title" style="font-size: 1.8rem; font-weight: 800; margin-bottom: 12px; color: var(--text-p);" data-i18n="sub_required">
             Subscription Required</h1>
         <p id="sub-desc"
-            style="color: var(--text-s); font-size: 1rem; max-width: 300px; line-height: 1.6; margin-bottom: 30px;">
+            style="color: var(--text-s); font-size: 1rem; max-width: 300px; line-height: 1.6; margin-bottom: 30px;" data-i18n="sub_desc">
             To use the bot and access this panel, you must join our channels first.
         </p>
 
@@ -1842,7 +1843,7 @@
             <!-- Channels buttons will be injected here -->
         </div>
 
-        <button id="sub-check-btn" onclick="init(true)" class="btn-action" style="width: 100%; max-width: 300px;">
+        <button id="sub-check-btn" onclick="init(true)" class="btn-action" style="width: 100%; max-width: 300px;" data-i18n="sub_check">
             I have joined, open panel
         </button>
     </div>
@@ -1928,25 +1929,85 @@
 
         const translations = {
             en: {
-                nav_dashboard: "Dashboard", nav_submit: "Submit Numbers", nav_withdraw: "Withdraw", nav_pricing: "Price List", nav_support: "Support", nav_lang: "Language",
+                nav_dashboard: "Control Panel", nav_submit: "Submit Numbers", nav_withdraw: "Withdraw", nav_pricing: "Price List", nav_support: "Support", nav_lang: "Language",
                 curr_bal: "Current Balance", pend_with: "Pending Withdrawn", total_with: "Total Withdrawn",
                 stats: "STATISTICS", accepted: "Accepted Numbers", pending: "Pending Numbers", rejected: "Rejected Numbers",
                 sub_required: "Subscription Required", sub_desc: "To use the bot and access this panel, you must join our channels first.",
-                sub_check: "I have joined, open panel", join: "Join", checking: "Checking..."
+                sub_check: "I have joined, open panel", join: "Join", checking: "Checking...",
+                account_details_title: "Account Details", account_details_desc: "Enter the international phone number. We'll automatically detect the country and your reward price.",
+                phone_number_lbl: "Phone Number", btn_get_code: "Get Verification Code",
+                verify_login_title: "Verify Login", telegram_code_lbl: "Telegram Code",
+                btn_finish_sub: "Finish Submission", success_title_sub: "Great Work!", success_desc_sub: "Account has been submitted for review.",
+                btn_try_another: "Try Another", btn_home: "Home", rejected_title_sub: "Account Rejected",
+                rejected_desc_sub: "This account is restricted or frozen and cannot be accepted.",
+                sub_history_title: "Submission History", prev: "Prev", next: "Next", no_subs_found: "No submissions found",
+                payout_req_title: "Payout Request", payout_req_desc: "Select your preferred method and enter the amount. Requests are processed within 24-48h.",
+                min_lbl: "Min", withdraw_amount_lbl: "Withdraw Amount (USD)", wallet_lbl: "Wallet", wallet_ph: "Enter address here...",
+                btn_confirm_withdraw: "Confirm Withdraw", withdraw_history_title: "Withdraw History", no_withdrawals_found: "No withdrawal records found.",
+                price_search_ph: "Search by country or code...", no_results_found: "No results found for your search.",
+                contact_support_title: "Contact Support", support_desc: "Our dedicated support team is available to help you with any questions or issues you may have.",
+                btn_message_support: "Message Support", confirm_withdraw_title: "Confirm Withdraw",
+                confirm_withdraw_body: "Please review your payout details carefully before proceeding.",
+                btn_cancel: "Cancel", btn_withdraw_confirm: "Withdraw", req_submitted_title: "Request Submitted",
+                req_submitted_body: "Withdraw request submitted, please be patient until the bot administrator approves your payment.",
+                btn_got_it: "Got It",
+                maint_title: "Under Maintenance",
+                maint_desc: "Sourcing panel is currently undergoing scheduled maintenance. We'll be back online shortly!",
+                maint_eta: "Estimated time: 30-60 mins"
             },
             ar: {
                 nav_dashboard: "لوحة التحكم", nav_submit: "إضافة أرقام", nav_withdraw: "سحب الأرباح", nav_pricing: "قائمة الأسعار", nav_support: "الدعم الفني", nav_lang: "اللغة",
                 curr_bal: "الرصيد الحالي", pend_with: "قيد السحب", total_with: "إجمالي المسحوبات",
                 stats: "الإحصائيات", accepted: "أرقام مقبولة", pending: "أرقام معلقة", rejected: "أرقام مرفوضة",
                 sub_required: "الاشتراك إجباري", sub_desc: "لاستخدام البوت والوصول لهذه اللوحة، يجب عليك الانضمام لقنواتنا أولاً.",
-                sub_check: "لقد اشتركت، افتح اللوحة", join: "انضمام", checking: "جاري التحقق..."
+                sub_check: "لقد اشتركت، افتح اللوحة", join: "انضمام", checking: "جاري التحقق...",
+                account_details_title: "تفاصيل الحساب", account_details_desc: "أدخل رقم الهاتف الدولي. سنقوم تلقائياً بتحديد الدولة وسعر المكافأة الخاص بك.",
+                phone_number_lbl: "رقم الهاتف", btn_get_code: "الحصول على كود التحقق",
+                verify_login_title: "تأكيد تسجيل الدخول", telegram_code_lbl: "كود تليجرام",
+                btn_finish_sub: "إنهاء الإرسال", success_title_sub: "عمل رائع!", success_desc_sub: "تم إرسال الحساب للمراجعة بنجاح.",
+                btn_try_another: "إضافة آخر", btn_home: "الرئيسية", rejected_title_sub: "تم رفض الحساب",
+                rejected_desc_sub: "هذا الحساب مقيد أو محظور ولا يمكن قبوله.",
+                sub_history_title: "سجل الإرسال", prev: "السابق", next: "التالي", no_subs_found: "لا توجد طلبات إرسال.",
+                payout_req_title: "طلب سحب أرباح", payout_req_desc: "اختر وسيلتك المفضلة وأدخل المبلغ. يتم معالجة الطلبات خلال 24-48 ساعة.",
+                min_lbl: "الأدنى", withdraw_amount_lbl: "مبلغ السحب (دولار)", wallet_lbl: "المحفظة", wallet_ph: "أدخل عنوان المحفظة هنا...",
+                btn_confirm_withdraw: "تأكيد السحب", withdraw_history_title: "سجل المسحوبات", no_withdrawals_found: "لا توجد سجلات سحب.",
+                price_search_ph: "ابحث عن دولة أو كود...", no_results_found: "لا توجد نتائج لبحثك.",
+                contact_support_title: "تواصل مع الدعم", support_desc: "فريق الدعم المخصص لدينا متاح لمساعدتك في أي أسئلة أو مشكلات قد تواجهك.",
+                btn_message_support: "مراسلة الدعم", confirm_withdraw_title: "تأكيد السحب",
+                confirm_withdraw_body: "يرجى مراجعة تفاصيل السحب بعناية قبل المتابعة.",
+                btn_cancel: "إلغاء", btn_withdraw_confirm: "سحب الآن", req_submitted_title: "تم تقديم الطلب",
+                req_submitted_body: "تم تقديم طلب السحب بنجاح، يرجى الانتظار حتى يقوم المسؤول بالموافقة على الدفع.",
+                btn_got_it: "مفهوم",
+                maint_title: "قيد الصيانة",
+                maint_desc: "لوحة التوريد تخضع حالياً لصيانة مجدولة. سنعود للعمل قريباً!",
+                maint_eta: "الوقت المقدر: 30-60 دقيقة"
             },
             zh: {
                 nav_dashboard: "控制面板", nav_submit: "提交号码", nav_withdraw: "提现", nav_pricing: "价格表", nav_support: "支持", nav_lang: "语言",
                 curr_bal: "当前余额", pend_with: "待提现", total_with: "总提现",
                 stats: "统计数据", accepted: "已接受号码", pending: "待处理号码", rejected: "已拒绝号码",
                 sub_required: "需要订阅", sub_desc: "要使用机器人并访问此面板，您必须先加入我们的频道。",
-                sub_check: "我已加入，进入面板", join: "加入", checking: "正在检查..."
+                sub_check: "我已加入，进入面板", join: "加入", checking: "正在检查...",
+                account_details_title: "账号详情", account_details_desc: "输入国际电话号码。我们将自动检测国家和您的奖励价格。",
+                phone_number_lbl: "电话号码", btn_get_code: "获取验证码",
+                verify_login_title: "验证登录", telegram_code_lbl: "电报验证码",
+                btn_finish_sub: "完成提交", success_title_sub: "做得好！", success_desc_sub: "账号已提交审核。",
+                btn_try_another: "提交另一个", btn_home: "首页", rejected_title_sub: "账号被拒绝",
+                rejected_desc_sub: "此账号受限或被封锁，无法接收。",
+                sub_history_title: "提交历史", prev: "上一页", next: "下一页", no_subs_found: "未找到提交记录",
+                payout_req_title: "提现申请", payout_req_desc: "选择您偏好的方式并输入金额。申请将在24-48小时内处理。",
+                min_lbl: "最小", withdraw_amount_lbl: "提现金额 (美元)", wallet_lbl: "钱包地址", wallet_ph: "在此输入地址...",
+                btn_confirm_withdraw: "确认提现", withdraw_history_title: "提现历史", no_withdrawals_found: "未找到提现记录。",
+                price_search_ph: "按国家或代码搜索...", no_results_found: "未找到搜索结果。",
+                contact_support_title: "联系支持", support_desc: "我们的专属支持团队随时为您解答任何问题或解决您可能遇到的问题。",
+                btn_message_support: "联系支持", confirm_withdraw_title: "确认提现",
+                confirm_withdraw_body: "在继续之前，请仔细核对您的收款详情。",
+                btn_cancel: "取消", btn_withdraw_confirm: "提现", req_submitted_title: "申请已提交",
+                req_submitted_body: "提现申请已提交，请耐心等待管理员审核付款。",
+                btn_got_it: "明白了",
+                maint_title: "系统维护中",
+                maint_desc: "供应面板目前正在进行例行维护。我们将很快恢复在线！",
+                maint_eta: "预计时间：30-60 分钟"
             }
         };
 
@@ -1974,6 +2035,14 @@
                     } else {
                         el.innerText = translations[currentLang][key];
                     }
+                }
+            });
+
+            // Update placeholders
+            document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+                const key = el.getAttribute('data-i18n-ph');
+                if (translations[currentLang] && translations[currentLang][key]) {
+                    el.placeholder = translations[currentLang][key];
                 }
             });
 
