@@ -1127,7 +1127,7 @@
 
                 <div style="width: 100%;">
                     <label data-i18n="txid_lbl"
-                        style="display: block; margin-bottom: 8px; color: var(--text-p); font-size: 0.85rem; font-weight: 700; opacity: 0.9;">Transaction
+                        style="display: block; margin-bottom: 8px; color: var(--text-p); font-size: 0.85rem; font-weight: 700; opacity: 0.9; text-align: inherit;">Transaction
                         ID</label>
                     <div style="position: relative; margin-bottom: 20px;">
                         <input type="text" id="deposit-txid" class="search-input" data-i18n-ph="txid_ph"
@@ -1159,7 +1159,7 @@
                     style="text-align: center; padding: 40px 20px; background: var(--card-glass); border-radius: 16px; border: 1px dashed var(--border); margin-top: 0; backdrop-filter: blur(10px); display: none;">
                     <i class="fas fa-history"
                         style="font-size: 2.5rem; color: var(--text-s); opacity: 0.15; margin-bottom: 12px;"></i>
-                    <p style="color: var(--text-s); font-weight: 600; font-size: 0.95rem;" data-t="dep_empty">No
+                    <p style="color: var(--text-s); font-weight: 600; font-size: 0.95rem;" data-i18n="dep_empty">No
                         deposits found.</p>
                 </div>
 
@@ -2601,7 +2601,7 @@
             list.style.flexDirection = 'column';
             list.style.gap = '15px';
             pagination.style.display = (data.total_pages > 1) ? 'flex' : 'none';
-            document.getElementById('pgInfoDep').textContent = `Page ${data.current_page || 1} of ${data.total_pages || 1}`;
+            document.getElementById('pgInfoDep').textContent = translations[currentLang].page_of.replace('{current}', data.current_page || 1).replace('{total}', data.total_pages || 1);
             document.getElementById('pgPrevDep').disabled = (data.current_page <= 1);
             document.getElementById('pgNextDep').disabled = (data.current_page >= (data.total_pages || 1));
 
