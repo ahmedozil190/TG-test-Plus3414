@@ -1038,7 +1038,7 @@
             <div class="search-area">
                 <div class="search-box">
                     <i class="fas fa-search" style="color: var(--text-s);"></i>
-                    <input type="text" id="store-search" class="search-input" placeholder="Search countries..."
+                    <input type="text" id="store-search" class="search-input" data-i18n-ph="store_search_ph" placeholder="Search countries..."
                         oninput="filterStore()">
                 </div>
                 <div class="server-filter-bar" id="server-filter-bar"></div>
@@ -1531,15 +1531,17 @@
                 number: "Number",
                 price: "Price",
                 date: "Date",
-                unit_numbers: "NUMBERS",
-                unit_orders: "ORDERS",
-                unit_usd: "USD",
-                unit_users: "USERS",
-                unit_countries: "COUNTRIES",
-                unit_deposits: "DEPOSITS"
-            },
+                        unit_numbers: "NUMBERS",
+                        unit_orders: "ORDERS",
+                        unit_usd: "USD",
+                        unit_users: "USERS",
+                        unit_countries: "COUNTRIES",
+                        unit_deposits: "DEPOSITS"
+                    },
             ar: {
                 loading: "تحسين المتجر...", nav_home: "لوحة التحكم", nav_store: "شراء رقم", nav_deposit: "إيداع", nav_history: "سجل الطلبات", nav_support: "الدعم", nav_referrals: "نظام الإحالات",
+                total_numbers: "إجمالي الأرقام", countries: "إجمالي الدول", lowest_price: "أقل سعر",
+                store_search_ph: "ابحث عن دولة...", no_numbers_found: "لا توجد أرقام متاحة حالياً",
                 financials_header: "البيانات المالية", stats_header: "الإحصائيات", balance: "الرصيد الحالي", total_spent: "إجمالي المشتريات", total_deposits: "إجمالي الإيداعات",
                 completed_orders: "الطلبات المكتملة", active_orders: "الطلبات النشطة", unique_countries: "الدول الفريدة",
                 loading_addr: "جاري تحميل العنوان...", txid_lbl: "معرف العملية (TXID)", txid_ph: "أدخل معرف العملية هنا", btn_verify_dep: "تحقق من الإيداع",
@@ -1594,6 +1596,8 @@
             },
             zh: {
                 loading: "优化商店...", nav_home: "控制面板", nav_store: "购买号码", nav_deposit: "充值", nav_history: "订单历史", nav_support: "支持", nav_referrals: "邀请系统",
+                total_numbers: "总号码", countries: "总国家", lowest_price: "最低价格",
+                store_search_ph: "搜索国家...", no_numbers_found: "目前没有可用号码",
                 financials_header: "财务数据", stats_header: "统计数据", balance: "当前余额", total_spent: "总支出", total_deposits: "总充值",
                 completed_orders: "已完成订单", active_orders: "活跃订单", unique_countries: "独特国家",
                 loading_addr: "正在加载地址...", txid_lbl: "交易 ID", txid_ph: "在此输入交易 ID", btn_verify_dep: "验证充值",
@@ -1877,6 +1881,11 @@
                     if (refLinkVal) refLinkVal.innerText = `https://t.me/${botUsername}?start=REF${userId}`;
                 }
 
+                // Render Store Stats
+                safeSetHTML('stat-total-numbers', `${data.total_numbers || 0}&nbsp;<span>${translations[currentLang].unit_numbers}</span>`);
+                safeSetHTML('stat-countries', `${(data.countries || []).length}&nbsp;<span>${translations[currentLang].unit_countries}</span>`);
+                safeSetHTML('stat-lowest-price', `${formatMoney(data.lowest_price || 0)}&nbsp;<span>${translations[currentLang].unit_usd}</span>`);
+
                 // Render Referral Program Settings
                 const refBonusValEl = document.getElementById('ref-join-bonus-val');
                 const refCommValEl = document.getElementById('ref-commission-val');
@@ -2053,6 +2062,14 @@
                 if (activeOrders) activeOrders.innerHTML = `${data.user.active_orders || 0}&nbsp;<span>${translations[currentLang].unit_orders}</span>`;
                 const uniqueCountries = document.getElementById('dash-unique-countries');
                 if (uniqueCountries) uniqueCountries.innerHTML = `${data.user.unique_countries || 0}&nbsp;<span>${translations[currentLang].unit_countries}</span>`;
+            }
+
+            // Also update Store section stats if data exists
+            if (window.lastDashboardData) {
+                const data = window.lastDashboardData;
+                safeSetHTML('stat-total-numbers', `${data.total_numbers || 0}&nbsp;<span>${translations[currentLang].unit_numbers}</span>`);
+                safeSetHTML('stat-countries', `${(data.countries || []).length}&nbsp;<span>${translations[currentLang].unit_countries}</span>`);
+                safeSetHTML('stat-lowest-price', `${formatMoney(data.lowest_price || 0)}&nbsp;<span>${translations[currentLang].unit_usd}</span>`);
             }
         }
 
