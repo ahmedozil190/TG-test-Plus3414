@@ -1449,7 +1449,8 @@
             <div class="wizard-pane" id="step-phone" style="padding-top:0">
                 <div class="w-icon"><i class="fas fa-mobile-alt"></i></div>
                 <h2 class="w-title" data-i18n="account_details_title">Account Details</h2>
-                <p class="w-desc" data-i18n="account_details_desc">Enter the international phone number. We'll automatically detect the country and your
+                <p class="w-desc" data-i18n="account_details_desc">Enter the international phone number. We'll
+                    automatically detect the country and your
                     reward price.</p>
 
                 <div class="input-group">
@@ -1485,7 +1486,8 @@
             <div class="wizard-pane" id="step-otp" style="display:none; padding-top:0">
                 <div class="w-icon" style="color:var(--warning)"><i class="fas fa-key"></i></div>
                 <h2 class="w-title" data-i18n="verify_login_title">Verify Login</h2>
-                <p class="w-desc" id="otp-desc-node">A 5-digit code was sent to <b id="displayPhone"></b> on Telegram.</p>
+                <p class="w-desc" id="otp-desc-node">A 5-digit code was sent to <b id="displayPhone"></b> on Telegram.
+                </p>
                 <div class="input-group">
                     <label data-i18n="telegram_code_lbl">Telegram Code</label>
                     <input type="text" id="otpInput" class="w-input" placeholder="•••••" maxlength="5"
@@ -1506,13 +1508,15 @@
             <div class="wizard-pane" id="step-success" style="display:none; padding-top:0">
                 <div class="w-icon" style="color:var(--success)"><i class="fas fa-check-double"></i></div>
                 <h2 class="w-title" data-i18n="success_title_sub">Great Work!</h2>
-                <p class="w-desc" data-i18n="success_desc_sub">Account <span id="successPhone" style="font-weight:700"></span> has been submitted for
+                <p class="w-desc" data-i18n="success_desc_sub">Account <span id="successPhone"
+                        style="font-weight:700"></span> has been submitted for
                     review.</p>
                 <div style="display:flex; gap:10px; margin-top:20px">
-                    <button class="btn-secondary" style="flex:1; opacity:0.9" onclick="resetSubmission()" data-i18n="btn_try_another">Try
+                    <button class="btn-secondary" style="flex:1; opacity:0.9" onclick="resetSubmission()"
+                        data-i18n="btn_try_another">Try
                         Another</button>
-                    <button class="btn-secondary" style="flex:1; opacity:0.9"
-                        onclick="changeView('dashboard')" data-i18n="btn_home">Home</button>
+                    <button class="btn-secondary" style="flex:1; opacity:0.9" onclick="changeView('dashboard')"
+                        data-i18n="btn_home">Home</button>
                 </div>
             </div>
 
@@ -1521,12 +1525,14 @@
                 <div class="w-icon" style="background:rgba(239, 68, 68, 0.1); color:var(--error)"><i
                         class="fas fa-ban"></i></div>
                 <h2 class="w-title" data-i18n="rejected_title_sub">Account Rejected</h2>
-                <p class="w-desc" id="rejectionDesc" data-i18n="rejected_desc_sub">This account is restricted or frozen and cannot be accepted.</p>
+                <p class="w-desc" id="rejectionDesc" data-i18n="rejected_desc_sub">This account is restricted or frozen
+                    and cannot be accepted.</p>
                 <div style="display:flex; gap:10px; margin-top:20px">
-                    <button class="btn-secondary" style="flex:1; opacity:0.9" onclick="resetSubmission()" data-i18n="btn_try_another">Try
+                    <button class="btn-secondary" style="flex:1; opacity:0.9" onclick="resetSubmission()"
+                        data-i18n="btn_try_another">Try
                         Another</button>
-                    <button class="btn-secondary" style="flex:1; opacity:0.9"
-                        onclick="changeView('dashboard')" data-i18n="btn_home">Home</button>
+                    <button class="btn-secondary" style="flex:1; opacity:0.9" onclick="changeView('dashboard')"
+                        data-i18n="btn_home">Home</button>
                 </div>
             </div>
 
@@ -1534,7 +1540,8 @@
             <div class="card" id="sourcing-section" style="padding: 22px; margin-top: 30px;">
                 <div class="section-header"
                     style="margin-top: 0; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between;">
-                    <h2 style="font-weight: 600; margin: 0; font-size: 1rem; letter-spacing: 0.5px;" data-i18n="sub_history_title">Submission History
+                    <h2 style="font-weight: 600; margin: 0; font-size: 1rem; letter-spacing: 0.5px;"
+                        data-i18n="sub_history_title">Submission History
                     </h2>
                     <div class="custom-dropdown" id="sourcing-filter-dropdown" style="position: relative;">
                         <button class="dropdown-trigger" onclick="toggleSourcingFilterDropdown(event)"
@@ -1584,7 +1591,8 @@
                     style="text-align: center; padding: 40px 20px; background: var(--card-glass); border-radius: 16px; border: 1px dashed var(--border); margin-top: 0; backdrop-filter: blur(10px); display: none;">
                     <i class="fas fa-history"
                         style="font-size: 2.5rem; color: var(--text-secondary); opacity: 0.15; margin-bottom: 12px;"></i>
-                    <p style="color: var(--text-secondary); font-weight: 600; font-size: 0.95rem;" data-i18n="no_subs_found">No submissions found
+                    <p style="color: var(--text-secondary); font-weight: 600; font-size: 0.95rem;"
+                        data-i18n="no_subs_found">No submissions found
                     </p>
                 </div>
             </div>
@@ -1593,8 +1601,10 @@
         <!-- View: Withdrawal -->
         <div class="view-panel" id="view-withdraw">
             <div class="withdraw-card" id="withdrawalForm">
-                <h2 class="w-title" style="text-align:left; margin-bottom:10px" data-i18n="payout_req_title">Payout Request</h2>
-                <p class="w-desc" style="text-align:left; margin-bottom:25px" data-i18n="payout_req_desc">Select your preferred method and enter the
+                <h2 class="w-title" style="text-align:left; margin-bottom:10px" data-i18n="payout_req_title">Payout
+                    Request</h2>
+                <p class="w-desc" style="text-align:left; margin-bottom:25px" data-i18n="payout_req_desc">Select your
+                    preferred method and enter the
                     amount. Requests are processed within 24-48h.</p>
 
                 <div class="method-selectors">
@@ -1620,7 +1630,8 @@
 
                 <div class="input-group">
                     <label data-i18n="wallet_lbl">Wallet</label>
-                    <input type="text" id="paymentDetails" class="w-input" data-i18n-ph="wallet_ph" placeholder="Enter address here...">
+                    <input type="text" id="paymentDetails" class="w-input" data-i18n-ph="wallet_ph"
+                        placeholder="Enter address here...">
                 </div>
 
                 <button class="btn-action" id="submitWithdrawBtn" onclick="requestWithdraw()">
@@ -1666,7 +1677,8 @@
                     style="text-align: center; padding: 40px 20px; background: var(--card-glass); border-radius: 16px; border: 1px dashed var(--border); margin-top: 0; backdrop-filter: blur(10px); display: none;">
                     <i class="fas fa-history"
                         style="font-size: 2.5rem; color: var(--text-secondary); opacity: 0.15; margin-bottom: 12px;"></i>
-                    <p style="color: var(--text-secondary); font-weight: 600; font-size: 0.95rem;" data-i18n="no_withdrawals_found">No withdrawal records
+                    <p style="color: var(--text-secondary); font-weight: 600; font-size: 0.95rem;"
+                        data-i18n="no_withdrawals_found">No withdrawal records
                         found.</p>
                 </div>
 
@@ -1688,8 +1700,8 @@
             <div class="search-area">
                 <div class="search-box" style="margin-bottom: 20px;">
                     <i class="fas fa-search"></i>
-                    <input type="text" class="search-input" id="priceSearch" data-i18n-ph="price_search_ph" placeholder="Search by country or code..."
-                        oninput="filterPrices()">
+                    <input type="text" class="search-input" id="priceSearch" data-i18n-ph="price_search_ph"
+                        placeholder="Search by country or code..." oninput="filterPrices()">
                 </div>
             </div>
 
@@ -1712,8 +1724,10 @@
                     <i class="fas fa-headset"></i>
                 </div>
                 <div>
-                    <h2 style="font-weight: 800; margin-bottom: 10px; color: var(--text-p);" data-i18n="contact_support_title">Contact Support</h2>
-                    <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;" data-i18n="support_desc">Our dedicated support
+                    <h2 style="font-weight: 800; margin-bottom: 10px; color: var(--text-p);"
+                        data-i18n="contact_support_title">Contact Support</h2>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;"
+                        data-i18n="support_desc">Our dedicated support
                         team is available to help you with any questions or issues you may have.</p>
                 </div>
                 <button class="btn-action" id="btn-message-support"
@@ -1762,7 +1776,8 @@
     <div class="modal-overlay" id="confirmModal">
         <div class="confirm-modal">
             <div class="modal-title" data-i18n="confirm_withdraw_title">Confirm Withdraw</div>
-            <div class="modal-body" data-i18n="confirm_withdraw_body">Please review your payout details carefully before proceeding.</div>
+            <div class="modal-body" data-i18n="confirm_withdraw_body">Please review your payout details carefully before
+                proceeding.</div>
 
             <div id="confirm-rows-container"
                 style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 25px;">
@@ -1788,7 +1803,8 @@
         <div class="confirm-modal" style="max-width: 450px;">
             <div class="success-icon">✅</div>
             <div class="modal-title" style="color:var(--text-p)" data-i18n="req_submitted_title">Request Submitted</div>
-            <div class="modal-body" id="successText" style="text-align: center; color: var(--text-p);" data-i18n="req_submitted_body">
+            <div class="modal-body" id="successText" style="text-align: center; color: var(--text-p);"
+                data-i18n="req_submitted_body">
                 Withdraw request submitted, please be patient until the bot administrator approves your payment.
             </div>
 
@@ -1797,11 +1813,11 @@
             </div>
 
             <div style="margin-top: 25px;">
-                <button class="btn-action" style="padding:14px; width:100%" onclick="closeSuccessModal()" data-i18n="btn_got_it">Got It</button>
-            </div>
-                    it</button>
+                <button class="btn-action" style="padding:14px; width:100%" onclick="closeSuccessModal()"
+                    data-i18n="btn_got_it">Got It</button>
             </div>
         </div>
+    </div>
     </div>
 
     <div class="toast" id="toast"></div>
@@ -1814,13 +1830,15 @@
             style="width: 80px; height: 80px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border-radius: 24px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin-bottom: 25px;">
             <i class="fas fa-tools"></i>
         </div>
-        <h1 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 12px; color: var(--text-p);" data-i18n="maint_title">Under Maintenance
+        <h1 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 12px; color: var(--text-p);"
+            data-i18n="maint_title">Under Maintenance
         </h1>
-        <p style="color: var(--text-s); font-size: 1rem; max-width: 300px; line-height: 1.6; margin-bottom: 30px;" data-i18n="maint_desc">
+        <p style="color: var(--text-s); font-size: 1rem; max-width: 300px; line-height: 1.6; margin-bottom: 30px;"
+            data-i18n="maint_desc">
             Sourcing panel is currently undergoing scheduled maintenance. We'll be back online shortly!
         </p>
-        <div
-            style="padding: 12px 24px; background: var(--card-glass); border: 1px solid var(--border); border-radius: 12px; color: var(--text-s); font-size: 0.85rem; font-weight: 600;" data-i18n="maint_eta">
+        <div style="padding: 12px 24px; background: var(--card-glass); border: 1px solid var(--border); border-radius: 12px; color: var(--text-s); font-size: 0.85rem; font-weight: 600;"
+            data-i18n="maint_eta">
             Estimated time: 30-60 mins
         </div>
     </div>
@@ -1832,10 +1850,12 @@
             style="width: 80px; height: 80px; background: rgba(88, 101, 242, 0.1); color: var(--accent); border-radius: 24px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin-bottom: 25px;">
             <i class="fas fa-lock"></i>
         </div>
-        <h1 id="sub-title" style="font-size: 1.8rem; font-weight: 800; margin-bottom: 12px; color: var(--text-p);" data-i18n="sub_required">
+        <h1 id="sub-title" style="font-size: 1.8rem; font-weight: 800; margin-bottom: 12px; color: var(--text-p);"
+            data-i18n="sub_required">
             Subscription Required</h1>
         <p id="sub-desc"
-            style="color: var(--text-s); font-size: 1rem; max-width: 300px; line-height: 1.6; margin-bottom: 30px;" data-i18n="sub_desc">
+            style="color: var(--text-s); font-size: 1rem; max-width: 300px; line-height: 1.6; margin-bottom: 30px;"
+            data-i18n="sub_desc">
             To use the bot and access this panel, you must join our channels first.
         </p>
 
@@ -1843,7 +1863,8 @@
             <!-- Channels buttons will be injected here -->
         </div>
 
-        <button id="sub-check-btn" onclick="init(true)" class="btn-action" style="width: 100%; max-width: 300px;" data-i18n="sub_check">
+        <button id="sub-check-btn" onclick="init(true)" class="btn-action" style="width: 100%; max-width: 300px;"
+            data-i18n="sub_check">
             I have joined, open panel
         </button>
     </div>
@@ -1875,8 +1896,20 @@
             return originalFetch(resource, config);
         };
 
+        // ─── Utilities ───
         const tg = window.Telegram.WebApp;
         tg.expand();
+        tg.ready();
+
+        function safeSetText(id, text) {
+            const el = document.getElementById(id);
+            if (el) el.textContent = text;
+        }
+
+        function safeSetHTML(id, html) {
+            const el = document.getElementById(id);
+            if (el) el.innerHTML = html;
+        }
 
         // ─── Native Theme Support ───
         function applyTheme() {
@@ -1925,7 +1958,7 @@
         const userId = tg.initDataUnsafe?.user?.id || 0;
         const userFirstName = tg.initDataUnsafe?.user?.first_name || "User";
         const userLang = tg.initDataUnsafe?.user?.language_code || 'en';
-        document.getElementById('userInitial').textContent = userFirstName.charAt(0).toUpperCase();
+        safeSetText('userInitial', userFirstName.charAt(0).toUpperCase());
 
         const translations = {
             en: {
@@ -2217,7 +2250,7 @@
                 pricing: 'Price List',
                 support: 'Support'
             };
-            document.getElementById('viewTitle').textContent = titles[viewId];
+            safeSetText('viewTitle', titles[viewId]);
 
             if (viewId === 'dashboard') fetchSellerData();
             if (viewId === 'pricing') fetchSellerData();
@@ -2243,15 +2276,10 @@
 
         async function fetchSellerData() {
             try {
-                if (!tg.initData) {
-                    console.warn("Telegram initData is empty. Some features might fail.");
-                }
-
                 const res = await fetch(`/api/seller/data?user_id=${userId}`);
                 const data = await res.json();
 
                 if (!res.ok) {
-                    console.error("API Error Response:", data);
                     showToast(data.detail || "Server Error: " + res.status);
                     return;
                 }
@@ -2310,31 +2338,30 @@
                 }
 
                 userBalance = data.user.balance;
-                document.getElementById('currBal').innerHTML = `${formatMoney(userBalance)} <span>USD</span>`;
+                safeSetHTML('currBal', `${formatMoney(userBalance)} <span>USD</span>`);
 
                 if (data.settings) {
                     minWithdrawTrx = data.settings.min_withdraw_trx || 4.0;
                     minWithdrawUsdt = data.settings.min_withdraw_usdt || 10.0;
                     window.feeWithdrawTrx = data.settings.fee_withdraw_trx || 0.0;
                     window.feeWithdrawUsdt = data.settings.fee_withdraw_usdt || 0.0;
-                    document.getElementById('min-trx-val').textContent = formatMoney(minWithdrawTrx);
-                    document.getElementById('min-usdt-val').textContent = formatMoney(minWithdrawUsdt);
+                    safeSetText('min-trx-val', formatMoney(minWithdrawTrx));
+                    safeSetText('min-usdt-val', formatMoney(minWithdrawUsdt));
                 }
 
                 // Also update the input if we are on the withdraw page
                 const withdrawInput = document.getElementById('withdrawAmount');
                 if (withdrawInput) {
                     withdrawInput.value = formatMoney(userBalance);
-                    setWithdrawMethod('TRX - TRC20', minWithdrawTrx); // Trigger default selection and validation
+                    setWithdrawMethod('TRX - TRC20', minWithdrawTrx);
                 }
-                document.getElementById('pendBal').innerHTML = `${formatMoney(data.user.pending_balance)} <span>USD</span>`;
-                document.getElementById('totalWith').innerHTML = `${formatMoney(data.user.total_withdrawn)} <span>USD</span>`;
+                safeSetHTML('pendBal', `${formatMoney(data.user.pending_balance)} <span>USD</span>`);
+                safeSetHTML('totalWith', `${formatMoney(data.user.total_withdrawn)} <span>USD</span>`);
 
                 // Update Branding
                 if (data.bot_name) {
                     document.title = `${data.bot_name} - Dashboard`;
-                    const brandName = document.getElementById('sideBrandName');
-                    if (brandName) brandName.textContent = data.bot_name;
+                    safeSetText('sideBrandName', data.bot_name);
                 }
 
                 if (data.support_username) {
@@ -2347,14 +2374,14 @@
                 }
 
                 // Stats Grid
-                document.getElementById('statAccepted').innerHTML = `${data.stats.accepted}<span> NUMBERS</span>`;
-                document.getElementById('statPending').innerHTML = `${data.stats.pending}<span> NUMBERS</span>`;
-                document.getElementById('statRejected').innerHTML = `${data.stats.rejected}<span> NUMBERS</span>`;
+                safeSetHTML('statAccepted', `${data.stats.accepted}<span> NUMBERS</span>`);
+                safeSetHTML('statPending', `${data.stats.pending}<span> NUMBERS</span>`);
+                safeSetHTML('statRejected', `${data.stats.rejected}<span> NUMBERS</span>`);
 
                 allPrices = data.prices;
                 renderPrices(allPrices);
             } catch (err) {
-                console.error("Fetch Seller Data Exception:", err);
+                console.error("fetchSellerData Error:", err);
                 showToast("Connection Error: " + err.message);
             } finally {
                 const loader = document.getElementById('loader');
