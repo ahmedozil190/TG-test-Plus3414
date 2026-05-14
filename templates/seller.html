@@ -90,11 +90,15 @@
             font-family: 'Cairo', sans-serif;
         }
 
+        html {
+            overflow-x: hidden;
+        }
+
         body {
             background-color: var(--bg);
             color: var(--text-p);
             height: 100vh;
-            overflow: hidden;
+            overflow-x: hidden;
             display: flex;
             flex-direction: column;
             transition: background-color 0.4s var(--ease), color 0.4s var(--ease);
@@ -122,6 +126,7 @@
             position: absolute;
             top: calc(100% + 8px);
             right: 0;
+            left: auto;
             background: var(--card-glass);
             border: 1px solid var(--border);
             border-radius: 14px;
@@ -130,6 +135,11 @@
             overflow: hidden;
             backdrop-filter: blur(10px);
             box-shadow: none;
+        }
+
+        [dir="rtl"] .dropdown-menu {
+            right: auto;
+            left: 0;
         }
 
         .dropdown-item {
@@ -1977,7 +1987,7 @@
                 btn_finish_sub: "Finish Submission", success_title_sub: "Great Work!", success_desc_sub: "Account has been submitted for review.",
                 btn_try_another: "Try Another", btn_home: "Home", rejected_title_sub: "Account Rejected",
                 rejected_desc_sub: "This account is restricted or frozen and cannot be accepted.",
-                sub_history_title: "Sales History", prev: "Prev", next: "Next", no_subs_found: "No sales found",
+                sub_history_title: "Sales History", prev: "Prev", next: "Next", no_subs_found: "No sales found yet.",
                 payout_req_title: "Payout Request", payout_req_desc: "Select your preferred method and enter the amount. Requests are processed within 24-48h.",
                 min_lbl: "Min", withdraw_amount_lbl: "Withdraw Amount (USD)", wallet_lbl: "Wallet", wallet_ph: "Enter address here...",
                 btn_confirm_withdraw: "Confirm Withdraw", withdraw_history_title: "Withdraw History", no_withdrawals_found: "No withdrawal records found.",
@@ -2024,7 +2034,7 @@
                 btn_finish_sub: "إنهاء الإرسال", success_title_sub: "عمل رائع!", success_desc_sub: "تم إرسال الحساب للمراجعة بنجاح.",
                 btn_try_another: "إضافة آخر", btn_home: "الرئيسية", rejected_title_sub: "تم رفض الحساب",
                 rejected_desc_sub: "هذا الحساب مقيد أو محظور ولا يمكن قبوله.",
-                sub_history_title: "سجل المبيعات", prev: "السابق", next: "التالي", no_subs_found: "لا توجد مبيعات.",
+                sub_history_title: "سجل المبيعات", prev: "السابق", next: "التالي", no_subs_found: "لا توجد مبيعات حتى الآن.",
                 payout_req_title: "طلب سحب أرباح", payout_req_desc: "اختر وسيلتك المفضلة وأدخل المبلغ. يتم معالجة الطلبات خلال 24-48 ساعة.",
                 min_lbl: "الحد الأدنى", withdraw_amount_lbl: "مبلغ السحب (دولار)", wallet_lbl: "المحفظة", wallet_ph: "أدخل عنوان المحفظة هنا...",
                 btn_confirm_withdraw: "تأكيد السحب", withdraw_history_title: "سجل المسحوبات", no_withdrawals_found: "لا توجد سجلات سحب.",
@@ -2068,7 +2078,7 @@
                 btn_finish_sub: "完成提交", success_title_sub: "做得好！", success_desc_sub: "账号已提交审核。",
                 btn_try_another: "提交另一个", btn_home: "首页", rejected_title_sub: "账号被拒绝",
                 rejected_desc_sub: "此账号受限或被封锁，无法接收。",
-                sub_history_title: "销售历史", prev: "上一页", next: "下一页", no_subs_found: "未找到销售记录",
+                sub_history_title: "销售历史", prev: "上一页", next: "下一页", no_subs_found: "暂无销售记录。",
                 payout_req_title: "提现申请", payout_req_desc: "选择您偏好的方式并输入金额。申请将在24-48小时内处理。",
                 min_lbl: "最小", withdraw_amount_lbl: "提现金额 (美元)", wallet_lbl: "钱包地址", wallet_ph: "在此输入地址...",
                 btn_confirm_withdraw: "确认提现", withdraw_history_title: "提现历史", no_withdrawals_found: "未找到提现记录。",
@@ -2162,6 +2172,7 @@
             const titleKey = titles[activeView] || 'nav_dashboard';
             const viewTitleEl = document.getElementById('viewTitle');
             if (viewTitleEl) viewTitleEl.innerText = translations[currentLang][titleKey] || 'Dashboard';
+
 
             // Restore transitions
             setTimeout(() => {
