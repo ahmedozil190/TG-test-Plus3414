@@ -1235,21 +1235,26 @@
         <!-- View: Language -->
         <section id="section-lang" class="view-panel">
             <div style="display: flex; flex-direction: column; gap: 15px;">
-                <div class="info-card" onclick="setLanguage('en')" style="cursor: pointer; padding: 0 20px; border: 1px solid var(--border); height: 75px; display: flex; align-items: center; justify-content: space-between;">
+                <div class="info-card" onclick="setLanguage('en')"
+                    style="cursor: pointer; padding: 0 20px; border: 1px solid var(--border); height: 75px; display: flex; align-items: center; justify-content: space-between;">
                     <div style="display: flex; align-items: center; gap: 15px;">
                         <span style="font-size: 1.5rem; width: 30px; text-align: center;">🇺🇸</span>
-                        <div style="font-weight: 700; color: var(--text-p); font-size: 1rem; line-height: 1;">English</div>
+                        <div style="font-weight: 700; color: var(--text-p); font-size: 1rem; line-height: 1;">English
+                        </div>
                     </div>
                     <i id="check-en" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
                 </div>
-                <div class="info-card" onclick="setLanguage('ar')" style="cursor: pointer; padding: 0 20px; border: 1px solid var(--border); height: 75px; display: flex; align-items: center; justify-content: space-between;">
+                <div class="info-card" onclick="setLanguage('ar')"
+                    style="cursor: pointer; padding: 0 20px; border: 1px solid var(--border); height: 75px; display: flex; align-items: center; justify-content: space-between;">
                     <div style="display: flex; align-items: center; gap: 15px;">
                         <span style="font-size: 1.5rem; width: 30px; text-align: center;">🇸🇦</span>
-                        <div style="font-weight: 700; color: var(--text-p); font-size: 1rem; line-height: 1;">العربية</div>
+                        <div style="font-weight: 700; color: var(--text-p); font-size: 1rem; line-height: 1;">العربية
+                        </div>
                     </div>
                     <i id="check-ar" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
                 </div>
-                <div class="info-card" onclick="setLanguage('zh')" style="cursor: pointer; padding: 0 20px; border: 1px solid var(--border); height: 75px; display: flex; align-items: center; justify-content: space-between;">
+                <div class="info-card" onclick="setLanguage('zh')"
+                    style="cursor: pointer; padding: 0 20px; border: 1px solid var(--border); height: 75px; display: flex; align-items: center; justify-content: space-between;">
                     <div style="display: flex; align-items: center; gap: 15px;">
                         <span style="font-size: 1.5rem; width: 30px; text-align: center;">🇨🇳</span>
                         <div style="font-weight: 700; color: var(--text-p); font-size: 1rem; line-height: 1;">简体中文</div>
@@ -1879,7 +1884,7 @@
         function updateTranslations() {
             // Temporarily disable transitions during layout shift
             document.body.classList.add('switching');
-            
+
             // Update direction
             document.body.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
             document.body.classList.toggle('rtl', currentLang === 'ar');

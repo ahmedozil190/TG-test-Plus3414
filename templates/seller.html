@@ -925,6 +925,7 @@
             width: 100%;
             align-items: flex-end;
         }
+
         .copy-toast {
             background: var(--bg-elevated);
             backdrop-filter: blur(12px);
@@ -941,9 +942,11 @@
             transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             pointer-events: auto;
         }
+
         .copy-toast.show {
             transform: translateX(0);
         }
+
         .copy-toast-icon {
             width: 44px;
             height: 44px;
@@ -954,18 +957,24 @@
             flex-shrink: 0;
             font-size: 1.1rem;
         }
-        .copy-toast-content { flex: 1; }
+
+        .copy-toast-content {
+            flex: 1;
+        }
+
         .copy-toast-title {
             font-weight: 800;
             font-size: 1rem;
             color: var(--text-p);
             margin-bottom: 2px;
         }
+
         .copy-toast-desc {
             font-size: 0.85rem;
             color: var(--text-s);
             font-weight: 500;
         }
+
         .copy-toast-close {
             color: var(--text-s);
             cursor: pointer;
@@ -974,7 +983,10 @@
             opacity: 0.5;
             transition: 0.2s;
         }
-        .copy-toast-close:hover { opacity: 1; }
+
+        .copy-toast-close:hover {
+            opacity: 1;
+        }
 
         /* ─── Confirmation Modal ─── */
         .modal-overlay {
@@ -1520,7 +1532,8 @@
 
             <!-- New Sourcing History Section -->
             <div class="card" id="sourcing-section" style="padding: 22px; margin-top: 30px;">
-                <div class="section-header" style="margin-top: 0; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between;">
+                <div class="section-header"
+                    style="margin-top: 0; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between;">
                     <h2 style="font-weight: 600; margin: 0; font-size: 1rem; letter-spacing: 0.5px;">Submission History
                     </h2>
                     <div class="custom-dropdown" id="sourcing-filter-dropdown" style="position: relative;">
@@ -1536,20 +1549,17 @@
                             style="display: none; position: absolute; top: calc(100% + 8px); right: 0; background: var(--card-glass); border: 1px solid var(--border); border-radius: 12px; min-width: 150px; z-index: 100; box-shadow: none; overflow: hidden; backdrop-filter: blur(10px);">
                             <div class="dropdown-item" onclick="setSourcingFilter('PENDING', '#fbbf24')"
                                 style="padding: 10px 15px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
-                                <span
-                                    style="width: 8px; height: 8px; border-radius: 50%; background: #fbbf24;"></span>
+                                <span style="width: 8px; height: 8px; border-radius: 50%; background: #fbbf24;"></span>
                                 PENDING
                             </div>
                             <div class="dropdown-item" onclick="setSourcingFilter('ACCEPTED', '#10b981')"
                                 style="padding: 10px 15px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
-                                <span
-                                    style="width: 8px; height: 8px; border-radius: 50%; background: #10b981;"></span>
+                                <span style="width: 8px; height: 8px; border-radius: 50%; background: #10b981;"></span>
                                 ACCEPTED
                             </div>
                             <div class="dropdown-item" onclick="setSourcingFilter('REJECTED', '#ef4444')"
                                 style="padding: 10px 15px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
-                                <span
-                                    style="width: 8px; height: 8px; border-radius: 50%; background: #ef4444;"></span>
+                                <span style="width: 8px; height: 8px; border-radius: 50%; background: #ef4444;"></span>
                                 REJECTED
                             </div>
                         </div>
@@ -1717,21 +1727,26 @@
         <!-- View: Language -->
         <div class="view-panel" id="view-lang">
             <div style="display: flex; flex-direction: column; gap: 15px;">
-                <div class="info-card" onclick="setLanguage('en')" style="cursor: pointer; padding: 0 20px; border: 1px solid var(--border); height: 75px; display: flex; align-items: center; justify-content: space-between;">
+                <div class="info-card" onclick="setLanguage('en')"
+                    style="cursor: pointer; padding: 0 20px; border: 1px solid var(--border); height: 75px; display: flex; align-items: center; justify-content: space-between;">
                     <div style="display: flex; align-items: center; gap: 15px;">
                         <span style="font-size: 1.5rem; width: 30px; text-align: center;">🇺🇸</span>
-                        <div style="font-weight: 700; color: var(--text-p); font-size: 1rem; line-height: 1;">English</div>
+                        <div style="font-weight: 700; color: var(--text-p); font-size: 1rem; line-height: 1;">English
+                        </div>
                     </div>
                     <i id="check-en" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
                 </div>
-                <div class="info-card" onclick="setLanguage('ar')" style="cursor: pointer; padding: 0 20px; border: 1px solid var(--border); height: 75px; display: flex; align-items: center; justify-content: space-between;">
+                <div class="info-card" onclick="setLanguage('ar')"
+                    style="cursor: pointer; padding: 0 20px; border: 1px solid var(--border); height: 75px; display: flex; align-items: center; justify-content: space-between;">
                     <div style="display: flex; align-items: center; gap: 15px;">
                         <span style="font-size: 1.5rem; width: 30px; text-align: center;">🇸🇦</span>
-                        <div style="font-weight: 700; color: var(--text-p); font-size: 1rem; line-height: 1;">العربية</div>
+                        <div style="font-weight: 700; color: var(--text-p); font-size: 1rem; line-height: 1;">العربية
+                        </div>
                     </div>
                     <i id="check-ar" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
                 </div>
-                <div class="info-card" onclick="setLanguage('zh')" style="cursor: pointer; padding: 0 20px; border: 1px solid var(--border); height: 75px; display: flex; align-items: center; justify-content: space-between;">
+                <div class="info-card" onclick="setLanguage('zh')"
+                    style="cursor: pointer; padding: 0 20px; border: 1px solid var(--border); height: 75px; display: flex; align-items: center; justify-content: space-between;">
                     <div style="display: flex; align-items: center; gap: 15px;">
                         <span style="font-size: 1.5rem; width: 30px; text-align: center;">🇨🇳</span>
                         <div style="font-weight: 700; color: var(--text-p); font-size: 1rem; line-height: 1;">简体中文</div>
@@ -2868,7 +2883,7 @@
         function setSourcingFilter(status, color) {
             currentSourcingFilter = status;
             currentSourcingPage = 1;
-            
+
             // Update UI Labels
             const dot = document.getElementById('sourcing-filter-status-dot');
             const label = document.getElementById('current-sourcing-filter-label');
@@ -2877,11 +2892,11 @@
                 label.textContent = status;
                 label.style.color = color;
             }
-            
+
             // Close menu
             const menu = document.getElementById('sourcing-filter-menu');
             if (menu) menu.style.display = 'none';
-            
+
             fetchSourcingHistory();
         }
 
