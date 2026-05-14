@@ -1310,23 +1310,31 @@
 
         <div class="side-nav">
             <div class="nav-item active" id="btn-dashboard" onclick="changeView('dashboard')">
-                <i class="fas fa-chart-pie"></i> Dashboard
+                <i class="fas fa-chart-pie"></i> <span data-i18n="nav_dashboard">Dashboard</span>
             </div>
             <div class="nav-item" id="btn-submit" onclick="changeView('submit')">
-                <i class="fas fa-paper-plane"></i> Submit Numbers
+                <i class="fas fa-paper-plane"></i> <span data-i18n="nav_submit">Submit Numbers</span>
             </div>
             <div class="nav-item" id="btn-withdraw" onclick="changeView('withdraw')">
-                <i class="fas fa-hand-holding-usd"></i> Withdraw
+                <i class="fas fa-hand-holding-usd"></i> <span data-i18n="nav_withdraw">Withdraw</span>
             </div>
             <div class="nav-item" id="btn-pricing" onclick="changeView('pricing')">
-                <i class="fas fa-tags"></i> Price List
+                <i class="fas fa-tags"></i> <span data-i18n="nav_pricing">Price List</span>
             </div>
             <div class="nav-item" id="btn-support" onclick="changeView('support')">
-                <i class="fas fa-headset"></i> Support
+                <i class="fas fa-headset"></i> <span data-i18n="nav_support">Support</span>
             </div>
         </div>
 
-        <div class="side-footer">
+        <div class="side-footer" style="padding: 20px; border-top: 1px solid var(--border);">
+            <div style="display: flex; align-items: center; gap: 10px; background: var(--bg); padding: 10px 15px; border-radius: 12px; border: 1px solid var(--border);">
+                <i class="fas fa-language" style="color: var(--accent);"></i>
+                <select id="lang-selector" onchange="setLanguage(this.value)" style="background: transparent; color: var(--text-p); border: none; font-size: 0.85rem; font-weight: 600; outline: none; cursor: pointer; flex: 1;">
+                    <option value="en" style="background: var(--bg);">English</option>
+                    <option value="ar" style="background: var(--bg);">العربية</option>
+                    <option value="zh" style="background: var(--bg);">简体中文</option>
+                </select>
+            </div>
         </div>
     </div>
 
@@ -1866,22 +1874,82 @@
         const userLang = tg.initDataUnsafe?.user?.language_code || 'en';
         document.getElementById('userInitial').textContent = userFirstName.charAt(0).toUpperCase();
 
-        const subTranslations = {
+        const translations = {
             en: {
-                title: "Subscription Required",
-                desc: "To use the bot and access this panel, you must join our channels first.",
-                check: "I have joined, open panel",
-                join: "Join",
-                checking: "Checking..."
+                nav_dashboard: "Dashboard", nav_submit: "Submit Numbers", nav_withdraw: "Withdraw", nav_pricing: "Price List", nav_support: "Support",
+                curr_bal: "Current Balance", pend_with: "Pending Withdrawn", total_with: "Total Withdrawn",
+                stats: "STATISTICS", accepted: "Accepted Numbers", pending: "Pending Numbers", rejected: "Rejected Numbers",
+                sub_required: "Subscription Required", sub_desc: "To use the bot and access this panel, you must join our channels first.",
+                sub_check: "I have joined, open panel", join: "Join", checking: "Checking..."
             },
             ar: {
-                title: "الاشتراك إجباري",
-                desc: "لاستخدام البوت والوصول لهذه اللوحة، يجب عليك الانضمام لقنواتنا أولاً.",
-                check: "لقد اشتركت، افتح اللوحة",
-                join: "انضمام",
-                checking: "جاري التحقق..."
+                nav_dashboard: "لوحة التحكم", nav_submit: "إضافة أرقام", nav_withdraw: "سحب الأرباح", nav_pricing: "قائمة الأسعار", nav_support: "الدعم الفني",
+                curr_bal: "الرصيد الحالي", pend_with: "قيد السحب", total_with: "إجمالي المسحوبات",
+                stats: "الإحصائيات", accepted: "أرقام مقبولة", pending: "أرقام معلقة", rejected: "أرقام مرفوضة",
+                sub_required: "الاشتراك إجباري", sub_desc: "لاستخدام البوت والوصول لهذه اللوحة، يجب عليك الانضمام لقنواتنا أولاً.",
+                sub_check: "لقد اشتركت، افتح اللوحة", join: "انضمام", checking: "جاري التحقق..."
+            },
+            zh: {
+                nav_dashboard: "仪表板", nav_submit: "提交号码", nav_withdraw: "提现", nav_pricing: "价格表", nav_support: "支持",
+                curr_bal: "当前余额", pend_with: "待提现", total_with: "总提现",
+                stats: "统计数据", accepted: "已接受号码", pending: "待处理号码", rejected: "已拒绝号码",
+                sub_required: "需要订阅", sub_desc: "要使用机器人并访问此面板，您必须先加入我们的频道。",
+                sub_check: "我已加入，进入面板", join: "加入", checking: "正在检查..."
             }
         };
+
+        let currentLang = 'en';
+
+        function updateTranslations() {
+            // Update direction
+            document.body.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+            document.body.classList.toggle('rtl', currentLang === 'ar');
+            document.body.style.textAlign = currentLang === 'ar' ? 'right' : 'left';
+
+            // Find all elements with data-i18n
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[currentLang] && translations[currentLang][key]) {
+                    // Check if it has an icon child
+                    const icon = el.querySelector('i');
+                    if (icon) {
+                        const textNode = Array.from(el.childNodes).find(node => node.nodeType === 3);
+                        if (textNode) textNode.textContent = ' ' + translations[currentLang][key];
+                        else el.innerHTML = `${icon.outerHTML} ${translations[currentLang][key]}`;
+                    } else {
+                        el.innerText = translations[currentLang][key];
+                    }
+                }
+            });
+
+            // Sync selector
+            const selector = document.getElementById('lang-selector');
+            if (selector) selector.value = currentLang;
+
+            // Update title
+            const activeView = window.location.hash.replace('#', '') || 'dashboard';
+            const titles = {
+                dashboard: 'nav_dashboard',
+                submit: 'nav_submit',
+                withdraw: 'nav_withdraw',
+                pricing: 'nav_pricing',
+                support: 'nav_support'
+            };
+            const titleKey = titles[activeView] || 'nav_dashboard';
+            document.getElementById('viewTitle').innerText = translations[currentLang][titleKey] || 'Dashboard';
+        }
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            sessionStorage.setItem('preferredLang_sourcing', lang);
+            updateTranslations();
+
+            // Optional: Tell backend about language preference
+            fetch('/api/user/settings', {
+                method: 'POST',
+                body: JSON.stringify({ language: lang })
+            }).catch(e => console.warn("Language sync failed"));
+        }
 
         async function checkSubscription() {
             try {
@@ -1902,16 +1970,15 @@
         function showSubscriptionOverlay(channels) {
             const overlay = document.getElementById('subscription-overlay');
             const list = document.getElementById('sub-channels-list-ui');
-            const lang = userLang === 'ar' ? 'ar' : 'en';
             if (!overlay || !list) return;
 
-            document.getElementById('sub-title').innerText = subTranslations[lang].title;
-            document.getElementById('sub-desc').innerText = subTranslations[lang].desc;
-            document.getElementById('sub-check-btn').innerText = subTranslations[lang].check;
+            document.getElementById('sub-title').innerText = translations[currentLang].sub_required;
+            document.getElementById('sub-desc').innerText = translations[currentLang].sub_desc;
+            document.getElementById('sub-check-btn').innerText = translations[currentLang].sub_check;
 
             list.innerHTML = channels.map(ch => `
                 <div onclick="window.Telegram.WebApp.openTelegramLink('${ch.link}')" class="btn-secondary" style="margin-bottom: 10px; cursor: pointer; color: var(--accent); border-color: var(--accent); justify-content: center;">
-                    <i class="fab fa-telegram"></i> ${subTranslations[lang].join} ${ch.username}
+                    <i class="fab fa-telegram"></i> ${translations[currentLang].join} ${ch.username}
                 </div>
             `).join('');
 
@@ -1922,15 +1989,13 @@
             const overlay = document.getElementById('subscription-overlay');
             if (overlay) overlay.style.display = 'none';
         }
-
         async function init(isManual = false) {
-            const lang = userLang === 'ar' ? 'ar' : 'en';
             const subBtn = document.getElementById('sub-check-btn');
             const originalText = subBtn ? subBtn.innerText : '';
 
             if (isManual && subBtn) {
                 subBtn.disabled = true;
-                subBtn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> ${subTranslations[lang].checking}`;
+                subBtn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> ${translations[currentLang].checking}`;
             }
 
             const isSubscribed = await checkSubscription();

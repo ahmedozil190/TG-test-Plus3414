@@ -901,7 +901,16 @@
                 <i class="fas fa-headset"></i> <span data-i18n="nav_support">Support</span>
             </div>
         </div>
-        <div class="side-footer"></div>
+        <div class="side-footer" style="padding: 20px; border-top: 1px solid var(--border);">
+            <div style="display: flex; align-items: center; gap: 10px; background: var(--bg); padding: 10px 15px; border-radius: 12px; border: 1px solid var(--border);">
+                <i class="fas fa-language" style="color: var(--accent);"></i>
+                <select id="lang-selector" onchange="setLanguage(this.value)" style="background: transparent; color: var(--text-p); border: none; font-size: 0.85rem; font-weight: 600; outline: none; cursor: pointer; flex: 1;">
+                    <option value="en" style="background: var(--bg);">English</option>
+                    <option value="ar" style="background: var(--bg);">العربية</option>
+                    <option value="zh" style="background: var(--bg);">简体中文</option>
+                </select>
+            </div>
+        </div>
     </div>
 
     <header class="top-bar">
@@ -1456,17 +1465,38 @@
                 success_title: "تم بنجاح!", success_desc: "انتظر وصول الكود في البوت.", btn_close: "إغلاق",
                 available: "رقم متاح", search_ph: "ابحث عن دولة...",
                 total_numbers: "إجمالي الأرقام", countries: "إجمالي الدول", lowest_price: "أقل سعر",
+                completed_orders: "طلبات مكتملة", active_orders: "طلبات نشطة", unique_countries: "دول فريدة",
                 hist_title: "سجل الطلبات", hist_empty: "لا توجد طلبات.",
                 dep_title: "سجل الإيداعات", dep_empty: "لا توجد سجلات إيداع.",
-                insufficient_bal: "رصيدك غير كافٍ",
+                insufficient_bal: "الرصيد غير كافٍ",
                 sub_required: "الاشتراك إجباري",
                 sub_desc: "لاستخدام البوت والوصول للمتجر، يجب عليك الانضمام لقنواتنا أولاً.",
                 sub_check: "لقد اشتركت، افتح المتجر",
                 join: "انضمام",
                 checking: "جاري التحقق...",
-                binance_pay_desc: "يرجى تحويل USDT عبر Binance Pay إلى الـ Pay ID أدناه. بعد الدفع، أدخل 'رقم الطلب' (Order ID) أو 'رقم العملية' الموجود في إيصال الدفع.",
-                trx_desc: "يرجى إرسال عملة TRX (شبكة TRC20) إلى العنوان أدناه. أدخل هاش العملية (TxID) بعد الإرسال.",
-                usdt_desc: "يرجى إرسال USDT (شبكة BEP20 / BSC) إلى العنوان أدناه. أدخل هاش العملية (TxID) بعد الإرسال."
+                binance_pay_desc: "يرجى تحويل USDT عبر Binance Pay إلى المعرف أدناه. بعد الدفع، أدخل 'Order ID' من إيصال الدفع.",
+                trx_desc: "يرجى إرسال TRX إلى العنوان أدناه. أدخل Hash العملية بعد الإرسال.",
+                usdt_desc: "يرجى إرسال USDT (شبكة BEP20) إلى العنوان أدناه. أدخل Hash العملية بعد الإرسال."
+            },
+            zh: {
+                loading: "优化商店...", nav_home: "仪表板", nav_store: "购买号码", nav_deposit: "充值", nav_history: "订单历史", nav_support: "支持", nav_referrals: "推荐计划",
+                balance: "当前余额", total_spent: "总支出", total_deposits: "总充值", quick_buy: "快速访问", btn_start_shopping: "浏览号码",
+                confirm_title: "确认购买", lbl_country: "国家", lbl_price: "价格", btn_confirm_pay: "立即购买",
+                success_title: "支付成功!", success_desc: "请在机器人聊天中等待验证码。", btn_close: "关闭",
+                available: "可用", search_ph: "搜索国家...",
+                total_numbers: "总号码", countries: "总国家", lowest_price: "最低价格",
+                completed_orders: "已完成订单", active_orders: "活跃订单", unique_countries: "独特国家",
+                hist_title: "订单历史", hist_empty: "未找到订单历史。",
+                dep_title: "充值记录", dep_empty: "未找到充值记录。",
+                insufficient_bal: "余额不足",
+                sub_required: "需要订阅",
+                sub_desc: "要使用机器人并访问商店，您必须先加入我们的频道。",
+                sub_check: "我已加入，进入商店",
+                join: "加入",
+                checking: "正在检查...",
+                binance_pay_desc: "请通过 Binance Pay 转账 USDT 到下方的 Pay ID。付款后，输入收据上的 'Order ID' 或 'Transaction ID'。",
+                trx_desc: "请发送 TRX 到下方地址。发送后输入交易哈希 (TxID)。",
+                usdt_desc: "请发送 USDT (BEP20 / BSC) 到下方地址。发送后输入交易哈希 (TxID)。"
             }
         };
 
@@ -1804,16 +1834,50 @@
             if (topBal) topBal.innerText = `${fval} USD`;
         }
         function updateTranslations() {
-            document.documentElement.lang = currentLang;
-            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
-            document.querySelectorAll('[data-i18n], [data-t]').forEach(el => {
-                const key = el.getAttribute('data-i18n') || el.getAttribute('data-t');
+            // Update direction
+            document.body.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+            document.body.classList.toggle('rtl', currentLang === 'ar');
+
+            // Find all elements with data-i18n
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
                 if (translations[currentLang] && translations[currentLang][key]) {
-                    el.innerText = translations[currentLang][key];
+                    // Check if it has an icon child
+                    const icon = el.querySelector('i');
+                    if (icon) {
+                        const textNode = Array.from(el.childNodes).find(node => node.nodeType === 3);
+                        if (textNode) textNode.textContent = ' ' + translations[currentLang][key];
+                        else el.innerHTML = `${icon.outerHTML} ${translations[currentLang][key]}`;
+                    } else {
+                        el.innerText = translations[currentLang][key];
+                    }
                 }
             });
+
+            // Update placeholders
             const searchInput = document.getElementById('store-search');
             if (searchInput) searchInput.placeholder = translations[currentLang].search_ph;
+
+            // Sync selector
+            const selector = document.getElementById('lang-selector');
+            if (selector) selector.value = currentLang;
+
+            // Update view title if necessary
+            const activeTab = sessionStorage.getItem('activeTab') || 'home';
+            const titleEl = document.getElementById('view-title');
+            if (titleEl) titleEl.innerText = translations[currentLang]['nav_' + activeTab] || activeTab;
+        }
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            sessionStorage.setItem('preferredLang', lang);
+            updateTranslations();
+
+            // Optional: Tell backend about language preference
+            fetch('/api/user/settings', {
+                method: 'POST',
+                body: JSON.stringify({ language: lang })
+            }).catch(e => console.warn("Language sync failed"));
         }
 
         async function fetchCountries() {
