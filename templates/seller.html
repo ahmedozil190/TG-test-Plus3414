@@ -191,7 +191,6 @@
             width: var(--sidebar-width);
             height: 100%;
             background: var(--bg-elevated);
-            border-right: none;
             z-index: 3000;
             transform: translateX(-100%);
             transition: transform 0.2s var(--ease);
@@ -204,7 +203,19 @@
             overflow-x: hidden;
         }
 
+        body.rtl .sidebar {
+            left: auto;
+            right: 0;
+            transform: translateX(100%);
+            border-right: none;
+            border-left: 1px solid var(--border);
+        }
+
         .sidebar.open {
+            transform: translateX(0);
+        }
+
+        body.rtl .sidebar.open {
             transform: translateX(0);
         }
 
@@ -1700,25 +1711,25 @@
 
         <!-- View: Language -->
         <div class="view-panel" id="view-lang">
-            <div style="display: flex; flex-direction: column; gap: 12px;">
-                <div class="info-card" onclick="setLanguage('en')" style="cursor: pointer; padding: 20px; border: 1px solid var(--border);">
-                    <div style="display: flex; align-items: center; gap: 15px; flex: 1;">
-                        <span style="font-size: 1.5rem;">🇺🇸</span>
-                        <div style="flex: 1; font-weight: 700; color: var(--text-p);">English</div>
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                <div class="info-card" onclick="setLanguage('en')" style="cursor: pointer; padding: 20px; border: 1px solid var(--border); min-height: 75px;">
+                    <div style="display: flex; align-items: center; gap: 15px; flex: 1; height: 100%;">
+                        <span style="font-size: 1.5rem; width: 30px; text-align: center;">🇺🇸</span>
+                        <div style="flex: 1; font-weight: 700; color: var(--text-p); font-size: 1rem;">English</div>
                         <i id="check-en" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
                     </div>
                 </div>
-                <div class="info-card" onclick="setLanguage('ar')" style="cursor: pointer; padding: 20px; border: 1px solid var(--border);">
-                    <div style="display: flex; align-items: center; gap: 15px; flex: 1;">
-                        <span style="font-size: 1.5rem;">🇸🇦</span>
-                        <div style="flex: 1; font-weight: 700; color: var(--text-p);">العربية</div>
+                <div class="info-card" onclick="setLanguage('ar')" style="cursor: pointer; padding: 20px; border: 1px solid var(--border); min-height: 75px;">
+                    <div style="display: flex; align-items: center; gap: 15px; flex: 1; height: 100%;">
+                        <span style="font-size: 1.5rem; width: 30px; text-align: center;">🇸🇦</span>
+                        <div style="flex: 1; font-weight: 700; color: var(--text-p); font-size: 1rem;">العربية</div>
                         <i id="check-ar" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
                     </div>
                 </div>
-                <div class="info-card" onclick="setLanguage('zh')" style="cursor: pointer; padding: 20px; border: 1px solid var(--border);">
-                    <div style="display: flex; align-items: center; gap: 15px; flex: 1;">
-                        <span style="font-size: 1.5rem;">🇨🇳</span>
-                        <div style="flex: 1; font-weight: 700; color: var(--text-p);">简体中文</div>
+                <div class="info-card" onclick="setLanguage('zh')" style="cursor: pointer; padding: 20px; border: 1px solid var(--border); min-height: 75px;">
+                    <div style="display: flex; align-items: center; gap: 15px; flex: 1; height: 100%;">
+                        <span style="font-size: 1.5rem; width: 30px; text-align: center;">🇨🇳</span>
+                        <div style="flex: 1; font-weight: 700; color: var(--text-p); font-size: 1rem;">简体中文</div>
                         <i id="check-zh" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
                     </div>
                 </div>
@@ -1897,21 +1908,21 @@
 
         const translations = {
             en: {
-                nav_dashboard: "Dashboard", nav_submit: "Submit Numbers", nav_withdraw: "Withdraw", nav_pricing: "Price List", nav_support: "Support",
+                nav_dashboard: "Dashboard", nav_submit: "Submit Numbers", nav_withdraw: "Withdraw", nav_pricing: "Price List", nav_support: "Support", nav_lang: "Language",
                 curr_bal: "Current Balance", pend_with: "Pending Withdrawn", total_with: "Total Withdrawn",
                 stats: "STATISTICS", accepted: "Accepted Numbers", pending: "Pending Numbers", rejected: "Rejected Numbers",
                 sub_required: "Subscription Required", sub_desc: "To use the bot and access this panel, you must join our channels first.",
                 sub_check: "I have joined, open panel", join: "Join", checking: "Checking..."
             },
             ar: {
-                nav_dashboard: "لوحة التحكم", nav_submit: "إضافة أرقام", nav_withdraw: "سحب الأرباح", nav_pricing: "قائمة الأسعار", nav_support: "الدعم الفني",
+                nav_dashboard: "لوحة التحكم", nav_submit: "إضافة أرقام", nav_withdraw: "سحب الأرباح", nav_pricing: "قائمة الأسعار", nav_support: "الدعم الفني", nav_lang: "اللغة",
                 curr_bal: "الرصيد الحالي", pend_with: "قيد السحب", total_with: "إجمالي المسحوبات",
                 stats: "الإحصائيات", accepted: "أرقام مقبولة", pending: "أرقام معلقة", rejected: "أرقام مرفوضة",
                 sub_required: "الاشتراك إجباري", sub_desc: "لاستخدام البوت والوصول لهذه اللوحة، يجب عليك الانضمام لقنواتنا أولاً.",
                 sub_check: "لقد اشتركت، افتح اللوحة", join: "انضمام", checking: "جاري التحقق..."
             },
             zh: {
-                nav_dashboard: "仪表板", nav_submit: "提交号码", nav_withdraw: "提现", nav_pricing: "价格表", nav_support: "支持",
+                nav_dashboard: "仪表板", nav_submit: "提交号码", nav_withdraw: "提现", nav_pricing: "价格表", nav_support: "支持", nav_lang: "语言",
                 curr_bal: "当前余额", pend_with: "待提现", total_with: "总提现",
                 stats: "统计数据", accepted: "已接受号码", pending: "待处理号码", rejected: "已拒绝号码",
                 sub_required: "需要订阅", sub_desc: "要使用机器人并访问此面板，您必须先加入我们的频道。",
@@ -1964,7 +1975,8 @@
                 lang: 'nav_lang'
             };
             const titleKey = titles[activeView] || 'nav_dashboard';
-            document.getElementById('viewTitle').innerText = translations[currentLang][titleKey] || 'Dashboard';
+            const viewTitleEl = document.getElementById('viewTitle');
+            if (viewTitleEl) viewTitleEl.innerText = translations[currentLang][titleKey] || 'Dashboard';
         }
 
         function setLanguage(lang) {
