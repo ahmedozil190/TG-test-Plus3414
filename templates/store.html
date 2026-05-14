@@ -286,7 +286,6 @@
             justify-content: space-between;
             align-items: center;
             box-shadow: var(--shadow);
-            margin-bottom: 15px;
         }
 
 
@@ -939,31 +938,33 @@
                 <span
                     style="font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;">FINANCIALS</span>
             </div>
-            <div class="info-card">
-                <div class="info-card-l">
-                    <span class="info-card-lbl" data-i18n="balance">Current Balance</span>
-                    <span class="info-card-val" id="dash-balance">$0.00</span>
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                <div class="info-card">
+                    <div class="info-card-l">
+                        <span class="info-card-lbl" data-i18n="balance">Current Balance</span>
+                        <span class="info-card-val" id="dash-balance">$0.00</span>
+                    </div>
+                    <div class="info-card-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">
+                        <i class="fas fa-wallet"></i>
+                    </div>
                 </div>
-                <div class="info-card-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">
-                    <i class="fas fa-wallet"></i>
+                <div class="info-card">
+                    <div class="info-card-l">
+                        <span class="info-card-lbl" data-i18n="total_spent">TOTAL SPENT</span>
+                        <span class="info-card-val" id="dash-spent">$0.00</span>
+                    </div>
+                    <div class="info-card-icon" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">
+                        <i class="fas fa-hand-holding-dollar"></i>
+                    </div>
                 </div>
-            </div>
-            <div class="info-card">
-                <div class="info-card-l">
-                    <span class="info-card-lbl" data-i18n="total_spent">TOTAL SPENT</span>
-                    <span class="info-card-val" id="dash-spent">$0.00</span>
-                </div>
-                <div class="info-card-icon" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">
-                    <i class="fas fa-hand-holding-dollar"></i>
-                </div>
-            </div>
-            <div class="info-card">
-                <div class="info-card-l">
-                    <span class="info-card-lbl" data-i18n="total_deposits">TOTAL DEPOSITS</span>
-                    <span class="info-card-val" id="dash-total-deposits">0</span>
-                </div>
-                <div class="info-card-icon" style="background: rgba(88, 101, 242, 0.1); color: var(--accent);">
-                    <i class="fas fa-chart-line"></i>
+                <div class="info-card">
+                    <div class="info-card-l">
+                        <span class="info-card-lbl" data-i18n="total_deposits">TOTAL DEPOSITS</span>
+                        <span class="info-card-val" id="dash-total-deposits">0</span>
+                    </div>
+                    <div class="info-card-icon" style="background: rgba(88, 101, 242, 0.1); color: var(--accent);">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
                 </div>
             </div>
 
@@ -972,31 +973,33 @@
                 <span data-i18n="stats_header"
                     style="font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;">STATISTICS</span>
             </div>
-            <div class="info-card">
-                <div class="info-card-l">
-                    <span class="info-card-lbl" data-i18n="completed_orders">COMPLETED ORDERS</span>
-                    <span class="info-card-val" id="dash-completed-orders">0</span>
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                <div class="info-card">
+                    <div class="info-card-l">
+                        <span class="info-card-lbl" data-i18n="completed_orders">COMPLETED ORDERS</span>
+                        <span class="info-card-val" id="dash-completed-orders">0</span>
+                    </div>
+                    <div class="info-card-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">
+                        <i class="fas fa-check-double"></i>
+                    </div>
                 </div>
-                <div class="info-card-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">
-                    <i class="fas fa-check-double"></i>
+                <div class="info-card">
+                    <div class="info-card-l">
+                        <span class="info-card-lbl" data-i18n="active_orders">ACTIVE ORDERS</span>
+                        <span class="info-card-val" id="dash-active-orders">0</span>
+                    </div>
+                    <div class="info-card-icon" style="background: rgba(88, 101, 242, 0.1); color: var(--accent);">
+                        <i class="fas fa-clock"></i>
+                    </div>
                 </div>
-            </div>
-            <div class="info-card">
-                <div class="info-card-l">
-                    <span class="info-card-lbl" data-i18n="active_orders">ACTIVE ORDERS</span>
-                    <span class="info-card-val" id="dash-active-orders">0</span>
-                </div>
-                <div class="info-card-icon" style="background: rgba(88, 101, 242, 0.1); color: var(--accent);">
-                    <i class="fas fa-clock"></i>
-                </div>
-            </div>
-            <div class="info-card">
-                <div class="info-card-l">
-                    <span class="info-card-lbl" data-i18n="unique_countries">UNIQUE COUNTRIES</span>
-                    <span class="info-card-val" id="dash-unique-countries">0</span>
-                </div>
-                <div class="info-card-icon" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">
-                    <i class="fas fa-earth-americas"></i>
+                <div class="info-card">
+                    <div class="info-card-l">
+                        <span class="info-card-lbl" data-i18n="unique_countries">UNIQUE COUNTRIES</span>
+                        <span class="info-card-val" id="dash-unique-countries">0</span>
+                    </div>
+                    <div class="info-card-icon" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">
+                        <i class="fas fa-earth-americas"></i>
+                    </div>
                 </div>
             </div>
         </section>
