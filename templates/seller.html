@@ -2165,10 +2165,24 @@
             }, 50);
         }
 
+        function renderDashboardStats() {
+            if (!window.lastDashboardData) return;
+            const data = window.lastDashboardData;
+            
+            safeSetHTML('currBal', `${formatMoney(data.user.balance)}&nbsp;<span>${translations[currentLang].unit_usd}</span>`);
+            safeSetHTML('pendBal', `${formatMoney(data.user.pending_balance)}&nbsp;<span>${translations[currentLang].unit_usd}</span>`);
+            safeSetHTML('totalWith', `${formatMoney(data.user.total_withdrawn)}&nbsp;<span>${translations[currentLang].unit_usd}</span>`);
+            
+            safeSetHTML('statAccepted', `${data.stats.accepted}&nbsp;<span>${translations[currentLang].unit_numbers}</span>`);
+            safeSetHTML('statPending', `${data.stats.pending}&nbsp;<span>${translations[currentLang].unit_numbers}</span>`);
+            safeSetHTML('statRejected', `${data.stats.rejected}&nbsp;<span>${translations[currentLang].unit_numbers}</span>`);
+        }
+
         function setLanguage(lang) {
             currentLang = lang;
             localStorage.setItem('preferredLang_sourcing', lang);
             updateTranslations();
+            renderDashboardStats();
 
             // Optional: Tell backend about language preference
             fetch('/api/user/settings', {
@@ -2393,8 +2407,9 @@
                     return;
                 }
 
+                window.lastDashboardData = data;
+                renderDashboardStats();
                 userBalance = data.user.balance;
-                safeSetHTML('currBal', `${formatMoney(userBalance)}&nbsp;<span>${translations[currentLang].unit_usd}</span>`);
 
                 if (data.settings) {
                     minWithdrawTrx = data.settings.min_withdraw_trx || 4.0;
@@ -2411,8 +2426,7 @@
                     withdrawInput.value = formatMoney(userBalance);
                     setWithdrawMethod('TRX - TRC20', minWithdrawTrx);
                 }
-                safeSetHTML('pendBal', `${formatMoney(data.user.pending_balance)}&nbsp;<span>${translations[currentLang].unit_usd}</span>`);
-                safeSetHTML('totalWith', `${formatMoney(data.user.total_withdrawn)}&nbsp;<span>${translations[currentLang].unit_usd}</span>`);
+                // renderDashboardStats handled currBal, pendBal, totalWith
 
                 // Update Branding
                 if (data.bot_name) {
@@ -2429,10 +2443,7 @@
                     }
                 }
 
-                // Stats Grid
-                safeSetHTML('statAccepted', `${data.stats.accepted}&nbsp;<span>${translations[currentLang].unit_numbers}</span>`);
-                safeSetHTML('statPending', `${data.stats.pending}&nbsp;<span>${translations[currentLang].unit_numbers}</span>`);
-                safeSetHTML('statRejected', `${data.stats.rejected}&nbsp;<span>${translations[currentLang].unit_numbers}</span>`);
+                // renderDashboardStats handled stats grid
 
                 allPrices = data.prices;
                 renderPrices(allPrices);
