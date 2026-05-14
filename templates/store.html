@@ -856,13 +856,13 @@
             style="width: 80px; height: 80px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border-radius: 24px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin-bottom: 25px;">
             <i class="fas fa-tools"></i>
         </div>
-        <h1 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 12px; color: var(--text-p);">Under Maintenance
+        <h1 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 12px; color: var(--text-p);" data-i18n="maint_title">Under Maintenance
         </h1>
-        <p style="color: var(--text-s); font-size: 1rem; max-width: 300px; line-height: 1.6; margin-bottom: 30px;">
+        <p style="color: var(--text-s); font-size: 1rem; max-width: 300px; line-height: 1.6; margin-bottom: 30px;" data-i18n="maint_desc">
             We're currently performing some scheduled maintenance to improve your experience. Please check back soon!
         </p>
         <div
-            style="padding: 12px 24px; background: var(--card-glass); border: 1px solid var(--border); border-radius: 12px; color: var(--text-s); font-size: 0.85rem; font-weight: 600;">
+            style="padding: 12px 24px; background: var(--card-glass); border: 1px solid var(--border); border-radius: 12px; color: var(--text-s); font-size: 0.85rem; font-weight: 600;" data-i18n="maint_eta">
             Estimated time: 30-60 mins
         </div>
     </div>
@@ -1057,7 +1057,7 @@
                             <i class="fas fa-bolt"></i>
                         </div>
                         <div style="flex: 1;">
-                            <div style="font-weight: 800; font-size: 1rem; color: var(--text-p); font-weight: 700;">
+                            <div style="font-weight: 800; font-size: 1rem; color: var(--text-p); font-weight: 700;" data-i18n="binance_pay">
                                 Binance Pay</div>
                         </div>
                         <div class="active-check" style="display: block; color: var(--accent); font-size: 1.3rem;">
@@ -1075,7 +1075,7 @@
                             <i class="fas fa-coins"></i>
                         </div>
                         <div style="flex: 1;">
-                            <div style="font-weight: 800; font-size: 1rem; color: var(--text-p); font-weight: 700;">TRX
+                            <div style="font-weight: 800; font-size: 1rem; color: var(--text-p); font-weight: 700;" data-i18n="trx_trc20">TRX
                                 (TRC20)</div>
                         </div>
                         <div class="active-check" style="display: none; color: var(--accent); font-size: 1.3rem;">
@@ -1093,7 +1093,7 @@
                             <i class="fas fa-shield-halved"></i>
                         </div>
                         <div style="flex: 1;">
-                            <div style="font-weight: 800; font-size: 1rem; color: var(--text-p); font-weight: 700;">USDT
+                            <div style="font-weight: 800; font-size: 1rem; color: var(--text-p); font-weight: 700;" data-i18n="usdt_bep20">USDT
                                 (BEP20)</div>
                         </div>
                         <div class="active-check" style="display: none; color: var(--accent); font-size: 1.3rem;">
@@ -1108,7 +1108,7 @@
                 <div id="deposit-method-icon" style="font-size: 2.5rem; color: #f3ba2f; margin-bottom: 12px;">
                     <i class="fas fa-bolt"></i>
                 </div>
-                <h3 id="deposit-method-title" style="margin-bottom: 10px; font-size: 1.1rem;">Binance Pay</h3>
+                <h3 id="deposit-method-title" style="margin-bottom: 10px; font-size: 1.1rem;" data-i18n="binance_pay">Binance Pay</h3>
                 <p id="deposit-method-desc" data-i18n="binance_pay_short_desc"
                     style="color: var(--text-s); font-size: 0.85rem; margin-bottom: 20px; line-height: 1.5;">
                     Please transfer USDT via Binance Internal Transfer (Binance Pay) to the Pay ID below.
@@ -1141,7 +1141,7 @@
             <div class="card" id="deposit-history-container" style="padding: 22px; margin-top: 30px; margin-bottom: 0;">
                 <div class="section-header" style="margin-top: 0; margin-bottom: 35px;">
                     <span style="font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;"
-                        data-t="dep_title">Deposit History</span>
+                        data-i18n="dep_title">Deposit History</span>
                 </div>
 
                 <div class="history-list" id="deposits-list" style="display: none; flex-direction: column; gap: 0;">
@@ -1511,7 +1511,26 @@
                 binance_pay_short_desc: "Please transfer USDT via Binance Internal Transfer (Binance Pay) to the Pay ID below.",
                 binance_pay_desc: "Please transfer USDT via Binance Pay to the Pay ID below. After payment, enter the 'Order ID' or 'Transaction ID' from your payment receipt.",
                 trx_desc: "Please send TRX (TRC20 network) to the address below. Enter the Transaction Hash (TxID) after sending.",
-                usdt_desc: "Please send USDT (BEP20 / BSC network) to the address below. Enter the Transaction Hash (TxID) after sending."
+                usdt_desc: "Please send USDT (BEP20 / BSC network) to the address below. Enter the Transaction Hash (TxID) after sending.",
+                maint_title: "Under Maintenance",
+                maint_desc: "We're currently performing some scheduled maintenance to improve your experience. Please check back soon!",
+                maint_eta: "Estimated time: 30-60 mins",
+                page_of: "Page {current} of {total}",
+                pending: "PENDING",
+                completed: "COMPLETED",
+                rejected: "REJECTED",
+                frozen: "FROZEN",
+                spam: "SPAM",
+                revoked: "REVOKED",
+                binance_pay: "Binance Pay",
+                trx_trc20: "TRX (TRC20)",
+                usdt_bep20: "USDT (BEP20)",
+                copied: "Copied",
+                copied_desc: "Copied to clipboard",
+                account: "Account",
+                number: "Number",
+                price: "Price",
+                date: "Date"
             },
             ar: {
                 loading: "تحسين المتجر...", nav_home: "لوحة التحكم", nav_store: "شراء رقم", nav_deposit: "إيداع", nav_history: "سجل الطلبات", nav_support: "الدعم", nav_referrals: "نظام الإحالات",
@@ -1540,7 +1559,26 @@
                 binance_pay_short_desc: "يرجى تحويل USDT عبر التحويل الداخلي (Binance Pay) إلى المعرف أدناه.",
                 binance_pay_desc: "يرجى تحويل USDT عبر Binance Pay إلى المعرف أدناه. بعد الدفع، أدخل 'Order ID' من إيصال الدفع.",
                 trx_desc: "يرجى إرسال TRX إلى العنوان أدناه. أدخل Hash العملية بعد الإرسال.",
-                usdt_desc: "يرجى إرسال USDT (BEP20) إلى العنوان أدناه. أدخل Hash العملية بعد الإرسال."
+                usdt_desc: "يرجى إرسال USDT (BEP20) إلى العنوان أدناه. أدخل Hash العملية بعد الإرسال.",
+                maint_title: "تحت الصيانة",
+                maint_desc: "نحن نجري حالياً صيانة دورية لتحسين تجربتك. يرجى العودة لاحقاً!",
+                maint_eta: "الوقت المقدر: 30-60 دقيقة",
+                page_of: "صفحة {current} من {total}",
+                pending: "قيد الانتظار",
+                completed: "مكتمل",
+                rejected: "مرفوض",
+                frozen: "مجمد",
+                spam: "سبام",
+                revoked: "مسحوب",
+                binance_pay: "بينانس باي",
+                trx_trc20: "TRX (TRC20)",
+                usdt_bep20: "USDT (BEP20)",
+                copied: "تم النسخ",
+                copied_desc: "تم النسخ إلى الحافظة",
+                account: "حساب",
+                number: "رقم",
+                price: "السعر",
+                date: "التاريخ"
             },
             zh: {
                 loading: "优化商店...", nav_home: "控制面板", nav_store: "购买号码", nav_deposit: "充值", nav_history: "订单历史", nav_support: "支持", nav_referrals: "邀请系统",
@@ -1569,7 +1607,26 @@
                 binance_pay_short_desc: "请通过币安内部转账 (Binance Pay) 将 USDT 转至下方 Pay ID。",
                 binance_pay_desc: "请通过 Binance Pay 转账 USDT 到下方的 Pay ID。付款后，输入收据上的 'Order ID' 或 'Transaction ID'。",
                 trx_desc: "请发送 TRX 到下方地址。发送后输入交易哈希 (TxID)。",
-                usdt_desc: "请发送 USDT (BEP20 / BSC) 到下方地址。发送后输入交易哈希 (TxID)。"
+                usdt_desc: "请发送 USDT (BEP20 / BSC) 到下方地址。发送后输入交易哈希 (TxID)。",
+                maint_title: "维护中",
+                maint_desc: "我们目前正在进行一些例行维护，以改善您的体验。请稍后再来！",
+                maint_eta: "预计时间：30-60 分钟",
+                page_of: "第 {current} 页，共 {total} 页",
+                pending: "等待中",
+                completed: "已完成",
+                rejected: "已拒绝",
+                frozen: "已冻结",
+                spam: "垃圾邮件",
+                revoked: "已撤销",
+                binance_pay: "币安支付",
+                trx_trc20: "TRX (TRC20)",
+                usdt_bep20: "USDT (BEP20)",
+                copied: "已复制",
+                copied_desc: "已复制到剪贴板",
+                account: "账号",
+                number: "号码",
+                price: "价格",
+                date: "日期"
             }
         };
 
@@ -1897,7 +1954,7 @@
             const addr = document.getElementById('deposit-address-display').innerText;
             if (addr && addr !== 'Loading Address...' && addr !== 'Not Set') {
                 navigator.clipboard.writeText(addr).then(() => {
-                    showToast("Copied", "Copied to clipboard", "success");
+                    showToast(translations[currentLang].copied, translations[currentLang].copied_desc, "success");
                     tg.HapticFeedback.impactOccurred('light');
                 });
             }
@@ -2183,7 +2240,7 @@
             document.getElementById('hist-total-orders').innerHTML = `${data.total_count || 0} <span>ORDERS</span>`;
 
             document.getElementById('historyPagination').style.display = totalHistoryPages > 1 ? 'flex' : 'none';
-            document.getElementById('pgInfoHist').textContent = `Page ${data.current_page || 1} of ${totalHistoryPages}`;
+            document.getElementById('pgInfoHistory').textContent = translations[currentLang].page_of.replace('{current}', data.current_page).replace('{total}', totalHistoryPages);
             document.getElementById('pgPrevHist').disabled = ((data.current_page || 1) <= 1);
             document.getElementById('pgNextHist').disabled = ((data.current_page || 1) >= totalHistoryPages);
 

@@ -1366,13 +1366,13 @@
         <!-- View: Dashboard -->
         <div class="view-panel active" id="view-dashboard">
             <div class="section-header" style="margin-top: 0;">
-                <i class="fas fa-wallet"></i> <span
+                <i class="fas fa-wallet"></i> <span data-i18n="financials_header"
                     style="font-size: 0.8rem; font-weight: 700; letter-spacing: 1px;">FINANCIALS</span>
             </div>
             <div class="info-card-stack">
                 <div class="info-card">
                     <div class="info-card-l">
-                        <span class="info-card-lbl">Current Balance</span>
+                        <span class="info-card-lbl" data-i18n="curr_bal">Current Balance</span>
                         <div class="info-card-val" id="currBal">0.00 <span>USD</span></div>
                     </div>
                     <div class="info-card-icon" style="background:rgba(16, 185, 129, 0.1); color: var(--success);">
@@ -1381,7 +1381,7 @@
                 </div>
                 <div class="info-card">
                     <div class="info-card-l">
-                        <span class="info-card-lbl">Pending Withdrawn</span>
+                        <span class="info-card-lbl" data-i18n="pend_with">Pending Withdrawn</span>
                         <div class="info-card-val" id="pendBal">0.00 <span>USD</span></div>
                     </div>
                     <div class="info-card-icon" style="background:rgba(245, 158, 11, 0.1); color: var(--warning);">
@@ -1390,7 +1390,7 @@
                 </div>
                 <div class="info-card">
                     <div class="info-card-l">
-                        <span class="info-card-lbl">Total Withdrawn</span>
+                        <span class="info-card-lbl" data-i18n="total_with">Total Withdrawn</span>
                         <div class="info-card-val" id="totalWith">0.00 <span>USD</span></div>
                     </div>
                     <div class="info-card-icon" style="background:rgba(88, 101, 242, 0.1); color: var(--accent);">
@@ -1400,13 +1400,13 @@
             </div>
 
             <div class="section-header">
-                <i class="fas fa-chart-line"></i> <span
+                <i class="fas fa-chart-line"></i> <span data-i18n="stats"
                     style="font-size: 0.8rem; font-weight: 700; letter-spacing: 1px;">STATISTICS</span>
             </div>
             <div class="info-card-stack">
                 <div class="info-card">
                     <div class="info-card-l">
-                        <span class="info-card-lbl">Accepted Numbers</span>
+                        <span class="info-card-lbl" data-i18n="accepted">Accepted Numbers</span>
                         <div class="info-card-val" id="statAccepted" style="color: var(--text-p)">0<span> NUMBERS</span>
                         </div>
                     </div>
@@ -1416,7 +1416,7 @@
                 </div>
                 <div class="info-card">
                     <div class="info-card-l">
-                        <span class="info-card-lbl">Pending Numbers</span>
+                        <span class="info-card-lbl" data-i18n="pending">Pending Numbers</span>
                         <div class="info-card-val" id="statPending" style="color: var(--text-p)">0<span> NUMBERS</span>
                         </div>
                     </div>
@@ -1426,7 +1426,7 @@
                 </div>
                 <div class="info-card">
                     <div class="info-card-l">
-                        <span class="info-card-lbl">Rejected Numbers</span>
+                        <span class="info-card-lbl" data-i18n="rejected">Rejected Numbers</span>
                         <div class="info-card-val" id="statRejected" style="color: var(--text-p)">0<span> NUMBERS</span>
                         </div>
                     </div>
@@ -1548,7 +1548,7 @@
                             style="display: flex; align-items: center; gap: 8px; background: var(--card-glass); border: 1px solid var(--border); padding: 6px 12px; border-radius: 10px; color: var(--text-primary); cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.2s;">
                             <span id="sourcing-filter-status-dot"
                                 style="width: 8px; height: 8px; border-radius: 50%; background: #fbbf24;"></span>
-                            <span id="current-sourcing-filter-label" style="color: #fbbf24;">PENDING</span>
+                            <span id="current-sourcing-filter-label" style="color: #fbbf24;" data-i18n="pending">PENDING</span>
                             <i class="fas fa-chevron-down"
                                 style="font-size: 0.7rem; opacity: 0.5; margin-left: 4px;"></i>
                         </button>
@@ -1557,17 +1557,17 @@
                             <div class="dropdown-item" onclick="setSourcingFilter('PENDING', '#fbbf24')"
                                 style="padding: 10px 15px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
                                 <span style="width: 8px; height: 8px; border-radius: 50%; background: #fbbf24;"></span>
-                                PENDING
+                                <span data-i18n="pending">PENDING</span>
                             </div>
                             <div class="dropdown-item" onclick="setSourcingFilter('ACCEPTED', '#10b981')"
                                 style="padding: 10px 15px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
                                 <span style="width: 8px; height: 8px; border-radius: 50%; background: #10b981;"></span>
-                                ACCEPTED
+                                <span data-i18n="accepted">ACCEPTED</span>
                             </div>
                             <div class="dropdown-item" onclick="setSourcingFilter('REJECTED', '#ef4444')"
                                 style="padding: 10px 15px; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
                                 <span style="width: 8px; height: 8px; border-radius: 50%; background: #ef4444;"></span>
-                                REJECTED
+                                <span data-i18n="rejected">REJECTED</span>
                             </div>
                         </div>
                     </div>
@@ -1650,22 +1650,22 @@
                             style="display: flex; align-items: center; gap: 8px; background: var(--card-glass); border: 1px solid var(--border); padding: 8px 14px; border-radius: 12px; color: var(--text-primary); cursor: pointer; font-size: 0.85rem; font-weight: 700; transition: all 0.2s;">
                             <span id="withdraw-status-dot"
                                 style="width: 8px; height: 8px; border-radius: 50%; background: #f59e0b;"></span>
-                            <span id="current-withdraw-filter-label" style="color: #f59e0b;">PENDING</span>
+                            <span id="current-withdraw-filter-label" style="color: #f59e0b;" data-i18n="pending">PENDING</span>
                             <i class="fas fa-chevron-down"
                                 style="font-size: 0.7rem; opacity: 0.5; margin-left: 4px;"></i>
                         </button>
                         <div class="dropdown-menu" id="withdraw-filter-menu">
                             <div class="dropdown-item" onclick="filterWithdrawals('PENDING', '#f59e0b', 'PENDING')">
                                 <span style="width: 8px; height: 8px; border-radius: 50%; background: #f59e0b;"></span>
-                                PENDING
+                                <span data-i18n="pending">PENDING</span>
                             </div>
                             <div class="dropdown-item" onclick="filterWithdrawals('APPROVED', '#10b981', 'APPROVED')">
                                 <span style="width: 8px; height: 8px; border-radius: 50%; background: #10b981;"></span>
-                                APPROVED
+                                <span data-i18n="approved">APPROVED</span>
                             </div>
                             <div class="dropdown-item" onclick="filterWithdrawals('REJECTED', '#ef4444', 'REJECTED')">
                                 <span style="width: 8px; height: 8px; border-radius: 50%; background: #ef4444;"></span>
-                                REJECTED
+                                <span data-i18n="rejected">REJECTED</span>
                             </div>
                         </div>
                     </div>
@@ -1986,7 +1986,19 @@
                 btn_got_it: "Got It",
                 maint_title: "Under Maintenance",
                 maint_desc: "Sourcing panel is currently undergoing scheduled maintenance. We'll be back online shortly!",
-                maint_eta: "Estimated time: 30-60 mins"
+                maint_eta: "Estimated time: 30-60 mins",
+                page_of: "Page {current} of {total}",
+                trans_no: "Trans No. {id}",
+                country_not_found: "Country Not Requested",
+                invalid_phone: "The phone number you entered is invalid",
+                banned_phone: "This phone number is banned from Telegram",
+                temp_banned: "Number Temporarily Banned — {time}",
+                copied: "Copied",
+                copied_desc: "Copied to clipboard",
+                account: "Account",
+                number: "Number",
+                price: "Price",
+                date: "Date"
             },
             ar: {
                 nav_dashboard: "لوحة التحكم", nav_submit: "إضافة أرقام", nav_withdraw: "سحب الأرباح", nav_pricing: "قائمة الأسعار", nav_support: "الدعم الفني", nav_lang: "اللغة",
@@ -2013,7 +2025,19 @@
                 btn_got_it: "مفهوم",
                 maint_title: "قيد الصيانة",
                 maint_desc: "لوحة التوريد تخضع حالياً لصيانة مجدولة. سنعود للعمل قريباً!",
-                maint_eta: "الوقت المقدر: 30-60 دقيقة"
+                maint_eta: "الوقت المقدر: 30-60 دقيقة",
+                page_of: "صفحة {current} من {total}",
+                trans_no: "رقم العملية {id}",
+                country_not_found: "الدولة غير مطلوبة",
+                invalid_phone: "رقم الهاتف الذي أدخلته غير صالح",
+                banned_phone: "هذا الرقم محظور من تليجرام",
+                temp_banned: "الرقم محظور مؤقتاً — {time}",
+                copied: "تم النسخ",
+                copied_desc: "تم النسخ إلى الحافظة",
+                account: "حساب",
+                number: "رقم",
+                price: "السعر",
+                date: "التاريخ"
             },
             zh: {
                 nav_dashboard: "控制面板", nav_submit: "提交号码", nav_withdraw: "提现", nav_pricing: "价格表", nav_support: "支持", nav_lang: "语言",
@@ -2040,7 +2064,19 @@
                 btn_got_it: "明白了",
                 maint_title: "系统维护中",
                 maint_desc: "供应面板目前正在进行例行维护。我们将很快恢复在线！",
-                maint_eta: "预计时间：30-60 分钟"
+                maint_eta: "预计时间：30-60 分钟",
+                page_of: "第 {current} 页，共 {total} 页",
+                trans_no: "交易编号 {id}",
+                country_not_found: "国家未请求",
+                invalid_phone: "您输入的电话号码无效",
+                banned_phone: "此电话号码已被 Telegram 封禁",
+                temp_banned: "号码暂时被封禁 — {time}",
+                copied: "已复制",
+                copied_desc: "已复制到剪贴板",
+                account: "账号",
+                number: "号码",
+                price: "价格",
+                date: "日期"
             }
         };
 
@@ -2323,15 +2359,14 @@
                         `window.Telegram.WebApp.openTelegramLink('${data.updates_channel || ''}')`
                     );
                     return;
-                }
 
                 // Check Banned Status
                 if (data.is_banned === true) {
                     showStatusPage(
                         'fa-user-slash',
-                        'Account Restricted',
-                        'Your access has been suppressed due to a violation of our terms. Contact support for more info.',
-                        '<i class="fab fa-telegram-plane"></i> Contact Support',
+                        translations[currentLang].acc_restricted_title,
+                        translations[currentLang].acc_restricted_desc,
+                        `<i class="fab fa-telegram-plane"></i> ${translations[currentLang].contact_support}`,
                         `window.Telegram.WebApp.openTelegramLink('https://t.me/${data.support_username || ''}')`
                     );
                     return;
@@ -2374,9 +2409,9 @@
                 }
 
                 // Stats Grid
-                safeSetHTML('statAccepted', `${data.stats.accepted}<span> NUMBERS</span>`);
-                safeSetHTML('statPending', `${data.stats.pending}<span> NUMBERS</span>`);
-                safeSetHTML('statRejected', `${data.stats.rejected}<span> NUMBERS</span>`);
+                safeSetHTML('statAccepted', `${data.stats.accepted}<span> ${translations[currentLang].nav_submit.split(' ')[1] || 'NUMBERS'}</span>`);
+                safeSetHTML('statPending', `${data.stats.pending}<span> ${translations[currentLang].nav_submit.split(' ')[1] || 'NUMBERS'}</span>`);
+                safeSetHTML('statRejected', `${data.stats.rejected}<span> ${translations[currentLang].nav_submit.split(' ')[1] || 'NUMBERS'}</span>`);
 
                 allPrices = data.prices;
                 renderPrices(allPrices);
@@ -2474,7 +2509,7 @@
             if (trigger) trigger.style.opacity = '0.5';
 
             document.getElementById('withdraw-status-dot').style.background = color;
-            document.getElementById('current-withdraw-filter-label').innerText = label;
+            document.getElementById('current-withdraw-filter-label').innerText = translations[currentLang][label.toLowerCase()] || label;
             document.getElementById('current-withdraw-filter-label').style.color = color;
             document.getElementById('withdraw-filter-menu').style.display = 'none';
 
@@ -2514,7 +2549,7 @@
             const addr = document.getElementById('paymentDetails').value.trim();
 
             if (amt < currentMin) return; // Button should be disabled anyway
-            if (!addr) return showToast("Address required");
+            if (!addr) return showToast(translations[currentLang].address_required);
 
             const fee = currentMethod.includes('TRX') ? window.feeWithdrawTrx : window.feeWithdrawUsdt;
             const net = amt - fee;
@@ -2527,15 +2562,15 @@
             const container = document.getElementById('confirm-rows-container');
             container.innerHTML = `
                 <div style="${rowS('#10b981')}">
-                    <span style="${lblS}">DETAILS</span>
+                    <span style="${lblS}">${translations[currentLang].details}</span>
                     <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.95rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(amt)} - ${simpleMethod}</span>
                 </div>
                 <div style="${rowS('#8b5cf6')}">
-                    <span style="${lblS}">Amount to Receive</span>
+                    <span style="${lblS}">${translations[currentLang].amount_to_receive}</span>
                     <span style="color: #10b981; font-weight: 700; font-size: 1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(net)}</span>
                 </div>
                 <div style="${rowS('#3b82f6')}">
-                    <span style="${lblS}">Wallet</span>
+                    <span style="${lblS}">${translations[currentLang].wallet}</span>
                     <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.95rem; text-align: right; direction: ltr; flex: 1; min-width: 0;">
                         ${addr && addr.length > 14 ? addr.slice(0, 8) + '···' + addr.slice(-6) : (addr || 'N/A')}
                     </span>
@@ -2553,7 +2588,6 @@
             const amt = parseFloat(document.getElementById('withdrawAmount').value) || 0;
             const addr = document.getElementById('paymentDetails').value.trim();
             const btn = document.getElementById('finalConfirmBtn');
-            const mainSubmitBtn = document.getElementById('submitWithdrawBtn');
 
             btn.disabled = true;
             btn.innerHTML = '<span class="loader-ring" style="width:20px;height:20px"></span>';
@@ -2569,7 +2603,7 @@
 
                 if (res.ok) {
                     // Update Success Modal
-                    document.getElementById('successTransNo').textContent = `Trans No. ${data.id}`;
+                    document.getElementById('successTransNo').textContent = translations[currentLang].trans_no.replace('{id}', data.id);
 
                     document.getElementById('withdrawAmount').value = '';
                     document.getElementById('paymentDetails').value = '';
@@ -2582,13 +2616,13 @@
                     fetchSellerData(); // Refresh balance
                     fetchWithdrawals(); // Refresh history
                 } else {
-                    showToast(data.detail || "Error occurred");
+                    showToast(data.detail || translations[currentLang].error_occurred);
                 }
             } catch (err) {
-                showToast("Request failed");
+                showToast(translations[currentLang].request_failed);
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-check"></i>Withdraw';
+                btn.innerHTML = `<i class="fas fa-check"></i>${translations[currentLang].withdraw}`;
             }
         }
 
@@ -2619,7 +2653,7 @@
                 // Update Pagination Controls
                 totalWithdrawPages = data.total_pages;
                 pgCtrls.style.display = totalWithdrawPages > 1 ? 'flex' : 'none';
-                document.getElementById('pgInfoWithdraw').textContent = `Page ${data.current_page} of ${totalWithdrawPages}`;
+                document.getElementById('pgInfoWithdraw').textContent = translations[currentLang].page_of.replace('{current}', data.current_page).replace('{total}', totalWithdrawPages);
                 document.getElementById('pgPrevWithdraw').disabled = (data.current_page <= 1);
                 document.getElementById('pgNextWithdraw').disabled = (data.current_page >= totalWithdrawPages);
 
@@ -2629,14 +2663,14 @@
                     item.style.marginBottom = (idx === data.history.length - 1) ? "0" : "15px";
 
                     let statusColor = '#f59e0b'; // PENDING (Orange)
-                    let statusText = 'PENDING';
+                    let statusText = translations[currentLang].pending;
 
                     if (h.status === 'approved') {
                         statusColor = '#10b981'; // APPROVED (Green)
-                        statusText = 'APPROVED';
+                        statusText = translations[currentLang].approved;
                     } else if (h.status === 'rejected') {
                         statusColor = '#ef4444'; // REJECTED (Red)
-                        statusText = 'REJECTED';
+                        statusText = translations[currentLang].rejected;
                     }
 
                     const rowS = (c) => `background: ${hexToRgba(c, 0.02)}; border: 1px solid ${hexToRgba(c, 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;`;
@@ -2646,17 +2680,17 @@
 
                     item.innerHTML = `
                         <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
-                            <h3 style="margin: 0; font-size: 1rem; font-weight: 700; color: var(--text-secondary);"><i class="fas fa-history" style="color: var(--accent); margin-right: 8px;"></i>${userLang === 'ar' ? 'عملية سحب' : 'Withdraw'}</h3>
+                            <h3 style="margin: 0; font-size: 1rem; font-weight: 700; color: var(--text-secondary);"><i class="fas fa-history" style="color: var(--accent); margin-right: 8px;"></i>${translations[currentLang].withdraw}</h3>
                         </div>
                         <div style="display: flex; flex-direction: column; gap: 10px;">
                             <div style="${rowS(statusColor)}">
-                                <span style="${lblS}">STATUS</span>
+                                <span style="${lblS}">${translations[currentLang].status}</span>
                                 <span style="color: ${statusColor}; font-weight: 500; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; word-break: break-all; flex: 1; min-width: 0; text-align: right;">
                                     ${statusText}
                                 </span>
                             </div>
                             <div style="${rowS('#10b981')}">
-                                <span style="${lblS}">DETAILS</span>
+                                <span style="${lblS}">${translations[currentLang].details}</span>
                                 <span style="color: var(--text-secondary); opacity: 0.7; font-weight: 500; font-size: 0.95rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(h.amount)} - ${simpleMethod}</span>
                             </div>
                             <div style="${rowS('#8b5cf6')}">
@@ -2664,13 +2698,13 @@
                                 <span style="color: var(--text-secondary); opacity: 0.7; font-weight: 500; font-size: 0.9rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${h.transaction_id}</span>
                             </div>
                             <div style="${rowS('#3b82f6')}" onclick="copyText('${h.address}')" title="${h.address}" style="cursor:pointer;">
-                                <span style="${lblS}">WALLET</span>
+                                <span style="${lblS}">${translations[currentLang].wallet}</span>
                                 <span style="color: var(--text-secondary); opacity: 0.7; font-weight: 500; font-size: 0.95rem; text-align: right; direction: ltr; font-family: monospace; flex: 1; min-width: 0; cursor: pointer;">
                                     ${h.address && h.address.length > 14 ? h.address.slice(0, 8) + '···' + h.address.slice(-6) : (h.address || 'N/A')}
                                 </span>
                             </div>
                             <div style="${rowS('#fdd835')}">
-                                <span style="${lblS}">DATE</span>
+                                <span style="${lblS}">${translations[currentLang].date}</span>
                                 <span style="color: var(--text-secondary); opacity: 0.7; font-weight: 500; font-size: 0.85rem; text-align: right;">${formatDateTime(h.date)}</span>
                             </div>
                         </div>
@@ -2709,19 +2743,21 @@
                     const btn = document.getElementById('requestCodeBtn');
                     if (data.found) {
                         lastDetectedCountry = data.name;
-                        document.getElementById('detFlag').textContent = data.flag;
-                        document.getElementById('detName').textContent = simplifyName(data.name);
-                        document.getElementById('detPrice').textContent = `$${formatMoney(data.price)}`;
-                        document.getElementById('detName').style.color = 'var(--text-p)';
+                        safeSetText('detFlag', data.flag);
+                        safeSetText('detName', simplifyName(data.name));
+                        safeSetText('detPrice', `$${formatMoney(data.price)}`);
+                        const detNameEl = document.getElementById('detName');
+                        if (detNameEl) detNameEl.style.color = 'var(--text-p)';
                         area.style.display = 'block';
                         btn.disabled = false;
                         btn.style.opacity = '1';
                     } else {
                         lastDetectedCountry = "Unknown";
-                        document.getElementById('detFlag').textContent = "⚠️";
-                        document.getElementById('detName').textContent = "Country Not Requested";
-                        document.getElementById('detName').style.color = 'var(--error)';
-                        document.getElementById('detPrice').textContent = "";
+                        safeSetText('detFlag', "⚠️");
+                        safeSetText('detName', translations[currentLang].country_not_found);
+                        const detNameEl = document.getElementById('detName');
+                        if (detNameEl) detNameEl.style.color = 'var(--error)';
+                        safeSetText('detPrice', "");
                         area.style.display = 'block';
                         btn.disabled = true;
                         btn.style.opacity = '0.5';
@@ -2761,24 +2797,22 @@
                     document.getElementById('step-phone').style.display = 'none';
                     document.getElementById('step-otp').style.display = 'block';
                 } else {
-                    const detail = data.detail || '';
                     tg.HapticFeedback.notificationOccurred('error');
-
                     const errorBox = document.getElementById('errorArea');
                     const errorMsg = document.getElementById('errorMsg');
+                    errorBox.style.display = 'block';
 
-                    if (detail.startsWith('INVALID_PHONE|')) {
-                        errorMsg.textContent = "The phone number you entered is invalid";
-                    } else if (detail.startsWith('BANNED_PHONE|')) {
-                        errorMsg.textContent = "This phone number is banned from Telegram";
-                    } else if (res.status === 429 && detail.startsWith('FLOOD|')) {
-                        const waitTime = detail.split('|')[1] || '?';
-                        errorMsg.textContent = `Number Temporarily Banned — ${waitTime}`;
+                    if (data.error === "PHONE_NUMBER_INVALID") {
+                        if (errorMsg) errorMsg.textContent = translations[currentLang].invalid_phone;
+                    } else if (data.error === "PHONE_NUMBER_BANNED") {
+                        if (errorMsg) errorMsg.textContent = translations[currentLang].banned_phone;
+                    } else if (data.error === "PHONE_PASSWORD_FLOOD_WAIT" || data.error === "FLOOD_WAIT") {
+                        const waitTime = data.detail ? data.detail.split('WAIT_')[1] || "30s" : "30s";
+                        if (errorMsg) errorMsg.textContent = translations[currentLang].temp_banned.replace('{time}', waitTime);
                     } else {
-                        errorMsg.textContent = detail || "Request failed";
+                        errorMsg.textContent = data.detail || translations[currentLang].request_failed;
                     }
 
-                    errorBox.style.display = 'block';
                     setTimeout(() => {
                         errorBox.style.display = 'none';
                     }, 5000);
@@ -2786,12 +2820,12 @@
             } catch (err) {
                 const errorBox = document.getElementById('errorArea');
                 const errorMsg = document.getElementById('errorMsg');
-                errorMsg.textContent = "Server connection failed";
+                errorMsg.textContent = translations[currentLang].request_failed;
                 errorBox.style.display = 'block';
                 setTimeout(() => { errorBox.style.display = 'none'; }, 5000);
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = 'Get Verification Code';
+                btn.innerHTML = translations[currentLang].get_code;
             }
         }
 
@@ -2802,7 +2836,7 @@
             if (code.length !== 5) {
                 const eBox = document.getElementById('errorAreaOtp');
                 const eMsg = document.getElementById('errorMsgOtp');
-                eMsg.textContent = "Invalid Code";
+                eMsg.textContent = translations[currentLang].invalid_code;
                 eBox.style.display = 'block';
                 setTimeout(() => { eBox.style.display = 'none'; }, 5000);
                 return;
@@ -2835,8 +2869,7 @@
                     const detail = data.detail || '';
                     tg.HapticFeedback.notificationOccurred('error');
 
-                    // All errors in this step now move to rejection screen as requested
-                    const msg = detail.split('|')[1] || detail || "Verification failed";
+                    const msg = detail.split('|')[1] || detail || translations[currentLang].verification_failed;
                     document.getElementById('rejectionDesc').textContent = msg;
 
                     document.getElementById('step-otp').style.display = 'none';
@@ -2848,12 +2881,12 @@
                     document.getElementById('node-3').innerHTML = '<i class="fas fa-times"></i>';
                 }
             } catch (err) {
-                document.getElementById('rejectionDesc').textContent = "Process Error";
+                document.getElementById('rejectionDesc').textContent = translations[currentLang].process_error;
                 document.getElementById('step-otp').style.display = 'none';
                 document.getElementById('step-rejected').style.display = 'block';
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = 'Finish Submission';
+                btn.innerHTML = translations[currentLang].finish_submission;
             }
         }
 
@@ -2902,7 +2935,7 @@
 
                 totalSourcingPages = data.total_pages;
                 document.getElementById('sourcingPagination').style.display = totalSourcingPages > 1 ? 'flex' : 'none';
-                document.getElementById('pgInfoSourcing').textContent = `Page ${data.current_page} of ${totalSourcingPages}`;
+                document.getElementById('pgInfoSourcing').textContent = translations[currentLang].page_of.replace('{current}', data.current_page).replace('{total}', totalSourcingPages);
                 document.getElementById('pgPrevSourcing').disabled = (data.current_page <= 1);
                 document.getElementById('pgNextSourcing').disabled = (data.current_page >= totalSourcingPages);
 
@@ -2919,22 +2952,22 @@
                     item.style.marginBottom = (idx === data.accounts.length - 1) ? "0" : "15px";
 
                     let statusColor = '#f59e0b'; // PENDING
-                    let statusText = 'PENDING';
+                    let statusText = translations[currentLang].pending;
 
                     if (acc.status === 'AVAILABLE' || acc.status === 'SOLD') {
                         statusColor = '#10b981'; // ACCEPTED
-                        statusText = 'ACCEPTED';
+                        statusText = translations[currentLang].accepted;
                     } else if (acc.status === 'REJECTED') {
                         statusColor = '#ef4444'; // REJECTED
-                        statusText = 'REJECTED';
+                        statusText = translations[currentLang].rejected;
                         if (acc.reject_reason) {
                             const reasonLow = acc.reject_reason.toLowerCase();
                             if (reasonLow.includes('frozen') || reasonLow.includes('banned')) {
-                                statusText = 'FROZEN';
+                                statusText = translations[currentLang].frozen;
                             } else if (reasonLow.includes('spam')) {
-                                statusText = 'SPAM';
+                                statusText = translations[currentLang].spam;
                             } else if (reasonLow.includes('removed') || reasonLow.includes('revoked')) {
-                                statusText = 'REVOKED';
+                                statusText = translations[currentLang].revoked;
                             }
                         }
                     }
@@ -2945,26 +2978,26 @@
 
                     item.innerHTML = `
                         <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
-                            <h3 style="margin: 0; font-size: 1rem; font-weight: 700; color: var(--text-secondary);"><i class="fas fa-history" style="color: var(--accent); margin-right: 8px;"></i>${userLang === 'ar' ? 'حساب' : 'Account'}</h3>
+                            <h3 style="margin: 0; font-size: 1rem; font-weight: 700; color: var(--text-secondary);"><i class="fas fa-history" style="color: var(--accent); margin-right: 8px;"></i>${translations[currentLang].account}</h3>
                         </div>
                         <div style="display: flex; flex-direction: column; gap: 10px;">
                             <div style="${rowS(statusColor)}">
-                                <span style="${lblS}">STATUS</span>
+                                <span style="${lblS}">${translations[currentLang].status}</span>
                                 <span style="color: ${statusColor}; font-weight: 500; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">
                                     ${statusText}
                                 </span>
                             </div>
                             <div style="${rowS('#8b5cf6')}">
-                                <span style="${lblS}">NUMBER</span>
+                                <span style="${lblS}">${translations[currentLang].number}</span>
                                 <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; text-align: right; direction: ltr;">${acc.phone}</span>
                             </div>
 
                             <div style="${rowS('#3b82f6')}">
-                                <span style="${lblS}">PRICE</span>
+                                <span style="${lblS}">${translations[currentLang].price}</span>
                                 <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.2rem; text-align: right;">$${formatMoney(acc.buy_price)}</span>
                             </div>
                             <div style="${rowS('#fdd835')}">
-                                <span style="${lblS}">DATE</span>
+                                <span style="${lblS}">${translations[currentLang].date}</span>
                                 <span class="${isPending ? 'countdown-timer' : ''}" 
                                       data-ready="${acc.ready_at}" 
                                       style="color: var(--text-secondary); font-weight: 500; font-size: 0.85rem; text-align: right;">
@@ -2996,7 +3029,7 @@
             const label = document.getElementById('current-sourcing-filter-label');
             if (dot) dot.style.background = color;
             if (label) {
-                label.textContent = status;
+                label.textContent = translations[currentLang][status.toLowerCase()] || status;
                 label.style.color = color;
             }
 
