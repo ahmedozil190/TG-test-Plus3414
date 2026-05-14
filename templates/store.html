@@ -1050,14 +1050,14 @@
             <div class="tabs-row" style="margin-bottom: 25px; display: flex; flex-direction: column; gap: 12px;">
                 <!-- Binance Pay -->
                 <button class="tab-btn active" onclick="switchDepositMethod('binance_pay', this)"
-                    style="padding: 18px 20px; text-align: left; position: relative;">
+                    style="padding: 18px 20px; text-align: left !important; direction: ltr !important; position: relative;">
                     <div style="display: flex; align-items: center; gap: 15px; width: 100%;">
                         <div
                             style="font-size: 1.5rem; color: #f3ba2f; background: rgba(243, 186, 47, 0.1); width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                             <i class="fas fa-bolt"></i>
                         </div>
                         <div style="flex: 1;">
-                            <div style="font-weight: 800; font-size: 1rem; color: var(--text-p); font-weight: 700;" data-i18n="binance_pay">
+                            <div style="font-weight: 800; font-size: 1rem; color: var(--text-p); font-weight: 700;">
                                 Binance Pay</div>
                         </div>
                         <div class="active-check" style="display: block; color: var(--accent); font-size: 1.3rem;">
@@ -1068,14 +1068,14 @@
 
                 <!-- TRX -->
                 <button class="tab-btn" onclick="switchDepositMethod('trx_trc20', this)"
-                    style="padding: 18px 20px; text-align: left; position: relative;">
+                    style="padding: 18px 20px; text-align: left !important; direction: ltr !important; position: relative;">
                     <div style="display: flex; align-items: center; gap: 15px; width: 100%;">
                         <div
                             style="font-size: 1.5rem; color: #ff0013; background: rgba(255, 0, 19, 0.1); width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                             <i class="fas fa-coins"></i>
                         </div>
                         <div style="flex: 1;">
-                            <div style="font-weight: 800; font-size: 1rem; color: var(--text-p); font-weight: 700;" data-i18n="trx_trc20">TRX
+                            <div style="font-weight: 800; font-size: 1rem; color: var(--text-p); font-weight: 700;">TRX
                                 (TRC20)</div>
                         </div>
                         <div class="active-check" style="display: none; color: var(--accent); font-size: 1.3rem;">
@@ -1086,14 +1086,14 @@
 
                 <!-- USDT -->
                 <button class="tab-btn" onclick="switchDepositMethod('usdt_bep20', this)"
-                    style="padding: 18px 20px; text-align: left; position: relative;">
+                    style="padding: 18px 20px; text-align: left !important; direction: ltr !important; position: relative;">
                     <div style="display: flex; align-items: center; gap: 15px; width: 100%;">
                         <div
                             style="font-size: 1.5rem; color: #32d74b; background: rgba(50, 215, 75, 0.1); width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                             <i class="fas fa-shield-halved"></i>
                         </div>
                         <div style="flex: 1;">
-                            <div style="font-weight: 800; font-size: 1rem; color: var(--text-p); font-weight: 700;" data-i18n="usdt_bep20">USDT
+                            <div style="font-weight: 800; font-size: 1rem; color: var(--text-p); font-weight: 700;">USDT
                                 (BEP20)</div>
                         </div>
                         <div class="active-check" style="display: none; color: var(--accent); font-size: 1.3rem;">
@@ -1108,7 +1108,7 @@
                 <div id="deposit-method-icon" style="font-size: 2.5rem; color: #f3ba2f; margin-bottom: 12px;">
                     <i class="fas fa-bolt"></i>
                 </div>
-                <h3 id="deposit-method-title" style="margin-bottom: 10px; font-size: 1.1rem;" data-i18n="binance_pay">Binance Pay</h3>
+                <h3 id="deposit-method-title" style="margin-bottom: 10px; font-size: 1.1rem; direction: ltr !important;">Binance Pay</h3>
                 <p id="deposit-method-desc" data-i18n="binance_pay_short_desc"
                     style="color: var(--text-s); font-size: 0.85rem; margin-bottom: 20px; line-height: 1.5;">
                     Please transfer USDT via Binance Internal Transfer (Binance Pay) to the Pay ID below.
