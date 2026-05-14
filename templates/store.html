@@ -900,17 +900,11 @@
             <div class="nav-item" id="m-support" onclick="switchNav('support', this)">
                 <i class="fas fa-headset"></i> <span data-i18n="nav_support">Support</span>
             </div>
-        </div>
-        <div class="side-footer" style="padding: 20px; border-top: 1px solid var(--border);">
-            <div style="display: flex; align-items: center; gap: 10px; background: var(--bg); padding: 10px 15px; border-radius: 12px; border: 1px solid var(--border);">
-                <i class="fas fa-language" style="color: var(--accent);"></i>
-                <select id="lang-selector" onchange="setLanguage(this.value)" style="background: transparent; color: var(--text-p); border: none; font-size: 0.85rem; font-weight: 600; outline: none; cursor: pointer; flex: 1;">
-                    <option value="en" style="background: var(--bg);">English</option>
-                    <option value="ar" style="background: var(--bg);">العربية</option>
-                    <option value="zh" style="background: var(--bg);">简体中文</option>
-                </select>
+            <div class="nav-item" id="m-lang" onclick="switchNav('lang', this)">
+                <i class="fas fa-language"></i> <span data-i18n="nav_lang">Language</span>
             </div>
         </div>
+        <div class="side-footer"></div>
     </div>
 
     <header class="top-bar">
@@ -1221,6 +1215,47 @@
                 </button>
             </div>
         </section>
+
+        <!-- View: Language -->
+        <section id="section-lang" class="view-panel">
+            <div class="section-header" style="margin-top: 0;">
+                <i class="fas fa-language"></i> <span data-i18n="nav_lang">Language</span>
+            </div>
+            <p style="color: var(--text-s); font-size: 0.9rem; margin-bottom: 25px;" data-i18n="lang_desc">Select your preferred language for the interface.</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <div class="info-card" onclick="setLanguage('en')" style="cursor: pointer; padding: 20px; border: 1px solid var(--border);">
+                    <div style="display: flex; align-items: center; gap: 15px; flex: 1;">
+                        <span style="font-size: 1.5rem;">🇺🇸</span>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 700; color: var(--text-p);">English</div>
+                            <div style="font-size: 0.8rem; color: var(--text-s);">International Standard</div>
+                        </div>
+                        <i id="check-en" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
+                    </div>
+                </div>
+                <div class="info-card" onclick="setLanguage('ar')" style="cursor: pointer; padding: 20px; border: 1px solid var(--border);">
+                    <div style="display: flex; align-items: center; gap: 15px; flex: 1;">
+                        <span style="font-size: 1.5rem;">🇸🇦</span>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 700; color: var(--text-p);">العربية</div>
+                            <div style="font-size: 0.8rem; color: var(--text-s);">اللغة العربية الفصحى</div>
+                        </div>
+                        <i id="check-ar" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
+                    </div>
+                </div>
+                <div class="info-card" onclick="setLanguage('zh')" style="cursor: pointer; padding: 20px; border: 1px solid var(--border);">
+                    <div style="display: flex; align-items: center; gap: 15px; flex: 1;">
+                        <span style="font-size: 1.5rem;">🇨🇳</span>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 700; color: var(--text-p);">简体中文</div>
+                            <div style="font-size: 0.8rem; color: var(--text-s);">中国官方语言</div>
+                        </div>
+                        <i id="check-zh" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
     <!-- Referrals Section -->
@@ -1448,6 +1483,7 @@
                 completed_orders: "Completed Orders", active_orders: "Active Orders", unique_countries: "Unique Countries",
                 dep_title: "Deposit History", dep_empty: "No deposits found.",
                 hist_title: "Orders History", hist_empty: "No orders history found.",
+                nav_lang: "Language", lang_desc: "Select your preferred language for the interface.",
                 insufficient_bal: "Insufficient balance",
                 sub_required: "Subscription Required",
                 sub_desc: "To use the bot and access the store, you must join our channels first.",
@@ -1468,6 +1504,7 @@
                 completed_orders: "طلبات مكتملة", active_orders: "طلبات نشطة", unique_countries: "دول فريدة",
                 hist_title: "سجل الطلبات", hist_empty: "لا توجد طلبات.",
                 dep_title: "سجل الإيداعات", dep_empty: "لا توجد سجلات إيداع.",
+                nav_lang: "اللغة", lang_desc: "اختر لغتك المفضلة لواجهة المستخدم.",
                 insufficient_bal: "الرصيد غير كافٍ",
                 sub_required: "الاشتراك إجباري",
                 sub_desc: "لاستخدام البوت والوصول للمتجر، يجب عليك الانضمام لقنواتنا أولاً.",
@@ -1488,6 +1525,7 @@
                 completed_orders: "已完成订单", active_orders: "活跃订单", unique_countries: "独特国家",
                 hist_title: "订单历史", hist_empty: "未找到订单历史。",
                 dep_title: "充值记录", dep_empty: "未找到充值记录。",
+                nav_lang: "语言", lang_desc: "选择您界面的首选语言。",
                 insufficient_bal: "余额不足",
                 sub_required: "需要订阅",
                 sub_desc: "要使用机器人并访问商店，您必须先加入我们的频道。",
@@ -1601,7 +1639,10 @@
         async function init(isManual = false) {
             try {
                 // Determine language
-                if (tg.initDataUnsafe?.user?.language_code === 'ar') {
+                const savedLang = localStorage.getItem('preferredLang');
+                if (savedLang) {
+                    currentLang = savedLang;
+                } else if (tg.initDataUnsafe?.user?.language_code === 'ar') {
                     currentLang = 'ar';
                 }
                 updateTranslations();
@@ -1862,6 +1903,12 @@
             const selector = document.getElementById('lang-selector');
             if (selector) selector.value = currentLang;
 
+            // Sync visual checks
+            ['en', 'ar', 'zh'].forEach(l => {
+                const check = document.getElementById('check-' + l);
+                if (check) check.style.display = (l === currentLang) ? 'block' : 'none';
+            });
+
             // Update view title if necessary
             const activeTab = sessionStorage.getItem('activeTab') || 'home';
             const titleEl = document.getElementById('view-title');
@@ -1870,7 +1917,7 @@
 
         function setLanguage(lang) {
             currentLang = lang;
-            sessionStorage.setItem('preferredLang', lang);
+            localStorage.setItem('preferredLang', lang);
             updateTranslations();
 
             // Optional: Tell backend about language preference

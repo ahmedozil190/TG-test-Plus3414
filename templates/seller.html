@@ -1324,6 +1324,9 @@
             <div class="nav-item" id="btn-support" onclick="changeView('support')">
                 <i class="fas fa-headset"></i> <span data-i18n="nav_support">Support</span>
             </div>
+            <div class="nav-item" id="btn-lang" onclick="changeView('lang')">
+                <i class="fas fa-language"></i> <span data-i18n="nav_lang">Language</span>
+            </div>
         </div>
 
         <div class="side-footer" style="padding: 20px; border-top: 1px solid var(--border);">
@@ -1704,6 +1707,47 @@
             </div>
         </div>
 
+        <!-- View: Language -->
+        <div class="view-panel" id="view-lang">
+            <div class="section-header" style="margin-top: 0;">
+                <i class="fas fa-language"></i> <span data-i18n="nav_lang">Language</span>
+            </div>
+            <p style="color: var(--text-s); font-size: 0.9rem; margin-bottom: 25px;" data-i18n="lang_desc">Select your preferred language for the interface.</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <div class="info-card" onclick="setLanguage('en')" style="cursor: pointer; padding: 20px; border: 1px solid var(--border);">
+                    <div style="display: flex; align-items: center; gap: 15px; flex: 1;">
+                        <span style="font-size: 1.5rem;">🇺🇸</span>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 700; color: var(--text-p);">English</div>
+                            <div style="font-size: 0.8rem; color: var(--text-s);">International Standard</div>
+                        </div>
+                        <i id="check-en" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
+                    </div>
+                </div>
+                <div class="info-card" onclick="setLanguage('ar')" style="cursor: pointer; padding: 20px; border: 1px solid var(--border);">
+                    <div style="display: flex; align-items: center; gap: 15px; flex: 1;">
+                        <span style="font-size: 1.5rem;">🇸🇦</span>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 700; color: var(--text-p);">العربية</div>
+                            <div style="font-size: 0.8rem; color: var(--text-s);">اللغة العربية الفصحى</div>
+                        </div>
+                        <i id="check-ar" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
+                    </div>
+                </div>
+                <div class="info-card" onclick="setLanguage('zh')" style="cursor: pointer; padding: 20px; border: 1px solid var(--border);">
+                    <div style="display: flex; align-items: center; gap: 15px; flex: 1;">
+                        <span style="font-size: 1.5rem;">🇨🇳</span>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 700; color: var(--text-p);">简体中文</div>
+                            <div style="font-size: 0.8rem; color: var(--text-s);">中国官方语言</div>
+                        </div>
+                        <i id="check-zh" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- Confirmation Modal Structure -->
@@ -1926,6 +1970,12 @@
             const selector = document.getElementById('lang-selector');
             if (selector) selector.value = currentLang;
 
+            // Sync visual checks
+            ['en', 'ar', 'zh'].forEach(l => {
+                const check = document.getElementById('check-' + l);
+                if (check) check.style.display = (l === currentLang) ? 'block' : 'none';
+            });
+
             // Update title
             const activeView = window.location.hash.replace('#', '') || 'dashboard';
             const titles = {
@@ -1933,7 +1983,8 @@
                 submit: 'nav_submit',
                 withdraw: 'nav_withdraw',
                 pricing: 'nav_pricing',
-                support: 'nav_support'
+                support: 'nav_support',
+                lang: 'nav_lang'
             };
             const titleKey = titles[activeView] || 'nav_dashboard';
             document.getElementById('viewTitle').innerText = translations[currentLang][titleKey] || 'Dashboard';
@@ -1941,7 +1992,7 @@
 
         function setLanguage(lang) {
             currentLang = lang;
-            sessionStorage.setItem('preferredLang_sourcing', lang);
+            localStorage.setItem('preferredLang_sourcing', lang);
             updateTranslations();
 
             // Optional: Tell backend about language preference
@@ -1990,6 +2041,15 @@
             if (overlay) overlay.style.display = 'none';
         }
         async function init(isManual = false) {
+            // Determine language
+            const savedLang = localStorage.getItem('preferredLang_sourcing');
+            if (savedLang) {
+                currentLang = savedLang;
+            } else if (tg.initDataUnsafe?.user?.language_code === 'ar') {
+                currentLang = 'ar';
+            }
+            updateTranslations();
+
             const subBtn = document.getElementById('sub-check-btn');
             const originalText = subBtn ? subBtn.innerText : '';
 
