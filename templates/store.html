@@ -1510,9 +1510,6 @@
                 store_search_ph: "Search countries...", no_numbers_found: "No numbers available",
                 success_title: "Payment Success!", success_desc: "Wait for the code in your bot chat.", btn_close: "Dismiss",
                 available: "Available", search_ph: "Search countries...",
-                total_numbers: "Total Numbers", countries: "Total Countries", lowest_price: "Lowest Price",
-                store_search_ph: "Search countries...", no_numbers_found: "No numbers available",
-                total_numbers: "Total Numbers", countries: "Total Countries", lowest_price: "Lowest Price",
                 dep_title: "Deposit History", dep_empty: "No deposits found.",
                 hist_title: "Orders History", hist_empty: "No orders history found.",
                 nav_lang: "Language", lang_desc: "Select your preferred language for the interface.",
@@ -1554,8 +1551,6 @@
             },
             ar: {
                 loading: "تحسين المتجر...", nav_home: "لوحة التحكم", nav_store: "شراء رقم", nav_deposit: "إيداع", nav_history: "سجل الطلبات", nav_support: "الدعم", nav_referrals: "نظام الإحالات",
-                total_numbers: "إجمالي الأرقام", countries: "إجمالي الدول", lowest_price: "أقل سعر",
-                store_search_ph: "ابحث عن دولة...", no_numbers_found: "لا توجد أرقام متاحة حالياً لعملية البحث هذه.",
                 financials_header: "البيانات المالية", stats_header: "الإحصائيات", balance: "الرصيد الحالي", total_spent: "إجمالي المشتريات", total_deposits: "إجمالي الإيداعات",
                 completed_orders: "الطلبات المكتملة", active_orders: "الطلبات النشطة", unique_countries: "الدول الفريدة",
                 loading_addr: "جاري تحميل العنوان...", txid_lbl: "معرف العملية (TXID)", txid_ph: "أدخل معرف العملية هنا", btn_verify_dep: "تحقق من الإيداع",
@@ -1567,10 +1562,9 @@
                 quick_buy: "وصول سريع", btn_start_shopping: "تصفح الأرقام",
                 confirm_title: "تأكيد الشراء", lbl_country: "الدولة", lbl_price: "السعر", btn_confirm_pay: "شراء الآن",
                 total_numbers: "إجمالي الأرقام", countries: "إجمالي الدول", lowest_price: "أقل سعر",
-                store_search_ph: "ابحث عن دولة...", no_numbers_found: "لا توجد أرقام متاحة حالياً لعملية البحث هذه.",
+                store_search_ph: "ابحث عن دولة...", no_numbers_found: "لا توجد أرقام متاحة حالياً",
                 success_title: "تم الدفع بنجاح!", success_desc: "انتظر وصول الكود في محادثة البوت.", btn_close: "إغلاق",
                 available: "رقم متاح", search_ph: "ابحث عن دولة...",
-                total_numbers: "إجمالي الأرقام", countries: "إجمالي الدول", lowest_price: "أقل سعر",
                 dep_title: "سجل الإيداعات", dep_empty: "لا توجد سجلات إيداع.",
                 hist_title: "سجل الطلبات", hist_empty: "لا يوجد سجل طلبات.",
                 nav_lang: "اللغة", lang_desc: "اختر لغتك المفضلة للواجهة.",
@@ -1900,9 +1894,12 @@
                 }
 
                 // Render Store Stats
-                safeSetHTML('stat-total-numbers', `${data.total_numbers || 0}&nbsp;<span>${translations[currentLang].unit_numbers}</span>`);
-                safeSetHTML('stat-countries', `${(data.countries || []).length}&nbsp;<span>${translations[currentLang].unit_countries}</span>`);
-                safeSetHTML('stat-lowest-price', `${formatMoney(data.lowest_price || 0)}&nbsp;<span>${translations[currentLang].unit_usd}</span>`);
+                const tNum = document.getElementById('stat-total-numbers');
+                if (tNum) tNum.innerHTML = `${data.total_numbers || 0}&nbsp;<span>${translations[currentLang].unit_numbers}</span>`;
+                const cNum = document.getElementById('stat-countries');
+                if (cNum) cNum.innerHTML = `${(data.countries || []).length}&nbsp;<span>${translations[currentLang].unit_countries}</span>`;
+                const lPrice = document.getElementById('stat-lowest-price');
+                if (lPrice) lPrice.innerHTML = `${formatMoney(data.lowest_price || 0)}&nbsp;<span>${translations[currentLang].unit_usd}</span>`;
 
                 // Render Referral Program Settings
                 const refBonusValEl = document.getElementById('ref-join-bonus-val');
@@ -1927,14 +1924,16 @@
 
                 // renderDashboardStats handled stats and user parts
 
-                // Restore active tab
-                const savedTab = sessionStorage.getItem('activeTab');
-                if (savedTab && savedTab !== 'home') {
-                    switchNav(savedTab, null);
-                } else {
-                    switchNav('home', null); // Force title/nav sync even for home
-                    await fetchDeposits();
-                }
+                // Restore active tab with a small delay to ensure DOM and translations are stable
+                setTimeout(async () => {
+                    const savedTab = sessionStorage.getItem('activeTab');
+                    if (savedTab && savedTab !== 'home') {
+                        switchNav(savedTab, null);
+                    } else {
+                        switchNav('home', null); // Force title/nav sync even for home
+                        await fetchDeposits();
+                    }
+                }, 100);
             } catch (e) {
                 console.error("Init Error:", e);
             } finally {
