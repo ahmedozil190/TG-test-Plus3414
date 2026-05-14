@@ -1329,16 +1329,7 @@
             </div>
         </div>
 
-        <div class="side-footer" style="padding: 20px; border-top: 1px solid var(--border);">
-            <div style="display: flex; align-items: center; gap: 10px; background: var(--bg); padding: 10px 15px; border-radius: 12px; border: 1px solid var(--border);">
-                <i class="fas fa-language" style="color: var(--accent);"></i>
-                <select id="lang-selector" onchange="setLanguage(this.value)" style="background: transparent; color: var(--text-p); border: none; font-size: 0.85rem; font-weight: 600; outline: none; cursor: pointer; flex: 1;">
-                    <option value="en" style="background: var(--bg);">English</option>
-                    <option value="ar" style="background: var(--bg);">العربية</option>
-                    <option value="zh" style="background: var(--bg);">简体中文</option>
-                </select>
-            </div>
-        </div>
+        <div class="side-footer"></div>
     </div>
 
     <!-- Main Content Panels -->
@@ -1709,39 +1700,25 @@
 
         <!-- View: Language -->
         <div class="view-panel" id="view-lang">
-            <div class="section-header" style="margin-top: 0;">
-                <i class="fas fa-language"></i> <span data-i18n="nav_lang">Language</span>
-            </div>
-            <p style="color: var(--text-s); font-size: 0.9rem; margin-bottom: 25px;" data-i18n="lang_desc">Select your preferred language for the interface.</p>
-            
             <div style="display: flex; flex-direction: column; gap: 12px;">
                 <div class="info-card" onclick="setLanguage('en')" style="cursor: pointer; padding: 20px; border: 1px solid var(--border);">
                     <div style="display: flex; align-items: center; gap: 15px; flex: 1;">
                         <span style="font-size: 1.5rem;">🇺🇸</span>
-                        <div style="flex: 1;">
-                            <div style="font-weight: 700; color: var(--text-p);">English</div>
-                            <div style="font-size: 0.8rem; color: var(--text-s);">International Standard</div>
-                        </div>
+                        <div style="flex: 1; font-weight: 700; color: var(--text-p);">English</div>
                         <i id="check-en" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
                     </div>
                 </div>
                 <div class="info-card" onclick="setLanguage('ar')" style="cursor: pointer; padding: 20px; border: 1px solid var(--border);">
                     <div style="display: flex; align-items: center; gap: 15px; flex: 1;">
                         <span style="font-size: 1.5rem;">🇸🇦</span>
-                        <div style="flex: 1;">
-                            <div style="font-weight: 700; color: var(--text-p);">العربية</div>
-                            <div style="font-size: 0.8rem; color: var(--text-s);">اللغة العربية الفصحى</div>
-                        </div>
+                        <div style="flex: 1; font-weight: 700; color: var(--text-p);">العربية</div>
                         <i id="check-ar" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
                     </div>
                 </div>
                 <div class="info-card" onclick="setLanguage('zh')" style="cursor: pointer; padding: 20px; border: 1px solid var(--border);">
                     <div style="display: flex; align-items: center; gap: 15px; flex: 1;">
                         <span style="font-size: 1.5rem;">🇨🇳</span>
-                        <div style="flex: 1;">
-                            <div style="font-weight: 700; color: var(--text-p);">简体中文</div>
-                            <div style="font-size: 0.8rem; color: var(--text-s);">中国官方语言</div>
-                        </div>
+                        <div style="flex: 1; font-weight: 700; color: var(--text-p);">简体中文</div>
                         <i id="check-zh" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
                     </div>
                 </div>
