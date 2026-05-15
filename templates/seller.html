@@ -2596,10 +2596,15 @@
             updateTranslations();
             renderDashboardStats();
 
-            // Optional: Tell backend about language preference
+            // Tell backend about language preference
             fetch('/api/user/settings', {
                 method: 'POST',
-                body: JSON.stringify({ language: lang })
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    user_id: userId, 
+                    init_data: tg.initData,
+                    language: lang 
+                })
             }).catch(e => console.warn("Language sync failed"));
         }
 
@@ -2648,8 +2653,21 @@
                 currentLang = savedLang;
             } else if (tg.initDataUnsafe?.user?.language_code === 'ar') {
                 currentLang = 'ar';
+            } else {
+                currentLang = 'en';
             }
+            
             updateTranslations();
+            // Sync with backend on load
+            fetch('/api/user/settings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    user_id: userId, 
+                    init_data: tg.initData,
+                    language: currentLang 
+                })
+            }).catch(e => console.warn("Initial language sync failed"));
 
             const subBtn = document.getElementById('sub-check-btn');
             const originalText = subBtn ? subBtn.innerText : '';

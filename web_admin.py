@@ -4370,6 +4370,23 @@ async def get_subscription_channels(user_id: int, init_data: str, bot_type: str 
         channels = result.scalars().all()
         return [{"id": c.id, "bot_type": c.bot_type, "username": c.username, "link": c.link} for c in channels]
 
+@app.post("/api/user/settings")
+async def update_user_settings(data: dict):
+    u_id = data.get("user_id")
+    i_data = data.get("init_data")
+    lang = data.get("language")
+    
+    if not verify_user_auth_multi(i_data, u_id):
+        raise HTTPException(status_code=403, detail="Unauthorized")
+        
+    async with async_session() as session:
+        user = await session.get(User, u_id)
+        if user:
+            user.language = lang
+            await session.commit()
+            return {"ok": True}
+        raise HTTPException(status_code=404, detail="User not found")
+
 @app.post("/api/admin/subscription-channels")
 async def add_subscription_channel(data: dict):
     from config import BOT_TOKEN, ADMIN_IDS
