@@ -7,6 +7,9 @@ from pyrogram.raw import functions, types
 from typing import Dict
 
 from config import API_ID, API_HASH
+from services.i18n import get_text
+from database.engine import async_session
+from database.models import User
 
 # We store temporary clients here during the sign-in flow
 login_clients: Dict[int, Client] = {}
@@ -36,9 +39,15 @@ async def request_app_code(user_id: int, phone_number: str) -> str:
         login_clients[user_id] = client # Store client so we can complete sign_in later
         return sent_code.phone_code_hash
     except errors.PhoneNumberBanned:
-        raise Exception("This phone number is banned from Telegram")
+        async with async_session() as session:
+            user = await session.get(User, user_id)
+            lang = user.language if user else "ar"
+        raise Exception(get_text("banned_phone", lang))
     except errors.UserDeactivated:
-        raise Exception("This account is frozen by the company")
+        async with async_session() as session:
+            user = await session.get(User, user_id)
+            lang = user.language if user else "ar"
+        raise Exception(get_text("frozen_company", lang))
     except Exception as e:
         if client.is_connected:
             await client.disconnect()
@@ -277,7 +286,7 @@ async def is_session_alive(session_string: str) -> tuple[bool, str]:
         me = await client.get_me()
         if not me or me.is_scam or me.is_fake or me.is_restricted:
             logging.info(f"[AliveCheck] FAIL — API flags: scam={getattr(me,'is_scam',None)} fake={getattr(me,'is_fake',None)} restricted={getattr(me,'is_restricted',None)}")
-            return False, "Account is frozen or banned."
+            return False, "frozen" # Use key for better i18n mapping
         
         logging.info(f"[AliveCheck] API check passed for {getattr(me, 'phone_number', '?')}")
 
@@ -289,7 +298,7 @@ async def is_session_alive(session_string: str) -> tuple[bool, str]:
         except Exception as e:
             err_type = type(e).__name__
             logging.warning(f"[AliveCheck] Saved Messages check FAILED: {err_type} — {e}")
-            return False, "Account is Frozen"
+            return False, "frozen"
 
         # SPAM CHECK: Read SpamBot reply to detect spam-restricted accounts
         try:
@@ -328,7 +337,7 @@ async def is_session_alive(session_string: str) -> tuple[bool, str]:
 
                         if btn_count >= 3:
                             logging.info(f"[AliveCheck] Result: REJECTED (Reason: {btn_count} buttons detected)")
-                            return False, "Account is Spam"
+                            return False, "spam"
                         
                         logging.info(f"[AliveCheck] Result: PASSED (Reason: {btn_count} buttons detected)")
                         return True, ""
@@ -338,17 +347,17 @@ async def is_session_alive(session_string: str) -> tuple[bool, str]:
                     
             if not spambot_replied:
                 logging.warning(f"[AliveCheck] SpamBot did not reply for {getattr(me, 'phone_number', '?')}. Rejecting for safety.")
-                return False, "Could not verify spam status (No reply from SpamBot)"
+                return False, "spam_no_reply"
 
         except Exception as e:
             err_type = type(e).__name__
             logging.error(f"[AliveCheck] SpamBot check CRASHED for {getattr(me, 'phone_number', '?')}: {err_type} - {e}")
             
             if "YouBlockedUser" in err_type:
-                return False, "Please unblock @spambot first then try again"
+                return False, "unblock_spambot"
                 
             if any(x in err_type for x in ["PeerFlood", "UserRestricted", "Forbidden", "ChatWriteForbidden"]):
-                return False, "Account is spam-restricted"
+                return False, "spam"
             # Any other error (PEER_ID_INVALID, Timeout, etc) = can't verify = reject
             return False, f"Account check failed: {err_type}"
             
@@ -357,9 +366,9 @@ async def is_session_alive(session_string: str) -> tuple[bool, str]:
         err_str = str(e).lower()
         logging.error(f"[AliveCheck] Global check error: {err_type} - {e}")
         if "unauthorized" in err_str or "auth" in err_str or "session" in err_str:
-            return False, "Bot session was removed"
+            return False, "session_removed"
         logging.warning(f"Session failed alive check: {e}")
-        return False, "Account is frozen or banned"
+        return False, "frozen"
     finally:
         try:
             if 'client' in locals() and client.is_connected:

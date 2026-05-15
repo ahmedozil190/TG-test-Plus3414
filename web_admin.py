@@ -23,6 +23,7 @@ from pydantic import BaseModel
 from typing import List
 # Delayed imports inside functions to avoid pyrogram event loop issues
 from services.external_provider import ExternalProvider
+from services.i18n import get_text
 import pycountry
 import re
 import urllib.request
@@ -3414,11 +3415,13 @@ async def seller_request_otp(data: SellerOTPRequest):
         
         if now - last_phone_req < OTP_COOLDOWN_SECONDS:
             wait_time = int(OTP_COOLDOWN_SECONDS - (now - last_phone_req))
-            raise HTTPException(status_code=429, detail=f"Wait {wait_time}s before requesting a code for this number")
+            lang = user.language if user else "ar"
+            raise HTTPException(status_code=429, detail=get_text("wait_code", lang, wait_time=wait_time))
             
         if now - last_user_req < OTP_COOLDOWN_SECONDS:
             wait_time = int(OTP_COOLDOWN_SECONDS - (now - last_user_req))
-            raise HTTPException(status_code=429, detail=f"Wait {wait_time}s before requesting another code.")
+            lang = user.language if user else "ar"
+            raise HTTPException(status_code=429, detail=get_text("wait_another", lang, wait_time=wait_time))
 
         # Update cooldowns
         otp_cooldowns[phone_key] = now
@@ -3433,7 +3436,8 @@ async def seller_request_otp(data: SellerOTPRequest):
             dup_stmt = select(Account).where(Account.phone_number == phone)
             existing = (await session.execute(dup_stmt)).scalar()
             if existing:
-                raise HTTPException(status_code=400, detail="This account already exists in the system")
+                lang = user.language if user else "ar"
+                raise HTTPException(status_code=400, detail=get_text("acc_exists", lang))
 
         # 2. Country & Pricing Check
         try:
@@ -3835,16 +3839,10 @@ async def admin_withdrawal_action(data: WithdrawAction):
                 user = await session.get(User, req.user_id)
                 lang = user.language if user else "ar"
                 
-                if lang == "ar":
-                    if data.action == 'approve':
-                        msg = f"<b>🎉 Congrats <code>{req.transaction_id}</code> withdrawal {req.amount}$</b>"
-                    else:
-                        msg = f"<b>❌ Rejected <code>{req.transaction_id}</code> withdrawal {req.amount}$</b>"
+                if data.action == 'approve':
+                    msg = get_text("withdraw_approved", lang, tx_id=req.transaction_id, amount=req.amount)
                 else:
-                    if data.action == 'approve':
-                        msg = f"<b>🎉 Congrats <code>{req.transaction_id}</code> withdrawal {req.amount}$</b>"
-                    else:
-                        msg = f"<b>❌ Rejected <code>{req.transaction_id}</code> withdrawal {req.amount}$</b>"
+                    msg = get_text("withdraw_rejected", lang, tx_id=req.transaction_id, amount=req.amount)
                 
                 await bot.send_message(req.user_id, msg, parse_mode="HTML")
             except Exception as e:

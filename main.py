@@ -13,6 +13,7 @@ from config import BOT_TOKEN, SELLER_BOT_TOKEN
 from database.engine import init_db, async_session
 from database.models import Account, AccountStatus, CountryPrice, User, Transaction, TransactionType
 from sqlalchemy import select
+from services.i18n import get_text
 from handlers import main_router
 from web_admin import app
 from middlewares.user_update import UserUpdateMiddleware
@@ -113,9 +114,11 @@ async def auto_approve_task(bot_seller: Bot):
                                     # Notify the seller about the delay
                                     if seller:
                                         try:
+                                            lang = seller.language if seller else "ar"
+                                            msg = get_text("pending_sessions", lang, phone=acc.phone_number)
                                             await bot_seller.send_message(
                                                 seller.id,
-                                                f"<b>⏳ Pending <code>{acc.phone_number}</code> Sessions found — wait 24h</b>",
+                                                msg,
                                                 parse_mode="HTML"
                                             )
                                         except Exception as n_err:
@@ -137,9 +140,11 @@ async def auto_approve_task(bot_seller: Bot):
                                     
                                     # Notify via seller bot
                                     try:
+                                        lang = seller.language if seller else "ar"
+                                        msg = get_text("number_approved", lang, phone=acc.phone_number, amount=buy_price)
                                         await bot_seller.send_message(
                                             seller.id,
-                                            f"<b>🎉 Congrats <code>{acc.phone_number}</code> Add {buy_price}$</b>",
+                                            msg,
                                             parse_mode="HTML"
                                         )
                                         logger.info(f"[AutoApprove] Notified seller {seller.id}")
@@ -154,9 +159,12 @@ async def auto_approve_task(bot_seller: Bot):
                                 logger.info(f"[AutoApprove] Rejecting {acc.phone_number} | reason={reject_reason} | seller_id={acc.seller_id}")
                                 if seller:
                                     try:
+                                        lang = seller.language if seller else "ar"
+                                        reason_text = get_text(reject_reason, lang)
+                                        msg = get_text("number_rejected", lang, phone=acc.phone_number, reason=reason_text)
                                         await bot_seller.send_message(
                                             seller.id,
-                                            f"<b>❌ Rejected <code>{acc.phone_number}</code> {reject_reason}</b>",
+                                            msg,
                                             parse_mode="HTML"
                                         )
                                         logger.info(f"[AutoApprove] Rejection notification sent to seller {seller.id}")
