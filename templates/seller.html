@@ -940,6 +940,12 @@
             align-items: flex-end;
         }
 
+        body.rtl .copy-toast-container {
+            right: auto;
+            left: 15px;
+            align-items: flex-start;
+        }
+
         .copy-toast {
             background: var(--bg-elevated);
             backdrop-filter: blur(12px);
@@ -957,7 +963,12 @@
             pointer-events: auto;
         }
 
-        .copy-toast.show {
+        body.rtl .copy-toast {
+            transform: translateX(-120%);
+        }
+
+        .copy-toast.show,
+        body.rtl .copy-toast.show {
             transform: translateX(0);
         }
 

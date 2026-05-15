@@ -708,6 +708,12 @@
             align-items: flex-end;
         }
 
+        body.rtl .toast-container {
+            right: auto;
+            left: 15px;
+            align-items: flex-start;
+        }
+
         .toast {
             background: var(--bg-elevated);
             backdrop-filter: blur(12px);
@@ -725,7 +731,12 @@
             pointer-events: auto;
         }
 
-        .toast.show {
+        body.rtl .toast {
+            transform: translateX(-120%);
+        }
+
+        .toast.show,
+        body.rtl .toast.show {
             transform: translateX(0);
         }
 
