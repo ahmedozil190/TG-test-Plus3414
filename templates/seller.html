@@ -1785,6 +1785,22 @@
                     </div>
                     <i id="check-zh" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
                 </div>
+                <div class="info-card" onclick="setLanguage('bn')"
+                    style="cursor: pointer; padding: 0 20px; border: 1px solid var(--border); height: 75px; display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span style="font-size: 1.5rem; width: 30px; text-align: center;">🇧🇩</span>
+                        <div style="font-weight: 700; color: var(--text-p); font-size: 1rem; line-height: 1;">বাংলা</div>
+                    </div>
+                    <i id="check-bn" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
+                </div>
+                <div class="info-card" onclick="setLanguage('fa')"
+                    style="cursor: pointer; padding: 0 20px; border: 1px solid var(--border); height: 75px; display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span style="font-size: 1.5rem; width: 30px; text-align: center;">🇮🇷</span>
+                        <div style="font-weight: 700; color: var(--text-p); font-size: 1rem; line-height: 1;">فارسی</div>
+                    </div>
+                    <i id="check-fa" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
+                </div>
             </div>
         </div>
 
@@ -2111,13 +2127,101 @@
                 number: "号码",
                 price: "价格",
                 date: "日期",
-                financials_header: "财务数据",
-                stats_header: "统计数据",
-                unit_numbers: "号码",
-                unit_orders: "订单",
-                unit_usd: "美元",
-                unit_users: "用户",
                 unit_countries: "国家"
+            },
+            bn: {
+                nav_dashboard: "নিয়ন্ত্রণ প্যানেল", nav_submit: "নম্বর বিক্রি করুন", nav_withdraw: "সমন্বয়", nav_pricing: "মূল্য তালিকা", nav_support: "সমর্থন", nav_lang: "ভাষা",
+                curr_bal: "বর্তমান ব্যালেন্স", pend_with: "অপেক্ষমান উত্তোলন", total_with: "মোট উত্তোলন",
+                stats: "পরিসংখ্যান", accepted: "গৃহীত", pending: "অপেক্ষমান", rejected: "প্রত্যাখ্যাত",
+                sub_required: "সাবস্ক্রিপশন প্রয়োজন", sub_desc: "বট ব্যবহার এবং এই প্যানেলে অ্যাক্সেস করতে হলে আপনাকে প্রথমে আমাদের চ্যানেলে যোগ দিতে হবে।",
+                sub_check: "আমি যোগ দিয়েছি, প্যানেল খুলুন", join: "যোগ দিন", checking: "যাচাই করা হচ্ছে...",
+                account_details_title: "অ্যাকাউন্ট বিবরণ", account_details_desc: "আন্তর্জাতিক ফোন নম্বর লিখুন। আমরা স্বয়ংক্রিয়ভাবে দেশ এবং আপনার পুরস্কারের মূল্য নির্ধারণ করব।",
+                phone_number_lbl: "ফোন নম্বর", btn_get_code: "যাচাইকরণ কোড নিন",
+                verify_login_title: "যাচাই লগইন করুন", telegram_code_lbl: "টেলিগ্রাম কোড",
+                btn_finish_sub: "সাবমিশন সম্পন্ন করুন", success_title_sub: "চমৎকার কাজ!", success_desc_sub: "পর্যালোচনার জন্য অ্যাকাউন্ট জমা দেওয়া হয়েছে।",
+                btn_try_another: "আরেকটি চেষ্টা করুন", btn_home: "হোম", rejected_title_sub: "অ্যাকাউন্ট প্রত্যাখ্যাত",
+                rejected_desc_sub: "এই অ্যাকাউন্টটি সীমাবদ্ধ বা স্থগিত এবং গ্রহণ করা যাবে না।",
+                sub_history_title: "বিক্রয় ইতিহাস", prev: "পূর্ববর্তী", next: "পরবর্তী", no_subs_found: "এখনও কোনো বিক্রয় পাওয়া যায়নি।",
+                payout_req_title: "উত্তোলন অনুরোধ", payout_req_desc: "আপনার পছন্দসই উত্তোলন পদ্ধতি নির্বাচন করুন। অনুরোধগুলি ২৪-৪৮ ঘন্টার মধ্যে প্রক্রিয়া করা হয়।",
+                min_lbl: "সর্বনিম্ন", withdraw_amount_lbl: "উত্তোলনের পরিমাণ (ইউএসডি)", wallet_lbl: "ওয়ালেট", wallet_ph: "এখানে ঠিকানা লিখুন...",
+                btn_confirm_withdraw: "উত্তোলন নিশ্চিত করুন", withdraw_history_title: "উত্তোলন ইতিহাস", no_withdrawals_found: "এখনও কোনো উত্তোলন পাওয়া যায়নি।",
+                price_search_ph: "দেশ বা কোড দিয়ে খুঁজুন...", no_results_found: "আপনার অনুসন্ধানের জন্য কোনো ফলাফল পাওয়া যায়নি।",
+                contact_support_title: "সমর্থনের সাথে যোগাযোগ করুন", support_desc: "যেকোনো প্রশ্ন বা সমস্যার জন্য আমাদের সমর্থন দল আপনাকে সাহায্য করতে প্রস্তুত।",
+                btn_message_support: "সমর্থন বার্তা পাঠান", confirm_withdraw_title: "উত্তোলন নিশ্চিত করুন",
+                approved: "অনুমোদিত",
+                confirm_withdraw_body: "এগিয়ে যাওয়ার আগে আপনার উত্তولনের বিবরণ সাবধানে পর্যালোচনা করুন।",
+                btn_cancel: "বাতিল করুন", btn_withdraw_confirm: "এখনই উত্তোলন করুন", req_submitted_title: "অনুরোধ জমা দেওয়া হয়েছে",
+                req_submitted_body: "উত্তোলনের অনুরোধ জমা দেওয়া হয়েছে, দয়া করে প্রশাসক পেমেন্ট অনুমোদন করা পর্যন্ত অপেক্ষা করুন।",
+                btn_got_it: "বুঝেছি",
+                maint_title: "রক্ষণাবেক্ষণ চলছে",
+                maint_desc: "সোর্সিং প্যানেল বর্তমানে নির্ধারিত রক্ষণাবেক্ষণের মধ্য দিয়ে যাচ্ছে। আমরা শীঘ্রই ফিরে আসছি!",
+                maint_eta: "আনুমানিক সময়: ৩০-৬০ মিনিট",
+                page_of: "পৃষ্ঠা {current} এর {total}",
+                trans_no: "লেনদেন নং {id}",
+                country_not_found: "দেশের অনুরোধ করা হয়নি",
+                invalid_phone: "আপনার প্রবেশ করানো ফোন নম্বরটি ভুল",
+                banned_phone: "এই ফোন নম্বরটি টেলিগ্রাম থেকে নিষিদ্ধ",
+                temp_banned: "নম্বর সাময়িকভাবে নিষিদ্ধ — {time}",
+                copied: "কপি করা হয়েছে",
+                copied_desc: "ক্লিপবোর্ডে কপি করা হয়েছে",
+                account: "অ্যাকাউন্ট",
+                number: "নম্বর",
+                price: "মূল্য",
+                date: "তারিখ",
+                financials_header: "আর্থিক তথ্য",
+                stats_header: "পরিসংখ্যান",
+                unit_numbers: "নম্বর",
+                unit_orders: "অর্ডার",
+                unit_usd: "ইউএসডি",
+                unit_users: "ব্যবহারকারী",
+                unit_countries: "দেশ"
+            },
+            fa: {
+                nav_dashboard: "پنل کنترل", nav_submit: "فروش شماره", nav_withdraw: "برداشت", nav_pricing: "لیست قیمت", nav_support: "پشتیبانی", nav_lang: "زبان",
+                curr_bal: "موجودی فعلی", pend_with: "در انتظار برداشت", total_with: "کل برداشت شده",
+                stats: "آمار", accepted: "پذیرفته شده", pending: "در انتظار", rejected: "رد شده",
+                sub_required: "اشتراک الزامی است", sub_desc: "برای استفاده از بات و دسترسی به این پنل، ابتدا باید در کانال‌های ما عضو شوید.",
+                sub_check: "عضو شدم، باز کردن پنل", join: "عضویت", checking: "در حال بررسی...",
+                account_details_title: "جزئیات حساب", account_details_desc: "شماره تلفن بین‌المللی را وارد کنید. ما به طور خودکار کشور و قیمت پاداش شما را شناسایی می‌کنیم.",
+                phone_number_lbl: "شماره تلفن", btn_get_code: "دریافت کد تأیید",
+                verify_login_title: "تأیید ورود", telegram_code_lbl: "کد تلگرام",
+                btn_finish_sub: "پایان ارسال", success_title_sub: "عالی بود!", success_desc_sub: "حساب برای بررسی ارسال شد.",
+                btn_try_another: "ارسال مورد دیگر", btn_home: "خانه", rejected_title_sub: "حساب رد شد",
+                rejected_desc_sub: "این حساب محدود یا مسدود شده است و قابل قبول نیست.",
+                sub_history_title: "تاریخچه فروش", prev: "قبلی", next: "بعدی", no_subs_found: "هنوز هیچ فروشی یافت نشده است.",
+                payout_req_title: "درخواست برداشت", payout_req_desc: "روش برداشت مورد نظر خود را انتخاب کنید. درخواست‌ها ظرف ۲۴-۴۸ ساعت پردازش می‌شوند.",
+                min_lbl: "حداقل", withdraw_amount_lbl: "مبلغ برداشت (دلار)", wallet_lbl: "کیف پول", wallet_ph: "آدرس را اینجا وارد کنید...",
+                btn_confirm_withdraw: "تأیید برداشت", withdraw_history_title: "تاریخچه برداشت", no_withdrawals_found: "هنوز هیچ برداشتی یافت نشده است.",
+                price_search_ph: "جستجو با کشور یا کد...", no_results_found: "نتیجه‌ای برای جستجوی شما یافت نشد.",
+                contact_support_title: "تماس با پشتیبانی", support_desc: "تیم پشتیبانی ما برای پاسخگویی به سوالات یا مشکلات شما آماده است.",
+                btn_message_support: "ارسال پیام به پشتیبانی", confirm_withdraw_title: "تأیید برداشت",
+                approved: "تأیید شده",
+                confirm_withdraw_body: "لطفاً قبل از ادامه، جزئیات برداشت خود را با دقت بررسی کنید.",
+                btn_cancel: "لغو", btn_withdraw_confirm: "برداشت آنی", req_submitted_title: "درخواست ثبت شد",
+                req_submitted_body: "درخواست برداشت ثبت شد، لطفاً تا زمان تأیید توسط مدیر صبور باشید.",
+                btn_got_it: "فهمیدم",
+                maint_title: "در حال بروزرسانی",
+                maint_desc: "پنل تامین در حال حاضر تحت تعمیرات دوره‌ای است. به زودی باز خواهیم گشت!",
+                maint_eta: "زمان تقریبی: ۳۰-۶۰ دقیقه",
+                page_of: "صفحه {current} از {total}",
+                trans_no: "شماره تراکنش {id}",
+                country_not_found: "کشور درخواست نشده است",
+                invalid_phone: "شماره تلفن وارد شده نامعتبر است",
+                banned_phone: "این شماره از تلگرام مسدود شده است",
+                temp_banned: "شماره موقتاً مسدود شده — {time}",
+                copied: "کپی شد",
+                copied_desc: "در حافظه کپی شد",
+                account: "حساب",
+                number: "شماره",
+                price: "قیمت",
+                date: "تاریخ",
+                financials_header: "داده‌های مالی",
+                stats_header: "آمار",
+                unit_numbers: "شماره",
+                unit_orders: "سفارش",
+                unit_usd: "دلار",
+                unit_users: "کاربر",
+                unit_countries: "کشور"
             }
         };
 
@@ -2128,9 +2232,15 @@
             document.body.classList.add('switching');
 
             // Update direction
-            document.body.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
-            document.body.classList.toggle('rtl', currentLang === 'ar');
-            document.body.style.textAlign = currentLang === 'ar' ? 'right' : 'left';
+            const isRTL = currentLang === 'ar' || currentLang === 'fa';
+            document.body.dir = isRTL ? 'rtl' : 'ltr';
+            document.body.classList.toggle('rtl', isRTL);
+            document.body.style.textAlign = isRTL ? 'right' : 'left';
+
+            // Update language selector checkmarks
+            document.querySelectorAll('#check-en, #check-ar, #check-zh, #check-bn, #check-fa').forEach(i => {
+                if (i) i.style.display = (i.id === 'check-' + currentLang) ? 'block' : 'none';
+            });
 
             // Find all elements with data-i18n
             document.querySelectorAll('[data-i18n]').forEach(el => {

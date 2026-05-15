@@ -1275,6 +1275,22 @@
                     </div>
                     <i id="check-zh" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
                 </div>
+                <div class="info-card" onclick="setLanguage('bn')"
+                    style="cursor: pointer; padding: 0 20px; border: 1px solid var(--border); height: 75px; display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span style="font-size: 1.5rem; width: 30px; text-align: center;">🇧🇩</span>
+                        <div style="font-weight: 700; color: var(--text-p); font-size: 1rem; line-height: 1;">বাংলা</div>
+                    </div>
+                    <i id="check-bn" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
+                </div>
+                <div class="info-card" onclick="setLanguage('fa')"
+                    style="cursor: pointer; padding: 0 20px; border: 1px solid var(--border); height: 75px; display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span style="font-size: 1.5rem; width: 30px; text-align: center;">🇮🇷</span>
+                        <div style="font-weight: 700; color: var(--text-p); font-size: 1rem; line-height: 1;">فارسی</div>
+                    </div>
+                    <i id="check-fa" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
+                </div>
             </div>
         </section>
     </main>
@@ -1661,6 +1677,116 @@
                 unit_users: "用户",
                 unit_countries: "国家",
                 unit_deposits: "充值"
+            },
+            bn: {
+                loading: "স্টোর অপ্টিমাইজ করা হচ্ছে...", nav_home: "ড্যাশবোর্ড", nav_store: "নম্বর কিনুন", nav_deposit: "আমানত", nav_history: "অর্ডার ইতিহাস", nav_support: "সমর্থন", nav_referrals: "রেফারাল সিস্টেম",
+                financials_header: "আর্থিক তথ্য", stats_header: "পরিসংখ্যান", balance: "বর্তমান ব্যালেন্স", total_spent: "মোট খরচ", total_deposits: "মোট আমানত",
+                completed_orders: "সম্পন্ন অর্ডার", active_orders: "সক্রিয় অর্ডার", unique_countries: "অনন্য দেশ",
+                loading_addr: "ঠিকানা লোড হচ্ছে...", txid_lbl: "লেনদেন আইডি (TXID)", txid_ph: "এখানে লেনদেন আইডি লিখুন", btn_verify_dep: "আমানত যাচাই করুন",
+                total_orders_lbl: "মোট অর্ডার", orders_count_lbl: "অর্ডার", prev: "পূর্ববর্তী", next: "পরবর্তী",
+                contact_support_title: "সমর্থনের সাথে যোগাযোগ করুন", support_desc: "যেকোনো প্রশ্ন বা সমস্যার জন্য আমাদের সমর্থন দল আপনাকে সাহায্য করতে প্রস্তুত।", btn_message_support: "সমর্থন বার্তা পাঠান",
+                total_invited_lbl: "মোট আমন্ত্রিত", users_count_lbl: "ব্যবহারকারী", total_earnings_lbl: "মোট উপার্জন", usd_lbl: "ইউএসডি",
+                referral_prog_title: "রেফারাল প্রোগ্রাম", referral_prog_desc: "আপনার লিঙ্ক শেয়ার করুন এবং প্রতিটি ব্যবহারকারী থেকে বিশাল পুরস্কার জিতুন!",
+                ref_join_bonus_lbl: "যোগদানের সময়", ref_commission_lbl: "আمانতের ওপর", your_link_lbl: "আপনার অনন্য লিঙ্ক", loading_lbl: "লোড হচ্ছে...", tap_copy_lbl: "কপি করতে ট্যাপ করুন",
+                quick_buy: "দ্রুত অ্যাক্সেস", btn_start_shopping: "নম্বর দেখুন",
+                confirm_title: "নিশ্চিতকরণ", lbl_country: "দেশ", lbl_price: "মূল্য", btn_confirm_pay: "এখনই কিনুন",
+                total_numbers: "মোট নম্বর", countries: "মোট দেশ", lowest_price: "সর্বনিম্ন মূল্য",
+                store_search_ph: "দেশ খুঁজুন...", no_numbers_found: "বর্তমানে কোনো নম্বর নেই",
+                success_title: "পেমেন্ট সফল!", success_desc: "বট চ্যাটে কোডের জন্য অপেক্ষা করুন।", btn_close: "বন্ধ করুন",
+                available: "উপলব্ধ", search_ph: "দেশ খুঁজুন...",
+                dep_title: "আমানত ইতিহাস", dep_empty: "এখনও কোনো আমানত পাওয়া যায়নি।",
+                hist_title: "অর্ডার ইতিহাস", hist_empty: "এখনও কোনো অর্ডার পাওয়া যায়নি।",
+                nav_lang: "ভাষা", lang_desc: "ইন্টারফেসের জন্য আপনার পছন্দসই ভাষা নির্বাচন করুন।",
+                insufficient_bal: "অপর্যাপ্ত ব্যালেন্স",
+                sub_required: "সাবস্ক্রিপশন প্রয়োজন",
+                sub_desc: "বট ব্যবহার এবং স্টোর অ্যাক্সেস করতে হলে আপনাকে প্রথমে আমাদের চ্যানেলে যোগ দিতে হবে।",
+                sub_check: "আমি যোগ দিয়েছি, স্টোর খুলুন",
+                join: "যোগ দিন",
+                checking: "যাচাই করা হচ্ছে...",
+                binance_pay_short_desc: "দয়া করে নিচের পে আইডিতে বিনান্স ইন্টারনাল ট্রান্সফারের মাধ্যমে USDT পাঠান।",
+                binance_pay_desc: "দয়া করে নিচের পে আইডিতে বিনান্স পে-র মাধ্যমে USDT পাঠান। পেমেন্টের পর রসিদ থেকে 'অর্ডার আইডি' লিখুন।",
+                trx_desc: "দয়া করে নিচের ঠিকানায় TRX পাঠান। পাঠানোর পর ট্রানজ্যাকশন হ্যাশ (TxID) লিখুন।",
+                usdt_desc: "দয়া করে নিচের ঠিকানায় USDT (BEP20) পাঠান। পাঠানোর পর ট্রানজ্যাকশন হ্যাশ (TxID) লিখুন।",
+                maint_title: "রক্ষণাবেক্ষণ চলছে",
+                maint_desc: "আপনার অভিজ্ঞতা উন্নত করতে আমরা কিছু নির্ধারিত রক্ষণাবেক্ষণ করছি। শীঘ্রই ফিরে আসছি!",
+                maint_eta: "আনুমানিক সময়: ৩০-৬০ মিনিট",
+                page_of: "পৃষ্ঠা {current} এর {total}",
+                pending: "অপেক্ষমান",
+                completed: "সম্পন্ন",
+                rejected: "প্রত্যাখ্যাত",
+                frozen: "স্থগিত",
+                spam: "স্প্যাম",
+                revoked: "প্রত্যাহার করা হয়েছে",
+                binance_pay: "বিনান্স পে",
+                trx_trc20: "TRX (TRC20)",
+                usdt_bep20: "USDT (BEP20)",
+                copied: "কপি করা হয়েছে",
+                copied_desc: "ক্লিপবোর্ডে কপি করা হয়েছে",
+                account: "অ্যাকাউন্ট",
+                number: "নম্বর",
+                price: "মূল্য",
+                date: "তারিখ",
+                unit_numbers: "নম্বর",
+                unit_orders: "অর্ডার",
+                unit_usd: "ইউএসডি",
+                unit_users: "ব্যবহারকারী",
+                unit_countries: "দেশ",
+                unit_deposits: "আমানত"
+            },
+            fa: {
+                loading: "بهینه‌سازی فروشگاه...", nav_home: "داشبورد", nav_store: "خرید شماره", nav_deposit: "شارژ حساب", nav_history: "تاریخچه سفارشات", nav_support: "پشتیبانی", nav_referrals: "سیستم دعوت",
+                financials_header: "داده‌های مالی", stats_header: "آمار", balance: "موجودی فعلی", total_spent: "کل هزینه", total_deposits: "کل واریزی‌ها",
+                completed_orders: "سفارشات تکمیل شده", active_orders: "سفارشات فعال", unique_countries: "کشورهای منحصر به فرد",
+                loading_addr: "در حال بارگذاری آدرس...", txid_lbl: "شناسه تراکنش (TXID)", txid_ph: "شناسه تراکنش را اینجا وارد کنید", btn_verify_dep: "تأیید واریز",
+                total_orders_lbl: "کل سفارشات", orders_count_lbl: "سفارش", prev: "قبلی", next: "بعدی",
+                contact_support_title: "تماس با پشتیبانی", support_desc: "تیم پشتیبانی ما برای پاسخگویی به سوالات یا مشکلات شما آماده است.", btn_message_support: "ارسال پیام به پشتیبانی",
+                total_invited_lbl: "کل دعوت‌شدگان", users_count_lbl: "کاربر", total_earnings_lbl: "کل درآمد", usd_lbl: "دلار",
+                referral_prog_title: "برنامه دعوت", referral_prog_desc: "لینک خود را به اشتراک بگذارید و از هر کاربر پاداش‌های عالی بگیرید!",
+                ref_join_bonus_lbl: "هنگام عضویت", ref_commission_lbl: "در واریزی‌ها", your_link_lbl: "لینک اختصاصی شما", loading_lbl: "در حال بارگذاری...", tap_copy_lbl: "برای کپی ضربه بزنید",
+                quick_buy: "دسترسی سریع", btn_start_shopping: "مشاهده شماره‌ها",
+                confirm_title: "تأیید خرید", lbl_country: "کشور", lbl_price: "قیمت", btn_confirm_pay: "خرید آنی",
+                total_numbers: "کل شماره‌ها", countries: "کل کشورها", lowest_price: "کمترین قیمت",
+                store_search_ph: "جستجوی کشور...", no_numbers_found: "در حال حاضر شماره‌ای موجود نیست",
+                success_title: "پرداخت موفق!", success_desc: "منتظر دریافت کد در چت بات باشید.", btn_close: "بستن",
+                available: "موجود", search_ph: "جستجوی کشور...",
+                dep_title: "تاریخچه واریز", dep_empty: "هنوز هیچ واریزی یافت نشده است.",
+                hist_title: "تاریخچه سفارشات", hist_empty: "هنوز هیچ سفارشی یافت نشده است.",
+                nav_lang: "زبان", lang_desc: "زبان مورد نظر خود را برای رابط کاربری انتخاب کنید.",
+                insufficient_bal: "موجودی کافی نیست",
+                sub_required: "اشتراک الزامی است",
+                sub_desc: "برای استفاده از بات و دسترسی به فروشگاه، ابتدا باید در کانال‌های ما عضو شوید.",
+                sub_check: "عضو شدم، باز کردن فروشگاه",
+                join: "عضویت",
+                checking: "در حال بررسی...",
+                binance_pay_short_desc: "لطفاً USDT را از طریق انتقال داخلی بینانس به شناسه زیر واریز کنید.",
+                binance_pay_desc: "لطفاً USDT را از طریق Binance Pay به شناسه زیر ارسال کنید. پس از پرداخت، شناسه سفارش (Order ID) را وارد کنید.",
+                trx_desc: "لطفاً TRX را به آدرس زیر ارسال کنید. پس از ارسال، شناسه تراکنش (TxID) را وارد کنید.",
+                usdt_desc: "لطفاً USDT (BEP20) را به آدرس زیر ارسال کنید. پس از ارسال، شناسه تراکنش (TxID) را وارد کنید.",
+                maint_title: "در حال بروزرسانی",
+                maint_desc: "ما در حال انجام تعمیرات دوره‌ای برای بهبود تجربه شما هستیم. لطفا بعداً مراجعه کنید!",
+                maint_eta: "زمان تقریبی: ۳۰-۶۰ دقیقه",
+                page_of: "صفحه {current} از {total}",
+                pending: "در انتظار",
+                completed: "تکمیل شده",
+                rejected: "رد شده",
+                frozen: "مسدود شده",
+                spam: "اسپم",
+                revoked: "لغو شده",
+                binance_pay: "بینانس پی",
+                trx_trc20: "TRX (TRC20)",
+                usdt_bep20: "USDT (BEP20)",
+                copied: "کپی شد",
+                copied_desc: "در حافظه کپی شد",
+                account: "حساب",
+                number: "شماره",
+                price: "قیمت",
+                date: "تاریخ",
+                unit_numbers: "شماره",
+                unit_orders: "سفارش",
+                unit_usd: "دلار",
+                unit_users: "کاربر",
+                unit_countries: "کشور",
+                unit_deposits: "واریز"
             }
         };
 
@@ -2002,8 +2128,14 @@
             document.body.classList.add('switching');
 
             // Update direction
-            document.body.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
-            document.body.classList.toggle('rtl', currentLang === 'ar');
+            const isRTL = currentLang === 'ar' || currentLang === 'fa';
+            document.body.dir = isRTL ? 'rtl' : 'ltr';
+            document.body.classList.toggle('rtl', isRTL);
+
+            // Update language selector checkmarks
+            document.querySelectorAll('#check-en, #check-ar, #check-zh, #check-bn, #check-fa').forEach(i => {
+                if (i) i.style.display = (i.id === 'check-' + currentLang) ? 'block' : 'none';
+            });
 
             // Find all elements with data-i18n
             document.querySelectorAll('[data-i18n]').forEach(el => {
