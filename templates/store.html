@@ -1130,7 +1130,7 @@
                 </p>
 
                 <div style="background: var(--bg); padding: 18px; border-radius: 12px; width: 100%; word-break: break-all; font-family: monospace; font-size: 1rem; border: 1px solid var(--border); margin-bottom: 20px; cursor: pointer; position: relative; color: var(--accent); font-weight: 600;"
-                    id="deposit-address-display" onclick="copyDepositAddress()" data-i18n="loading_addr">
+                    id="deposit-address-display" onclick="copyDepositAddress()">
                     Loading Address...
                 </div>
 
@@ -2445,6 +2445,18 @@
             if (titleEl) {
                 const key = 'nav_' + activeTab;
                 titleEl.innerText = translations[currentLang][key] || activeTab;
+            }
+
+            // Refresh deposit method title and description
+            if (typeof switchDepositMethod === 'function') {
+                switchDepositMethod(currentDepositMethod, document.querySelector('#section-deposit .tab-btn.active'));
+            }
+
+            // Refresh referral link
+            if (window.lastDashboardData && window.lastDashboardData.bot_username) {
+                const botUsername = window.lastDashboardData.bot_username;
+                const refLinkVal = document.getElementById('ref-link-val');
+                if (refLinkVal) refLinkVal.innerText = `https://t.me/${botUsername}?start=REF${userId}`;
             }
 
             // Restore transitions
