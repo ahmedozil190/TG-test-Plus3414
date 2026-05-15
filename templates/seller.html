@@ -936,11 +936,7 @@
             flex-direction: column;
             gap: 12px;
             pointer-events: none;
-        }
-
-        body.rtl .copy-toast-container {
-            right: auto;
-            left: 15px;
+            align-items: flex-end;
         }
 
         .copy-toast {
@@ -960,12 +956,7 @@
             pointer-events: auto;
         }
 
-        body.rtl .copy-toast {
-            transform: translateX(-120%);
-        }
-
-        .copy-toast.show,
-        body.rtl .copy-toast.show {
+        .copy-toast.show {
             transform: translateX(0);
         }
 

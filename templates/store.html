@@ -704,11 +704,7 @@
             flex-direction: column;
             gap: 12px;
             pointer-events: none;
-        }
-
-        body.rtl .toast-container {
-            right: auto;
-            left: 15px;
+            align-items: flex-end;
         }
 
         .toast {
@@ -728,12 +724,7 @@
             pointer-events: auto;
         }
 
-        body.rtl .toast {
-            transform: translateX(-120%);
-        }
-
-        .toast.show,
-        body.rtl .toast.show {
+        .toast.show {
             transform: translateX(0);
         }
 
