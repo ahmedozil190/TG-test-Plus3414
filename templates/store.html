@@ -1366,7 +1366,7 @@
                         Unique Link</span>
                 </div>
 
-                <div id="ref-link-val" data-i18n="loading_lbl"
+                <div id="ref-link-val"
                     style="font-size: 0.95rem; font-weight: 700; color: var(--accent); word-break: break-all; margin-bottom: 20px; font-family: 'JetBrains Mono', monospace; line-height: 1.6; background: transparent; padding: 15px; border-radius: 16px; border: 1px solid var(--border);">
                     Loading...</div>
 
@@ -2578,7 +2578,7 @@
         function copyText(txt) {
             if (!txt || txt.includes('WAITING') || txt === 'N/A') return;
             navigator.clipboard.writeText(txt).then(() => {
-                showToast("Copied", "Copied to clipboard", "success");
+                showToast(translations[currentLang].copied, translations[currentLang].copied_desc, "success");
                 tg.HapticFeedback.impactOccurred('light');
             });
         }
@@ -2793,7 +2793,7 @@
             if (!link || link === "Loading...") return;
             navigator.clipboard.writeText(link).then(() => {
                 tg.HapticFeedback.notificationOccurred('success');
-                showToast("Copied", "Copied to clipboard", "success");
+                showToast(translations[currentLang].copied, translations[currentLang].copied_desc, "success");
             }).catch(() => {
                 showToast("Error", "Failed to copy link.", true);
             });
