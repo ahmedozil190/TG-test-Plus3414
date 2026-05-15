@@ -1765,27 +1765,63 @@
             </div>
         </div>
 
-        <!-- View: Language -->
         <div class="view-panel" id="view-lang">
             <div style="display: flex; flex-direction: column; gap: 15px;">
+                <!-- EN -->
                 <div class="info-card" onclick="setLanguage('en')"
                     style="cursor: pointer; padding: 0 20px; border: 1px solid var(--border); height: 75px; display: flex; align-items: center; justify-content: space-between;">
                     <div style="display: flex; align-items: center; gap: 15px;">
                         <span style="font-size: 1.5rem; width: 30px; text-align: center;">🇺🇸</span>
-                        <div style="font-weight: 700; color: var(--text-p); font-size: 1rem; line-height: 1;">English
-                        </div>
+                        <div style="font-weight: 700; color: var(--text-p); font-size: 1rem; line-height: 1;">English</div>
                     </div>
                     <i id="check-en" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
                 </div>
+                <!-- AR -->
                 <div class="info-card" onclick="setLanguage('ar')"
                     style="cursor: pointer; padding: 0 20px; border: 1px solid var(--border); height: 75px; display: flex; align-items: center; justify-content: space-between;">
                     <div style="display: flex; align-items: center; gap: 15px;">
                         <span style="font-size: 1.5rem; width: 30px; text-align: center;">🇸🇦</span>
-                        <div style="font-weight: 700; color: var(--text-p); font-size: 1rem; line-height: 1;">العربية
-                        </div>
+                        <div style="font-weight: 700; color: var(--text-p); font-size: 1rem; line-height: 1;">العربية</div>
                     </div>
                     <i id="check-ar" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
                 </div>
+                <!-- RU -->
+                <div class="info-card" onclick="setLanguage('ru')"
+                    style="cursor: pointer; padding: 0 20px; border: 1px solid var(--border); height: 75px; display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span style="font-size: 1.5rem; width: 30px; text-align: center;">🇷🇺</span>
+                        <div style="font-weight: 700; color: var(--text-p); font-size: 1rem; line-height: 1;">Русский</div>
+                    </div>
+                    <i id="check-ru" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
+                </div>
+                <!-- UZ -->
+                <div class="info-card" onclick="setLanguage('uz')"
+                    style="cursor: pointer; padding: 0 20px; border: 1px solid var(--border); height: 75px; display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span style="font-size: 1.5rem; width: 30px; text-align: center;">🇺🇿</span>
+                        <div style="font-weight: 700; color: var(--text-p); font-size: 1rem; line-height: 1;">O'zbekcha</div>
+                    </div>
+                    <i id="check-uz" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
+                </div>
+                <!-- ES -->
+                <div class="info-card" onclick="setLanguage('es')"
+                    style="cursor: pointer; padding: 0 20px; border: 1px solid var(--border); height: 75px; display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span style="font-size: 1.5rem; width: 30px; text-align: center;">🇪🇸</span>
+                        <div style="font-weight: 700; color: var(--text-p); font-size: 1rem; line-height: 1;">Español</div>
+                    </div>
+                    <i id="check-es" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
+                </div>
+                <!-- TR -->
+                <div class="info-card" onclick="setLanguage('tr')"
+                    style="cursor: pointer; padding: 0 20px; border: 1px solid var(--border); height: 75px; display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span style="font-size: 1.5rem; width: 30px; text-align: center;">🇹🇷</span>
+                        <div style="font-weight: 700; color: var(--text-p); font-size: 1rem; line-height: 1;">Türkçe</div>
+                    </div>
+                    <i id="check-tr" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
+                </div>
+                <!-- ZH -->
                 <div class="info-card" onclick="setLanguage('zh')"
                     style="cursor: pointer; padding: 0 20px; border: 1px solid var(--border); height: 75px; display: flex; align-items: center; justify-content: space-between;">
                     <div style="display: flex; align-items: center; gap: 15px;">
@@ -1794,6 +1830,7 @@
                     </div>
                     <i id="check-zh" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
                 </div>
+                <!-- BN -->
                 <div class="info-card" onclick="setLanguage('bn')"
                     style="cursor: pointer; padding: 0 20px; border: 1px solid var(--border); height: 75px; display: flex; align-items: center; justify-content: space-between;">
                     <div style="display: flex; align-items: center; gap: 15px;">
@@ -1802,6 +1839,7 @@
                     </div>
                     <i id="check-bn" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
                 </div>
+                <!-- FA -->
                 <div class="info-card" onclick="setLanguage('fa')"
                     style="cursor: pointer; padding: 0 20px; border: 1px solid var(--border); height: 75px; display: flex; align-items: center; justify-content: space-between;">
                     <div style="display: flex; align-items: center; gap: 15px;">
@@ -2231,6 +2269,194 @@
                 unit_usd: "دلار",
                 unit_users: "کاربر",
                 unit_countries: "کشور"
+            },
+            ru: {
+                nav_dashboard: "Панель управления", nav_submit: "Продать номер", nav_withdraw: "Вывод", nav_pricing: "Цены", nav_support: "Поддержка", nav_lang: "Язык",
+                curr_bal: "Текущий баланс", pend_with: "Ожидает вывода", total_with: "Всего выведено",
+                stats: "СТАТИСТИКА", accepted: "Принято", pending: "В ожидании", rejected: "Отклонено",
+                sub_required: "Требуется подписка", sub_desc: "Для доступа к этой панели необходимо сначала подписаться на наши каналы.",
+                sub_check: "Я подписался, открыть панель", join: "Подписаться", checking: "Проверка...",
+                account_details_title: "Данные аккаунта", account_details_desc: "Введите международный номер телефона. Мы автоматически определим страну и сумму вознаграждения.",
+                phone_number_lbl: "Номер телефона", btn_get_code: "Получить код подтверждения",
+                verify_login_title: "Подтверждение входа", telegram_code_lbl: "Код Telegram",
+                btn_finish_sub: "Завершить отправку", success_title_sub: "Отличная работа!", success_desc_sub: "Аккаунт отправлен на проверку.",
+                btn_try_another: "Добавить еще", btn_home: "Главная", rejected_title_sub: "Аккаунт отклонен",
+                rejected_desc_sub: "Этот аккаунт ограничен или заморожен и не может быть принят.",
+                sub_history_title: "История продаж", prev: "Пред.", next: "След.", no_subs_found: "Продаж пока нет.",
+                payout_req_title: "Запрос выплаты", payout_req_desc: "Выберите предпочтительный метод вывода. Запросы обрабатываются в течение 24-48 часов.",
+                min_lbl: "Мин.", withdraw_amount_lbl: "Сумма вывода (USD)", wallet_lbl: "Кошелек", wallet_ph: "Введите адрес здесь...",
+                btn_confirm_withdraw: "Подтвердить вывод", withdraw_history_title: "История выводов", no_withdrawals_found: "Выплат пока нет.",
+                price_search_ph: "Поиск по стране или коду...", no_results_found: "Результатов не найдено.", no_countries_requested: "Страны пока не запрошены.",
+                contact_support_title: "Служба поддержки", support_desc: "Наша команда поддержки готова помочь вам с любыми вопросами.",
+                btn_message_support: "Написать в поддержку", confirm_withdraw_title: "Подтверждение вывода",
+                approved: "Одобрено",
+                confirm_withdraw_body: "Пожалуйста, внимательно проверьте данные для выплаты перед продолжением.",
+                btn_cancel: "Отмена", btn_withdraw_confirm: "Вывести", req_submitted_title: "Запрос отправлен",
+                req_submitted_body: "Запрос на вывод отправлен, пожалуйста, дождитесь одобрения администратором.",
+                btn_got_it: "Понятно",
+                maint_title: "Техническое обслуживание",
+                maint_desc: "Панель временно недоступна из-за плановых работ. Мы скоро вернемся!",
+                maint_eta: "Ожидаемое время: 30-60 мин.",
+                page_of: "Страница {current} из {total}",
+                trans_no: "Транзакция №{id}",
+                country_not_found: "Страна не запрошена",
+                invalid_phone: "Введен неверный номер телефона",
+                banned_phone: "Этот номер заблокирован в Telegram",
+                temp_banned: "Номер временно заблокирован — {time}",
+                copied: "Скопировано",
+                copied_desc: "Скопировано в буфер обмена",
+                account: "Аккаунт",
+                number: "Номер",
+                price: "Цена",
+                date: "Дата",
+                financials_header: "ФИНАНСЫ",
+                stats_header: "СТАТИСТИКА",
+                unit_numbers: "НОМЕРОВ",
+                unit_orders: "ЗАКАЗОВ",
+                unit_usd: "USD",
+                unit_users: "ПОЛЬЗ.",
+                unit_countries: "СТРАН"
+            },
+            uz: {
+                nav_dashboard: "Boshqaruv paneli", nav_submit: "Raqam sotish", nav_withdraw: "Pul yechish", nav_pricing: "Narxlar", nav_support: "Qo'llab-quvvatlash", nav_lang: "Til",
+                curr_bal: "Joriy balans", pend_with: "Kutilayotgan to'lov", total_with: "Jami yechilgan",
+                stats: "STATISTIKA", accepted: "Qabul qilindi", pending: "Kutilmoqda", rejected: "Rad etildi",
+                sub_required: "Obuna bo'lish talab etiladi", sub_desc: "Ushbu panelga kirish uchun avval kanallarimizga a'zo bo'lishingiz kerak.",
+                sub_check: "A'zo bo'ldim, panelni ochish", join: "A'zo bo'lish", checking: "Tekshirilmoqda...",
+                account_details_title: "Hisob ma'lumotlari", account_details_desc: "Xalqaro telefon raqamini kiriting. Biz avtomatik ravishda davlatni va mukofot miqdorini aniqlaymiz.",
+                phone_number_lbl: "Telefon raqami", btn_get_code: "Tasdiqlash kodini olish",
+                verify_login_title: "Kirishni tasdiqlash", telegram_code_lbl: "Telegram kodi",
+                btn_finish_sub: "Yakunlash", success_title_sub: "Ajoyib!", success_desc_sub: "Hisob ko'rib chiqish uchun yuborildi.",
+                btn_try_another: "Yana qo'shish", btn_home: "Bosh sahifa", rejected_title_sub: "Hisob rad etildi",
+                rejected_desc_sub: "Ushbu hisob cheklangan yoki muzlatilgan va qabul qilinishi mumkin emas.",
+                sub_history_title: "Sotuvlar tarixi", prev: "Oldingi", next: "Keyingi", no_subs_found: "Hozircha sotuvlar yo'q.",
+                payout_req_title: "To'lov so'rovi", payout_req_desc: "Pul yechish usulini tanlang. So'rovlar 24-48 soat ichida ko'rib chiqiladi.",
+                min_lbl: "Min.", withdraw_amount_lbl: "Yechish summasi (USD)", wallet_lbl: "Hamyon", wallet_ph: "Manzilni kiriting...",
+                btn_confirm_withdraw: "Yechishni tasdiqlash", withdraw_history_title: "To'lovlar tarixi", no_withdrawals_found: "Hozircha to'lovlar yo'q.",
+                price_search_ph: "Davlat yoki kod bo'yicha qidirish...", no_results_found: "Natija topilmadi.", no_countries_requested: "Hozircha davlatlar so'ralmagan.",
+                contact_support_title: "Qo'llab-quvvatlash", support_desc: "Bizning jamoamiz har qanday savol bo'yicha yordamga tayyor.",
+                btn_message_support: "Xabar yozish", confirm_withdraw_title: "Yechishni tasdiqlash",
+                approved: "Tasdiqlandi",
+                confirm_withdraw_body: "Davom etishdan oldin to'lov ma'lumotlarini diqqat bilan tekshiring.",
+                btn_cancel: "Bekor qilish", btn_withdraw_confirm: "Yechish", req_submitted_title: "So'rov yuborildi",
+                req_submitted_body: "Yechish so'rovi yuborildi, administrator to'lovni tasdiqlashini kuting.",
+                btn_got_it: "Tushunarli",
+                maint_title: "Texnik xizmat",
+                maint_desc: "Panelda profilaktika ishlari olib borilmoqda. Tez orada qaytamiz!",
+                maint_eta: "Taxminiy vaqt: 30-60 daqiqa",
+                page_of: "{total} dan {current}-sahifa",
+                trans_no: "Tranzaksiya №{id}",
+                country_not_found: "Davlat so'ralmagan",
+                invalid_phone: "Kiritilgan raqam noto'g'ri",
+                banned_phone: "Ushbu raqam Telegram'dan bloklangan",
+                temp_banned: "Raqam vaqtincha bloklangan — {time}",
+                copied: "Nusxa olindi",
+                copied_desc: "Vaqtinchalik xotiraga nusxa olindi",
+                account: "Hisob",
+                number: "Raqam",
+                price: "Narx",
+                date: "Sana",
+                financials_header: "MOLIYA",
+                stats_header: "STATISTIKA",
+                unit_numbers: "RAQAMLAR",
+                unit_orders: "BUYURTMALAR",
+                unit_usd: "USD",
+                unit_users: "FOYDALANUVCHILAR",
+                unit_countries: "DAVLATLAR"
+            },
+            es: {
+                nav_dashboard: "Panel de Control", nav_submit: "Vender Número", nav_withdraw: "Retirar", nav_pricing: "Lista de Precios", nav_support: "Soporte", nav_lang: "Idioma",
+                curr_bal: "Saldo Actual", pend_with: "Retiro Pendiente", total_with: "Total Retirado",
+                stats: "ESTADÍSTICAS", accepted: "Aceptado", pending: "Pendiente", rejected: "Rechazado",
+                sub_required: "Suscripción Requerida", sub_desc: "Para acceder a este panel, primero debe unirse a nuestros canales.",
+                sub_check: "Ya me he unido, abrir panel", join: "Unirse", checking: "Verificando...",
+                account_details_title: "Detalles de la Cuenta", account_details_desc: "Ingrese el número de teléfono internacional. Detectaremos automáticamente el país y su precio de recompensa.",
+                phone_number_lbl: "Número de Teléfono", btn_get_code: "Obtener Código de Verificación",
+                verify_login_title: "Verificar Inicio de Sesión", telegram_code_lbl: "Código de Telegram",
+                btn_finish_sub: "Finalizar Envío", success_title_sub: "¡Buen trabajo!", success_desc_sub: "La cuenta ha sido enviada para revisión.",
+                btn_try_another: "Intentar con otro", btn_home: "Inicio", rejected_title_sub: "Cuenta Rechazada",
+                rejected_desc_sub: "Esta cuenta está restringida o congelada y no puede ser aceptada.",
+                sub_history_title: "Historial de Ventas", prev: "Ant.", next: "Sig.", no_subs_found: "No se han encontrado ventas aún.",
+                payout_req_title: "Solicitud de Pago", payout_req_desc: "Seleccione su método de retiro preferido. Las solicitudes se procesan en 24-48h.",
+                min_lbl: "Mín.", withdraw_amount_lbl: "Monto a Retirar (USD)", wallet_lbl: "Billetera", wallet_ph: "Ingrese la dirección aquí...",
+                btn_confirm_withdraw: "Confirmar Retiro", withdraw_history_title: "Historial de Retiros", no_withdrawals_found: "No se han encontrado retiros aún.",
+                price_search_ph: "Buscar por país o código...", no_results_found: "No se encontraron resultados.", no_countries_requested: "No hay países solicitados aún.",
+                contact_support_title: "Contactar Soporte", support_desc: "Nuestro equipo de soporte está disponible para ayudarle con cualquier duda.",
+                btn_message_support: "Enviar Mensaje", confirm_withdraw_title: "Confirmar Retiro",
+                approved: "Aprobado",
+                confirm_withdraw_body: "Por favor, revise sus detalles de pago cuidadosamente antes de continuar.",
+                btn_cancel: "Cancelar", btn_withdraw_confirm: "Retirar", req_submitted_title: "Solicitud Enviada",
+                req_submitted_body: "Solicitud de retiro enviada, por favor espere a que el administrador apruebe su pago.",
+                btn_got_it: "Entendido",
+                maint_title: "En Mantenimiento",
+                maint_desc: "El panel de suministro está actualmente en mantenimiento programado. ¡Volveremos pronto!",
+                maint_eta: "Tiempo estimado: 30-60 min.",
+                page_of: "Página {current} de {total}",
+                trans_no: "Transacción Nº {id}",
+                country_not_found: "País no solicitado",
+                invalid_phone: "El número de teléfono ingresado no es válido",
+                banned_phone: "Este número está prohibido en Telegram",
+                temp_banned: "Número prohibido temporalmente — {time}",
+                copied: "Copiado",
+                copied_desc: "Copiado al portapapeles",
+                account: "Cuenta",
+                number: "Número",
+                price: "Precio",
+                date: "Fecha",
+                financials_header: "FINANZAS",
+                stats_header: "ESTADÍSTICAS",
+                unit_numbers: "NÚMEROS",
+                unit_orders: "PEDIDOS",
+                unit_usd: "USD",
+                unit_users: "USUARIOS",
+                unit_countries: "PAÍSES"
+            },
+            tr: {
+                nav_dashboard: "Kontrol Paneli", nav_submit: "Numara Sat", nav_withdraw: "Para Çek", nav_pricing: "Fiyat Listesi", nav_support: "Destek", nav_lang: "Dil",
+                curr_bal: "Mevcut Bakiye", pend_with: "Bekleyen Çekim", total_with: "Toplam Çekilen",
+                stats: "İSTATİSTİKLER", accepted: "Kabul Edildi", pending: "Beklemede", rejected: "Reddedildi",
+                sub_required: "Abonelik Gerekli", sub_desc: "Bu panele erişmek için önce kanallarımıza katılmalısınız.",
+                sub_check: "Katıldım, paneli aç", join: "Katıl", checking: "Kontrol ediliyor...",
+                account_details_title: "Hesap Detayları", account_details_desc: "Uluslararası telefon numarasını girin. Ülkeyi ve ödül miktarınızı otomatik olarak belirleyeceğiz.",
+                phone_number_lbl: "Telefon Numarası", btn_get_code: "Doğrulama Kodu Al",
+                verify_login_title: "Girişi Doğrula", telegram_code_lbl: "Telegram Kodu",
+                btn_finish_sub: "Gönderimi Tamamla", success_title_sub: "Harika İş!", success_desc_sub: "Hesap inceleme için gönderildi.",
+                btn_try_another: "Başka Bir Tane Ekle", btn_home: "Ana Sayfa", rejected_title_sub: "Hesap Reddedildi",
+                rejected_desc_sub: "Bu hesap kısıtlanmış veya dondurulmuş ve kabul edilemez.",
+                sub_history_title: "Satış Geçmişi", prev: "Geri", next: "İleri", no_subs_found: "Henüz satış bulunamadı.",
+                payout_req_title: "Ödeme Talebi", payout_req_desc: "Tercih ettiğiniz çekim yöntemini seçin. Talepler 24-48 saat içinde işlenir.",
+                min_lbl: "Min.", withdraw_amount_lbl: "Çekim Tutarı (USD)", wallet_lbl: "Cüzdan", wallet_ph: "Adresi buraya girin...",
+                btn_confirm_withdraw: "Çekimi Onayla", withdraw_history_title: "Çekim Geçmişi", no_withdrawals_found: "Henüz çekim bulunamadı.",
+                price_search_ph: "Ülke veya kodla ara...", no_results_found: "Sonuç bulunamadı.", no_countries_requested: "Henüz talep edilen ülke yok.",
+                contact_support_title: "Destekle İletيشme Geç", support_desc: "Destek ekibimiz her türlü sorunuz için yardıma hazırdır.",
+                btn_message_support: "Destek Mesajı Gönder", confirm_withdraw_title: "Çekimi Onayla",
+                approved: "Onaylandı",
+                confirm_withdraw_body: "Lütfen devam etmeden önce ödeme detaylarınızı dikkatlice inceleyin.",
+                btn_cancel: "İptal", btn_withdraw_confirm: "Para Çek", req_submitted_title: "Talep Gönderildi",
+                req_submitted_body: "Çekim talebi gönderildi, lütfen yönetici ödemenizi onaylayana kadar bekleyin.",
+                btn_got_it: "Anladım",
+                maint_title: "Bakım Çalışması",
+                maint_desc: "Tedarik paneli şu anda planlı bakım aşamasındadır. Kıسا süre içinde tekrar çevrimiçi olacağız!",
+                maint_eta: "Tahmini süre: 30-60 dk.",
+                page_of: "Sayfa {current} / {total}",
+                trans_no: "İşlem No {id}",
+                country_not_found: "Ülke Talep Edilmedi",
+                invalid_phone: "Girdiğiniz telefon numarası geçersiz",
+                banned_phone: "Bu telefon numarası Telegram'dan yasaklanmış",
+                temp_banned: "Numara Geçici Olarak Yasaklandı — {time}",
+                copied: "Kopyalandı",
+                copied_desc: "Panoya kopyalandı",
+                account: "Hesap",
+                number: "Numara",
+                price: "Fiyat",
+                date: "Tarih",
+                financials_header: "FİNANSAL VERİLER",
+                stats_header: "İSTATİSTİKLER",
+                unit_numbers: "NUMARA",
+                unit_orders: "SİPARİŞ",
+                unit_usd: "USD",
+                unit_users: "KULLANICI",
+                unit_countries: "ÜLKE"
             }
         };
 
@@ -2247,7 +2473,7 @@
             document.body.style.textAlign = isRTL ? 'right' : 'left';
 
             // Update language selector checkmarks
-            document.querySelectorAll('#check-en, #check-ar, #check-zh, #check-bn, #check-fa').forEach(i => {
+            document.querySelectorAll('#check-en, #check-ar, #check-zh, #check-bn, #check-fa, #check-ru, #check-uz, #check-es, #check-tr').forEach(i => {
                 if (i) i.style.display = (i.id === 'check-' + currentLang) ? 'block' : 'none';
             });
 

@@ -1258,24 +1258,61 @@
         <!-- View: Language -->
         <section id="section-lang" class="view-panel">
             <div style="display: flex; flex-direction: column; gap: 15px;">
+                <!-- EN -->
                 <div class="info-card" onclick="setLanguage('en')"
                     style="cursor: pointer; padding: 0 20px; border: 1px solid var(--border); height: 75px; display: flex; align-items: center; justify-content: space-between;">
                     <div style="display: flex; align-items: center; gap: 15px;">
                         <span style="font-size: 1.5rem; width: 30px; text-align: center;">🇺🇸</span>
-                        <div style="font-weight: 700; color: var(--text-p); font-size: 1rem; line-height: 1;">English
-                        </div>
+                        <div style="font-weight: 700; color: var(--text-p); font-size: 1rem; line-height: 1;">English</div>
                     </div>
                     <i id="check-en" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
                 </div>
+                <!-- AR -->
                 <div class="info-card" onclick="setLanguage('ar')"
                     style="cursor: pointer; padding: 0 20px; border: 1px solid var(--border); height: 75px; display: flex; align-items: center; justify-content: space-between;">
                     <div style="display: flex; align-items: center; gap: 15px;">
                         <span style="font-size: 1.5rem; width: 30px; text-align: center;">🇸🇦</span>
-                        <div style="font-weight: 700; color: var(--text-p); font-size: 1rem; line-height: 1;">العربية
-                        </div>
+                        <div style="font-weight: 700; color: var(--text-p); font-size: 1rem; line-height: 1;">العربية</div>
                     </div>
                     <i id="check-ar" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
                 </div>
+                <!-- RU -->
+                <div class="info-card" onclick="setLanguage('ru')"
+                    style="cursor: pointer; padding: 0 20px; border: 1px solid var(--border); height: 75px; display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span style="font-size: 1.5rem; width: 30px; text-align: center;">🇷🇺</span>
+                        <div style="font-weight: 700; color: var(--text-p); font-size: 1rem; line-height: 1;">Русский</div>
+                    </div>
+                    <i id="check-ru" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
+                </div>
+                <!-- UZ -->
+                <div class="info-card" onclick="setLanguage('uz')"
+                    style="cursor: pointer; padding: 0 20px; border: 1px solid var(--border); height: 75px; display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span style="font-size: 1.5rem; width: 30px; text-align: center;">🇺🇿</span>
+                        <div style="font-weight: 700; color: var(--text-p); font-size: 1rem; line-height: 1;">O'zbekcha</div>
+                    </div>
+                    <i id="check-uz" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
+                </div>
+                <!-- ES -->
+                <div class="info-card" onclick="setLanguage('es')"
+                    style="cursor: pointer; padding: 0 20px; border: 1px solid var(--border); height: 75px; display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span style="font-size: 1.5rem; width: 30px; text-align: center;">🇪🇸</span>
+                        <div style="font-weight: 700; color: var(--text-p); font-size: 1rem; line-height: 1;">Español</div>
+                    </div>
+                    <i id="check-es" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
+                </div>
+                <!-- TR -->
+                <div class="info-card" onclick="setLanguage('tr')"
+                    style="cursor: pointer; padding: 0 20px; border: 1px solid var(--border); height: 75px; display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span style="font-size: 1.5rem; width: 30px; text-align: center;">🇹🇷</span>
+                        <div style="font-weight: 700; color: var(--text-p); font-size: 1rem; line-height: 1;">Türkçe</div>
+                    </div>
+                    <i id="check-tr" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
+                </div>
+                <!-- ZH -->
                 <div class="info-card" onclick="setLanguage('zh')"
                     style="cursor: pointer; padding: 0 20px; border: 1px solid var(--border); height: 75px; display: flex; align-items: center; justify-content: space-between;">
                     <div style="display: flex; align-items: center; gap: 15px;">
@@ -1284,6 +1321,7 @@
                     </div>
                     <i id="check-zh" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
                 </div>
+                <!-- BN -->
                 <div class="info-card" onclick="setLanguage('bn')"
                     style="cursor: pointer; padding: 0 20px; border: 1px solid var(--border); height: 75px; display: flex; align-items: center; justify-content: space-between;">
                     <div style="display: flex; align-items: center; gap: 15px;">
@@ -1292,6 +1330,7 @@
                     </div>
                     <i id="check-bn" class="fas fa-check-circle" style="color: var(--success); display: none;"></i>
                 </div>
+                <!-- FA -->
                 <div class="info-card" onclick="setLanguage('fa')"
                     style="cursor: pointer; padding: 0 20px; border: 1px solid var(--border); height: 75px; display: flex; align-items: center; justify-content: space-between;">
                     <div style="display: flex; align-items: center; gap: 15px;">
@@ -1796,6 +1835,226 @@
                 unit_users: "کاربر",
                 unit_countries: "کشور",
                 unit_deposits: "واریز"
+            },
+            ru: {
+                loading: "Оптимизация магазина...", nav_home: "Панель управления", nav_store: "Купить номер", nav_deposit: "Пополнение", nav_history: "История заказов", nav_support: "Поддержка", nav_referrals: "Рефералы",
+                financials_header: "Финансы", stats_header: "Статистика", balance: "Текущий баланс", total_spent: "Всего потрачено", total_deposits: "Всего пополнено",
+                completed_orders: "Выполненные заказы", active_orders: "Активные заказы", unique_countries: "Уникальные страны",
+                loading_addr: "Загрузка адреса...", txid_lbl: "ID транзакции (TXID)", txid_ph: "Введите ID транзакции здесь", btn_verify_dep: "Проверить пополнение",
+                total_orders_lbl: "Всего заказов", orders_count_lbl: "зак.", prev: "Пред.", next: "След.",
+                contact_support_title: "Связаться с поддержкой", support_desc: "Наша команда поддержки готова помочь вам с любыми вопросами или проблемами.", btn_message_support: "Написать в поддержку",
+                total_invited_lbl: "Всего приглашенных", users_count_lbl: "польз.", total_earnings_lbl: "Общий заработок", usd_lbl: "USD",
+                referral_prog_title: "Реферальная программа", referral_prog_desc: "Поделитесь своей ссылкой и получайте бонусы от каждого пользователя!",
+                ref_join_bonus_lbl: "При регистрации", ref_commission_lbl: "От депозитов", your_link_lbl: "Ваша уникальная ссылка", loading_lbl: "Загрузка...", tap_copy_lbl: "Нажмите, чтобы скопировать",
+                quick_buy: "Быстрый доступ", btn_start_shopping: "Просмотреть номера",
+                confirm_title: "Подтверждение покупки", lbl_country: "Страна", lbl_price: "Цена", btn_confirm_pay: "Купить сейчас",
+                total_numbers: "Всего номеров", countries: "Всего стран", lowest_price: "Мин. цена",
+                store_search_ph: "Поиск страны...", no_numbers_found: "Нет доступных номеров",
+                success_title: "Оплата прошла успешно!", success_desc: "Дождитесь получения кода в боте.", btn_close: "Закрыть",
+                available: "доступно", search_ph: "Поиск страны...",
+                dep_title: "История пополнений", dep_empty: "История пополнений пуста.",
+                hist_title: "История заказов", hist_empty: "История заказов пуста.",
+                nav_lang: "Язык", lang_desc: "Выберите предпочтительный язык интерфейса.",
+                insufficient_bal: "Недостаточно средств",
+                sub_required: "Требуется подписка",
+                sub_desc: "Для использования бота и доступа к магазину необходимо подписаться на наши каналы.",
+                sub_check: "Я подписался, открыть магазин",
+                join: "Подписаться",
+                checking: "Проверка...",
+                binance_pay_short_desc: "Пожалуйста, переведите USDT через Binance Internal Transfer (Binance Pay) на указанный ниже ID.",
+                binance_pay_desc: "Пожалуйста, переведите USDT через Binance Pay на указанный ниже ID. После оплаты введите 'Order ID' из чека.",
+                trx_desc: "Пожалуйста, отправьте TRX на указанный адрес. После отправки введите хеш транзакции (TxID).",
+                usdt_desc: "Пожалуйста, отправьте USDT (BEP20) на указанный адрес. После отправки введите хеш транзакции (TxID).",
+                maint_title: "Техническое обслуживание",
+                maint_desc: "Мы проводим плановые работы для улучшения сервиса. Пожалуйста, зайдите позже!",
+                maint_eta: "Ожидаемое время: 30-60 мин.",
+                page_of: "Страница {current} из {total}",
+                pending: "В ОЖИДАНИИ",
+                completed: "ВЫПОЛНЕНО",
+                rejected: "ОТКЛОНЕНО",
+                frozen: "ЗАМОРОЖЕНО",
+                spam: "СПАМ",
+                revoked: "ОТЗВАНО",
+                binance_pay: "Binance Pay",
+                trx_trc20: "TRX (TRC20)",
+                usdt_bep20: "USDT (BEP20)",
+                copied: "Скопировано",
+                copied_desc: "Скопировано в буфер обмена",
+                account: "Аккаунт",
+                number: "Номер",
+                price: "Цена",
+                date: "Дата",
+                unit_numbers: "НОМЕРОВ",
+                unit_orders: "ЗАКАЗОВ",
+                unit_usd: "USD",
+                unit_users: "ПОЛЬЗ.",
+                unit_countries: "СТРАН",
+                unit_deposits: "ДЕПОЗИТОВ"
+            },
+            uz: {
+                loading: "Do'kon optimallashtirilmoqda...", nav_home: "Boshqaruv paneli", nav_store: "Raqam sotib olish", nav_deposit: "Hisobni to'ldirish", nav_history: "Buyurtmalar tarixi", nav_support: "Qo'llab-quvvatlash", nav_referrals: "Takliflar tizimi",
+                financials_header: "Moliyaviy ma'lumotlar", stats_header: "Statistika", balance: "Joriy balans", total_spent: "Jami sarflangan", total_deposits: "Jami to'ldirilgan",
+                completed_orders: "Bajarilgan buyurtmalar", active_orders: "Faol buyurtmalar", unique_countries: "Noyob davlatlar",
+                loading_addr: "Manzil yuklanmoqda...", txid_lbl: "Tranzaksiya ID (TXID)", txid_ph: "Tranzaksiya ID sini kiriting", btn_verify_dep: "To'lovni tekshirish",
+                total_orders_lbl: "Jami buyurtmalar", orders_count_lbl: "ta", prev: "Oldingi", next: "Keyingi",
+                contact_support_title: "Qo'llab-quvvatlash bilan bog'lanish", support_desc: "Bizning jamoamiz har qanday savol yoki muammolaringizda yordam berishga tayyor.", btn_message_support: "Xabar yozish",
+                total_invited_lbl: "Jami taklif qilinganlar", users_count_lbl: "ta foydalanuvchi", total_earnings_lbl: "Jami daromad", usd_lbl: "USD",
+                referral_prog_title: "Takliflar dasturi", referral_prog_desc: "Havolangizni ulashing va har bir foydalanuvchidan mukofot oling!",
+                ref_join_bonus_lbl: "Ro'yxatdan o'tganda", ref_commission_lbl: "To'lovlardan", your_link_lbl: "Sizning maxsus havolangiz", loading_lbl: "Yuklanmoqda...", tap_copy_lbl: "Nusxa olish uchun bosing",
+                quick_buy: "Tezkor kirish", btn_start_shopping: "Raqamlarni ko'rish",
+                confirm_title: "Xaridni tasdiqlash", lbl_country: "Davlat", lbl_price: "Narxi", btn_confirm_pay: "Sotib olish",
+                total_numbers: "Jami raqamlar", countries: "Jami davlatlar", lowest_price: "Eng arzon narx",
+                store_search_ph: "Davlatni qidirish...", no_numbers_found: "Hozirda raqamlar mavjud emas",
+                success_title: "To'lov muvaffaqiyatli yakunlandi!", success_desc: "Botda kod kelishini kuting.", btn_close: "Yopish",
+                available: "mavjud", search_ph: "Qidirish...",
+                dep_title: "Hisobni to'ldirish tarixi", dep_empty: "Hozircha to'lovlar mavjud emas.",
+                hist_title: "Buyurtmalar tarixi", hist_empty: "Hozircha buyurtmalar mavjud emas.",
+                nav_lang: "Til", lang_desc: "Interfeys uchun o'zingizga qulay tilni tanlang.",
+                insufficient_bal: "Mablag' yetarli emas",
+                sub_required: "Obuna bo'lish talab etiladi",
+                sub_desc: "Botdan foydalanish va do'konga kirish uchun avval kanallarimizga a'zo bo'lishingiz kerak.",
+                sub_check: "A'zo bo'ldim, do'konni ochish",
+                join: "A'zo bo'lish",
+                checking: "Tekshirilmoqda...",
+                binance_pay_short_desc: "Iltimos, USDT ni Binance Internal Transfer (Binance Pay) orqali quyidagi ID ga o'tkazing.",
+                binance_pay_desc: "Iltimos, USDT ni Binance Pay orqali quyidagi ID ga o'tkazing. To'lovdan so'ng chekdagi 'Order ID' ni kiriting.",
+                trx_desc: "Iltimos, TRX ni quyidagi manzilga yuboring. Yuborgandan so'ng tranzaksiya xeshini (TxID) kiriting.",
+                usdt_desc: "Iltimos, USDT (BEP20) ni quyidagi manzilga yuboring. Yuborgandan so'ng tranzaksiya xeshini (TxID) kiriting.",
+                maint_title: "Texnik xizmat ko'rsatish",
+                maint_desc: "Xizmat sifatini oshirish uchun profilaktika ishlari olib borilmoqda. Iltimos, birozdan keyin qayta urinib ko'ring!",
+                maint_eta: "Taxminiy vaqt: 30-60 daqiqa",
+                page_of: "{total} dan {current}-sahifa",
+                pending: "KUTILMOQDA",
+                completed: "BAJARILDI",
+                rejected: "RAD ETILDI",
+                frozen: "MUZLATILDI",
+                spam: "SPAM",
+                revoked: "QAYTARIB OLINDI",
+                binance_pay: "Binance Pay",
+                trx_trc20: "TRX (TRC20)",
+                usdt_bep20: "USDT (BEP20)",
+                copied: "Nusxa olindi",
+                copied_desc: "Vaqtinchalik xotiraga nusxa olindi",
+                account: "Hisob",
+                number: "Raqam",
+                price: "Narx",
+                date: "Sana",
+                unit_numbers: "RAQAMLAR",
+                unit_orders: "BUYURTMALAR",
+                unit_usd: "USD",
+                unit_users: "FOYDALANUVCHILAR",
+                unit_countries: "DAVLATLAR",
+                unit_deposits: "TO'LOVLAR"
+            },
+            es: {
+                loading: "Optimizando tienda...", nav_home: "Panel", nav_store: "Comprar número", nav_deposit: "Depósito", nav_history: "Historial", nav_support: "Soporte", nav_referrals: "Referidos",
+                financials_header: "Finanzas", stats_header: "Estadísticas", balance: "Saldo actual", total_spent: "Total gastado", total_deposits: "Total depositado",
+                completed_orders: "Pedidos completados", active_orders: "Pedidos activos", unique_countries: "Países únicos",
+                loading_addr: "Cargando dirección...", txid_lbl: "ID de transacción (TXID)", txid_ph: "Ingrese el ID de transacción aquí", btn_verify_dep: "Verificar depósito",
+                total_orders_lbl: "Total de pedidos", orders_count_lbl: "ped.", prev: "Ant.", next: "Sig.",
+                contact_support_title: "Contactar soporte", support_desc: "Nuestro equipo de soporte está disponible para ayudarle con cualquier duda o problema.", btn_message_support: "Enviar mensaje",
+                total_invited_lbl: "Total de invitados", users_count_lbl: "usuarios", total_earnings_lbl: "Ganancias totales", usd_lbl: "USD",
+                referral_prog_title: "Programa de referidos", referral_prog_desc: "¡Comparte tu enlace y gana recompensas de cada usuario!",
+                ref_join_bonus_lbl: "Al unirse", ref_commission_lbl: "En depósitos", your_link_lbl: "Tu enlace único", loading_lbl: "Cargando...", tap_copy_lbl: "Toca para copiar",
+                quick_buy: "Acceso rápido", btn_start_shopping: "Ver números",
+                confirm_title: "Confirmar compra", lbl_country: "País", lbl_price: "Precio", btn_confirm_pay: "Comprar ahora",
+                total_numbers: "Total de números", countries: "Total de países", lowest_price: "Precio más bajo",
+                store_search_ph: "Buscar país...", no_numbers_found: "No hay números disponibles actualmente",
+                success_title: "¡Pago exitoso!", success_desc: "Espera a recibir el código en el chat del bot.", btn_close: "Cerrar",
+                available: "disponibles", search_ph: "Buscar país...",
+                dep_title: "Historial de depósitos", dep_empty: "No se han encontrado depósitos.",
+                hist_title: "Historial de pedidos", hist_empty: "No se han encontrado pedidos.",
+                nav_lang: "Idioma", lang_desc: "Selecciona tu idioma preferido para la interfaz.",
+                insufficient_bal: "Saldo insuficiente",
+                sub_required: "Suscripción obligatoria",
+                sub_desc: "Para usar el bot y acceder a la tienda, primero debes unirte a nuestros canales.",
+                sub_check: "Ya me he unido, abrir tienda",
+                join: "Unirse",
+                checking: "Verificando...",
+                binance_pay_short_desc: "Por favor, transfiera USDT vía Binance Internal Transfer (Binance Pay) al ID de abajo.",
+                binance_pay_desc: "Transfiera USDT vía Binance Pay al ID de abajo. Después del pago, ingrese el 'Order ID' de su recibo.",
+                trx_desc: "Envíe TRX a la dirección de abajo. Ingrese el hash de la transacción (TxID) después de enviar.",
+                usdt_desc: "Envíe USDT (BEP20) a la dirección de abajo. Ingrese el hash de la transacción (TxID) después de enviar.",
+                maint_title: "En mantenimiento",
+                maint_desc: "Estamos realizando mantenimiento de rutina para mejorar su experiencia. ¡Vuelva pronto!",
+                maint_eta: "Tiempo estimado: 30-60 min.",
+                page_of: "Página {current} de {total}",
+                pending: "PENDIENTE",
+                completed: "COMPLETADO",
+                rejected: "RECHAZADO",
+                frozen: "CONGELADO",
+                spam: "SPAM",
+                revoked: "REVOCADO",
+                binance_pay: "Binance Pay",
+                trx_trc20: "TRX (TRC20)",
+                usdt_bep20: "USDT (BEP20)",
+                copied: "Copiado",
+                copied_desc: "Copiado al portapapeles",
+                account: "Cuenta",
+                number: "Número",
+                price: "Precio",
+                date: "Fecha",
+                unit_numbers: "NÚMEROS",
+                unit_orders: "PEDIDOS",
+                unit_usd: "USD",
+                unit_users: "USUARIOS",
+                unit_countries: "PAÍSES",
+                unit_deposits: "DEPÓSITOS"
+            },
+            tr: {
+                loading: "Mağaza optimize ediliyor...", nav_home: "Panel", nav_store: "Numara Satın Al", nav_deposit: "Bakiye Yükle", nav_history: "Sipariş Geçmişi", nav_support: "Destek", nav_referrals: "Referanslar",
+                financials_header: "Finansal Veriler", stats_header: "İstatistikler", balance: "Mevcut Bakiye", total_spent: "Toplam Harcama", total_deposits: "Toplam Yükleme",
+                completed_orders: "Tamamlanan Siparişler", active_orders: "Aktif Siparişler", unique_countries: "Benzersiz Ülkeler",
+                loading_addr: "Adres yükleniyor...", txid_lbl: "İşlem ID (TXID)", txid_ph: "İşlem ID'sini buraya girin", btn_verify_dep: "Yüklemeyi Doğrula",
+                total_orders_lbl: "Toplam Sipariş", orders_count_lbl: "sipariş", prev: "Geri", next: "İleri",
+                contact_support_title: "Destekle İletişime Geç", support_desc: "Destek ekibimiz her türlü sorunuz veya sorununuz için yardıma hazır.", btn_message_support: "Destek Mesajı Gönder",
+                total_invited_lbl: "Toplam Davet", users_count_lbl: "kullanıcı", total_earnings_lbl: "Toplam Kazanç", usd_lbl: "USD",
+                referral_prog_title: "Referans Programı", referral_prog_desc: "Bağlantınızı paylaşın ve her kullanıcıdan harika ödüller kazanın!",
+                ref_join_bonus_lbl: "Katılım Bonusu", ref_commission_lbl: "Yükleme Komisyonu", your_link_lbl: "Size Özel Bağlantı", loading_lbl: "Yükleniyor...", tap_copy_lbl: "Kopyalamak için tıklayın",
+                quick_buy: "Hızlı Erişim", btn_start_shopping: "Numaralara Göz At",
+                confirm_title: "Satın Almayı Onayla", lbl_country: "Ülke", lbl_price: "Fiyat", btn_confirm_pay: "Şimdi Satın Al",
+                total_numbers: "Toplam Numara", countries: "Toplam Ülke", lowest_price: "En Düşük Fiyat",
+                store_search_ph: "Ülke ara...", no_numbers_found: "Şu anda uygun numara yok",
+                success_title: "Ödeme Başarılı!", success_desc: "Bot sohbetinde kodun gelmesini bekleyin.", btn_close: "Kapat",
+                available: "mevcut", search_ph: "Ülke ara...",
+                dep_title: "Yükleme Geçmişi", dep_empty: "Henüz yükleme kaydı bulunamadı.",
+                hist_title: "Sipariş Geçmişi", hist_empty: "Henüz sipariş kaydı bulunamadı.",
+                nav_lang: "Dil", lang_desc: "Arayüz için tercih ettiğiniz dili seçin.",
+                insufficient_bal: "Yetersiz bakiye",
+                sub_required: "Abonelik Gerekli",
+                sub_desc: "Botu kullanmak ve mağazaya erişmek için önce kanallarımıza katılmalısınız.",
+                sub_check: "Katıldım, mağazayı aç",
+                join: "Katıl",
+                checking: "Kontrol ediliyor...",
+                binance_pay_short_desc: "Lütfen USDT'yi Binance Dahili Transfer (Binance Pay) yoluyla aşağıdaki ID'ye gönderin.",
+                binance_pay_desc: "Lütfen USDT'yi Binance Pay ile aşağıdaki ID'ye gönderin. Ödemeden sonra makbuzdaki 'Order ID'yi girin.",
+                trx_desc: "Lütfen TRX'i aşağıdaki adrese gönderin. Gönderdikten sonra İşlem Karmasını (TxID) girin.",
+                usdt_desc: "Lütfen USDT'yi (BEP20) aşağıdaki adrese gönderin. Gönderdikten sonra İşlem Karmasını (TxID) girin.",
+                maint_title: "Bakım Çalışması",
+                maint_desc: "Deneyiminizi iyileştirmek için rutin bakım yapıyoruz. Lütfen daha sonra tekrar gelin!",
+                maint_eta: "Tahmini süre: 30-60 dk.",
+                page_of: "Sayfa {current} / {total}",
+                pending: "BEKLİYOR",
+                completed: "TAMAMLANDI",
+                rejected: "REDDEDİLDİ",
+                frozen: "DONDURULDU",
+                spam: "SPAM",
+                revoked: "GERİ ÇEKİLDİ",
+                binance_pay: "Binance Pay",
+                trx_trc20: "TRX (TRC20)",
+                usdt_bep20: "USDT (BEP20)",
+                copied: "Kopyalandı",
+                copied_desc: "Panoya kopyalandı",
+                account: "Hesap",
+                number: "Numara",
+                price: "Fiyat",
+                date: "Tarih",
+                unit_numbers: "NUMARA",
+                unit_orders: "SİPARİŞ",
+                unit_usd: "USD",
+                unit_users: "KULLANICI",
+                unit_countries: "ÜLKE",
+                unit_deposits: "YÜKLEME"
             }
         };
 
@@ -2142,7 +2401,7 @@
             document.body.classList.toggle('rtl', isRTL);
 
             // Update language selector checkmarks
-            document.querySelectorAll('#check-en, #check-ar, #check-zh, #check-bn, #check-fa').forEach(i => {
+            document.querySelectorAll('#check-en, #check-ar, #check-zh, #check-bn, #check-fa, #check-ru, #check-uz, #check-es, #check-tr').forEach(i => {
                 if (i) i.style.display = (i.id === 'check-' + currentLang) ? 'block' : 'none';
             });
 
