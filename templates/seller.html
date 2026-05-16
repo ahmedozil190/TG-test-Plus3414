@@ -2921,7 +2921,7 @@
 
         async function fetchSellerData() {
             try {
-                const res = await fetch(`/api/seller/data?user_id=${userId}`);
+                const res = await fetch(`/api/seller/data?user_id=${userId}&lang=${currentLang}&init_data=${encodeURIComponent(tg.initData || '')}`);
                 const data = await res.json();
 
                 if (!res.ok) {
@@ -3034,6 +3034,7 @@
         function filterPrices() {
             const query = document.getElementById('priceSearch').value.toLowerCase();
             const filtered = allPrices.filter(p =>
+                (p.localized_name || p.name).toLowerCase().includes(query) ||
                 p.name.toLowerCase().includes(query) ||
                 p.code.toLowerCase().includes(query)
             );
@@ -3087,7 +3088,7 @@
                     <div class="country-side" style="flex: 1; min-width: 0;">
                         <span class="c-flag">${p.flag}</span>
                         <div style="min-width: 0; flex: 1;">
-                            <div class="c-name">${simplifyName(p.name)}</div>
+                            <div class="c-name">${p.localized_name || simplifyName(p.name)}</div>
                             <div class="c-code">+${p.code}</div>
                         </div>
                     </div>

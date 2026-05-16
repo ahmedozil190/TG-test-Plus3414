@@ -570,6 +570,36 @@ def clean_display_name(raw_name: str) -> str:
     clean = re.sub(r'\s*[\(\[]?[A-Z]{2,3}[\)\]]?\s*$', '', raw_name)
     return clean.strip()
 
+# ─── Babel Locale Map ───
+_LANG_TO_BABEL = {
+    "en": "en",
+    "ar": "ar",
+    "zh": "zh_Hans",
+    "bn": "bn",
+    "fa": "fa",
+    "ru": "ru",
+    "uz": "uz",
+    "es": "es",
+    "tr": "tr",
+}
+
+def get_localized_country_name(iso_code: str, lang: str) -> str:
+    """Return country name localized to the given language using Babel."""
+    if not iso_code or iso_code == 'XX':
+        return None
+    try:
+        from babel import Locale
+        from babel.core import UnknownLocaleError
+        locale_str = _LANG_TO_BABEL.get(lang, "en")
+        try:
+            locale = Locale.parse(locale_str)
+        except UnknownLocaleError:
+            locale = Locale.parse("en")
+        name = locale.territories.get(iso_code.upper())
+        return name if name else None
+    except Exception:
+        return None
+
 app = FastAPI(title="Store Admin Panel")
 
 @app.middleware("http")
@@ -3228,7 +3258,7 @@ async def toggle_ban(data: BanToggle):
 # --- Seller Panel APIs ---
 
 @app.get("/api/seller/data")
-async def get_seller_data(user_id: int, init_data: str):
+async def get_seller_data(user_id: int, init_data: str, lang: str = "en"):
     try:
         from config import SELLER_BOT_TOKEN
         if not verify_user_auth_multi(init_data, user_id):
@@ -3329,8 +3359,10 @@ async def get_seller_data(user_id: int, init_data: str):
                                                 custom_prices.get((p.country_code, 'XX'), p.buy_price))
                     
                     if price_val > 0:
+                        localized = get_localized_country_name(iso, lang) or name
                         formatted_prices.append({
                             "name": name,
+                            "localized_name": localized,
                             "flag": flag,
                             "code": p.country_code,
                             "price": price_val
@@ -3353,9 +3385,11 @@ async def get_seller_data(user_id: int, init_data: str):
                             flag = get_flag_emoji(c_iso)
                         else:
                             flag = f
-
+                        
+                        localized = get_localized_country_name(c_iso if c_iso != 'XX' else None, lang) or name
                         formatted_prices.append({
                             "name": name,
+                            "localized_name": localized,
                             "flag": flag,
                             "code": cc,
                             "price": cp_buy_price
