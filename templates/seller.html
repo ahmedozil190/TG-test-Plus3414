@@ -3471,7 +3471,8 @@
                     if (data.found) {
                         lastDetectedCountry = data.name;
                         safeSetText('detFlag', data.flag);
-                        safeSetText('detName', simplifyName(data.name));
+                        const locName = getLocalizedCountryName({iso: data.iso, name: data.name}, currentLang);
+                        safeSetText('detName', locName);
                         safeSetText('detPrice', `$${formatMoney(data.price)}`);
                         const detNameEl = document.getElementById('detName');
                         if (detNameEl) detNameEl.style.color = 'var(--text-p)';

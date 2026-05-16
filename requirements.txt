@@ -12,6 +12,6 @@ itsdangerous
 python-multipart
 phonenumbers
 pycountry
-country_list
+babel
 requests
 httpx

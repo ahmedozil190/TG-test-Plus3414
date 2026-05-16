@@ -23,8 +23,8 @@ else:
 
 # WebApp URLs
 WEBAPP_URL = os.getenv("WEBAPP_URL", "https://tg-test-plus3414-production.up.railway.app")
-STORE_URL = f"{WEBAPP_URL}/store"
-SELLER_URL = f"{WEBAPP_URL}/seller"
+STORE_URL = f"{WEBAPP_URL}/store?v=2"
+SELLER_URL = f"{WEBAPP_URL}/seller?v=2"
 
 # Binance Payment Config
 BINANCE_API_KEY = os.getenv("BINANCE_API_KEY", "")

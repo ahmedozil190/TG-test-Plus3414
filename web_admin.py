@@ -1195,6 +1195,7 @@ async def get_store_data(user_id: int = None, init_data: str = None):
                     countries.append({
                         "name": name,
                         "flag": flag,
+                        "iso": c_data.get("iso", "XX"),
                         "buy_price": price,
                         "count": c_data["count"],
                         "server_id": c_data.get("server_id"),
@@ -4071,6 +4072,7 @@ async def detect_country(phone: str, user_id: int, init_data: str):
                 return {
                     "found": True,
                     "name": name,
+                    "iso": display_iso,
                     "flag": get_flag_emoji(display_iso) if display_iso != 'XX' else "🌐",
                     "price": price_val
                 }
@@ -4136,7 +4138,9 @@ async def get_seller_accounts(user_id: int, init_data: str, page: int = 1, limit
             accounts_data.append({
                 "phone": a.phone_number,
                 "status": status_name,
-                "country": f"{flag} {a.country}",
+                "country": a.country,
+                "flag": flag,
+                "iso": region,
                 "buy_price": actual_buy_price,
                 "ready_at": int(ready_at.timestamp() * 1000) if ready_at else None,
                 "date": a.created_at.isoformat() if a.created_at else None,
