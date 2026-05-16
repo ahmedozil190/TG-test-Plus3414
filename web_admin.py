@@ -3374,6 +3374,7 @@ async def get_seller_data(user_id: int, init_data: str, lang: str = "en"):
                         
                         formatted_prices.append({
                             "name": name,
+                            "iso": iso,
                             "localized_name": single_localized,
                             "localized_names": localized_names,
                             "flag": flag,
@@ -3408,6 +3409,7 @@ async def get_seller_data(user_id: int, init_data: str, lang: str = "en"):
                         
                         formatted_prices.append({
                             "name": name,
+                            "iso": target_iso or cc,
                             "localized_name": single_localized,
                             "localized_names": localized_names,
                             "flag": flag,

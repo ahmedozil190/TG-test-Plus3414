@@ -2048,27 +2048,20 @@
         };
 
         function getLocalizedCountryName(p, lang) {
-            // lang is passed at call time so it's always defined
             const l = lang || 'en';
-            // 1. Try frontend dict using debug ISO from server
-            const iso = (p.localized_names && p.localized_names['_debug_iso']) || p.iso || '';
-            if (iso && COUNTRY_NAMES[iso.toUpperCase()]) {
-                const nm = COUNTRY_NAMES[iso.toUpperCase()][l];
-                if (nm) return nm;
+            // Use iso field sent directly from server
+            const iso = (p.iso || '').toUpperCase();
+            if (iso && iso !== 'XX' && COUNTRY_NAMES[iso] && COUNTRY_NAMES[iso][l]) {
+                return COUNTRY_NAMES[iso][l];
             }
-            // 2. Try server localized_names
-            if (p.localized_names && p.localized_names[l] && !p.localized_names[l].startsWith('ERROR_')) {
-                return p.localized_names[l];
-            }
-            // 3. Match by English name in frontend dict
-            const eng = (p.name || '').trim();
+            // Fallback: match by English name
+            const eng = (p.name || '').trim().toLowerCase();
             for (const [, names] of Object.entries(COUNTRY_NAMES)) {
-                if (names['en'].toLowerCase() === eng.toLowerCase()) {
-                    const nm = names[l];
-                    if (nm) return nm;
+                if (names['en'].toLowerCase() === eng && names[l]) {
+                    return names[l];
                 }
             }
-            // 4. Fallback to English
+            // Final fallback
             return simplifyName(p.name);
         }
 
