@@ -584,21 +584,35 @@ _LANG_TO_BABEL = {
 }
 
 def get_localized_country_name(iso_code: str, lang: str) -> str:
-    """Return country name localized to the given language using Babel."""
+    """Return country name localized to the given language using country_list."""
     if not iso_code or iso_code == 'XX':
         return "ERROR_ISO_XX"
     try:
-        from babel import Locale
-        from babel.core import UnknownLocaleError
-        locale_str = _LANG_TO_BABEL.get(lang, "en")
+        from country_list import countries_for_language
+        # Map our lang codes to country_list supported languages
+        lang_map = {
+            "en": "en",
+            "ar": "ar",
+            "zh": "zh",
+            "bn": "bn",
+            "fa": "fa",
+            "ru": "ru",
+            "uz": "uz",
+            "es": "es",
+            "tr": "tr"
+        }
+        target_lang = lang_map.get(lang, "en")
         try:
-            locale = Locale.parse(locale_str)
-        except UnknownLocaleError:
-            locale = Locale.parse("en")
-        name = locale.territories.get(iso_code.upper())
-        return name if name else f"ERROR_NO_NAME_FOR_{iso_code}"
+            countries_dict = dict(countries_for_language(target_lang))
+            name = countries_dict.get(iso_code.upper())
+            return name if name else f"ERROR_NO_NAME_FOR_{iso_code}"
+        except Exception as e:
+            # Fallback to English if the language is somehow missing in the library
+            countries_dict = dict(countries_for_language("en"))
+            name = countries_dict.get(iso_code.upper())
+            return name if name else f"ERROR_NO_NAME_FOR_{iso_code}"
     except Exception as e:
-        return f"ERROR_BABEL_{str(e)}"
+        return f"ERROR_COUNTRY_LIST_{str(e)}"
 
 app = FastAPI(title="Store Admin Panel")
 
