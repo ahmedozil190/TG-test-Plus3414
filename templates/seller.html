@@ -3210,8 +3210,10 @@
                         statusText = translations[currentLang].rejected;
                     }
 
-                    const rowS = (c) => `background: ${hexToRgba(c, 0.02)}; border: 1px solid ${hexToRgba(c, 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;`;
-                    const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 500; text-transform: uppercase; opacity: 0.7; flex-shrink: 0;";
+                    const isRTL = currentLang === 'ar' || currentLang === 'fa';
+                    const valAlign = isRTL ? 'left' : 'right';
+                    const rowS = (c) => `background: ${hexToRgba(c, 0.02)}; border: 1px solid ${hexToRgba(c, 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px; direction: ${isRTL ? 'rtl' : 'ltr'};`;
+                    const lblS = `color: var(--text-secondary); font-size: 0.8rem; font-weight: 500; text-transform: uppercase; opacity: 0.7; flex-shrink: 0; text-align: ${isRTL ? 'right' : 'left'};`;
 
                     const simpleMethod = h.method.split(' - ')[0];
 
@@ -3222,27 +3224,27 @@
                         <div style="display: flex; flex-direction: column; gap: 10px;">
                             <div style="${rowS(statusColor)}">
                                 <span style="${lblS}">${translations[currentLang].status}</span>
-                                <span style="color: ${statusColor}; font-weight: 500; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; word-break: break-all; flex: 1; min-width: 0; text-align: right;">
+                                <span style="color: ${statusColor}; font-weight: 500; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; word-break: break-all; flex: 1; min-width: 0; text-align: ${valAlign};">
                                     ${statusText}
                                 </span>
                             </div>
                             <div style="${rowS('#10b981')}">
                                 <span style="${lblS}">${translations[currentLang].details}</span>
-                                <span style="color: var(--text-secondary); opacity: 0.7; font-weight: 500; font-size: 0.95rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(h.amount)} - ${simpleMethod}</span>
+                                <span style="color: var(--text-secondary); opacity: 0.7; font-weight: 500; font-size: 0.95rem; text-align: ${valAlign}; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(h.amount)} - ${simpleMethod}</span>
                             </div>
                             <div style="${rowS('#8b5cf6')}">
                                 <span style="${lblS}">${translations[currentLang].trans_id}</span>
-                                <span style="color: var(--text-secondary); opacity: 0.7; font-weight: 500; font-size: 0.9rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${h.transaction_id}</span>
+                                <span style="color: var(--text-secondary); opacity: 0.7; font-weight: 500; font-size: 0.9rem; text-align: ${valAlign}; word-break: break-all; flex: 1; min-width: 0;">${h.transaction_id}</span>
                             </div>
                             <div style="${rowS('#3b82f6')}" onclick="copyText('${h.address}')" title="${h.address}" style="cursor:pointer;">
                                 <span style="${lblS}">${translations[currentLang].wallet}</span>
-                                <span style="color: var(--text-secondary); opacity: 0.7; font-weight: 500; font-size: 0.95rem; text-align: right; direction: ltr; font-family: monospace; flex: 1; min-width: 0; cursor: pointer;">
+                                <span style="color: var(--text-secondary); opacity: 0.7; font-weight: 500; font-size: 0.95rem; text-align: ${valAlign}; direction: ltr; font-family: monospace; flex: 1; min-width: 0; cursor: pointer;">
                                     ${h.address && h.address.length > 14 ? h.address.slice(0, 8) + '···' + h.address.slice(-6) : (h.address || 'N/A')}
                                 </span>
                             </div>
                             <div style="${rowS('#fdd835')}">
                                 <span style="${lblS}">${translations[currentLang].date}</span>
-                                <span style="color: var(--text-secondary); opacity: 0.7; font-weight: 500; font-size: 0.85rem; text-align: right;">${formatDateTime(h.date)}</span>
+                                <span style="color: var(--text-secondary); opacity: 0.7; font-weight: 500; font-size: 0.85rem; text-align: ${valAlign};">${formatDateTime(h.date)}</span>
                             </div>
                         </div>
                     `;
@@ -3510,8 +3512,10 @@
                     }
 
                     const isPending = acc.status === 'PENDING';
-                    const rowS = (c) => `background: ${hexToRgba(c, 0.02)}; border: 1px solid ${hexToRgba(c, 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;`;
-                    const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 500; text-transform: uppercase; opacity: 0.7;";
+                    const isRTL = currentLang === 'ar' || currentLang === 'fa';
+                    const valAlign = isRTL ? 'left' : 'right';
+                    const rowS = (c) => `background: ${hexToRgba(c, 0.02)}; border: 1px solid ${hexToRgba(c, 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px; direction: ${isRTL ? 'rtl' : 'ltr'};`;
+                    const lblS = `color: var(--text-secondary); font-size: 0.8rem; font-weight: 500; text-transform: uppercase; opacity: 0.7; text-align: ${isRTL ? 'right' : 'left'};`;
 
                     item.innerHTML = `
                         <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
@@ -3520,24 +3524,24 @@
                         <div style="display: flex; flex-direction: column; gap: 10px;">
                             <div style="${rowS(statusColor)}">
                                 <span style="${lblS}">${translations[currentLang].status}</span>
-                                <span style="color: ${statusColor}; font-weight: 500; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">
+                                <span style="color: ${statusColor}; font-weight: 500; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; flex: 1; text-align: ${valAlign};">
                                     ${statusText}
                                 </span>
                             </div>
                             <div style="${rowS('#8b5cf6')}">
                                 <span style="${lblS}">${translations[currentLang].number}</span>
-                                <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; text-align: right; direction: ltr;">${acc.phone}</span>
+                                <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.1rem; text-align: ${valAlign}; direction: ltr; flex: 1;">${acc.phone}</span>
                             </div>
 
                             <div style="${rowS('#3b82f6')}">
                                 <span style="${lblS}">${translations[currentLang].price}</span>
-                                <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.2rem; text-align: right;">$${formatMoney(acc.buy_price)}</span>
+                                <span style="color: var(--text-secondary); font-weight: 500; font-size: 1.2rem; text-align: ${valAlign}; flex: 1;">$${formatMoney(acc.buy_price)}</span>
                             </div>
                             <div style="${rowS('#fdd835')}">
                                 <span style="${lblS}">${translations[currentLang].date}</span>
                                 <span class="${isPending ? 'countdown-timer' : ''}" 
                                       data-ready="${acc.ready_at}" 
-                                      style="color: var(--text-secondary); font-weight: 500; font-size: 0.85rem; text-align: right;">
+                                      style="color: var(--text-secondary); font-weight: 500; font-size: 0.85rem; text-align: ${valAlign}; flex: 1;">
                                     ${isPending ? '...' : formatDateTime(acc.date)}
                                 </span>
                             </div>
