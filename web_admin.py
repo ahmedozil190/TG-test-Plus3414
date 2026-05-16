@@ -586,7 +586,7 @@ _LANG_TO_BABEL = {
 def get_localized_country_name(iso_code: str, lang: str) -> str:
     """Return country name localized to the given language using Babel."""
     if not iso_code or iso_code == 'XX':
-        return None
+        return "ERROR_ISO_XX"
     try:
         from babel import Locale
         from babel.core import UnknownLocaleError
@@ -596,9 +596,9 @@ def get_localized_country_name(iso_code: str, lang: str) -> str:
         except UnknownLocaleError:
             locale = Locale.parse("en")
         name = locale.territories.get(iso_code.upper())
-        return name if name else None
-    except Exception:
-        return None
+        return name if name else f"ERROR_NO_NAME_FOR_{iso_code}"
+    except Exception as e:
+        return f"ERROR_BABEL_{str(e)}"
 
 app = FastAPI(title="Store Admin Panel")
 
@@ -3364,6 +3364,10 @@ async def get_seller_data(user_id: int, init_data: str):
                     
                     if price_val > 0:
                         localized_names = {lc: ln for lc in _LANG_TO_BABEL if (ln := get_localized_country_name(iso, lc))}
+                        
+                        # Add a debug key to check what iso we passed
+                        localized_names["_debug_iso"] = iso
+                        
                         formatted_prices.append({
                             "name": name,
                             "localized_names": localized_names,
@@ -3390,9 +3394,10 @@ async def get_seller_data(user_id: int, init_data: str):
                             target_iso = c_iso
                         else:
                             flag = f
-                            target_iso = resolved_iso if resolved_iso != 'XX' else None
-                        
+                            target_iso = c_iso if c_iso != 'XX' else None
                         localized_names = {lc: ln for lc in _LANG_TO_BABEL if (ln := get_localized_country_name(target_iso, lc))}
+                        localized_names["_debug_iso"] = target_iso
+                        
                         formatted_prices.append({
                             "name": name,
                             "localized_names": localized_names,
