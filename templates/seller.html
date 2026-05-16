@@ -3092,23 +3092,26 @@
             const net = amt - fee;
             const simpleMethod = currentMethod.split(' - ')[0];
 
+            const isRTL = currentLang === 'ar' || currentLang === 'fa';
+            const valAlign = isRTL ? 'left' : 'right';
+
             // Build Rows
-            const rowS = (c) => `background: ${hexToRgba(c, 0.02)}; border: 1px solid ${hexToRgba(c, 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px;`;
-            const lblS = "color: var(--text-secondary); font-size: 0.8rem; font-weight: 500; text-transform: uppercase; opacity: 0.7; flex-shrink: 0;";
+            const rowS = (c) => `background: ${hexToRgba(c, 0.02)}; border: 1px solid ${hexToRgba(c, 0.08)}; padding: 14px 18px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 15px; direction: ${isRTL ? 'rtl' : 'ltr'};`;
+            const lblS = `color: var(--text-secondary); font-size: 0.8rem; font-weight: 500; text-transform: uppercase; opacity: 0.7; flex-shrink: 0; text-align: ${isRTL ? 'right' : 'left'};`;
 
             const container = document.getElementById('confirm-rows-container');
             container.innerHTML = `
                 <div style="${rowS('#10b981')}">
                     <span style="${lblS}">${translations[currentLang].details}</span>
-                    <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.95rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(amt)} - ${simpleMethod}</span>
+                    <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.95rem; text-align: ${valAlign}; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(amt)} - ${simpleMethod}</span>
                 </div>
                 <div style="${rowS('#8b5cf6')}">
                     <span style="${lblS}">${translations[currentLang].amount_to_receive}</span>
-                    <span style="color: #10b981; font-weight: 700; font-size: 1rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(net)}</span>
+                    <span style="color: #10b981; font-weight: 700; font-size: 1rem; text-align: ${valAlign}; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(net)}</span>
                 </div>
                 <div style="${rowS('#3b82f6')}">
                     <span style="${lblS}">${translations[currentLang].wallet}</span>
-                    <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.95rem; text-align: right; direction: ltr; flex: 1; min-width: 0;">
+                    <span style="color: var(--text-secondary); font-weight: 500; font-size: 0.95rem; text-align: ${valAlign}; direction: ltr; flex: 1; min-width: 0;">
                         ${addr && addr.length > 14 ? addr.slice(0, 8) + '···' + addr.slice(-6) : (addr || 'N/A')}
                     </span>
                 </div>
