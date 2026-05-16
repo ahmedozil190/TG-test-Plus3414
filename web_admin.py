@@ -584,32 +584,9 @@ _LANG_TO_BABEL = {
 }
 
 def get_localized_country_name(iso_code: str, lang: str) -> str:
-    """Return country name localized to the given language."""
+    """Return country name localized to the given language using Babel."""
     if not iso_code or iso_code == 'XX':
         return "ERROR_ISO_XX"
-        
-    iso_upper = iso_code.upper()
-    
-    # 1. HARDCODED ARABIC FALLBACK (Fail-safe for common countries)
-    if lang == "ar":
-        arabic_countries = {
-            "EG": "مصر", "SA": "السعودية", "AE": "الإمارات", "IQ": "العراق",
-            "SY": "سوريا", "YE": "اليمن", "JO": "الأردن", "LB": "لبنان",
-            "PS": "فلسطين", "KW": "الكويت", "OM": "عُمان", "QA": "قطر",
-            "BH": "البحرين", "MA": "المغرب", "DZ": "الجزائر", "TN": "تونس",
-            "LY": "ليبيا", "SD": "السودان", "SO": "الصومال", "MR": "موريتانيا",
-            "RU": "روسيا", "US": "الولايات المتحدة", "GB": "بريطانيا",
-            "CN": "الصين", "IN": "الهند", "TR": "تركيا", "IR": "إيران",
-            "BR": "البرازيل", "FR": "فرنسا", "DE": "ألمانيا", "CA": "كندا",
-            "ID": "إندونيسيا", "PK": "باكستان", "BD": "بنغلاديش", "NG": "نيجيريا",
-            "PH": "الفلبين", "VN": "فيتنام", "ZA": "جنوب أفريقيا", "IT": "إيطاليا",
-            "ES": "إسبانيا", "AR": "الأرجنتين", "MX": "المكسيك", "CO": "كولومبيا",
-            "KR": "كوريا الجنوبية", "JP": "اليابان", "MY": "ماليزيا", "TH": "تايلاند"
-        }
-        if iso_upper in arabic_countries:
-            return arabic_countries[iso_upper]
-
-    # 2. STANDARD BABEL TRANSLATION
     try:
         from babel import Locale
         from babel.core import UnknownLocaleError
@@ -617,13 +594,8 @@ def get_localized_country_name(iso_code: str, lang: str) -> str:
         try:
             locale = Locale.parse(locale_str)
         except UnknownLocaleError:
-            # If babel fails to load the locale, don't silently fallback to English anymore
-            # unless the requested language was actually English.
-            if lang != "en":
-                return f"ERROR_LOCALE_MISSING_{lang}"
             locale = Locale.parse("en")
-            
-        name = locale.territories.get(iso_upper)
+        name = locale.territories.get(iso_code.upper())
         return name if name else f"ERROR_NO_NAME_FOR_{iso_code}"
     except Exception as e:
         return f"ERROR_BABEL_{str(e)}"

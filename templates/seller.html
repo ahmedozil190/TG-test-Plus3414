@@ -1863,11 +1863,6 @@
     </div>
 
     <!-- Confirmation Modal Structure -->
-    <div style="background-color: red; color: white; text-align: center; padding: 10px; font-weight: bold; font-size: 16px; z-index: 9999; position: relative;">
-        نسخة التحديث 2.0 - إذا رأيت هذا الشريط، الكاش قد اختفى!
-    </div>
-    
-    <div class="loader-overlay" id="loader">
     <div class="modal-overlay" id="confirmModal">
         <div class="confirm-modal">
             <div class="modal-title" data-i18n="confirm_withdraw_title">Confirm Withdraw</div>
@@ -1990,6 +1985,90 @@
             }
             return originalFetch(resource, config);
         };
+
+        // ─── Frontend Country Name Translations ───
+        const COUNTRY_NAMES = {
+            "EG":{"en":"Egypt","ar":"مصر","zh":"埃及","ru":"Египет","tr":"Mısır","es":"Egipto","fa":"مصر","bn":"মিসর","uz":"Misr"},
+            "SA":{"en":"Saudi Arabia","ar":"السعودية","zh":"沙特阿拉伯","ru":"Саудовская Аравия","tr":"Suudi Arabistan","es":"Arabia Saudita","fa":"عربستان سعودی","bn":"সৌদি আরব","uz":"Saudiya Arabistoni"},
+            "AE":{"en":"UAE","ar":"الإمارات","zh":"阿联酋","ru":"ОАЭ","tr":"BAE","es":"EAU","fa":"امارات","bn":"সংযুক্ত আরব আমিরাত","uz":"BAA"},
+            "IQ":{"en":"Iraq","ar":"العراق","zh":"伊拉克","ru":"Ирак","tr":"Irak","es":"Irak","fa":"عراق","bn":"ইরাক","uz":"Iroq"},
+            "SY":{"en":"Syria","ar":"سوريا","zh":"叙利亚","ru":"Сирия","tr":"Suriye","es":"Siria","fa":"سوریه","bn":"সিরিয়া","uz":"Suriya"},
+            "YE":{"en":"Yemen","ar":"اليمن","zh":"也门","ru":"Йемен","tr":"Yemen","es":"Yemen","fa":"یمن","bn":"ইয়েমেন","uz":"Yaman"},
+            "JO":{"en":"Jordan","ar":"الأردن","zh":"约旦","ru":"Иордания","tr":"Ürdün","es":"Jordania","fa":"اردن","bn":"জর্ডান","uz":"Iordaniya"},
+            "LB":{"en":"Lebanon","ar":"لبنان","zh":"黎巴嫩","ru":"Ливан","tr":"Lübnan","es":"Líbano","fa":"لبنان","bn":"লেবানন","uz":"Livan"},
+            "PS":{"en":"Palestine","ar":"فلسطين","zh":"巴勒斯坦","ru":"Палестина","tr":"Filistin","es":"Palestina","fa":"فلسطین","bn":"ফিলিস্তিন","uz":"Falastin"},
+            "KW":{"en":"Kuwait","ar":"الكويت","zh":"科威特","ru":"Кувейт","tr":"Kuveyt","es":"Kuwait","fa":"کویت","bn":"কুয়েত","uz":"Quvayt"},
+            "OM":{"en":"Oman","ar":"عُمان","zh":"阿曼","ru":"Оман","tr":"Umman","es":"Omán","fa":"عمان","bn":"ওমান","uz":"Ummon"},
+            "QA":{"en":"Qatar","ar":"قطر","zh":"卡塔尔","ru":"Катар","tr":"Katar","es":"Catar","fa":"قطر","bn":"কাতার","uz":"Qatar"},
+            "BH":{"en":"Bahrain","ar":"البحرين","zh":"巴林","ru":"Бахрейн","tr":"Bahreyn","es":"Baréin","fa":"بحرین","bn":"বাহরাইন","uz":"Bahrayn"},
+            "MA":{"en":"Morocco","ar":"المغرب","zh":"摩洛哥","ru":"Марокко","tr":"Fas","es":"Marruecos","fa":"مراکش","bn":"মরক্কো","uz":"Marokash"},
+            "DZ":{"en":"Algeria","ar":"الجزائر","zh":"阿尔及利亚","ru":"Алжир","tr":"Cezayir","es":"Argelia","fa":"الجزایر","bn":"আলজেরিয়া","uz":"Jazoir"},
+            "TN":{"en":"Tunisia","ar":"تونس","zh":"突尼斯","ru":"Тунис","tr":"Tunus","es":"Túnez","fa":"تونس","bn":"তিউনিসিয়া","uz":"Tunis"},
+            "LY":{"en":"Libya","ar":"ليبيا","zh":"利比亚","ru":"Ливия","tr":"Libya","es":"Libia","fa":"لیبی","bn":"লিবিয়া","uz":"Liviya"},
+            "SD":{"en":"Sudan","ar":"السودان","zh":"苏丹","ru":"Судан","tr":"Sudan","es":"Sudán","fa":"سودان","bn":"সুদান","uz":"Sudan"},
+            "SO":{"en":"Somalia","ar":"الصومال","zh":"索马里","ru":"Сомали","tr":"Somali","es":"Somalia","fa":"سومالی","bn":"সোমালিয়া","uz":"Somali"},
+            "RU":{"en":"Russia","ar":"روسيا","zh":"俄罗斯","ru":"Россия","tr":"Rusya","es":"Rusia","fa":"روسیه","bn":"রাশিয়া","uz":"Rossiya"},
+            "US":{"en":"United States","ar":"الولايات المتحدة","zh":"美国","ru":"США","tr":"Amerika","es":"Estados Unidos","fa":"آمریکا","bn":"যুক্তরাষ্ট্র","uz":"AQSH"},
+            "GB":{"en":"United Kingdom","ar":"بريطانيا","zh":"英国","ru":"Великобритания","tr":"İngiltere","es":"Reino Unido","fa":"بریتانیا","bn":"যুক্তরাজ্য","uz":"Buyuk Britaniya"},
+            "CN":{"en":"China","ar":"الصين","zh":"中国","ru":"Китай","tr":"Çin","es":"China","fa":"چین","bn":"চীন","uz":"Xitoy"},
+            "IN":{"en":"India","ar":"الهند","zh":"印度","ru":"Индия","tr":"Hindistan","es":"India","fa":"هند","bn":"ভারত","uz":"Hindiston"},
+            "TR":{"en":"Turkey","ar":"تركيا","zh":"土耳其","ru":"Турция","tr":"Türkiye","es":"Turquía","fa":"ترکیه","bn":"তুরস্ক","uz":"Turkiya"},
+            "IR":{"en":"Iran","ar":"إيران","zh":"伊朗","ru":"Иран","tr":"İran","es":"Irán","fa":"ایران","bn":"ইরান","uz":"Eron"},
+            "PK":{"en":"Pakistan","ar":"باكستان","zh":"巴基斯坦","ru":"Пакистан","tr":"Pakistan","es":"Pakistán","fa":"پاکستان","bn":"পাকিস্তান","uz":"Pokiston"},
+            "BD":{"en":"Bangladesh","ar":"بنغلاديش","zh":"孟加拉国","ru":"Бангладеш","tr":"Bangladeş","es":"Bangladés","fa":"بنگلادش","bn":"বাংলাদেশ","uz":"Bangladesh"},
+            "ID":{"en":"Indonesia","ar":"إندونيسيا","zh":"印度尼西亚","ru":"Индонезия","tr":"Endonezya","es":"Indonesia","fa":"اندونزی","bn":"ইন্দোনেশিয়া","uz":"Indoneziya"},
+            "PH":{"en":"Philippines","ar":"الفلبين","zh":"菲律宾","ru":"Филиппины","tr":"Filipinler","es":"Filipinas","fa":"فیلیپین","bn":"ফিলিপাইন","uz":"Filippin"},
+            "VN":{"en":"Vietnam","ar":"فيتنام","zh":"越南","ru":"Вьетнам","tr":"Vietnam","es":"Vietnam","fa":"ویتنام","bn":"ভিয়েতনাম","uz":"Vyetnam"},
+            "TH":{"en":"Thailand","ar":"تايلاند","zh":"泰国","ru":"Таиланд","tr":"Tayland","es":"Tailandia","fa":"تایلند","bn":"থাইল্যান্ড","uz":"Tailand"},
+            "MY":{"en":"Malaysia","ar":"ماليزيا","zh":"马来西亚","ru":"Малайзия","tr":"Malezya","es":"Malasia","fa":"مالزی","bn":"মালয়েশিয়া","uz":"Malayziya"},
+            "KR":{"en":"South Korea","ar":"كوريا الجنوبية","zh":"韩国","ru":"Южная Корея","tr":"Güney Kore","es":"Corea del Sur","fa":"کره جنوبی","bn":"দক্ষিণ কোরিয়া","uz":"Janubiy Koreya"},
+            "JP":{"en":"Japan","ar":"اليابان","zh":"日本","ru":"Япония","tr":"Japonya","es":"Japón","fa":"ژاپن","bn":"জাপান","uz":"Yaponiya"},
+            "NG":{"en":"Nigeria","ar":"نيجيريا","zh":"尼日利亚","ru":"Нигерия","tr":"Nijerya","es":"Nigeria","fa":"نیجریه","bn":"নাইজেরিয়া","uz":"Nigeriya"},
+            "ZA":{"en":"South Africa","ar":"جنوب أفريقيا","zh":"南非","ru":"ЮАР","tr":"Güney Afrika","es":"Sudáfrica","fa":"آفریقای جنوبی","bn":"দক্ষিণ আফ্রিকা","uz":"Janubiy Afrika"},
+            "FR":{"en":"France","ar":"فرنسا","zh":"法国","ru":"Франция","tr":"Fransa","es":"Francia","fa":"فرانسه","bn":"ফ্রান্স","uz":"Fransiya"},
+            "DE":{"en":"Germany","ar":"ألمانيا","zh":"德国","ru":"Германия","tr":"Almanya","es":"Alemania","fa":"آلمان","bn":"জার্মানি","uz":"Germaniya"},
+            "IT":{"en":"Italy","ar":"إيطاليا","zh":"意大利","ru":"Италия","tr":"İtalya","es":"Italia","fa":"ایتالیا","bn":"ইতালি","uz":"Italiya"},
+            "ES":{"en":"Spain","ar":"إسبانيا","zh":"西班牙","ru":"Испания","tr":"İspanya","es":"España","fa":"اسپانیا","bn":"স্পেন","uz":"Ispaniya"},
+            "CA":{"en":"Canada","ar":"كندا","zh":"加拿大","ru":"Канада","tr":"Kanada","es":"Canadá","fa":"کانادا","bn":"কানাডা","uz":"Kanada"},
+            "BR":{"en":"Brazil","ar":"البرازيل","zh":"巴西","ru":"Бразилия","tr":"Brezilya","es":"Brasil","fa":"برزیل","bn":"ব্রাজিল","uz":"Braziliya"},
+            "MX":{"en":"Mexico","ar":"المكسيك","zh":"墨西哥","ru":"Мексика","tr":"Meksika","es":"México","fa":"مکزیک","bn":"মেক্সিকো","uz":"Meksika"},
+            "AR":{"en":"Argentina","ar":"الأرجنتين","zh":"阿根廷","ru":"Аргентина","tr":"Arjantin","es":"Argentina","fa":"آرژانتین","bn":"আর্জেন্টিনা","uz":"Argentina"},
+            "CO":{"en":"Colombia","ar":"كولومبيا","zh":"哥伦比亚","ru":"Колумбия","tr":"Kolombiya","es":"Colombia","fa":"کلمبیا","bn":"কলম্বিয়া","uz":"Kolumbiya"},
+            "UA":{"en":"Ukraine","ar":"أوكرانيا","zh":"乌克兰","ru":"Украина","tr":"Ukrayna","es":"Ucrania","fa":"اوکراین","bn":"ইউক্রেন","uz":"Ukraina"},
+            "PL":{"en":"Poland","ar":"بولندا","zh":"波兰","ru":"Польша","tr":"Polonya","es":"Polonia","fa":"لهستان","bn":"পোল্যান্ড","uz":"Polsha"},
+            "UZ":{"en":"Uzbekistan","ar":"أوزبكستان","zh":"乌兹别克斯坦","ru":"Узбекистан","tr":"Özbekistan","es":"Uzbekistán","fa":"ازبکستان","bn":"উজবেকিস্তান","uz":"O'zbekiston"},
+            "KZ":{"en":"Kazakhstan","ar":"كازاخستان","zh":"哈萨克斯坦","ru":"Казахстان","tr":"Kazakistan","es":"Kazajistán","fa":"قزاقستان","bn":"কাজাখস্তান","uz":"Qozog'iston"},
+            "AZ":{"en":"Azerbaijan","ar":"أذربيجان","zh":"阿塞拜疆","ru":"Азербайджан","tr":"Azerbaycan","es":"Azerbaiyán","fa":"آذربایجان","bn":"আজারবাইজান","uz":"Ozarbayjon"},
+            "AM":{"en":"Armenia","ar":"أرمينيا","zh":"亚美尼亚","ru":"Армения","tr":"Ermenistan","es":"Armenia","fa":"ارمنستان","bn":"আর্মেনিয়া","uz":"Armaniston"},
+            "GE":{"en":"Georgia","ar":"جورجيا","zh":"格鲁吉亚","ru":"Грузия","tr":"Gürcistan","es":"Georgia","fa":"گرجستان","bn":"জর্জিয়া","uz":"Gruziya"},
+            "ET":{"en":"Ethiopia","ar":"إثيوبيا","zh":"埃塞俄比亚","ru":"Эфиопия","tr":"Etiyopya","es":"Etiopía","fa":"اتیوپی","bn":"ইথিওপিয়া","uz":"Efiopiya"},
+            "KE":{"en":"Kenya","ar":"كينيا","zh":"肯尼亚","ru":"Кения","tr":"Kenya","es":"Kenia","fa":"کنیا","bn":"কেনিয়া","uz":"Keniya"},
+            "GH":{"en":"Ghana","ar":"غانا","zh":"加纳","ru":"Гана","tr":"Gana","es":"Ghana","fa":"غنا","bn":"ঘানা","uz":"Gana"},
+            "MR":{"en":"Mauritania","ar":"موريتانيا","zh":"毛里塔尼亚","ru":"Мавритания","tr":"Moritanya","es":"Mauritania","fa":"موریتانی","bn":"মৌরিতানিয়া","uz":"Mavritaniya"}
+        };
+
+        function getLocalizedCountryName(p) {
+            // 1. Try frontend dict using debug ISO from server
+            const iso = (p.localized_names && p.localized_names['_debug_iso']) || p.iso || '';
+            if (iso && COUNTRY_NAMES[iso.toUpperCase()]) {
+                const nm = COUNTRY_NAMES[iso.toUpperCase()][currentLang];
+                if (nm) return nm;
+            }
+            // 2. Try server localized_names
+            if (p.localized_names && p.localized_names[currentLang] && !p.localized_names[currentLang].startsWith('ERROR_')) {
+                return p.localized_names[currentLang];
+            }
+            // 3. Match by English name in frontend dict
+            const eng = (p.name || '').trim();
+            for (const [, names] of Object.entries(COUNTRY_NAMES)) {
+                if (names['en'].toLowerCase() === eng.toLowerCase()) {
+                    const nm = names[currentLang];
+                    if (nm) return nm;
+                }
+            }
+            // 4. Fallback to English
+            return simplifyName(p.name);
+        }
 
         // ─── Utilities ───
         const tg = window.Telegram.WebApp;
@@ -2793,6 +2872,17 @@
             }
         }
 
+        function filterPrices() {
+            const query = document.getElementById('priceSearch').value.toLowerCase();
+            const filtered = allPrices.filter(p => {
+                const locName = getLocalizedCountryName(p);
+                return locName.toLowerCase().includes(query) ||
+                       p.name.toLowerCase().includes(query) ||
+                       p.code.toLowerCase().includes(query);
+            });
+            renderPrices(filtered);
+        }
+
         function showSubscriptionOverlay(channels) {
             const overlay = document.getElementById('subscription-overlay');
             const list = document.getElementById('sub-channels-list-ui');
@@ -3057,16 +3147,7 @@
             }
         }
 
-        function filterPrices() {
-            const query = document.getElementById('priceSearch').value.toLowerCase();
-            const filtered = allPrices.filter(p => {
-                const locName = (p.localized_names && p.localized_names[currentLang]) ? p.localized_names[currentLang] : p.name;
-                return locName.toLowerCase().includes(query) ||
-                       p.name.toLowerCase().includes(query) ||
-                       p.code.toLowerCase().includes(query);
-            });
-            renderPrices(filtered);
-        }
+
 
         function simplifyName(n) {
             if (!n) return '';
@@ -3115,7 +3196,7 @@
                     <div class="country-side" style="flex: 1; min-width: 0;">
                         <span class="c-flag">${p.flag}</span>
                         <div style="min-width: 0; flex: 1;">
-                            <div class="c-name">${(p.localized_names && p.localized_names[currentLang]) ? p.localized_names[currentLang] : simplifyName(p.name)}</div>
+                            <div class="c-name">${getLocalizedCountryName(p)}</div>
                             <div class="c-code">+${p.code}</div>
                         </div>
                     </div>
@@ -3529,7 +3610,7 @@
                     tg.HapticFeedback.notificationOccurred('error');
 
                     let msg = detail.split('|')[1] || detail || translations[currentLang].verification_failed;
-                    
+
                     // Map backend prefixes and known strings to localized keys
                     const prefixKey = detail.split('|')[0];
                     if (prefixKey === 'AUTH_ERROR' || msg.toLowerCase().includes('2fa') || msg.toLowerCase().includes('two-step') || msg.toLowerCase().includes('password')) {
@@ -3537,7 +3618,7 @@
                     } else if (msg.toLowerCase().includes('unblock') || msg.toLowerCase().includes('spambot')) {
                         msg = translations[currentLang].unblock_spambot;
                     }
-                    
+
                     // Map short status keys to full rejection messages
                     const keyMap = {
                         'SPAM': 'rejection_spam',
@@ -3545,7 +3626,7 @@
                         'REVOKED': 'rejection_revoked',
                         'LIMIT': 'rejection_limit'
                     };
-                    
+
                     const mappedKey = keyMap[msg.toUpperCase()];
                     if (mappedKey && translations[currentLang][mappedKey]) {
                         msg = translations[currentLang][mappedKey];
