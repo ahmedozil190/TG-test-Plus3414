@@ -2106,7 +2106,8 @@
                 address: "Address",
                 amount_to_receive: "Amount to receive",
                 wallet: "Wallet",
-                withdraw: "Withdraw"
+                withdraw: "Withdraw",
+                trans_id: "ID"
             },
             ar: {
                 nav_dashboard: "لوحة التحكم", nav_submit: "بيع رقم", nav_withdraw: "سحب", nav_pricing: "قائمة الأسعار", nav_support: "الدعم الفني", nav_lang: "اللغة",
@@ -2162,7 +2163,8 @@
                 address: "العنوان",
                 amount_to_receive: "المبلغ الذي ستتلقاه",
                 wallet: "المحفظة",
-                withdraw: "سحب"
+                withdraw: "سحب",
+                trans_id: "المعرف"
             },
             zh: {
                 nav_dashboard: "控制面板", nav_submit: "卖号", nav_withdraw: "提现", nav_pricing: "价格表", nav_support: "支持", nav_lang: "语言",
@@ -2213,7 +2215,8 @@
                 address: "地址",
                 amount_to_receive: "预计到账金额",
                 wallet: "钱包",
-                withdraw: "提现"
+                withdraw: "提现",
+                trans_id: "编号"
             },
             bn: {
                 nav_dashboard: "নিয়ন্ত্রণ প্যানেল", nav_submit: "নম্বর বিক্রি করুন", nav_withdraw: "সমন্বয়", nav_pricing: "মূল্য তালিকা", nav_support: "সমর্থন", nav_lang: "ভাষা",
@@ -2270,7 +2273,8 @@
                 address: "ঠিকানা",
                 amount_to_receive: "প্রাপ্য পরিমাণ",
                 wallet: "ওয়ালেট",
-                withdraw: "উত্তোলন"
+                withdraw: "উত্তোলন",
+                trans_id: "আইডি"
             },
             fa: {
                 nav_dashboard: "پنل کنترل", nav_submit: "فروش شماره", nav_withdraw: "برداشت", nav_pricing: "لیست قیمت", nav_support: "پشتیبانی", nav_lang: "زبان",
@@ -2327,7 +2331,8 @@
                 address: "آدرس",
                 amount_to_receive: "مبلغ دریافتی",
                 wallet: "کیف پول",
-                withdraw: "برداشت"
+                withdraw: "برداشت",
+                trans_id: "شناسه"
             },
             ru: {
                 nav_dashboard: "Панель управления", nav_submit: "Продать номер", nav_withdraw: "Вывод", nav_pricing: "Цены", nav_support: "Поддержка", nav_lang: "Язык",
@@ -2384,7 +2389,8 @@
                 address: "Адрес",
                 amount_to_receive: "Сумма к получению",
                 wallet: "Кошелек",
-                withdraw: "Вывод"
+                withdraw: "Вывод",
+                trans_id: "ID"
             },
             uz: {
                 nav_dashboard: "Boshqaruv paneli", nav_submit: "Raqam sotish", nav_withdraw: "Pul yechish", nav_pricing: "Narxlar", nav_support: "Qo'llab-quvvatlash", nav_lang: "Til",
@@ -2441,7 +2447,8 @@
                 address: "Manzil",
                 amount_to_receive: "Qabul qilinadigan summa",
                 wallet: "Hamyon",
-                withdraw: "Yechish"
+                withdraw: "Yechish",
+                trans_id: "ID"
             },
             es: {
                 nav_dashboard: "Panel de Control", nav_submit: "Vender Número", nav_withdraw: "Retirar", nav_pricing: "Lista de Precios", nav_support: "Soporte", nav_lang: "Idioma",
@@ -2498,7 +2505,8 @@
                 address: "Dirección",
                 amount_to_receive: "Monto a recibir",
                 wallet: "Billetera",
-                withdraw: "Retirar"
+                withdraw: "Retirar",
+                trans_id: "ID"
             },
             tr: {
                 nav_dashboard: "Kontrol Paneli", nav_submit: "Numara Sat", nav_withdraw: "Para Çek", nav_pricing: "Fiyat Listesi", nav_support: "Destek", nav_lang: "Dil",
@@ -2555,14 +2563,14 @@
                 address: "Adres",
                 amount_to_receive: "Alınacak Tutar",
                 wallet: "Cüzdan",
-                withdraw: "Para Çek"
+                withdraw: "Para Çek",
+                trans_id: "ID"
             }
         };
 
         let currentLang = 'en';
 
         function updateTranslations() {
-            // Temporarily disable transitions during layout shift
             document.body.classList.add('switching');
 
             // Update direction
@@ -3209,7 +3217,7 @@
 
                     item.innerHTML = `
                         <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
-                            <h3 style="margin: 0; font-size: 1rem; font-weight: 700; color: var(--text-secondary);"><i class="fas fa-history" style="color: var(--accent); margin-right: 8px;"></i>${translations[currentLang].withdraw}</h3>
+                            <h3 style="margin: 0; font-size: 1rem; font-weight: 700; color: var(--text-secondary); display: flex; align-items: center; gap: 8px;"><i class="fas fa-history" style="color: var(--accent);"></i>${translations[currentLang].withdraw}</h3>
                         </div>
                         <div style="display: flex; flex-direction: column; gap: 10px;">
                             <div style="${rowS(statusColor)}">
@@ -3223,7 +3231,7 @@
                                 <span style="color: var(--text-secondary); opacity: 0.7; font-weight: 500; font-size: 0.95rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">$${formatMoney(h.amount)} - ${simpleMethod}</span>
                             </div>
                             <div style="${rowS('#8b5cf6')}">
-                                <span style="${lblS}">ID</span>
+                                <span style="${lblS}">${translations[currentLang].trans_id}</span>
                                 <span style="color: var(--text-secondary); opacity: 0.7; font-weight: 500; font-size: 0.9rem; text-align: right; word-break: break-all; flex: 1; min-width: 0;">${h.transaction_id}</span>
                             </div>
                             <div style="${rowS('#3b82f6')}" onclick="copyText('${h.address}')" title="${h.address}" style="cursor:pointer;">
@@ -3507,7 +3515,7 @@
 
                     item.innerHTML = `
                         <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
-                            <h3 style="margin: 0; font-size: 1rem; font-weight: 700; color: var(--text-secondary);"><i class="fas fa-history" style="color: var(--accent); margin-right: 8px;"></i>${translations[currentLang].account}</h3>
+                            <h3 style="margin: 0; font-size: 1rem; font-weight: 700; color: var(--text-secondary); display: flex; align-items: center; gap: 8px;"><i class="fas fa-history" style="color: var(--accent);"></i>${translations[currentLang].account}</h3>
                         </div>
                         <div style="display: flex; flex-direction: column; gap: 10px;">
                             <div style="${rowS(statusColor)}">
