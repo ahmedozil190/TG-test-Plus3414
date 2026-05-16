@@ -605,7 +605,8 @@ app = FastAPI(title="Store Admin Panel")
 @app.middleware("http")
 async def add_no_cache_headers(request: Request, call_next):
     response = await call_next(request)
-    if request.url.path.startswith("/api/"):
+    # Apply no-cache to both API and HTML pages to prevent aggressive caching in Telegram
+    if request.url.path.startswith("/api/") or request.url.path.startswith("/seller") or request.url.path.startswith("/admin"):
         response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
         response.headers["Pragma"] = "no-cache"
         response.headers["Expires"] = "0"
@@ -3258,7 +3259,7 @@ async def toggle_ban(data: BanToggle):
 # --- Seller Panel APIs ---
 
 @app.get("/api/seller/data")
-async def get_seller_data(user_id: int, init_data: str):
+async def get_seller_data(user_id: int, init_data: str, lang: str = "en"):
     try:
         from config import SELLER_BOT_TOKEN
         if not verify_user_auth_multi(init_data, user_id):
@@ -3368,8 +3369,12 @@ async def get_seller_data(user_id: int, init_data: str):
                         # Add a debug key to check what iso we passed
                         localized_names["_debug_iso"] = iso
                         
+                        # Fallback for cached frontends
+                        single_localized = localized_names.get(lang) or name
+                        
                         formatted_prices.append({
                             "name": name,
+                            "localized_name": single_localized,
                             "localized_names": localized_names,
                             "flag": flag,
                             "code": p.country_code,
@@ -3398,8 +3403,12 @@ async def get_seller_data(user_id: int, init_data: str):
                         localized_names = {lc: ln for lc in _LANG_TO_BABEL if (ln := get_localized_country_name(target_iso, lc))}
                         localized_names["_debug_iso"] = target_iso
                         
+                        # Fallback for cached frontends
+                        single_localized = localized_names.get(lang) or name
+                        
                         formatted_prices.append({
                             "name": name,
+                            "localized_name": single_localized,
                             "localized_names": localized_names,
                             "flag": flag,
                             "code": cc,
