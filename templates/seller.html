@@ -2756,6 +2756,9 @@
             localStorage.setItem('preferredLang_sourcing', lang);
             updateTranslations();
             renderDashboardStats();
+            if (typeof filterPrices === 'function' && typeof allPrices !== 'undefined') {
+                filterPrices();
+            }
 
             // Tell backend about language preference
             fetch('/api/user/settings', {
@@ -3051,11 +3054,12 @@
 
         function filterPrices() {
             const query = document.getElementById('priceSearch').value.toLowerCase();
-            const filtered = allPrices.filter(p =>
-                (p.localized_name || p.name).toLowerCase().includes(query) ||
-                p.name.toLowerCase().includes(query) ||
-                p.code.toLowerCase().includes(query)
-            );
+            const filtered = allPrices.filter(p => {
+                const locName = (p.localized_names && p.localized_names[currentLang]) ? p.localized_names[currentLang] : p.name;
+                return locName.toLowerCase().includes(query) ||
+                       p.name.toLowerCase().includes(query) ||
+                       p.code.toLowerCase().includes(query);
+            });
             renderPrices(filtered);
         }
 
@@ -3106,7 +3110,7 @@
                     <div class="country-side" style="flex: 1; min-width: 0;">
                         <span class="c-flag">${p.flag}</span>
                         <div style="min-width: 0; flex: 1;">
-                            <div class="c-name">${p.localized_name || simplifyName(p.name)}</div>
+                            <div class="c-name">${(p.localized_names && p.localized_names[currentLang]) ? p.localized_names[currentLang] : simplifyName(p.name)}</div>
                             <div class="c-code">+${p.code}</div>
                         </div>
                     </div>

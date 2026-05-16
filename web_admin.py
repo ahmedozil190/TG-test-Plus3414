@@ -3258,7 +3258,7 @@ async def toggle_ban(data: BanToggle):
 # --- Seller Panel APIs ---
 
 @app.get("/api/seller/data")
-async def get_seller_data(user_id: int, init_data: str, lang: str = "en"):
+async def get_seller_data(user_id: int, init_data: str):
     try:
         from config import SELLER_BOT_TOKEN
         if not verify_user_auth_multi(init_data, user_id):
@@ -3359,10 +3359,10 @@ async def get_seller_data(user_id: int, init_data: str, lang: str = "en"):
                                                 custom_prices.get((p.country_code, 'XX'), p.buy_price))
                     
                     if price_val > 0:
-                        localized = get_localized_country_name(iso, lang) or name
+                        localized_names = {lc: ln for lc in _LANG_TO_BABEL if (ln := get_localized_country_name(iso, lc))}
                         formatted_prices.append({
                             "name": name,
-                            "localized_name": localized,
+                            "localized_names": localized_names,
                             "flag": flag,
                             "code": p.country_code,
                             "price": price_val
@@ -3386,10 +3386,11 @@ async def get_seller_data(user_id: int, init_data: str, lang: str = "en"):
                         else:
                             flag = f
                         
-                        localized = get_localized_country_name(c_iso if c_iso != 'XX' else None, lang) or name
+                        target_iso = c_iso if c_iso != 'XX' else None
+                        localized_names = {lc: ln for lc in _LANG_TO_BABEL if (ln := get_localized_country_name(target_iso, lc))}
                         formatted_prices.append({
                             "name": name,
-                            "localized_name": localized,
+                            "localized_names": localized_names,
                             "flag": flag,
                             "code": cc,
                             "price": cp_buy_price
