@@ -3350,8 +3350,12 @@ async def get_seller_data(user_id: int, init_data: str):
             for p in prices:
                 try:
                     iso = getattr(p, 'iso_code', None) or 'XX'
+                    default_name, default_flag, resolved_iso = resolve_country_info(p.country_code)
+                    
+                    if iso == 'XX' and resolved_iso != 'XX':
+                        iso = resolved_iso
+                        
                     flag = get_flag_emoji(iso)
-                    default_name = resolve_country_info(p.country_code)[0]
                     name = p.country_name if p.country_name and p.country_name != "Unknown" else default_name
                     
                     # Resolve price: Specific ISO override > Generic XX override > Global price
@@ -3377,16 +3381,17 @@ async def get_seller_data(user_id: int, init_data: str):
                 if cc not in seen_codes and cp_buy_price > 0:
                     try:
                         # Use the specific ISO if available, else XX
-                        n, f, _ = resolve_country_info(cc)
+                        n, f, resolved_iso = resolve_country_info(cc)
                         name = n if n != "Unknown" else f"Code {cc}"
                         
                         # If a custom ISO was specified, try to get a better name/flag
                         if c_iso != 'XX':
                             flag = get_flag_emoji(c_iso)
+                            target_iso = c_iso
                         else:
                             flag = f
+                            target_iso = resolved_iso if resolved_iso != 'XX' else None
                         
-                        target_iso = c_iso if c_iso != 'XX' else None
                         localized_names = {lc: ln for lc in _LANG_TO_BABEL if (ln := get_localized_country_name(target_iso, lc))}
                         formatted_prices.append({
                             "name": name,
