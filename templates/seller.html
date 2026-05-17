@@ -2321,7 +2321,7 @@
         const userLang = tg.initDataUnsafe?.user?.language_code || 'en';
         safeSetText('userInitial', userFirstName.charAt(0).toUpperCase());
 
-        const translations = {
+        const rawTranslations = {
             en: {
                 nav_dashboard: "Control Panel", nav_submit: "Sell Number", nav_withdraw: "Withdraw", nav_pricing: "Price List", nav_support: "Support", nav_lang: "Language",
                 curr_bal: "Current Balance", pend_with: "Pending Withdrawn", total_with: "Total Withdrawn",
@@ -2461,8 +2461,10 @@
             },
             zh: {
                 nav_dashboard: "控制面板", nav_submit: "卖号", nav_withdraw: "提现", nav_pricing: "价格表", nav_support: "支持", nav_lang: "语言",
+                financials_header: "财务数据", stats_header: "数据统计",
                 curr_bal: "当前余额", pend_with: "待提现", total_with: "总提现",
                 stats: "统计数据", accepted: "已通过", pending: "审核中", rejected: "已拒绝",
+                unit_numbers: "个号码", unit_orders: "个订单", unit_usd: "美元", unit_users: "个用户",
                 sub_required: "需要订阅", sub_desc: "要使用机器人并访问此面板，您必须先加入我们的频道。",
                 sub_check: "我已加入，进入面板", join: "加入", checking: "正在检查...",
                 account_details_title: "账号详情", account_details_desc: "输入国际电话号码。我们将自动检测国家和您的奖励价格。",
@@ -2937,6 +2939,24 @@
                 disable_2fa: "Lütfen İki Aşamalı Doğrulaması'nı (2FA) devre dışı bırakın ve tekrar deneyin"
             },
         };
+
+        const translations = new Proxy(rawTranslations, {
+            get(target, lang) {
+                const actualLang = target[lang] ? lang : 'en';
+                const langObj = target[actualLang];
+                return new Proxy(langObj, {
+                    get(subTarget, key) {
+                        if (key in subTarget) {
+                            return subTarget[key];
+                        }
+                        if (target['en'] && key in target['en']) {
+                            return target['en'][key];
+                        }
+                        return '';
+                    }
+                });
+            }
+        });
 
         let currentLang = 'en';
 

@@ -1557,7 +1557,7 @@
         let totalHistoryPages = 1;
         let userId = tg.initDataUnsafe?.user?.id || 0;
 
-        const translations = {
+        const rawTranslations = {
             en: {
                 loading: "Optimizing Store...", nav_home: "Dashboard", nav_store: "Buy Number", nav_deposit: "Deposit", nav_history: "Orders History", nav_support: "Support", nav_referrals: "Referrals",
                 financials_header: "FINANCIALS", stats_header: "STATISTICS", balance: "Current Balance", total_spent: "TOTAL SPENT", total_deposits: "TOTAL DEPOSITS",
@@ -2057,6 +2057,24 @@
                 unit_deposits: "YÜKLEME"
             }
         };
+
+        const translations = new Proxy(rawTranslations, {
+            get(target, lang) {
+                const actualLang = target[lang] ? lang : 'en';
+                const langObj = target[actualLang];
+                return new Proxy(langObj, {
+                    get(subTarget, key) {
+                        if (key in subTarget) {
+                            return subTarget[key];
+                        }
+                        if (target['en'] && key in target['en']) {
+                            return target['en'][key];
+                        }
+                        return '';
+                    }
+                });
+            }
+        });
 
         function openNav() { document.getElementById('navSidebar').classList.add('open'); document.getElementById('sidebarOverlay').classList.add('show'); }
         function closeNav() { document.getElementById('navSidebar').classList.remove('open'); document.getElementById('sidebarOverlay').classList.remove('show'); }
